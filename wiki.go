@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"regexp"
+	"github.com/m4tty/cajun"
 )
 
 var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
@@ -14,6 +15,7 @@ var validPath = regexp.MustCompile("^/(edit|save|view)/([a-zA-Z0-9]+)$")
 type Page struct {
 	Title string
 	Body  []byte
+	Html  template.HTML
 }
 
 func (p *Page) save() error {
@@ -44,6 +46,12 @@ func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
 	if err != nil {
 		http.Redirect(w, r, "/edit/"+title, http.StatusFound)
 		return
+	}
+	html, err := cajun.Transform(string(p.Body))
+	if err != nil {
+		// not sure what to do?
+	} else {
+		p.Html = template.HTML(html);
 	}
 	renderTemplate(w, "view", p)
 }
