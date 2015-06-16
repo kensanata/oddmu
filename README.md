@@ -1,4 +1,4 @@
-# A Small Wiki Written in Go
+# Oddµ: A Small Wiki Written in Go
 
 I'm the maintainer of [Oddmuse](http://oddmuse.org/), a wiki written
 in Perl 5. As we wait for Perl 6 to come around, I wanted to
