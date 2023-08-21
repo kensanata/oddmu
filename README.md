@@ -177,6 +177,14 @@ is what people see when reading the page). Optionally also remove the
 line that says `<title>{{.Title}}</title>` (this is what gets used for
 tabs and bookmarks).
 
+## Customization (with recompilation)
+
+The Markdown parser can be customized and
+[extensions](https://pkg.go.dev/github.com/gomarkdown/markdown/parser#Extensions)
+can be added. There's an example in the
+[usage](https://github.com/gomarkdown/markdown#usage) section. You'll
+need to make changes to the `viewHandler` yourself.
+
 ## Limitations
 
 Page titles are filenames with `.md` appended. If your filesystem
