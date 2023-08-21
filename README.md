@@ -8,13 +8,13 @@ sense to only use it as one person or in very small groups.
 
 ## Building
 
-```
+```sh
 go build
 ```
 
 ## Test
 
-```
+```sh
 mkdir wiki
 cd wiki
 go run ..
