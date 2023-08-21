@@ -10,8 +10,6 @@ import (
 	"regexp"
 )
 
-var port = "8080"
-
 var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
 
 var validPath = regexp.MustCompile("^/(edit|save|view)/([^/]+)$")
@@ -89,12 +87,21 @@ func makeHandler(fn func (http.ResponseWriter, *http.Request, string)) http.Hand
 	}
 }
 
+func getPort() string {
+	port := os.Getenv("ODDMU_PORT")
+	if port == "" {
+		port = "8080"
+	}
+	return port
+}
+
 func main() {
 	http.HandleFunc("/", rootHandler)
 	http.HandleFunc("/view/", makeHandler(viewHandler))
 	http.HandleFunc("/edit/", makeHandler(editHandler))
 	http.HandleFunc("/save/", makeHandler(saveHandler))
 
+	port := getPort()
 	fmt.Println("Serving a wiki on port " + port)
 	http.ListenAndServe(":" + port, nil)
 }
