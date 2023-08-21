@@ -42,7 +42,7 @@ func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
 }
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
-	viewHandler(w, r, "index")
+	http.Redirect(w, r, "/view/index", http.StatusFound)
 }
 
 func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
