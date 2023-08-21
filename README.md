@@ -170,6 +170,13 @@ MDCertificateAgreement accepted
 Feel free to change the templates `view.html` and `edit.html` and
 restart the server.
 
+You can remove the auto-generated titles from the files, for example.
+If your Markdown files start with a level 1 title, then edit
+`view.html` and remove the line that says `<h1>{{.Title}}</h1>` (this
+is what people see when reading the page). Optionally also remove the
+line that says `<title>{{.Title}}</title>` (this is what gets used for
+tabs and bookmarks).
+
 ## Limitations
 
 Page titles are filenames with `.md` appended. If your filesystem
