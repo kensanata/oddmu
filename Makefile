@@ -13,6 +13,8 @@ help:
 	@echo make upload
 	@echo "    this is how I upgrade my server"
 	@echo
+	@echo go build
+	@echo "    just build it"
 
 run:
 	go run .

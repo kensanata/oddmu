@@ -14,7 +14,7 @@ var port = "8080"
 
 var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
 
-var validPath = regexp.MustCompile("^/(edit|save|view)/([a-zA-Z0-9]+)$")
+var validPath = regexp.MustCompile("^/(edit|save|view)/([^/]+)$")
 
 type Page struct {
 	Title string
