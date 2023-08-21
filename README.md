@@ -144,33 +144,16 @@ htpasswd -D .htpasswd berta
 ```
 
 Modify your site configuration and protect the `/edit/` and `/save/`
-URLs with a password.
+URLs with a password by adding the following to your `<VirtualHost
+*:443>` section:
 
 ```apache
-MDomain transjovian.org
-MDCertificateAgreement accepted
-
-<VirtualHost *:80>
-    ServerName transjovian.org
-    RewriteEngine on
-    RewriteRule ^/(.*) https://%{HTTP_HOST}/$1 [redirect]
-</VirtualHost>
-<VirtualHost *:443>
-    ServerAdmin alex@alexschroeder.ch
-    ServerName transjovian.org
-    SSLEngine on
-
-    RewriteEngine on
-    RewriteRule ^/$ http://%{HTTP_HOST}:8080/view/index [redirect]
-    RewriteRule ^/(view|edit|save)/(.*) http://%{HTTP_HOST}:8080/$1/$2 [proxy]
-
-    <LocationMatch "^/(edit|save)/">
-      AuthType Basic
-      AuthName "Password Required"
-      AuthUserFile /home/oddmu/.htpasswd
-      Require valid-user
-    </LocationMatch>
-</VirtualHost>
+<LocationMatch "^/(edit|save)/">
+  AuthType Basic
+  AuthName "Password Required"
+  AuthUserFile /home/oddmu/.htpasswd
+  Require valid-user
+</LocationMatch>
 ```
 
 ## Configuration
