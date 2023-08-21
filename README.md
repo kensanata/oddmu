@@ -6,6 +6,10 @@ This program runs a wiki. It serves all the Markdown files (ending in
 This is a minimal wiki. There is no version history. It probably makes
 sense to only use it as one person or in very small groups.
 
+It's very minimal and only uses Markdown. No wiki extras, so double
+square brackets are not a link. If you're used to that, it'll be
+strange as you need to repeat the name: `[like this](like this)`.
+
 ## Building
 
 ```sh
@@ -111,25 +115,29 @@ Thus, this is what happens:
 
 ## Access
 
-By default, the wiki is editable by all. This is most likely not what
-you want unless you're running it stand-alone, unconnected to the
-Internet.
+Access control is not part of the wiki. By default, the wiki is
+editable by all. This is most likely not what you want unless you're
+running it stand-alone, unconnected to the Internet.
+
+You probably want to configure this in your webserver. If you're using
+Apache, you might have set up a site like the following.
 
 Create a new password file called `.htpasswd` and add the user "alex":
 
 ```sh
+cd /home/oddmu
 htpasswd -c .htpasswd alex
 ```
 
 To add more users, don't use the `-c` option or you will overwrite it!
 
-Add another user:
+To add another user:
 
 ```sh
 htpasswd .htpasswd berta
 ```
 
-Delete that user again:
+To delete remove a user:
 
 ```sh
 htpasswd -D .htpasswd berta
@@ -168,7 +176,8 @@ MDCertificateAgreement accepted
 ## Configuration
 
 Feel free to change the templates `view.html` and `edit.html` and
-restart the server.
+restart the server. Modifying the styles in the templates would be a
+good start.
 
 You can remove the auto-generated titles from the files, for example.
 If your Markdown files start with a level 1 title, then edit
