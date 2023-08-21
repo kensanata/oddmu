@@ -186,6 +186,33 @@ is what people see when reading the page). Optionally also remove the
 line that says `<title>{{.Title}}</title>` (this is what gets used for
 tabs and bookmarks).
 
+If you want to serve static files as well, add a document root to your
+webserver configuration. Using Apache, for example:
+
+```apache
+DocumentRoot /home/oddmu/static
+<Directory /home/oddmu/static>
+    Require all granted
+</Directory>
+```
+
+Create this directory, making sure to give it a permission that your
+webserver can read (world readable file, world readable and executable
+directory). Populate it with files. For example, create a file called
+`robots.txt` containing the following, tellin all robots that they're
+not welcome.
+
+```text
+User-agent: *
+Disallow: /
+```
+
+You site now serves `/robots.txt` without interfering with the wiki,
+and without needing a wiki page.
+
+[Wikipedia](https://en.wikipedia.org/wiki/Robot_exclusion_standard)
+has more information.
+
 ## Customization (with recompilation)
 
 The Markdown parser can be customized and
