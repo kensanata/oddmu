@@ -1,12 +1,16 @@
 package main
 
 import (
+	"os"
+	"fmt"
+	"github.com/microcosm-cc/bluemonday"
+	"github.com/gomarkdown/markdown"
 	"html/template"
-	"io/ioutil"
 	"net/http"
 	"regexp"
-	"github.com/m4tty/cajun"
 )
+
+var port = "8080"
 
 var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
 
@@ -19,19 +23,18 @@ type Page struct {
 }
 
 func (p *Page) save() error {
-	filename := p.Title + ".txt"
-	return ioutil.WriteFile(filename, p.Body, 0600)
+	filename := p.Title + ".md"
+	return os.WriteFile(filename, p.Body, 0600)
 }
 
 func loadPage(title string) (*Page, error) {
-	filename := title + ".txt"
-	body, err := ioutil.ReadFile(filename)
+	filename := title + ".md"
+	body, err := os.ReadFile(filename)
 	if err != nil {
 		return nil, err
 	}
 	return &Page{Title: title, Body: body}, nil
 }
-
 
 func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
 	err := templates.ExecuteTemplate(w, tmpl+".html", p)
@@ -40,6 +43,9 @@ func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
 	}
 }
 
+func rootHandler(w http.ResponseWriter, r *http.Request) {
+	viewHandler(w, r, "index")
+}
 
 func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
 	p, err := loadPage(title)
@@ -47,12 +53,9 @@ func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
 		http.Redirect(w, r, "/edit/"+title, http.StatusFound)
 		return
 	}
-	html, err := cajun.Transform(string(p.Body))
-	if err != nil {
-		// not sure what to do?
-	} else {
-		p.Html = template.HTML(html);
-	}
+	maybeUnsafeHTML := markdown.ToHTML(p.Body, nil, nil)
+	html := bluemonday.UGCPolicy().SanitizeBytes(maybeUnsafeHTML)
+	p.Html = template.HTML(html);
 	renderTemplate(w, "view", p)
 }
 
@@ -86,11 +89,12 @@ func makeHandler(fn func (http.ResponseWriter, *http.Request, string)) http.Hand
 	}
 }
 
-
 func main() {
+	http.HandleFunc("/", rootHandler)
 	http.HandleFunc("/view/", makeHandler(viewHandler))
 	http.HandleFunc("/edit/", makeHandler(editHandler))
 	http.HandleFunc("/save/", makeHandler(saveHandler))
 
-	http.ListenAndServe(":8080", nil)
+	fmt.Println("Serving a wiki on port " + port)
+	http.ListenAndServe(":" + port, nil)
 }

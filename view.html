@@ -1,5 +1,14 @@
-<h1>{{.Title}}</h1>
-
-<p>[<a href="/edit/{{.Title}}">edit</a>]</p>
-
-<div>{{.Html}}</div>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>{{.Title}}</title>
+  </head>
+  <body>
+    <h1>{{.Title}}</h1>
+    <p><a href="/edit/{{.Title}}">Edit this page</a></p>
+    <div>
+{{.Html}}
+    </div>
+  </body>
+</html>
