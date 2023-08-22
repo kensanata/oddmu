@@ -10,6 +10,9 @@ It's very minimal and only uses Markdown. No wiki extras, so double
 square brackets are not a link. If you're used to that, it'll be
 strange as you need to repeat the name: `[like this](like this)`.
 
+If your files don't provide their own title (`# title`), the file name
+is used for the title.
+
 ## Building
 
 ```sh
@@ -161,15 +164,6 @@ URLs with a password by adding the following to your `<VirtualHost
 Feel free to change the templates `view.html` and `edit.html` and
 restart the server. Modifying the styles in the templates would be a
 good start.
-
-### No automatic titles
-
-You can remove the auto-generated titles from the files, for example.
-If your Markdown files start with a level 1 title, then edit
-`view.html` and remove the line that says `<h1>{{.Title}}</h1>` (this
-is what people see when reading the page). Optionally also remove the
-line that says `<title>{{.Title}}</title>` (this is what gets used for
-tabs and bookmarks).
 
 ### Serve static files
 

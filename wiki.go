@@ -13,6 +13,7 @@ import (
 var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
 
 var validPath = regexp.MustCompile("^/(edit|save|view)/([^/]+)$")
+var titleRegexp = regexp.MustCompile("(?m)^#\\s*(.*)$")
 
 type Page struct {
 	Title string
@@ -30,6 +31,11 @@ func loadPage(title string) (*Page, error) {
 	body, err := os.ReadFile(filename)
 	if err != nil {
 		return nil, err
+	}
+	m := titleRegexp.FindStringSubmatch(string(body))
+	if m != nil {
+		title = m[1]
+		body = []byte(titleRegexp.ReplaceAllString(string(body), ""))
 	}
 	return &Page{Title: title, Body: body}, nil
 }
