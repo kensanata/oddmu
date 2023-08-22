@@ -35,14 +35,7 @@ func loadPage(title string) (*Page, error) {
 	if err != nil {
 		return nil, err
 	}
-	name := title
-	s := string(body)
-	m := titleRegexp.FindStringSubmatch(s)
-	if m != nil {
-		title = m[1]
-		body = []byte(strings.Replace(s, m[0], "", 1))
-	}
-	return &Page{Title: title, Name: name, Body: body}, nil
+	return &Page{Title: title, Name: title, Body: body}, nil
 }
 
 func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
@@ -71,7 +64,14 @@ func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
 		http.Redirect(w, r, "/edit/"+title, http.StatusFound)
 		return
 	}
-	// Render the Markdown to HTML, sanitizing it
+	// Render the Markdown to HTML, extracting a title and
+	// possibly sanitizing it
+	s := string(p.Body)
+	m := titleRegexp.FindStringSubmatch(s)
+	if m != nil {
+		p.Title = m[1]
+		p.Body = []byte(strings.Replace(s, m[0], "", 1))
+	}
 	maybeUnsafeHTML := markdown.ToHTML(p.Body, nil, nil)
 	html := bluemonday.UGCPolicy().SanitizeBytes(maybeUnsafeHTML)
 	p.Html = template.HTML(html);
@@ -81,14 +81,14 @@ func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
 func editHandler(w http.ResponseWriter, r *http.Request, title string) {
 	p, err := loadPage(title)
 	if err != nil {
-		p = &Page{Title: title}
+		p = &Page{Title: title, Name: title}
 	}
 	renderTemplate(w, "edit", p)
 }
 
 func saveHandler(w http.ResponseWriter, r *http.Request, title string) {
 	body := r.FormValue("body")
-	p := &Page{Title: title, Body: []byte(body)}
+	p := &Page{Title: title, Name: title, Body: []byte(body)}
 	err := p.save()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
