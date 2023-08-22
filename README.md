@@ -71,7 +71,7 @@ Edit the first page using `lynx`:
 lynx http://localhost:8080/view/index
 ```
 
-## Web Server Setup
+## Web server setup
 
 HTTPS is not part of the wiki. You probably want to configure this in
 your webserver. If you're using Apache, you might have set up a site
@@ -162,12 +162,16 @@ Feel free to change the templates `view.html` and `edit.html` and
 restart the server. Modifying the styles in the templates would be a
 good start.
 
+### No automatic titles
+
 You can remove the auto-generated titles from the files, for example.
 If your Markdown files start with a level 1 title, then edit
 `view.html` and remove the line that says `<h1>{{.Title}}</h1>` (this
 is what people see when reading the page). Optionally also remove the
 line that says `<title>{{.Title}}</title>` (this is what gets used for
 tabs and bookmarks).
+
+### Serve static files
 
 If you want to serve static files as well, add a document root to your
 webserver configuration. Using Apache, for example:
@@ -196,6 +200,9 @@ and without needing a wiki page.
 [Wikipedia](https://en.wikipedia.org/wiki/Robot_exclusion_standard)
 has more information.
 
+All you have make sure is that none of the static files look like the
+wiki paths `/view/`, `/edit/` or `/save/`.
+
 ## Customization (with recompilation)
 
 The Markdown parser can be customized and
@@ -203,6 +210,56 @@ The Markdown parser can be customized and
 can be added. There's an example in the
 [usage](https://github.com/gomarkdown/markdown#usage) section. You'll
 need to make changes to the `viewHandler` yourself.
+
+### Render Gemtext
+
+In a first approximation, Gemtext is valid Markdown except for the
+rocket links (`=>`). Here's how to modify the `loadPage` so that a
+`.gmi` file is loaded if no `.md` is found, and the rocket links are
+translated into Markdown:
+
+```go
+func loadPage(title string) (*Page, error) {
+	filename := title + ".md"
+	body, err := os.ReadFile(filename)
+	if err == nil {
+		return &Page{Title: title, Body: body}, nil
+	}
+	filename = title + ".gmi"
+	body, err = os.ReadFile(filename)
+	if err == nil {
+		re := regexp.MustCompile(`(?m)^=>\s*(\S+)\s+(.+)`)
+		body = []byte(re.ReplaceAllString(string(body), `* [$2]($1)`))
+		return &Page{Title: title, Body: body}, nil
+	}
+	return nil, err
+}
+```
+
+There is a small problem, however: By default, Markdown expects an
+empty line before a list begins. The following change to `viewHandler`
+uses the `NoEmptyLineBeforeBlock` extension for the parser:
+
+```go
+func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
+	p, err := loadPage(title)
+	if err != nil {
+		http.Redirect(w, r, "/edit/"+title, http.StatusFound)
+		return
+	}
+	extensions := parser.CommonExtensions | parser.NoEmptyLineBeforeBlock
+	markdownParser := parser.NewWithExtensions(extensions)
+	flags := html.CommonFlags
+	opts := html.RendererOptions{
+		Flags: flags,
+	}
+	htmlRenderer := html.NewRenderer(opts)
+	maybeUnsafeHTML := markdown.ToHTML(p.Body, markdownParser, htmlRenderer)
+	html := bluemonday.UGCPolicy().SanitizeBytes(maybeUnsafeHTML)
+	p.Html = template.HTML(html);
+	renderTemplate(w, "view", p)
+}
+```
 
 ## Limitations
 
