@@ -13,7 +13,7 @@ form, textarea { width: 100%; }
   <body>
     <h1>Editing {{.Title}}</h1>
 
-    <form action="/save/{{.Title}}" method="POST">
+    <form action="/save/{{.Name}}" method="POST">
       <div><textarea name="body" rows="20" cols="80">{{printf "%s" .Body}}</textarea></div>
       <p><input type="submit" value="Save"></p>
     </form>

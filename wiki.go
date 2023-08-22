@@ -13,17 +13,18 @@ import (
 
 var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
 
-var validPath = regexp.MustCompile("^/(edit|save|view)/([^/]+)$")
+var validPath = regexp.MustCompile("^/(edit|save|view)/(([a-z]+/)?[^/]+)$")
 var titleRegexp = regexp.MustCompile("(?m)^#\\s*(.*)\n+")
 
 type Page struct {
 	Title string
+	Name  string
 	Body  []byte
 	Html  template.HTML
 }
 
 func (p *Page) save() error {
-	filename := p.Title + ".md"
+	filename := p.Name + ".md"
 	return os.WriteFile(filename, p.Body, 0600)
 }
 
@@ -33,13 +34,14 @@ func loadPage(title string) (*Page, error) {
 	if err != nil {
 		return nil, err
 	}
+	name := title
 	s := string(body)
 	m := titleRegexp.FindStringSubmatch(s)
 	if m != nil {
 		title = m[1]
 		body = []byte(strings.Replace(s, m[0], "", 1))
 	}
-	return &Page{Title: title, Body: body}, nil
+	return &Page{Title: title, Name: name, Body: body}, nil
 }
 
 func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {

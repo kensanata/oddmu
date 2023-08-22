@@ -13,6 +13,25 @@ strange as you need to repeat the name: `[like this](like this)`.
 If your files don't provide their own title (`# title`), the file name
 is used for the title.
 
+## Templates
+
+Feel free to change the templates `view.html` and `edit.html` and
+restart the server. Modifying the styles in the templates would be a
+good start to get a feel for it.
+
+The templates can refer to the following properties of a page:
+
+`{{.Title}}` is the page title. If the page doesn't provide its own
+title, the page name is used.
+
+`{{.Name}}` is the page name. The page name doesn't include the `.md`
+extension.
+
+`{{.Html}}` is the rendered Markdown, as HTML.
+
+`{{printf "%s" .Body}}` is the Markdown, as a string (the data itself
+is a byte array and that's why we need to call `printf`).
+
 ## Building
 
 ```sh
