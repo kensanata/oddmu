@@ -6,12 +6,15 @@ This program runs a wiki. It serves all the Markdown files (ending in
 This is a minimal wiki. There is no version history. It probably makes
 sense to only use it as one person or in very small groups.
 
-It's very minimal and only uses Markdown. No wiki extras, so double
-square brackets are not a link. If you're used to that, it'll be
-strange as you need to repeat the name: `[like this](like this)`.
+This wiki only uses Markdown. There is no additional wiki markup, most
+importantly double square brackets are not a link. If you're used to
+that, it'll be strange as you need to repeat the name: `[like
+this](like this)`.
 
 If your files don't provide their own title (`# title`), the file name
 is used for the title.
+
+µ is the letter mu, so Oddµ is usually written Oddmu. 🙃
 
 ## Templates
 
@@ -40,9 +43,15 @@ go build
 
 ## Test
 
+The working directory is where pages are saved and where templates are
+loaded from. The following instructions make a wiki subdirectory, link
+the template files into it and run the wiki (with the source code
+being in the parent directory).
+
 ```sh
 mkdir wiki
 cd wiki
+ln ../*.html .
 go run ..
 ```
 
