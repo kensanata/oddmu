@@ -44,15 +44,11 @@ go build
 ## Test
 
 The working directory is where pages are saved and where templates are
-loaded from. The following instructions make a wiki subdirectory, link
-the template files into it and run the wiki (with the source code
-being in the parent directory).
+loaded from. You need a copy of the template files in this directory.
+Here's how to start it in the source directory:
 
 ```sh
-mkdir wiki
-cd wiki
-ln ../*.html .
-go run ..
+go run .
 ```
 
 The program serves the local directory as a wiki on port 8080. Point
@@ -66,16 +62,21 @@ currently reading.
 
 ## Deploying it using systemd
 
-As root:
+As root, on your server:
 
 ```sh
-# on your server
 adduser --system --home /home/oddmu oddmu
 ```
 
-Copy all the files into `/home/oddmu` on your server: `oddmu`, `oddmu.service`, `view.html` and `edit.html`.
+Copy all the files into `/home/oddmu` to your server: `oddmu`, `oddmu.service`, `view.html` and `edit.html`.
 
-Set the ODDMU_PORT environment variable in the `oddmu.service` file (or accept the default, 8080).
+Edit the `oddmu.service` file. These are the three lines you most likely have to take care of:
+
+```
+ExecStart=/home/oddmu/oddmu
+WorkingDirectory=/home/oddmu
+Environment="ODDMU_PORT=8080"
+```
 
 Install the service file and enable it:
 
@@ -105,9 +106,9 @@ lynx http://localhost:8080/view/index
 ## Web server setup
 
 HTTPS is not part of the wiki. You probably want to configure this in
-your webserver. If you're using Apache, you might have set up a site
-like the following. In my case, that'd be
-`/etc/apache2/sites-enabled/500-transjovian.conf`:
+your webserver. I guess you could use stunnel, too. If you're using
+Apache, you might have set up a site like I did, below. In my case,
+that'd be `/etc/apache2/sites-enabled/500-transjovian.conf`:
 
 ```apache
 MDomain transjovian.org
@@ -143,6 +144,12 @@ Thus, this is what happens:
 * Our second virtual host redirects this to `https://transjovian.org/wiki/view/index` (still on port 443)
 * This is proxied to `http://transjovian.org:8080/view/index` (no on port 8080, without encryption)
 * The wiki converts `index.md` to HTML, adds it to the template, and serves it.
+
+Restart the server, gracefully:
+
+```
+apachectl graceful
+```
 
 ## Access
 
@@ -187,13 +194,7 @@ URLs with a password by adding the following to your `<VirtualHost
 </LocationMatch>
 ```
 
-## Configuration
-
-Feel free to change the templates `view.html` and `edit.html` and
-restart the server. Modifying the styles in the templates would be a
-good start.
-
-### Serve static files
+## Serve static files
 
 If you want to serve static files as well, add a document root to your
 webserver configuration. Using Apache, for example:
@@ -245,14 +246,12 @@ func loadPage(title string) (*Page, error) {
 	filename := title + ".md"
 	body, err := os.ReadFile(filename)
 	if err == nil {
-		return &Page{Title: title, Body: body}, nil
+		return &Page{Title: title, Name: title, Body: body}, nil
 	}
 	filename = title + ".gmi"
 	body, err = os.ReadFile(filename)
 	if err == nil {
-		re := regexp.MustCompile(`(?m)^=>\s*(\S+)\s+(.+)`)
-		body = []byte(re.ReplaceAllString(string(body), `* [$2]($1)`))
-		return &Page{Title: title, Body: body}, nil
+		return &Page{Title: title, Name: title, Body: body}, nil
 	}
 	return nil, err
 }
@@ -264,11 +263,29 @@ uses the `NoEmptyLineBeforeBlock` extension for the parser:
 
 ```go
 func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
+	// Short cut for text files
+	if (strings.HasSuffix(title, ".txt")) {
+		body, err := os.ReadFile(title)
+		if err == nil {
+			w.Write(body)
+			return
+		}
+	}
+	// Attempt to load Markdown or Gemini page; edit it if this fails
 	p, err := loadPage(title)
 	if err != nil {
 		http.Redirect(w, r, "/edit/"+title, http.StatusFound)
 		return
 	}
+	// Render the Markdown to HTML, extracting a title and
+	// possibly sanitizing it
+	s := string(p.Body)
+	m := titleRegexp.FindStringSubmatch(s)
+	if m != nil {
+		p.Title = m[1]
+		p.Body = []byte(strings.Replace(s, m[0], "", 1))
+	}
+    // Here is where a new extension is added!
 	extensions := parser.CommonExtensions | parser.NoEmptyLineBeforeBlock
 	markdownParser := parser.NewWithExtensions(extensions)
 	flags := html.CommonFlags
