@@ -7,13 +7,14 @@ import (
 	"github.com/gomarkdown/markdown"
 	"html/template"
 	"net/http"
+	"strings"
 	"regexp"
 )
 
 var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
 
 var validPath = regexp.MustCompile("^/(edit|save|view)/([^/]+)$")
-var titleRegexp = regexp.MustCompile("(?m)^#\\s*(.*)$")
+var titleRegexp = regexp.MustCompile("(?m)^#\\s*(.*)\n+")
 
 type Page struct {
 	Title string
@@ -32,10 +33,11 @@ func loadPage(title string) (*Page, error) {
 	if err != nil {
 		return nil, err
 	}
-	m := titleRegexp.FindStringSubmatch(string(body))
+	s := string(body)
+	m := titleRegexp.FindStringSubmatch(s)
 	if m != nil {
 		title = m[1]
-		body = []byte(titleRegexp.ReplaceAllString(string(body), ""))
+		body = []byte(strings.Replace(s, m[0], "", 1))
 	}
 	return &Page{Title: title, Body: body}, nil
 }
@@ -52,11 +54,21 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
+	// Short cut for text files
+	if (strings.HasSuffix(title, ".txt")) {
+		body, err := os.ReadFile(title)
+		if err == nil {
+			w.Write(body)
+			return
+		}
+	}
+	// Attempt to load Markdown page; edit it if this fails
 	p, err := loadPage(title)
 	if err != nil {
 		http.Redirect(w, r, "/edit/"+title, http.StatusFound)
 		return
 	}
+	// Render the Markdown to HTML, sanitizing it
 	maybeUnsafeHTML := markdown.ToHTML(p.Body, nil, nil)
 	html := bluemonday.UGCPolicy().SanitizeBytes(maybeUnsafeHTML)
 	p.Html = template.HTML(html);
