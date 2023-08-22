@@ -1,14 +1,15 @@
 package main
 
 import (
-	"os"
-	"fmt"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/gomarkdown/markdown"
 	"html/template"
 	"net/http"
 	"strings"
 	"regexp"
+	"bytes"
+	"fmt"
+	"os"
 )
 
 var templates = template.Must(template.ParseFiles("edit.html", "view.html"))
@@ -25,7 +26,7 @@ type Page struct {
 
 func (p *Page) save() error {
 	filename := p.Name + ".md"
-	return os.WriteFile(filename, p.Body, 0600)
+	return os.WriteFile(filename, bytes.ReplaceAll(p.Body, []byte{'\r'}, []byte{}), 0600)
 }
 
 func loadPage(title string) (*Page, error) {
