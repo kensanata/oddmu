@@ -35,6 +35,15 @@ extension.
 `{{printf "%s" .Body}}` is the Markdown, as a string (the data itself
 is a byte array and that's why we need to call `printf`).
 
+When calling the `save` action, the page name is take from the URL and
+the page content is taken from the `body` form parameter. To
+illustrate, here's how to edit a page using `curl`:
+
+```sh
+curl --form body="Did you bring a towel?" \
+  http://localhost:8080/save/welcome
+```
+
 ## Building
 
 ```sh
@@ -126,15 +135,15 @@ MDCertificateAgreement accepted
 
     RewriteEngine on
     RewriteRule ^/$ http://%{HTTP_HOST}:8080/view/index [redirect]
-    RewriteRule ^/(view|edit|save)/(.*) http://%{HTTP_HOST}:8080/$1/$2 [proxy]
+    RewriteRule ^/(view|edit|save|search)/(.*) http://%{HTTP_HOST}:8080/$1/$2 [proxy]
 </VirtualHost>
 ```
 
 First, it manages the domain, getting the necessary certificates. It
 redirects regular HTTP traffic from port 80 to port 443. It turns on
 the SSL engine for port 443. It redirects `/` to `/view/index` and any
-path that starts with `/view/`, `/edit/` or `/save/` is proxied to
-port 8080 where the Oddmu program can handle it.
+path that starts with `/view/`, `/edit/`, `/save/` or `/search/` is
+proxied to port 8080 where the Oddmu program can handle it.
 
 Thus, this is what happens:
 
@@ -224,7 +233,7 @@ and without needing a wiki page.
 has more information.
 
 All you have make sure is that none of the static files look like the
-wiki paths `/view/`, `/edit/` or `/save/`.
+wiki paths `/view/`, `/edit/`, `/save/` or `/search/`.
 
 ## Customization (with recompilation)
 
