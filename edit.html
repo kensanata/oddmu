@@ -15,7 +15,8 @@ form, textarea { width: 100%; }
 
     <form action="/save/{{.Name}}" method="POST">
       <div><textarea name="body" rows="20" cols="80">{{printf "%s" .Body}}</textarea></div>
-      <p><input type="submit" value="Save"></p>
+      <p><input type="submit" value="Save">
+        <a href="/view/{{.Name}}"><button>Cancel</button></a></p>
     </form>
   </body>
 </html>
