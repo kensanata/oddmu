@@ -45,7 +45,8 @@ type Page struct {
 // save saves a Page. The filename is based on the Page.Name and gets
 // the ".md" extension. Page.Body is saved, without any carriage
 // return characters ("\r"). The file permissions used are readable
-// and writeable for the current user, i.e. u+rw or 0600.
+// and writeable for the current user, i.e. u+rw or 0600. Page.Title
+// and Page.Html are not saved no caching. There is no caching.
 func (p *Page) save() error {
 	filename := p.Name + ".md"
 	updateIndex(p)
@@ -67,13 +68,16 @@ func loadPage(name string) (*Page, error) {
 }
 
 // handleTitle extracts the title from a Page and sets Page.Title, if
-// any.
-func (p* Page) handleTitle() {
+// any. If replace is true, the page title is also removed from
+// Page.Body. Make sure not to save this! This is only for rendering.
+func (p* Page) handleTitle(replace bool) {
 	s := string(p.Body)
 	m := titleRegexp.FindStringSubmatch(s)
 	if m != nil {
 		p.Title = m[1]
-		p.Body = []byte(strings.Replace(s, m[0], "", 1))
+		if replace {
+			p.Body = []byte(strings.Replace(s, m[0], "", 1))
+		}
 	}
 }
 
@@ -85,7 +89,8 @@ func (p* Page) renderHtml() {
 }
 
 // plainText renders the Page.Body to plain text and returns it,
-// ignoring all the Markdown.
+// ignoring all the Markdown and all the newlines. The result is one
+// long single line of text.
 func (p* Page) plainText() string {
 	parser := parser.New()
 	doc := markdown.Parse(p.Body, parser)
@@ -100,6 +105,8 @@ func (p* Page) plainText() string {
 	return strings.ReplaceAll(string(text), "\n", " ")
 }
 
+// renderTemplate is the helper that is used render the templates with
+// data.
 func renderTemplate(w http.ResponseWriter, tmpl string, data any) {
 	err := templates.ExecuteTemplate(w, tmpl+".html", data)
 	if err != nil {
@@ -107,49 +114,66 @@ func renderTemplate(w http.ResponseWriter, tmpl string, data any) {
 	}
 }
 
+// rootHandler just redirects to /view/index.
 func rootHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/view/index", http.StatusFound)
 }
 
-func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
+// viewHandler renders a text file, if the name ends in ".txt" and
+// such a file exists. Otherwise, it loads the page. If this didn't
+// work, the browser is redirected to an edit page. Otherwise, the
+// "view.html" template is used to show the rendered HTML.
+func viewHandler(w http.ResponseWriter, r *http.Request, name string) {
 	// Short cut for text files
-	if (strings.HasSuffix(title, ".txt")) {
-		body, err := os.ReadFile(title)
+	if (strings.HasSuffix(name, ".txt")) {
+		body, err := os.ReadFile(name)
 		if err == nil {
 			w.Write(body)
 			return
 		}
 	}
 	// Attempt to load Markdown page; edit it if this fails
-	p, err := loadPage(title)
+	p, err := loadPage(name)
 	if err != nil {
-		http.Redirect(w, r, "/edit/"+title, http.StatusFound)
+		http.Redirect(w, r, "/edit/"+name, http.StatusFound)
 		return
 	}
-	p.handleTitle()
+	p.handleTitle(true)
 	p.renderHtml()
 	renderTemplate(w, "view", p)
 }
 
-func editHandler(w http.ResponseWriter, r *http.Request, title string) {
-	p, err := loadPage(title)
+// editHandler uses the "edit.html" template to present an edit page.
+// When editing, the page title is not overriden by a title in the
+// text. Instead, the page name is used.
+func editHandler(w http.ResponseWriter, r *http.Request, name string) {
+	p, err := loadPage(name)
 	if err != nil {
-		p = &Page{Title: title, Name: title}
+		p = &Page{Title: name, Name: name}
+	} else {
+		p.handleTitle(false)
 	}
 	renderTemplate(w, "edit", p)
 }
 
-func saveHandler(w http.ResponseWriter, r *http.Request, title string) {
+// saveHandler takes the "body" form parameter and saves it. The
+// browser is redirected to the page view.
+func saveHandler(w http.ResponseWriter, r *http.Request, name string) {
 	body := r.FormValue("body")
-	p := &Page{Title: title, Name: title, Body: []byte(body)}
+	p := &Page{Name: name, Body: []byte(body)}
 	err := p.save()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	http.Redirect(w, r, "/view/"+title, http.StatusFound)
+	http.Redirect(w, r, "/view/"+name, http.StatusFound)
 }
 
+// makeHandler returns a handler that uses the URL path without the
+// first path element as its argument, e.g. if the URL path is
+// /edit/foo/bar, the editHandler is called with "foo/bar" as its
+// argument. This uses the second group from the validPath regular
+// expression.
 func makeHandler(fn func (http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		m := validPath.FindStringSubmatch(r.URL.Path)
@@ -161,6 +185,10 @@ func makeHandler(fn func (http.ResponseWriter, *http.Request, string)) http.Hand
 	}
 }
 
+// searchHandler presents a search result. It uses the query string in
+// the form parameter "q" and the template "search.html". For each
+// page found, the HTML is just a few snippets based on the plain
+// text.
 func searchHandler(w http.ResponseWriter, r *http.Request) {
 	q := r.FormValue("q")
 	ids := index.Query(q)
@@ -171,7 +199,7 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			fmt.Printf("Error loading %s\n", name)
 		} else {
-			p.handleTitle()
+			p.handleTitle(true)
 			extract := []byte(snippets(q, p.plainText()))
 			html := bluemonday.UGCPolicy().SanitizeBytes(extract)
 			p.Html = template.HTML(html)
@@ -182,6 +210,8 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "search", s)
 }
 
+// getPort returns the environment variable ODDMU_PORT or the default
+// port, "8080".
 func getPort() string {
 	port := os.Getenv("ODDMU_PORT")
 	if port == "" {
