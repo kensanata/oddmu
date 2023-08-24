@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width">
+    <title>Search for {{.Query}}</title>
+    <style>
+html { max-width: 70ch; padding: 2ch; margin: auto; color: #111; background: #ffe; }
+img { max-width: 20%; }
+.result { font-size: larger }
+    </style>
+  </head>
+  <body>
+    <h1>Search for {{.Query}}</h1>
+    <div>
+      {{if .Results}}
+        {{range .Items}}
+      <p><a class="result" href="/view/{{.Name}}">{{.Title}}</a></p>
+      <blockquote>{{.Html}}</blockquote>
+        {{end}}
+      {{else}}
+      <p>No results.</p>
+      {{end}}
+    </div>
+  </body>
+</html>
