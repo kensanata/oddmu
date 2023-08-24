@@ -36,7 +36,6 @@ func indexAdd(path string, info fs.FileInfo, err error) error {
 		return nil
 	}
 	name := strings.TrimSuffix(filename, ".md")
-	fmt.Printf("Indexing %s\n", name)
 	p, err := loadPage(name)
 	if err != nil {
 		return err
@@ -58,7 +57,7 @@ func loadIndex() error {
 	return err
 }
 
-func updateIndex(p *Page) {
+func (p *Page) updateIndex() {
 	var id trigram.DocID
 	for docId, name := range documents {
 		if name == p.Name {
@@ -66,13 +65,15 @@ func updateIndex(p *Page) {
 			break
 		}
 	}
-	s := string(p.Body)
 	if id == 0 {
-		id = index.Add(s)
+		id = index.Add(string(p.Body))
 		documents[id] = p.Name
 	} else {
-		index.Delete(s, id)
-		index.Insert(s, id)
+		o, err := loadPage(p.Name)
+		if err == nil {
+			index.Delete(string(o.Body), id)
+		}
+		index.Insert(string(p.Body), id)
 	}
 }
 

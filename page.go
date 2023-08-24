@@ -32,8 +32,10 @@ type Page struct {
 // and Page.Html are not saved no caching. There is no caching.
 func (p *Page) save() error {
 	filename := p.Name + ".md"
-	updateIndex(p)
-	return os.WriteFile(filename, bytes.ReplaceAll(p.Body, []byte{'\r'}, []byte{}), 0600)
+	s := bytes.ReplaceAll(p.Body, []byte{'\r'}, []byte{})
+	p.Body = s
+	p.updateIndex()
+	return os.WriteFile(filename, s, 0600)
 }
 
 // loadPage loads a Page given a name. The filename loaded is that
