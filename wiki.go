@@ -1,15 +1,10 @@
 package main
 
 import (
-	"github.com/gomarkdown/markdown"
-	"github.com/gomarkdown/markdown/ast"
-	"github.com/gomarkdown/markdown/parser"
-	"github.com/microcosm-cc/bluemonday"
 	"html/template"
 	"net/http"
 	"strings"
 	"regexp"
-	"bytes"
 	"fmt"
 	"os"
 )
@@ -29,81 +24,6 @@ var validPath = regexp.MustCompile("^/([^/]+)/(.+)$")
 // is used to provide an title for pages. If no title exists in the
 // document, the page name is used instead.
 var titleRegexp = regexp.MustCompile("(?m)^#\\s*(.*)\n+")
-
-// Page is a struct containing information about a single page. Title
-// is the title extracted from the page content using titleRegexp.
-// Name is the filename without extension (so a filename of "foo.md"
-// results in the Name "foo"). Body is the Markdown content of the
-// page and Html is the rendered HTML for that Markdown.
-type Page struct {
-	Title string
-	Name  string
-	Body  []byte
-	Html  template.HTML
-}
-
-// save saves a Page. The filename is based on the Page.Name and gets
-// the ".md" extension. Page.Body is saved, without any carriage
-// return characters ("\r"). The file permissions used are readable
-// and writeable for the current user, i.e. u+rw or 0600. Page.Title
-// and Page.Html are not saved no caching. There is no caching.
-func (p *Page) save() error {
-	filename := p.Name + ".md"
-	updateIndex(p)
-	return os.WriteFile(filename, bytes.ReplaceAll(p.Body, []byte{'\r'}, []byte{}), 0600)
-}
-
-// loadPage loads a Page given a name. The filename loaded is that
-// Page.Name with the ".md" extension. The Page.Title is set to the
-// Page.Name (and possibly changed, later). The Page.Body is set to
-// the file content. The Page.Html remains undefined (there is no
-// caching).
-func loadPage(name string) (*Page, error) {
-	filename := name + ".md"
-	body, err := os.ReadFile(filename)
-	if err != nil {
-		return nil, err
-	}
-	return &Page{Title: name, Name: name, Body: body}, nil
-}
-
-// handleTitle extracts the title from a Page and sets Page.Title, if
-// any. If replace is true, the page title is also removed from
-// Page.Body. Make sure not to save this! This is only for rendering.
-func (p* Page) handleTitle(replace bool) {
-	s := string(p.Body)
-	m := titleRegexp.FindStringSubmatch(s)
-	if m != nil {
-		p.Title = m[1]
-		if replace {
-			p.Body = []byte(strings.Replace(s, m[0], "", 1))
-		}
-	}
-}
-
-// renderHtml renders the Page.Body to HTML and sets Page.Html.
-func (p* Page) renderHtml() {
-	maybeUnsafeHTML := markdown.ToHTML(p.Body, nil, nil)
-	html := bluemonday.UGCPolicy().SanitizeBytes(maybeUnsafeHTML)
-	p.Html = template.HTML(html);
-}
-
-// plainText renders the Page.Body to plain text and returns it,
-// ignoring all the Markdown and all the newlines. The result is one
-// long single line of text.
-func (p* Page) plainText() string {
-	parser := parser.New()
-	doc := markdown.Parse(p.Body, parser)
-	text := []byte("")
-	ast.WalkFunc(doc, func(node ast.Node, entering bool) ast.WalkStatus {
-		if entering && node.AsLeaf() != nil {
-			text = append(text, node.AsLeaf().Literal...)
-			text = append(text, []byte(" ")...)
-		}
-		return ast.GoToNext
-	})
-	return strings.ReplaceAll(string(text), "\n", " ")
-}
 
 // renderTemplate is the helper that is used render the templates with
 // data.
@@ -187,8 +107,7 @@ func makeHandler(fn func (http.ResponseWriter, *http.Request, string)) http.Hand
 
 // searchHandler presents a search result. It uses the query string in
 // the form parameter "q" and the template "search.html". For each
-// page found, the HTML is just a few snippets based on the plain
-// text.
+// page found, the HTML is just an extract of the actual body.
 func searchHandler(w http.ResponseWriter, r *http.Request) {
 	q := r.FormValue("q")
 	ids := index.Query(q)
@@ -199,10 +118,7 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			fmt.Printf("Error loading %s\n", name)
 		} else {
-			p.handleTitle(true)
-			extract := []byte(snippets(q, p.plainText()))
-			html := bluemonday.UGCPolicy().SanitizeBytes(extract)
-			p.Html = template.HTML(html)
+			p.summarize(q)
 			items[i] = *p
 		}
 	}
