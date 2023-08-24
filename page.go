@@ -85,7 +85,17 @@ func (p* Page) plainText() string {
 		}
 		return ast.GoToNext
 	})
-	return strings.ReplaceAll(string(text), "\n", " ")
+	// Some Markdown still contains newlines
+	for i, c := range text {
+		if c == '\n' {
+			text[i] = ' '
+		}
+	}
+	// Remove trailing space
+	for text[len(text)-1] == ' ' {
+		text = text[0:len(text)-1]
+	}
+	return string(text)
 }
 
 // summarize for query string q sets Page.Html to an extract.
