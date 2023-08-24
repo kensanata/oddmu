@@ -10,7 +10,7 @@ func snippets (q string, s string) (string, int) {
 	snippetlen := 100
 	maxsnippets := 4
 	// Compile the query as a regular expression
-	re, err := regexp.Compile("((?i)" + q + ")")
+	re, err := regexp.Compile("(?i)(" + strings.Join(strings.Split(q, " "), "|") + ")")
 	// If the compilation didn't work, truncate
 	if err != nil || len(s) <= snippetlen {
 		if len(s) > 400 {
@@ -32,7 +32,7 @@ func snippets (q string, s string) (string, int) {
 		}
 	}
 	t := s[0:j]
-	res := t + " … "
+	res := t + " …"
 	s = s[j:] // avoid rematching
 	jsnippet := 0
 	for jsnippet < maxsnippets {
@@ -70,7 +70,7 @@ func snippets (q string, s string) (string, int) {
 				}
 			}
 			t = s[start : end];
-			res = res + t + " … ";
+			res = res + t + " …";
 			// truncate text to avoid rematching the same string.
 			s = s[end:]
 		}

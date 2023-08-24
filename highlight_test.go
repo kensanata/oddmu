@@ -5,11 +5,19 @@ import (
 )
 
 func TestHighlight(t *testing.T) {
-	s := "The windows open\nA wave of car noise hits me\nNo birds to be heard."
+
+	s := `The windows opens
+A wave of car noise hits me
+No birds to be heard.`
+
+	h := `The <b>window</b>s opens
+A wave of car noise hits me
+No birds to be heard.`
+
 	q := "window"
-	h, c := highlight(q, s)
-	if h != "The <b>window</b>s open\nA wave of car noise hits me\nNo birds to be heard." {
-		t.Logf("The highlighting is wrong in ｢%s｣", h)
+	r, c := highlight(q, s)
+	if r != h {
+		t.Logf("The highlighting is wrong in ｢%s｣", r)
 		t.Fail()
 	}
 	// Score:
@@ -35,10 +43,9 @@ func TestHighlight(t *testing.T) {
 	q = "car noise"
 	_, c = highlight(q, s)
 	// Score:
-	// - q itself
-	// - the car token
-	// - the noise token
-	// - each with beginning, end and whole token (3 each)
+	// - car noise (+1)
+	// - car, with beginning, end, whole word (+4)
+	// - noise, with beginning, end, whole word (+4)
 	if c != 9 {
 		t.Logf("%s score is %d", q, c)
 		t.Fail()
