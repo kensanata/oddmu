@@ -8,21 +8,28 @@
     <style>
 html { max-width: 70ch; padding: 2ch; margin: auto; color: #111; background: #ffe; }
 form { display: inline-block; padding-left: 1em; }
+footer { border-top: 1px solid #888 }
 img { max-width: 100%; }
     </style>
   </head>
   <body>
-    <h1>{{.Title}}</h1>
-    <div>
+    <header>
+      <a href="#main">Skip navigation</a>
       <a href="/view/index">Home</a>
       <a href="/edit/{{.Name}}">Edit this page</a>
       <form role="search" action="/search" method="GET">
         <input type="text" spellcheck="false" name="q" required>
         <button>Search</button>
       </form>
-    </div>
-    <div>
-{{.Html}}
-    </div>
+    </header>
+    <main id="main">
+      <h1>{{.Title}}</h1>
+      {{.Html}}
+    </main>
+    <footer>
+      <address>
+        Comments? Send mail to Alex Schroeder <<a href="mailto:alex@alexschroeder.ch">alex@alexschroeder.ch</a>>
+      </address>
+    </footer>
   </body>
 </html>

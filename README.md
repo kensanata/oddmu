@@ -22,6 +22,9 @@ Feel free to change the templates `view.html` and `edit.html` and
 restart the server. Modifying the styles in the templates would be a
 good start to get a feel for it.
 
+The first change you should make is to replace the email address in
+`view.html`. 😄
+
 The templates can refer to the following properties of a page:
 
 `{{.Title}}` is the page title. If the page doesn't provide its own
@@ -77,9 +80,11 @@ As root, on your server:
 adduser --system --home /home/oddmu oddmu
 ```
 
-Copy all the files into `/home/oddmu` to your server: `oddmu`, `oddmu.service`, `view.html` and `edit.html`.
+Copy all the files into `/home/oddmu` to your server: `oddmu`,
+`oddmu.service`, `view.html` and `edit.html`.
 
-Edit the `oddmu.service` file. These are the three lines you most likely have to take care of:
+Edit the `oddmu.service` file. These are the three lines you most
+likely have to take care of:
 
 ```
 ExecStart=/home/oddmu/oddmu
