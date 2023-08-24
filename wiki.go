@@ -1,12 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
-	"strings"
-	"regexp"
-	"fmt"
 	"os"
+	"regexp"
+	"strings"
 )
 
 // Templates are parsed at startup.
@@ -45,7 +45,7 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 // "view.html" template is used to show the rendered HTML.
 func viewHandler(w http.ResponseWriter, r *http.Request, name string) {
 	// Short cut for text files
-	if (strings.HasSuffix(name, ".txt")) {
+	if strings.HasSuffix(name, ".txt") {
 		body, err := os.ReadFile(name)
 		if err == nil {
 			w.Write(body)
@@ -94,7 +94,7 @@ func saveHandler(w http.ResponseWriter, r *http.Request, name string) {
 // /edit/foo/bar, the editHandler is called with "foo/bar" as its
 // argument. This uses the second group from the validPath regular
 // expression.
-func makeHandler(fn func (http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
+func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		m := validPath.FindStringSubmatch(r.URL.Path)
 		if m != nil {
@@ -134,5 +134,5 @@ func main() {
 	loadIndex()
 	port := getPort()
 	fmt.Printf("Serving a wiki on port %s\n", port)
-	http.ListenAndServe(":" + port, nil)
+	http.ListenAndServe(":"+port, nil)
 }

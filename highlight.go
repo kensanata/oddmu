@@ -1,13 +1,13 @@
 package main
 
 import (
-	"strings"
 	"regexp"
+	"strings"
 )
 
 // highlight splits the query string q into terms and highlights them
 // using the bold tag. Return the highlighted string and a score.
-func highlight (q string, s string) (string, int) {
+func highlight(q string, s string) (string, int) {
 	c := 0
 	re, err := regexp.Compile("(?i)" + q)
 	if err == nil {
@@ -32,9 +32,15 @@ func highlight (q string, s string) (string, int) {
 			// Terms matching at the beginning and
 			// end of words and matching entire
 			// words increase the score further.
-			if len(m[1]) == 0 { c++ }
-			if len(m[3]) == 0 { c++ }
-			if len(m[1]) == 0 && len(m[3]) == 0 { c++ }
+			if len(m[1]) == 0 {
+				c++
+			}
+			if len(m[3]) == 0 {
+				c++
+			}
+			if len(m[1]) == 0 && len(m[3]) == 0 {
+				c++
+			}
 			r[m[2]] = "<b>" + m[2] + "</b>"
 		}
 		for old, new := range r {

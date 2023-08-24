@@ -1,11 +1,11 @@
 package main
 
 import (
-	"strings"
 	"regexp"
+	"strings"
 )
 
-func snippets (q string, s string) (string, int) {
+func snippets(q string, s string) (string, int) {
 	// Look for Snippets
 	snippetlen := 100
 	maxsnippets := 4
@@ -45,7 +45,7 @@ func snippets (q string, s string) (string, int) {
 		if j > -1 {
 			// get the substring containing the start of
 			// the match, ending on word boundaries
-			from := j - snippetlen / 2
+			from := j - snippetlen/2
 			if from < 0 {
 				from = 0
 			}
@@ -55,7 +55,7 @@ func snippets (q string, s string) (string, int) {
 			} else {
 				start += from
 			}
-			to := j + snippetlen / 2
+			to := j + snippetlen/2
 			if to > len(s) {
 				to = len(s)
 			}
@@ -69,8 +69,8 @@ func snippets (q string, s string) (string, int) {
 					end += to
 				}
 			}
-			t = s[start : end];
-			res = res + t + " …";
+			t = s[start:end]
+			res = res + t + " …"
 			// truncate text to avoid rematching the same string.
 			s = s[end:]
 		}

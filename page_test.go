@@ -1,12 +1,12 @@
 package main
 
 import (
+	"os"
 	"strings"
 	"testing"
-	"os"
 )
 
-func TestPageTitle (t *testing.T) {
+func TestPageTitle(t *testing.T) {
 	p := &Page{Body: []byte(`# Ache
 My back aches for you
 I sit, stare and type for hours
@@ -27,7 +27,7 @@ But yearn for blue sky`)}
 	}
 }
 
-func TestPagePlainText (t *testing.T) {
+func TestPagePlainText(t *testing.T) {
 	p := &Page{Body: []byte(`# Water
 The air will not come
 To inhale is an effort
@@ -40,7 +40,7 @@ The summer heat kills`)}
 	}
 }
 
-func TestPageHtml (t *testing.T) {
+func TestPageHtml(t *testing.T) {
 	p := &Page{Body: []byte(`# Sun
 Silver leaves shine bright
 They droop, boneless, weak and sad
@@ -59,7 +59,7 @@ A cruel sun stares down</p>
 	}
 }
 
-func TestPageDir (t *testing.T) {
+func TestPageDir(t *testing.T) {
 	_ = os.RemoveAll("testdata")
 	loadIndex()
 	p := &Page{Name: "testdata/moon", Body: []byte(`# Moon
@@ -72,7 +72,7 @@ Moonlight floods the aisle`)}
 		t.Logf("File in subdirectory not loaded: %s", p.Name)
 		t.Fail()
 	}
-	t.Cleanup(func(){
+	t.Cleanup(func() {
 		_ = os.RemoveAll("testdata")
 	})
 }

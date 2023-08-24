@@ -1,12 +1,12 @@
 package main
 
 import (
-	trigram "github.com/dgryski/go-trigram"
-	"path/filepath"
-	"strings"
-	"slices"
-	"io/fs"
 	"fmt"
+	trigram "github.com/dgryski/go-trigram"
+	"io/fs"
+	"path/filepath"
+	"slices"
+	"strings"
 )
 
 // Search is a struct containing the result of a search. Query is the

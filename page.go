@@ -1,16 +1,16 @@
 package main
 
 import (
+	"bytes"
+	"fmt"
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/parser"
 	"github.com/microcosm-cc/bluemonday"
 	"html/template"
+	"os"
 	"path/filepath"
 	"strings"
-	"bytes"
-	"fmt"
-	"os"
 )
 
 // Page is a struct containing information about a single page. Title
@@ -65,7 +65,7 @@ func loadPage(name string) (*Page, error) {
 // handleTitle extracts the title from a Page and sets Page.Title, if
 // any. If replace is true, the page title is also removed from
 // Page.Body. Make sure not to save this! This is only for rendering.
-func (p* Page) handleTitle(replace bool) {
+func (p *Page) handleTitle(replace bool) {
 	s := string(p.Body)
 	m := titleRegexp.FindStringSubmatch(s)
 	if m != nil {
@@ -77,16 +77,16 @@ func (p* Page) handleTitle(replace bool) {
 }
 
 // renderHtml renders the Page.Body to HTML and sets Page.Html.
-func (p* Page) renderHtml() {
+func (p *Page) renderHtml() {
 	maybeUnsafeHTML := markdown.ToHTML(p.Body, nil, nil)
 	html := bluemonday.UGCPolicy().SanitizeBytes(maybeUnsafeHTML)
-	p.Html = template.HTML(html);
+	p.Html = template.HTML(html)
 }
 
 // plainText renders the Page.Body to plain text and returns it,
 // ignoring all the Markdown and all the newlines. The result is one
 // long single line of text.
-func (p* Page) plainText() string {
+func (p *Page) plainText() string {
 	parser := parser.New()
 	doc := markdown.Parse(p.Body, parser)
 	text := []byte("")
@@ -105,13 +105,13 @@ func (p* Page) plainText() string {
 	}
 	// Remove trailing space
 	for text[len(text)-1] == ' ' {
-		text = text[0:len(text)-1]
+		text = text[0 : len(text)-1]
 	}
 	return string(text)
 }
 
 // summarize for query string q sets Page.Html to an extract.
-func (p* Page) summarize(q string) {
+func (p *Page) summarize(q string) {
 	p.handleTitle(true)
 	s, c := snippets(q, p.plainText())
 	p.Score = c

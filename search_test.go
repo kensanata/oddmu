@@ -1,15 +1,15 @@
 package main
 
 import (
-	"testing"
-	"strings"
 	"os"
+	"strings"
+	"testing"
 )
 
 var name string = "test"
 
 // TestIndex relies on README.md being indexed
-func TestIndex (t *testing.T) {
+func TestIndex(t *testing.T) {
 	_ = os.Remove(name + ".md")
 	loadIndex()
 	q := "Oddµ"
@@ -68,7 +68,7 @@ func TestIndex (t *testing.T) {
 		t.Logf("Page '%s' not found using the new content: %s", name, p.Body)
 		t.Fail()
 	}
-	t.Cleanup(func(){
+	t.Cleanup(func() {
 		_ = os.Remove(name + ".md")
 	})
 }
