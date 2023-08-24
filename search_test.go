@@ -68,4 +68,7 @@ func TestIndex (t *testing.T) {
 		t.Logf("Page '%s' not found using the new content: %s", name, p.Body)
 		t.Fail()
 	}
+	t.Cleanup(func(){
+		_ = os.Remove(name + ".md")
+	})
 }

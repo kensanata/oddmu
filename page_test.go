@@ -72,4 +72,7 @@ Moonlight floods the aisle`)}
 		t.Logf("File in subdirectory not loaded: %s", p.Name)
 		t.Fail()
 	}
+	t.Cleanup(func(){
+		_ = os.RemoveAll("testdata")
+	})
 }
