@@ -236,6 +236,38 @@ and without needing a wiki page.
 [Wikipedia](https://en.wikipedia.org/wiki/Robot_exclusion_standard)
 has more information.
 
+## Different logins for different access rights
+
+What if you have a site with various subdirectories and each
+subdirectory is for a different group of friends? You can set this up
+using your webserver. One way to do this is to require specific
+usernames (which must have a password in the password file mentioned
+above.
+
+This requires a valid login by the user "alex" or "berta":
+
+```apache
+<LocationMatch "^/(edit|save)/intetebi/">
+  Require user alex berta
+</LocationMatch>
+```
+
+## Private wikis
+
+Based on the above, you can prevent people from reading the wiki, too.
+The `LocationMatch` must cover the `/view/` URLs. In order to protect
+*everything*, use a [Location directive](https://httpd.apache.org/docs/current/mod/core.html#location)
+that matches everything:
+
+```apache
+<Location />
+  AuthType Basic
+  AuthName "Password Required"
+  AuthUserFile /home/oddmu/.htpasswd
+  Require valid-user
+</Location>
+```
+
 ## Customization (with recompilation)
 
 The Markdown parser can be customized and
