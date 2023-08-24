@@ -6,8 +6,10 @@ import (
 	"github.com/gomarkdown/markdown/parser"
 	"github.com/microcosm-cc/bluemonday"
 	"html/template"
+	"path/filepath"
 	"strings"
 	"bytes"
+	"fmt"
 	"os"
 )
 
@@ -35,6 +37,14 @@ func (p *Page) save() error {
 	s := bytes.ReplaceAll(p.Body, []byte{'\r'}, []byte{})
 	p.Body = s
 	p.updateIndex()
+	d := filepath.Dir(filename)
+	if d != "." {
+		err := os.MkdirAll(d, 0700)
+		if err != nil {
+			fmt.Printf("Creating directory %s failed", d)
+			return err
+		}
+	}
 	return os.WriteFile(filename, s, 0600)
 }
 

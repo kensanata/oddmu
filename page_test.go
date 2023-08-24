@@ -3,6 +3,7 @@ package main
 import (
 	"strings"
 	"testing"
+	"os"
 )
 
 func TestPageTitle (t *testing.T) {
@@ -54,6 +55,21 @@ A cruel sun stares down</p>
 `
 	if s != r {
 		t.Logf("The HTML is wrong: %s", s)
+		t.Fail()
+	}
+}
+
+func TestPageDir (t *testing.T) {
+	_ = os.RemoveAll("testdata")
+	loadIndex()
+	p := &Page{Name: "testdata/moon", Body: []byte(`# Moon
+From bed to bathroom
+A slow shuffle in the dark
+Moonlight floods the aisle`)}
+	p.save()
+	o, err := loadPage("testdata/moon")
+	if err != nil || string(o.Body) != string(p.Body) {
+		t.Logf("File in subdirectory not loaded: %s", p.Name)
 		t.Fail()
 	}
 }
