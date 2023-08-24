@@ -217,9 +217,13 @@ DocumentRoot /home/oddmu/static
 
 Create this directory, making sure to give it a permission that your
 webserver can read (world readable file, world readable and executable
-directory). Populate it with files. For example, create a file called
-`robots.txt` containing the following, tellin all robots that they're
-not welcome.
+directory). Populate it with files.
+
+Make sure that none of the static files look like the wiki paths
+`/view/`, `/edit/`, `/save/` or `/search/`.
+
+For example, create a file called `robots.txt` containing the
+following, tellin all robots that they're not welcome.
 
 ```text
 User-agent: *
@@ -231,9 +235,6 @@ and without needing a wiki page.
 
 [Wikipedia](https://en.wikipedia.org/wiki/Robot_exclusion_standard)
 has more information.
-
-All you have make sure is that none of the static files look like the
-wiki paths `/view/`, `/edit/`, `/save/` or `/search/`.
 
 ## Customization (with recompilation)
 
@@ -251,61 +252,33 @@ rocket links (`=>`). Here's how to modify the `loadPage` so that a
 translated into Markdown:
 
 ```go
-func loadPage(title string) (*Page, error) {
-	filename := title + ".md"
+func loadPage(name string) (*Page, error) {
+	filename := name + ".md"
 	body, err := os.ReadFile(filename)
 	if err == nil {
-		return &Page{Title: title, Name: title, Body: body}, nil
+		return &Page{Title: name, Name: name, Body: body}, nil
 	}
-	filename = title + ".gmi"
+	filename = name + ".gmi"
 	body, err = os.ReadFile(filename)
 	if err == nil {
-		return &Page{Title: title, Name: title, Body: body}, nil
+		return &Page{Title: name, Name: name, Body: body}, nil
 	}
 	return nil, err
 }
 ```
 
 There is a small problem, however: By default, Markdown expects an
-empty line before a list begins. The following change to `viewHandler`
+empty line before a list begins. The following change to `renderHtml`
 uses the `NoEmptyLineBeforeBlock` extension for the parser:
 
 ```go
-func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
-	// Short cut for text files
-	if (strings.HasSuffix(title, ".txt")) {
-		body, err := os.ReadFile(title)
-		if err == nil {
-			w.Write(body)
-			return
-		}
-	}
-	// Attempt to load Markdown or Gemini page; edit it if this fails
-	p, err := loadPage(title)
-	if err != nil {
-		http.Redirect(w, r, "/edit/"+title, http.StatusFound)
-		return
-	}
-	// Render the Markdown to HTML, extracting a title and
-	// possibly sanitizing it
-	s := string(p.Body)
-	m := titleRegexp.FindStringSubmatch(s)
-	if m != nil {
-		p.Title = m[1]
-		p.Body = []byte(strings.Replace(s, m[0], "", 1))
-	}
+func (p* Page) renderHtml() {
     // Here is where a new extension is added!
 	extensions := parser.CommonExtensions | parser.NoEmptyLineBeforeBlock
 	markdownParser := parser.NewWithExtensions(extensions)
-	flags := html.CommonFlags
-	opts := html.RendererOptions{
-		Flags: flags,
-	}
-	htmlRenderer := html.NewRenderer(opts)
-	maybeUnsafeHTML := markdown.ToHTML(p.Body, markdownParser, htmlRenderer)
+	maybeUnsafeHTML := markdown.ToHTML(p.Body, markdownParser, nil)
 	html := bluemonday.UGCPolicy().SanitizeBytes(maybeUnsafeHTML)
 	p.Html = template.HTML(html);
-	renderTemplate(w, "view", p)
 }
 ```
 
@@ -314,6 +287,10 @@ func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
 Page titles are filenames with `.md` appended. If your filesystem
 cannot handle it, it can't be a page title. Specifically, *no slashes*
 in filenames.
+
+The pages are indexed as the server starts and the index is kept in
+memory. If you have a ton of pages, this surely wastes a lot of
+memory.
 
 ## References
 
