@@ -4,6 +4,7 @@ import (
 	trigram "github.com/dgryski/go-trigram"
 	"path/filepath"
 	"strings"
+	"slices"
 	"io/fs"
 	"fmt"
 )
@@ -73,4 +74,36 @@ func updateIndex(p *Page) {
 		index.Delete(s, id)
 		index.Insert(s, id)
 	}
+}
+
+// search returns a sorted []Page where each page contains an extract
+// of the actual Page.Body in its Page.Html.
+func search(q string) []Page {
+	ids := index.Query(q)
+	items := make([]Page, len(ids))
+	for i, id := range ids {
+		name := documents[id]
+		p, err := loadPage(name)
+		if err != nil {
+			fmt.Printf("Error loading %s\n", name)
+		} else {
+			p.summarize(q)
+			items[i] = *p
+		}
+	}
+	fn := func(a, b Page) int {
+		if a.Score < b.Score {
+			return 1
+		} else if a.Score > b.Score {
+			return -1
+		} else if a.Title < b.Title {
+			return -1
+		} else if a.Title > b.Title {
+			return 1
+		} else {
+			return 0
+		}
+	}
+	slices.SortFunc(items, fn)
+	return items
 }

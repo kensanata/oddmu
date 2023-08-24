@@ -110,18 +110,7 @@ func makeHandler(fn func (http.ResponseWriter, *http.Request, string)) http.Hand
 // page found, the HTML is just an extract of the actual body.
 func searchHandler(w http.ResponseWriter, r *http.Request) {
 	q := r.FormValue("q")
-	ids := index.Query(q)
-	items := make([]Page, len(ids))
-	for i, id := range ids {
-		name := documents[id]
-		p, err := loadPage(name)
-		if err != nil {
-			fmt.Printf("Error loading %s\n", name)
-		} else {
-			p.summarize(q)
-			items[i] = *p
-		}
-	}
+	items := search(q)
 	s := &Search{Query: q, Items: items, Results: len(items) > 0}
 	renderTemplate(w, "search", s)
 }

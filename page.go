@@ -15,12 +15,14 @@ import (
 // is the title extracted from the page content using titleRegexp.
 // Name is the filename without extension (so a filename of "foo.md"
 // results in the Name "foo"). Body is the Markdown content of the
-// page and Html is the rendered HTML for that Markdown.
+// page and Html is the rendered HTML for that Markdown. Score is a
+// number indicating how well the page matched for a search query.
 type Page struct {
 	Title string
 	Name  string
 	Body  []byte
 	Html  template.HTML
+	Score int
 }
 
 // save saves a Page. The filename is based on the Page.Name and gets
@@ -89,7 +91,9 @@ func (p* Page) plainText() string {
 // summarize for query string q sets Page.Html to an extract.
 func (p* Page) summarize(q string) {
 	p.handleTitle(true)
-	extract := []byte(snippets(q, p.plainText()))
+	s, c := snippets(q, p.plainText())
+	p.Score = c
+	extract := []byte(s)
 	html := bluemonday.UGCPolicy().SanitizeBytes(extract)
 	p.Html = template.HTML(html)
 }

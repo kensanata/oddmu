@@ -9,6 +9,7 @@
 html { max-width: 70ch; padding: 2ch; margin: auto; color: #111; background: #ffe; }
 img { max-width: 20%; }
 .result { font-size: larger }
+.score { font-size: smaller; opacity: 0.8; }
     </style>
   </head>
   <body>
@@ -16,7 +17,7 @@ img { max-width: 20%; }
     <div>
       {{if .Results}}
         {{range .Items}}
-      <p><a class="result" href="/view/{{.Name}}">{{.Title}}</a></p>
+      <p><a class="result" href="/view/{{.Name}}">{{.Title}}</a> <span class="score">{{.Score}}</span></p>
       <blockquote>{{.Html}}</blockquote>
         {{end}}
       {{else}}
