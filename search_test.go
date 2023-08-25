@@ -19,6 +19,10 @@ func TestIndex(t *testing.T) {
 		t.Fail()
 	}
 	for _, p := range pages {
+		if strings.Contains(p.Title, "<b>") {
+			t.Logf("Page %s contains <b>", p.Name)
+			t.Fail()
+		}
 		if !strings.Contains(string(p.Body), q) && !strings.Contains(string(p.Title), q) {
 			t.Logf("Page %s does not contain %s", p.Name, q)
 			t.Fail()

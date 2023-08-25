@@ -27,6 +27,14 @@ type Page struct {
 	Score int
 }
 
+func sanitize (s string) template.HTML {
+	return template.HTML(bluemonday.UGCPolicy().Sanitize(s))
+}
+
+func sanitizeBytes (bytes []byte) template.HTML {
+	return template.HTML(bluemonday.UGCPolicy().SanitizeBytes(bytes))
+}
+
 // save saves a Page. The filename is based on the Page.Name and gets
 // the ".md" extension. Page.Body is saved, without any carriage
 // return characters ("\r"). The file permissions used are readable
@@ -79,8 +87,7 @@ func (p *Page) handleTitle(replace bool) {
 // renderHtml renders the Page.Body to HTML and sets Page.Html.
 func (p *Page) renderHtml() {
 	maybeUnsafeHTML := markdown.ToHTML(p.Body, nil, nil)
-	html := bluemonday.UGCPolicy().SanitizeBytes(maybeUnsafeHTML)
-	p.Html = template.HTML(html)
+	p.Html = sanitizeBytes(maybeUnsafeHTML)
 }
 
 // plainText renders the Page.Body to plain text and returns it,
@@ -113,12 +120,11 @@ func (p *Page) plainText() string {
 // summarize for query string q sets Page.Html to an extract.
 func (p *Page) summarize(q string) {
 	p.handleTitle(true)
-	// score title and summarize it (if it is long)
-	s, c := snippets(q, p.Title)
+	// summarize and score the body
+	s, c := snippets(q, p.plainText())
 	p.Score = c
-	p.Title = s
-	// add the score for the body and summarize it
-	s, c = snippets(q, p.plainText())
+	p.Html = sanitize(s)
+	// add the score for the title (but no messing with it!)
+	_, c = snippets(q, p.Title)
 	p.Score += c
-	p.Html = template.HTML(bluemonday.UGCPolicy().SanitizeBytes([]byte(s)))
 }
