@@ -113,9 +113,12 @@ func (p *Page) plainText() string {
 // summarize for query string q sets Page.Html to an extract.
 func (p *Page) summarize(q string) {
 	p.handleTitle(true)
-	s, c := snippets(q, p.plainText())
+	// score title and summarize it (if it is long)
+	s, c := snippets(q, p.Title)
 	p.Score = c
-	extract := []byte(s)
-	html := bluemonday.UGCPolicy().SanitizeBytes(extract)
-	p.Html = template.HTML(html)
+	p.Title = s
+	// add the score for the body and summarize it
+	s, c = snippets(q, p.plainText())
+	p.Score += c
+	p.Html = template.HTML(bluemonday.UGCPolicy().SanitizeBytes([]byte(s)))
 }

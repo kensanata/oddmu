@@ -7,6 +7,7 @@ import (
 
 // highlight splits the query string q into terms and highlights them
 // using the bold tag. Return the highlighted string and a score.
+// This assumes that q already has all its meta characters quoted.
 func highlight(q string, s string) (string, int) {
 	c := 0
 	re, err := regexp.Compile("(?i)" + q)

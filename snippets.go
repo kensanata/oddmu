@@ -9,6 +9,7 @@ func snippets(q string, s string) (string, int) {
 	// Look for Snippets
 	snippetlen := 100
 	maxsnippets := 4
+	q = regexp.QuoteMeta(q)
 	// Compile the query as a regular expression
 	re, err := regexp.Compile("(?i)(" + strings.Join(strings.Split(q, " "), "|") + ")")
 	// If the compilation didn't work, truncate
