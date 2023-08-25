@@ -363,6 +363,8 @@ func loadPage(name string) (*Page, error) {
 	filename = name + ".gmi"
 	body, err = os.ReadFile(filename)
 	if err == nil {
+		re := regexp.MustCompile(`(?m)^=>\s*(\S+)\s+(.+)`)
+		body = []byte(re.ReplaceAllString(string(body), `* [$2]($1)`))
 		return &Page{Title: name, Name: name, Body: body}, nil
 	}
 	return nil, err
