@@ -1,20 +1,75 @@
 # Oddµ: A minimal wiki
 
 This program runs a wiki. It serves all the Markdown files (ending in
-`.md`) into web pages and allows you to edit them.
+`.md`) into web pages and allows you to edit them. If your files don't
+provide their own title (`# title`), the file name (without `.md`) is
+used for the title. Subdirectories are created as necessary.
 
-This is a minimal wiki. There is no version history. It probably makes
-sense to only use it as one person or in very small groups.
+This is a minimal wiki. There is no version history. It's well suited
+as a *secondary* medium: collaboration and conversation happens
+elsewhere, in chat, on social media. The wiki serves as the text
+repository that results from these discussions.
 
-This wiki only uses Markdown. There is no additional wiki markup, most
+The wiki lists no recent changes. The expectation is that the people
+that care were involved in the discussions beforehand.
+
+The wiki also produces no feed. The assumption is that announcements
+are made on social media: blogs, news aggregators, discussion forums,
+the fediverse, but humans. There is no need for bots.
+
+As you'll see below, the idea is that the webserver handles as many
+tasks as possible. It logs requests, does rate limiting, handles
+encryption, gets the certificates, and so on. The web server acts as a
+reverse proxy and the wiki ends up being a content management system
+with almost no structure – or endless malleability, depending on your
+point of view.
+
+And last but not least: µ is the letter mu, so Oddµ is usually written
+Oddmu. 🙃
+
+## Markdown
+
+This wiki uses Markdown. There is no additional wiki markup, most
 importantly double square brackets are not a link. If you're used to
 that, it'll be strange as you need to repeat the name: `[like
-this](like this)`.
+this](like this)`. The Markdown processor comes with a few extensions,
+some of which are enable by default:
 
-If your files don't provide their own title (`# title`), the file name
-is used for the title.
+* emphasis markers inside words are ignored
+* tables are supported
+* fenced code blocks are supported
+* autolinking of "naked" URLs are supported
+* strikethrough using two tildes is supported (`~~like this~~`)
+* it is strict about prefix heading rules
+* you can specify an id for headings (`{#id}`)
+* trailing backslashes turn into line breaks
+* definition lists are supported
+* MathJax is supported (but needs a separte setup)
 
-µ is the letter mu, so Oddµ is usually written Oddmu. 🙃
+See the section on
+[extensions](https://github.com/gomarkdown/markdown#extensions) in the
+Markdown library for information on the various extensions.
+
+A table with footers and a columnspan:
+
+```text
+Name    | Age
+--------|------
+Bob     ||
+Alice   | 23
+========|======
+Total   | 23
+```
+
+A definition list:
+
+```text
+Cat
+: Fluffy animal everyone likes
+
+Internet
+: Vector of transmission for pictures of cats
+```
 
 ## Templates
 
