@@ -47,6 +47,16 @@ curl --form body="Did you bring a towel?" \
   http://localhost:8080/save/welcome
 ```
 
+## Non-English hyphenation
+
+Automatic hyphenation by the browser requires two things: The style
+sheet must indicate `hyphen: auto` for an HTML element such as `body`,
+and that element must have a `lang` set (usually a two letter language
+code such as `de` for German). This happens in the template files,
+such as `view.html` and `search.html`.
+
+If have languages in different languages, the problem is that 
+
 ## Building
 
 ```sh

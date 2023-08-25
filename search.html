@@ -6,15 +6,16 @@
     <meta name="viewport" content="width=device-width">
     <title>Search for {{.Query}}</title>
     <style>
-html { max-width: 70ch; padding: 2ch; margin: auto; color: #111; background: #ffe; }
+html { max-width: 65ch; padding: 2ch; margin: auto; color: #111; background: #ffe; }
+body { hyphens: auto; }
 img { max-width: 20%; }
 .result { font-size: larger }
 .score { font-size: smaller; opacity: 0.8; }
     </style>
   </head>
-  <body>
+  <body lang="en">
     <h1>Search for {{.Query}}</h1>
-    <div>
+    <main>
       {{if .Results}}
         {{range .Items}}
       <p><a class="result" href="/view/{{.Name}}">{{.Title}}</a> <span class="score">{{.Score}}</span></p>
@@ -23,6 +24,6 @@ img { max-width: 20%; }
       {{else}}
       <p>No results.</p>
       {{end}}
-    </div>
+    </main>
   </body>
 </html>
