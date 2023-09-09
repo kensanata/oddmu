@@ -81,7 +81,12 @@ func (p *Page) updateIndex() {
 // search returns a sorted []Page where each page contains an extract
 // of the actual Page.Body in its Page.Html.
 func search(q string) []Page {
-	ids := index.Query(strings.ToLower(q))
+	words := strings.Split(strings.ToLower(q), " ")
+	var trigrams []trigram.T
+	for _, word := range words {
+		trigrams = trigram.Extract(word, trigrams)
+	}
+	ids := index.QueryTrigrams(trigrams)
 	items := make([]Page, len(ids))
 	for i, id := range ids {
 		name := documents[id]
