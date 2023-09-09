@@ -396,6 +396,10 @@ The pages are indexed as the server starts and the index is kept in
 memory. If you have a ton of pages, this surely wastes a lot of
 memory.
 
+## Bugs
+
+If you spot any, [contact](https://alexschroeder.ch/wiki/Contact) me.
+
 ## References
 
 [Writing Web Applications](https://golang.org/doc/articles/wiki/)
