@@ -11,9 +11,6 @@ Post by Delta Chat? That is, allow certain encrypted emails to post.
 
 Convert the existing wiki.
 
-Normalize the pages for indexing and the query for searching: 1.
-downcase; 2. NFC vs NFD trigrams?
-
 Investigate how to run a multi-lingual wiki where an appropriate
 template is used based on the language of the page. This is important
 because the template needs to use the appropriate `lang` attribute for

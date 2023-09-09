@@ -20,7 +20,8 @@ type Search struct {
 }
 
 // index is a struct containing the trigram index for search. It is
-// generated at startup and updated after every page edit.
+// generated at startup and updated after every page edit. The index
+// is case-insensitive.
 var index trigram.Index
 
 // documents is a map, mapping document ids of the index to page
@@ -40,7 +41,7 @@ func indexAdd(path string, info fs.FileInfo, err error) error {
 	if err != nil {
 		return err
 	}
-	id := index.Add(string(p.Body))
+	id := index.Add(strings.ToLower(string(p.Body)))
 	documents[id] = p.Name
 	return nil
 }
@@ -66,21 +67,21 @@ func (p *Page) updateIndex() {
 		}
 	}
 	if id == 0 {
-		id = index.Add(string(p.Body))
+		id = index.Add(strings.ToLower(string(p.Body)))
 		documents[id] = p.Name
 	} else {
 		o, err := loadPage(p.Name)
 		if err == nil {
-			index.Delete(string(o.Body), id)
+			index.Delete(strings.ToLower(string(o.Body)), id)
 		}
-		index.Insert(string(p.Body), id)
+		index.Insert(strings.ToLower(string(p.Body)), id)
 	}
 }
 
 // search returns a sorted []Page where each page contains an extract
 // of the actual Page.Body in its Page.Html.
 func search(q string) []Page {
-	ids := index.Query(q)
+	ids := index.Query(strings.ToLower(q))
 	items := make([]Page, len(ids))
 	for i, id := range ids {
 		name := documents[id]

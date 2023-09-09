@@ -46,6 +46,18 @@ func TestIndex(t *testing.T) {
 		t.Logf("Page '%s' was not found", name)
 		t.Fail()
 	}
+	pages = search("this is a test")
+	found = false
+	for _, p := range pages {
+		if p.Name == name {
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Logf("Page '%s' was not found using the lower case text", name)
+		t.Fail()
+	}
 	p = &Page{Name: name, Body: []byte("Guvf vf n grfg.")}
 	p.save()
 	pages = search("This is a test")
