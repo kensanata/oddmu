@@ -391,6 +391,35 @@ func (p* Page) renderHtml() {
 }
 ```
 
+## Understanding search
+
+The index indexes trigrams. Each group of three characters is a
+trigram. A document with content "This is a test" is turned to lower
+case and indexed under the trigrams "thi", "his", "is ", "s i", " is",
+"is ", "s a", " a ", "a t", " te", "tes", "est".
+
+Each query is split into words and then processed the same way. A
+query with the words "this test" is turned to lower case and produces
+the trigrams "thi", "his", "tes", "est". This means that the word
+order is not considered when searching for documents.
+
+This also means that there is no stemming. Searching for "testing"
+won't find "This is a test" because there are no matches for the
+trigrams "sti", "tin", "ing".
+
+These trigrams are looked up in the index, resulting in the list of
+documents. Each document found is then scored. Each of the following
+increases the score by one point:
+
+- the entire phrase matches
+- a word matches
+- a word matches at the beginning of a word
+- a word matches at the end of a word
+
+A document with content "This is a test" when searched with the phrase
+"this test" therefore gets a score of 6: the entire phrase does not
+match but each word gets three points.
+
 ## Limitations
 
 Page titles are filenames with `.md` appended. If your filesystem
