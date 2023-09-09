@@ -19,4 +19,5 @@ version of a page is served based on language preferences of the user.
 This is a low priority issue since it's probably only of interest for
 corporate or governmental sites.
 
-Switch from trigram search to some full text search engine?
+Switch from trigram search to a simple full text search engine?
+https://artem.krylysov.com/blog/2020/07/28/lets-build-a-full-text-search-engine/
