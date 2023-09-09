@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func snippets(q string, s string) (string, int) {
+func snippets(q string, s string) string {
 	// Look for Snippets
 	snippetlen := 100
 	maxsnippets := 4

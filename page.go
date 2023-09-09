@@ -111,7 +111,7 @@ func (p *Page) plainText() string {
 		}
 	}
 	// Remove trailing space
-	for text[len(text)-1] == ' ' {
+	for len(text) > 0 && text[len(text)-1] == ' ' {
 		text = text[0 : len(text)-1]
 	}
 	return string(text)
@@ -121,10 +121,8 @@ func (p *Page) plainText() string {
 func (p *Page) summarize(q string) {
 	p.handleTitle(true)
 	// summarize and score the body
-	s, c := snippets(q, p.plainText())
-	p.Score = c
-	p.Html = sanitize(s)
+	p.Score = score(q, p.plainText())
+	p.Html = sanitize(snippets(q, p.plainText()))
 	// add the score for the title (but no messing with it!)
-	_, c = snippets(q, p.Title)
-	p.Score += c
+	p.Score += score(q, p.Title)
 }

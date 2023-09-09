@@ -81,6 +81,9 @@ func (p *Page) updateIndex() {
 // search returns a sorted []Page where each page contains an extract
 // of the actual Page.Body in its Page.Html.
 func search(q string) []Page {
+	if len(q) == 0 {
+		return make([]Page, 0)
+	}
 	words := strings.Split(strings.ToLower(q), " ")
 	var trigrams []trigram.T
 	for _, word := range words {

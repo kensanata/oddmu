@@ -15,7 +15,7 @@ A wave of car noise hits me
 No birds to be heard.`
 
 	q := "window"
-	r, c := highlight(q, s)
+	r := highlight(q, s)
 	if r != h {
 		t.Logf("The highlighting is wrong in ｢%s｣", r)
 		t.Fail()
@@ -24,12 +24,13 @@ No birds to be heard.`
 	// - q itself
 	// - the single token
 	// - the beginning of a word
+	c := score(q, s)
 	if c != 3 {
 		t.Logf("%s score is %d", q, c)
 		t.Fail()
 	}
 	q = "windows"
-	_, c = highlight(q, s)
+	c = score(q, s)
 	// Score:
 	// - q itself
 	// - the single token
@@ -41,7 +42,7 @@ No birds to be heard.`
 		t.Fail()
 	}
 	q = "car noise"
-	_, c = highlight(q, s)
+	c = score(q, s)
 	// Score:
 	// - car noise (+1)
 	// - car, with beginning, end, whole word (+4)
@@ -51,7 +52,7 @@ No birds to be heard.`
 		t.Fail()
 	}
 	q = "noise car"
-	_, c = highlight(q, s)
+	c = score(q, s)
 	// Score:
 	// - the car token
 	// - the noise token
