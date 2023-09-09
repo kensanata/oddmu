@@ -110,7 +110,12 @@ and that element must have a `lang` set (usually a two letter language
 code such as `de` for German). This happens in the template files,
 such as `view.html` and `search.html`.
 
-If have languages in different languages, the problem is that 
+If have pages in different languages, the problem is that they all use
+the same template and that's not good. In such cases, it might be
+better to not specificy the `lang` attribute in the template. This
+also disables hyphenation by the browser, unfortunately. It might
+still be better than using English hyphenation patterns for
+non-English languages.
 
 ## Building
 
