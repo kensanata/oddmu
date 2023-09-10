@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"slices"
 	"strings"
+	"unicode"
+	"unicode/utf8"
 )
 
 // Search is a struct containing the result of a search. Query is the
@@ -102,11 +104,27 @@ func search(q string) []Page {
 		}
 	}
 	fn := func(a, b Page) int {
+		// Sort by score
 		if a.Score < b.Score {
 			return 1
 		} else if a.Score > b.Score {
 			return -1
-		} else if a.Title < b.Title {
+		}
+		// If the score is the same and both page names start
+		// with a number (like an ISO date), sort descending.
+		ra, _ := utf8.DecodeRuneInString(a.Title)
+		rb, _ := utf8.DecodeRuneInString(b.Title)
+		if unicode.IsNumber(ra) && unicode.IsNumber(rb) {
+			if a.Title < b.Title {
+				return 1
+			} else if a.Title > b.Title {
+				return -1
+			} else {
+				return 0
+			}
+		}
+		// Otherwise sort ascending.
+		if a.Title < b.Title {
 			return -1
 		} else if a.Title > b.Title {
 			return 1

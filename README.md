@@ -415,10 +415,15 @@ increases the score by one point:
 - a word matches
 - a word matches at the beginning of a word
 - a word matches at the end of a word
+- a word matches as a whole word
 
 A document with content "This is a test" when searched with the phrase
-"this test" therefore gets a score of 6: the entire phrase does not
-match but each word gets three points.
+"this test" therefore gets a score of 8: the entire phrase does not
+match but each word gets four points.
+
+Trigrams are sometimes strange: In a text containing the words
+"software" and "#socialmedia", a search for "#software" returns a
+result because the trigram "#so" is part of "#socialmedia".
 
 ## Limitations
 

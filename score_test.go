@@ -68,3 +68,37 @@ func TestScoreLong(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestScoreSubstring(t *testing.T) {
+	s := `The loneliness of space means that receiving messages means knowledge that other people are out there. Not satellites pinging forever. Not bots searching and probing. Instead, humans. People who care. Curious and cautious.`
+	q := "search probe"
+	c := score(q, s)
+	// Score:
+	// - search, beginning (2)
+	// - probe (0)
+	if c != 2 {
+		t.Logf("%s score is %d", q, c)
+		t.Fail()
+	}
+	q = "ear"
+	c = score(q, s)
+	// Score:
+	// - ear, all (2)
+	if c != 2 {
+		t.Logf("%s score is %d", q, c)
+		t.Fail()
+	}
+}
+
+func TestScorePageAndMarkup(t *testing.T) {
+	s := `The Transjovian Council accepts new members. If you think we'd be a good fit, apply for an account. Contact [Alex Schroeder](https://alexschroeder.ch/wiki/Contact). Mail is best. Encrypted mail is best. [Delta Chat](https://delta.chat/de/) is a messenger app that uses encrypted mail. It's the bestest best.`
+	p := &Page{Title: "Test", Name: "Test", Body: []byte(s)}
+	q := "wiki"
+	p.summarize(q)
+	// "wiki" is not visible in the plain text but the score is no affected:
+	// - wiki, all, whole, beginning, end (5)
+	if p.Score != 5 {
+		t.Logf("%s score is %d", q, p.Score)
+		t.Fail()
+	}
+}
