@@ -15,7 +15,27 @@ A wave of car noise hits me
 No birds to be heard.`
 
 	q := "window"
-	r := highlight(q, s)
+	re, _ := re(q)
+	r := highlight(q, re, s)
+	if r != h {
+		t.Logf("The highlighting is wrong in ｢%s｣", r)
+		t.Fail()
+	}
+}
+
+func TestOverlap(t *testing.T) {
+
+	s := `Sit with me my love
+Kids shout and so do parents
+I hear the fountain`
+
+	h := `Sit with me my love
+Kids <b>shout</b> and so do parents
+I hear the fountain`
+
+	q := "shout out"
+	re, _ := re(q)
+	r := highlight(q, re, s)
 	if r != h {
 		t.Logf("The highlighting is wrong in ｢%s｣", r)
 		t.Fail()

@@ -5,19 +5,32 @@ import (
 	"strings"
 )
 
+// re returns a regular expression matching any word in q.
+func re(q string) (*regexp.Regexp, error) {
+	q = regexp.QuoteMeta(q)
+	re, err := regexp.Compile(`\s+`)
+	if err != nil {
+		return nil, err
+	}
+	words := re.ReplaceAllString(q, "|")
+	re, err = regexp.Compile(`(?i)(` + words + `)`)
+	if err != nil {
+		return nil, err
+	}
+	return re, nil
+}
+
 func snippets(q string, s string) string {
 	// Look for Snippets
 	snippetlen := 100
 	maxsnippets := 4
-	q = regexp.QuoteMeta(q)
-	// Compile the query as a regular expression
-	re, err := regexp.Compile("(?i)(" + strings.Join(strings.Split(q, " "), "|") + ")")
-	// If the compilation didn't work, truncate
+	re, err := re(q)
+	// If the compilation didn't work, truncate and return
 	if err != nil || len(s) <= snippetlen {
 		if len(s) > 400 {
-			s = s[0:400]
+			s = s[0:400] + " …"
 		}
-		return highlight(q, s)
+		return s
 	}
 	// show a snippet from the beginning of the document
 	j := strings.LastIndex(s[:snippetlen], " ")
@@ -27,9 +40,9 @@ func snippets(q string, s string) string {
 		if j == -1 {
 			// Or just truncate the body.
 			if len(s) > 400 {
-				s = s[0:400]
+				s = s[0:400] + " …"
 			}
-			return highlight(q, s)
+			return highlight(q, re, s)
 		}
 	}
 	t := s[0:j]
@@ -76,5 +89,5 @@ func snippets(q string, s string) string {
 			s = s[end:]
 		}
 	}
-	return highlight(q, res)
+	return highlight(q, re, res)
 }
