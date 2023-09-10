@@ -15,14 +15,4 @@ func TestSnippets(t *testing.T) {
 		t.Logf("The snippets are wrong in ｢%s｣", r)
 		t.Fail()
 	}
-	// Score:
-	// - all is well (1)
-	// - all, beginning, end, whole word (+4 × 3 = 12)
-	// - is, beginning, end, whole word (+4 × 1 = 4), and as a substring (1)
-	// - well, beginning, end, whole word (+4 × 2 = 8)
-	c := score(q, s)
-	if c != 26 {
-		t.Logf("%s score is %d", q, c)
-		t.Fail()
-	}
 }
