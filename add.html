@@ -4,19 +4,17 @@
     <meta charset="utf-8">
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width">
-    <title>Editing {{.Title}}</title>
+    <title>Add to {{.Title}}</title>
     <style>
 html { max-width: 70ch; padding: 2ch; margin: auto; color: #111; background: #ffe; }
 form, textarea { width: 100%; }
     </style>
   </head>
   <body>
-    <h1>Editing {{.Title}}</h1>
-    <form action="/save/{{.Name}}" method="POST">
-      <div><textarea name="body" rows="20" cols="80" placeholder="# Title
-
-Text" autofocus>{{printf "%s" .Body}}</textarea></div>
-      <p><input type="submit" value="Save">
+    <h1>Adding to {{.Title}}</h1>
+    <form action="/append/{{.Name}}" method="POST">
+      <div><textarea name="body" rows="20" cols="80" placeholder="Text" autofocus></textarea></div>
+      <p><input type="submit" value="Add">
         <a href="/view/{{.Name}}"><button>Cancel</button></a></p>
     </form>
   </body>

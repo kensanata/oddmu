@@ -10,7 +10,8 @@ import (
 )
 
 // Templates are parsed at startup.
-var templates = template.Must(template.ParseFiles("edit.html", "view.html", "search.html"))
+var templates = template.Must(
+	template.ParseFiles("edit.html", "add.html", "view.html", "search.html"))
 
 // validPath is a regular expression where the second group matches a
 // page, so when the handler for "/edit/" is called, a URL path of
@@ -65,7 +66,8 @@ func viewHandler(w http.ResponseWriter, r *http.Request, name string) {
 
 // editHandler uses the "edit.html" template to present an edit page.
 // When editing, the page title is not overriden by a title in the
-// text. Instead, the page name is used.
+// text. Instead, the page name is used. The edit is saved using the
+// saveHandler.
 func editHandler(w http.ResponseWriter, r *http.Request, name string) {
 	p, err := loadPage(name)
 	if err != nil {
@@ -82,6 +84,38 @@ func saveHandler(w http.ResponseWriter, r *http.Request, name string) {
 	body := r.FormValue("body")
 	p := &Page{Name: name, Body: []byte(body)}
 	err := p.save()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	http.Redirect(w, r, "/view/"+name, http.StatusFound)
+}
+
+// addHandler uses the "add.html" template to present an empty edit
+// page. What you type there is appended to the page using the
+// appendHandler.
+func addHandler(w http.ResponseWriter, r *http.Request, name string) {
+	p, err := loadPage(name)
+	if err != nil {
+		p = &Page{Title: name, Name: name}
+	} else {
+		p.handleTitle(false)
+	}
+	renderTemplate(w, "add", p)
+}
+
+// appendHandler takes the "body" form parameter and appends it. The
+// browser is redirected to the page view.
+func appendHandler(w http.ResponseWriter, r *http.Request, name string) {
+	body := r.FormValue("body")
+	p, err := loadPage(name)
+	if err != nil {
+		p = &Page{Title: name, Name: name, Body: []byte(body)}
+	} else {
+		p.handleTitle(false)
+		p.Body = append(p.Body, []byte(body)...)
+	}
+	err = p.save()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -130,6 +164,8 @@ func main() {
 	http.HandleFunc("/view/", makeHandler(viewHandler))
 	http.HandleFunc("/edit/", makeHandler(editHandler))
 	http.HandleFunc("/save/", makeHandler(saveHandler))
+	http.HandleFunc("/add/", makeHandler(addHandler))
+	http.HandleFunc("/append/", makeHandler(appendHandler))
 	http.HandleFunc("/search", searchHandler)
 	fmt.Print("Indexing all pages\n")
 	loadIndex()

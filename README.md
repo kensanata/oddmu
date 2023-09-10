@@ -217,8 +217,9 @@ MDCertificateAgreement accepted
 First, it manages the domain, getting the necessary certificates. It
 redirects regular HTTP traffic from port 80 to port 443. It turns on
 the SSL engine for port 443. It redirects `/` to `/view/index` and any
-path that starts with `/view/`, `/edit/`, `/save/` or `/search/` is
-proxied to port 8080 where the Oddmu program can handle it.
+path that starts with `/view/`, `/edit/`, `/save/`, `/add/`,
+`/append/` or `/search/` is proxied to port 8080 where the Oddmu
+program can handle it.
 
 Thus, this is what happens:
 
@@ -265,12 +266,12 @@ To delete remove a user:
 htpasswd -D .htpasswd berta
 ```
 
-Modify your site configuration and protect the `/edit/` and `/save/`
-URLs with a password by adding the following to your `<VirtualHost
-*:443>` section:
+Modify your site configuration and protect the `/edit/`, `/save/`,
+`/add/` and `/append/` URLs with a password by adding the following to
+your `<VirtualHost *:443>` section:
 
 ```apache
-<LocationMatch "^/(edit|save)/">
+<LocationMatch "^/(edit|save|add|append)/">
   AuthType Basic
   AuthName "Password Required"
   AuthUserFile /home/oddmu/.htpasswd
@@ -295,10 +296,9 @@ webserver can read (world readable file, world readable and executable
 directory). Populate it with files.
 
 Make sure that none of the static files look like the wiki paths
-`/view/`, `/edit/`, `/save/` or `/search/`.
-
-For example, create a file called `robots.txt` containing the
-following, tellin all robots that they're not welcome.
+`/view/`, `/edit/`, `/save/`, `/add/`, `/append/` or `/search/`. For
+example, create a file called `robots.txt` containing the following,
+tellin all robots that they're not welcome.
 
 ```text
 User-agent: *

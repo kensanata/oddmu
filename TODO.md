@@ -1,6 +1,3 @@
-Easily prepend or append text for use with a mobile browser. Like
-comments.
-
 Upload files.
 
 Automatically scale or process files.
