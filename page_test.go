@@ -76,3 +76,14 @@ Moonlight floods the aisle`)}
 		_ = os.RemoveAll("testdata")
 	})
 }
+
+func TestLanguage(t *testing.T) {
+	l := language(`
+My back hurts at night
+My shoulders won't budge today
+Winter bones I say`)
+	if l != "en" {
+		t.Logf("Language detected: %s", l)
+		t.Fail()
+	}
+}

@@ -105,7 +105,7 @@ func (p *Page) handleTitle(replace bool) {
 func (p *Page) renderHtml() {
 	maybeUnsafeHTML := markdown.ToHTML(p.Body, nil, nil)
 	p.Html = sanitizeBytes(maybeUnsafeHTML)
-	p.Language = p.language(p.plainText())
+	p.Language = language(p.plainText())
 }
 
 // plainText renders the Page.Body to plain text and returns it,
@@ -141,17 +141,12 @@ func (p *Page) summarize(q string) {
 	p.Score = score(q, string(p.Body)) + score(q, p.Title)
 	t := p.plainText()
 	p.Html = sanitize(snippets(q, t))
-	p.Language = p.language(t)
+	p.Language = language(t)
 }
 
-func (p *Page) language(s string) string {
+func language(s string) string {
 	if language, ok := detector.DetectLanguageOf(s); ok {
-		switch language {
-		case lingua.English:
-			return "en"
-		case lingua.German:
-			return "de"
-		}
+		return strings.ToLower(language.IsoCode639_1().String())
 	}
 	return ""
 }
