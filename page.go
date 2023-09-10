@@ -120,9 +120,6 @@ func (p *Page) plainText() string {
 // summarize for query string q sets Page.Html to an extract.
 func (p *Page) summarize(q string) {
 	p.handleTitle(true)
-	// summarize and score the body
-	p.Score = score(q, p.plainText())
+	p.Score = score(q, p.plainText()) + score(q, p.Title)
 	p.Html = sanitize(snippets(q, p.plainText()))
-	// add the score for the title (but no messing with it!)
-	p.Score += score(q, p.Title)
 }
