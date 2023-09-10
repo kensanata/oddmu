@@ -131,6 +131,7 @@ func main() {
 	http.HandleFunc("/edit/", makeHandler(editHandler))
 	http.HandleFunc("/save/", makeHandler(saveHandler))
 	http.HandleFunc("/search", searchHandler)
+	fmt.Print("Indexing all pages\n")
 	loadIndex()
 	port := getPort()
 	fmt.Printf("Serving a wiki on port %s\n", port)

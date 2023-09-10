@@ -27,10 +27,13 @@ img { max-width: 20%; }
     <main id="main">
       <h1>Search for {{.Query}}</h1>
       {{if .Results}}
-        {{range .Items}}
-      <p><a class="result" href="/view/{{.Name}}">{{.Title}}</a> <span class="score">{{.Score}}</span></p>
-      <blockquote>{{.Html}}</blockquote>
-        {{end}}
+      {{range .Items}}
+      <article lang="{{.Language}}">
+        <p><a class="result" href="/view/{{.Name}}">{{.Title}}</a>
+          <span class="score">{{.Score}}</span></p>
+        <blockquote>{{.Html}}</blockquote>
+      </article>
+      {{end}}
       {{else}}
       <p>No results.</p>
       {{end}}

@@ -7,11 +7,27 @@ import (
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/parser"
 	"github.com/microcosm-cc/bluemonday"
+	"github.com/pemistahl/lingua-go"
 	"html/template"
 	"os"
 	"path/filepath"
 	"strings"
 )
+
+// languages is the list of languages the wiki understands. This is
+// passed along to the template so that it can be added to the
+// template which allows browsers to (maybe) do hyphenation correctly.
+var languages = []lingua.Language{
+	lingua.English,
+	lingua.German,
+}
+
+// detector is built once based on the list languages.
+var detector = lingua.NewLanguageDetectorBuilder().
+	FromLanguages(languages...).
+	WithPreloadedLanguageModels().
+	WithLowAccuracyMode().
+	Build()
 
 // Page is a struct containing information about a single page. Title
 // is the title extracted from the page content using titleRegexp.
@@ -20,18 +36,19 @@ import (
 // page and Html is the rendered HTML for that Markdown. Score is a
 // number indicating how well the page matched for a search query.
 type Page struct {
-	Title string
-	Name  string
-	Body  []byte
-	Html  template.HTML
-	Score int
+	Title    string
+	Name     string
+	Language string
+	Body     []byte
+	Html     template.HTML
+	Score    int
 }
 
-func sanitize (s string) template.HTML {
+func sanitize(s string) template.HTML {
 	return template.HTML(bluemonday.UGCPolicy().Sanitize(s))
 }
 
-func sanitizeBytes (bytes []byte) template.HTML {
+func sanitizeBytes(bytes []byte) template.HTML {
 	return template.HTML(bluemonday.UGCPolicy().SanitizeBytes(bytes))
 }
 
@@ -67,7 +84,7 @@ func loadPage(name string) (*Page, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Page{Title: name, Name: name, Body: body}, nil
+	return &Page{Title: name, Name: name, Body: body, Language: ""}, nil
 }
 
 // handleTitle extracts the title from a Page and sets Page.Title, if
@@ -88,6 +105,7 @@ func (p *Page) handleTitle(replace bool) {
 func (p *Page) renderHtml() {
 	maybeUnsafeHTML := markdown.ToHTML(p.Body, nil, nil)
 	p.Html = sanitizeBytes(maybeUnsafeHTML)
+	p.Language = p.language(p.plainText())
 }
 
 // plainText renders the Page.Body to plain text and returns it,
@@ -121,5 +139,19 @@ func (p *Page) plainText() string {
 func (p *Page) summarize(q string) {
 	p.handleTitle(true)
 	p.Score = score(q, string(p.Body)) + score(q, p.Title)
-	p.Html = sanitize(snippets(q, p.plainText()))
+	t := p.plainText()
+	p.Html = sanitize(snippets(q, t))
+	p.Language = p.language(t)
+}
+
+func (p *Page) language (s string) string {
+	if language, ok := detector.DetectLanguageOf(s); ok {
+		switch language {
+		case lingua.English:
+			return "en"
+		case lingua.German:
+			return "de"
+		}
+	}
+	return ""
 }
