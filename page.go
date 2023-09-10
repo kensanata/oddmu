@@ -144,7 +144,7 @@ func (p *Page) summarize(q string) {
 	p.Language = p.language(t)
 }
 
-func (p *Page) language (s string) string {
+func (p *Page) language(s string) string {
 	if language, ok := detector.DetectLanguageOf(s); ok {
 		switch language {
 		case lingua.English:
