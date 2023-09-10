@@ -1,43 +1,96 @@
+// Read Artem Krylysov's blog post on full text search as an
+// introduction.
+// https://artem.krylysov.com/blog/2020/07/28/lets-build-a-full-text-search-engine/
+
 package main
 
-import (
-	trigram "github.com/dgryski/go-trigram"
+import(
 	"io/fs"
 	"path/filepath"
+	"log"
+	"sort"
 	"strings"
 	"sync"
 )
+
+type docid uint
 
 // Index contains the two maps used for search. Make sure to lock and
 // unlock as appropriate.
 type Index struct {
 	sync.RWMutex
 
-	// index is a struct containing the trigram index for search.
-	// It is generated at startup and updated after every page
-	// edit. The index is case-insensitive.
-	index trigram.Index
+	// next_id is the number of the next document added to the index
+	next_id docid
 
-	// documents is a map, mapping document ids of the index to
-	// page names.
-	documents map[trigram.DocID]string
+	// index is an inverted index mapping tokens to document ids.
+	token map[string][]docid
 
-	// names is a map, mapping page names to titles.
+	// documents is a map, mapping document ids to page names.
+	documents map[docid]string
+
+	// titles is a map, mapping page names to titles.
 	titles map[string]string
 }
 
-// idx is the global Index per wiki.
 var index Index
 
 // reset resets the Index. This assumes that the index is locked!
 func (idx *Index) reset() {
-	idx.index = nil
+	idx.token = nil
 	idx.documents = nil
 	idx.titles = nil
 }
 
+// addDocument adds the text as a new document. This assumes that the
+// index is locked!
+func (idx *Index) addDocument(text string) docid {
+	id := idx.next_id; idx.next_id++
+	for _, token := range tokens(text) {
+		ids := idx.token[token]
+		// Don't add same ID more than once. Checking the last
+		// position of the []docid works because the id is
+		// always a new one, i.e. the last one, if at all.
+		if ids != nil && ids[len(ids)-1] == id {
+			continue
+		}
+		idx.token[token] = append(ids, id)
+	}
+	return id
+}
+
+// deleteDocument deletes the text as a new document. The id can no
+// longer be used. This assumes that the index is locked!
+func (idx *Index) deleteDocument(text string, id docid) {
+	for _, token := range tokens(text) {
+		ids := index.token[token]
+		// Tokens can appear multiple times in a text but they
+		// can only be deleted once. deleted.
+		if ids == nil {
+			continue
+		}
+		// If the token appears only in this document, remove
+		// the whole entry.
+		if len(ids) == 1 && ids[0] == id {
+			delete(index.token, token)
+			continue
+		}
+		// Otherwise, remove the token from the index.
+		i := sort.Search(len(ids), func(i int) bool { return ids[i] >= id })
+		if i != -1 && i < len(ids) && ids[i] == id {
+			copy(ids[i:], ids[i+1:])
+			index.token[token] = ids[:len(ids)-1]
+			continue
+		}
+		// If none of the above, then our docid wasn't
+		// indexed. This shouldn't happen, either.
+		log.Printf("The index for token %s does not contain doc id %d", token, id)
+	}
+	delete(index.documents, id)
+}
+
 // add reads a file and adds it to the index. This must happen while
-// the idx is locked, which is true when called from loadIndex.
+// the idx is locked.
 func (idx *Index) add(path string, info fs.FileInfo, err error) error {
 	if err != nil {
 		return err
@@ -52,7 +105,8 @@ func (idx *Index) add(path string, info fs.FileInfo, err error) error {
 		return err
 	}
 	p.handleTitle(false)
-	id := idx.index.Add(strings.ToLower(string(p.Body)))
+
+	id := idx.addDocument(string(p.Body))
 	idx.documents[id] = p.Name
 	idx.titles[p.Name] = p.Title
 	return nil
@@ -63,8 +117,8 @@ func (idx *Index) add(path string, info fs.FileInfo, err error) error {
 func (idx *Index) load() (int, error) {
 	idx.Lock()
 	defer idx.Unlock()
-	idx.index = make(trigram.Index)
-	idx.documents = make(map[trigram.DocID]string)
+	idx.token = make(map[string][]docid)
+	idx.documents = make(map[docid]string)
 	idx.titles = make(map[string]string)
 	err := filepath.Walk(".", idx.add)
 	if err != nil {
@@ -75,15 +129,23 @@ func (idx *Index) load() (int, error) {
 	return n, nil
 }
 
+// dump prints the index to the log for debugging. Must already be readlocked.
+func (idx *Index) dump() {
+	index.RLock()
+	defer index.RUnlock()
+	for token, ids := range idx.token {
+		log.Printf("%s: %v", token, ids)
+	}
+}	
+
 // updateIndex updates the index for a single page. The old text is
 // loaded from the disk and removed from the index first, if it
 // exists.
 func (p *Page) updateIndex() {
 	index.Lock()
 	defer index.Unlock()
-	var id trigram.DocID
-	// This function does not rely on files actually existing, so
-	// let's quickly find the document id.
+	var id docid
+	// Reverse lookup! At least it's in memory.
 	for docId, name := range index.documents {
 		if name == p.Name {
 			id = docId
@@ -91,33 +153,94 @@ func (p *Page) updateIndex() {
 		}
 	}
 	if id == 0 {
-		id = index.index.Add(strings.ToLower(string(p.Body)))
+		id = index.addDocument(string(p.Body))
 		index.documents[id] = p.Name
+		index.titles[p.Name] = p.Title
 	} else {
-		o, err := loadPage(p.Name)
-		if err == nil {
-			index.index.Delete(strings.ToLower(string(o.Body)), id)
-			o.handleTitle(false)
-			delete(index.titles, o.Title)
+		if o, err := loadPage(p.Name); err == nil {
+			index.deleteDocument(string(o.Body), id)
 		}
-		index.index.Insert(strings.ToLower(string(p.Body)), id)
+		// Do not reuse the old id. We need a new one for
+		// indexing to work.
+		id = index.addDocument(string(p.Body))
+		index.documents[id] = p.Name
 		p.handleTitle(false)
+		// The page name stays the same but the title may have
+		// changed.
 		index.titles[p.Name] = p.Title
 	}
 }
 
-// searchDocuments searches the index for a string. This requires the
-// index to be locked.
-func searchDocuments(q string) []string {
-	words := strings.Fields(strings.ToLower(q))
-	var trigrams []trigram.T
-	for _, word := range words {
-		trigrams = trigram.Extract(word, trigrams)
+
+// removeFromIndex removes the page from the index. Do this when
+// deleting a page.
+func (p *Page) removeFromIndex() {
+	index.Lock()
+	defer index.Unlock()
+	var id docid
+	// Reverse lookup! At least it's in memory.
+	for docId, name := range index.documents {
+		if name == p.Name {
+			id = docId
+			break
+		}
 	}
-	ids := index.index.QueryTrigrams(trigrams)
-	names := make([]string, len(ids))
-	for i, id := range ids {
-		names[i] = index.documents[id]
+	if id == 0 {
+		log.Printf("Page %s is not indexed", p.Name)
+		return
+	}
+	o, err := loadPage(p.Name)
+	if err != nil {
+		log.Printf("Page %s cannot removed from the index: %s", p.Name, err)
+		return
+	}
+	index.deleteDocument(string(o.Body), id)
+}
+
+// searchDocuments searches the index for a query string and returns
+// page names.
+func (idx *Index) search(q string) []string {
+	index.RLock()
+	defer index.RUnlock()
+	var r []docid
+	for _, token := range tokens(q) {
+		if ids, ok := idx.token[token]; ok {
+			if r == nil {
+				r = ids
+			} else {
+				r = intersection(r, ids)
+			}
+		} else {
+			// Token doesn't exist therefore abort search.
+			return nil
+		}
+	}
+	names := make([]string, 0)
+	for _, id := range r {
+		names = append(names, idx.documents[id])
 	}
 	return names
+}
+
+// intersection returns the set intersection between a and b.
+// a and b have to be sorted in ascending order and contain no duplicates.
+func intersection(a []docid, b []docid) []docid {
+	maxLen := len(a)
+	if len(b) > maxLen {
+		maxLen = len(b)
+	}
+	r := make([]docid, 0, maxLen)
+	var i, j int
+	for i < len(a) && j < len(b) {
+		if a[i] < b[j] {
+			i++
+		} else if a[i] > b[j] {
+			j++
+		} else {
+			r = append(r, a[i])
+			i++
+			j++
+		}
+	}
+	return r
 }

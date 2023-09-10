@@ -18,7 +18,7 @@ Orange sky above
 Reflects a distant fire
 It's not `)}
 	p.save()
-
+	
 	data := url.Values{}
 	data.Set("body", "barbecue")
 
@@ -29,7 +29,6 @@ It's not `)}
 	HTTPRedirectTo(t, makeHandler(appendHandler, true), "POST", "/append/testdata/fire", data, "/view/testdata/fire")
 	assert.Regexp(t, regexp.MustCompile("It’s not barbecue"),
 		assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/testdata/fire", nil))
-
 	t.Cleanup(func() {
 		_ = os.RemoveAll("testdata")
 	})

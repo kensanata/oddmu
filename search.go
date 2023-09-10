@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 	"slices"
 	"strconv"
@@ -70,7 +70,7 @@ func load(names []string) []*Page {
 	for i, name := range names {
 		p, err := loadPage(name)
 		if err != nil {
-			fmt.Printf("Error loading %s\n", name)
+			log.Printf("Error loading %s: %s", name, err)
 		} else {
 			items[i] = p
 		}
@@ -89,10 +89,8 @@ func search(q string, page int) ([]*Page, bool, int) {
 	if len(q) == 0 {
 		return make([]*Page, 0), false, 0
 	}
-	index.RLock()
-	names := searchDocuments(q)
+	names := index.search(q)
 	slices.SortFunc(names, sortNames(q))
-	index.RUnlock()
 	from := itemsPerPage * (page - 1)
 	if from > len(names) {
 		return make([]*Page, 0), false, 0

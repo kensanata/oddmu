@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
+	"log"
 	"github.com/google/subcommands"
 	"html/template"
 	"net/http"
@@ -69,12 +69,12 @@ func getPort() string {
 // and after. For testing, call index.load directly and skip the
 // messages.
 func scheduleLoadIndex() {
-	fmt.Print("Indexing pages\n")
+	log.Print("Indexing pages")
 	n, err := index.load()
 	if err == nil {
-		fmt.Printf("Indexed %d pages\n", n)
+		log.Printf("Indexed %d pages", n)
 	} else {
-		fmt.Println("Indexing failed")
+		log.Printf("Indexing failed: %s", err)
 	}
 }
 
@@ -82,9 +82,9 @@ func scheduleLoadIndex() {
 // and after. For testing, call loadLanguages directly and skip the
 // messages.
 func scheduleLoadLanguages() {
-	fmt.Print("Loading languages\n")
+	log.Print("Loading languages")
 	n := loadLanguages()
-	fmt.Printf("Loaded %d languages\n", n)
+	log.Printf("Loaded %d languages", n)
 }
 
 func serve() {
@@ -101,7 +101,7 @@ func serve() {
 	go scheduleLoadLanguages()
 	initAccounts()
 	port := getPort()
-	fmt.Printf("Serving a wiki on port %s\n", port)
+	log.Printf("Serving a wiki on port %s", port)
 	http.ListenAndServe(":"+port, nil)
 }
 

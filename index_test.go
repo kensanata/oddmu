@@ -27,9 +27,10 @@ func TestSearchHashtag(t *testing.T) {
 	assert.NotZero(t, len(pages))
 }
 
+// wipes testdata
 func TestIndexUpdates(t *testing.T) {
-	name := "test"
-	_ = os.Remove(name + ".md")
+	_ = os.RemoveAll("testdata")
+	name := "testdata/test"
 	index.load()
 	p := &Page{Name: name, Body: []byte("This is a test.")}
 	p.save()
@@ -92,6 +93,6 @@ func TestIndexUpdates(t *testing.T) {
 	assert.True(t, found)
 
 	t.Cleanup(func() {
-		_ = os.Remove(name + ".md")
+		_ = os.RemoveAll("testdata")
 	})
 }

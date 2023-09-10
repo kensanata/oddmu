@@ -2,7 +2,7 @@ package main
 
 import (
 	"bytes"
-	"fmt"
+	"log"
 	"github.com/microcosm-cc/bluemonday"
 	"html/template"
 	"net/url"
@@ -60,6 +60,7 @@ func (p *Page) save() error {
 	filename := p.Name + ".md"
 	s := bytes.ReplaceAll(p.Body, []byte{'\r'}, []byte{})
 	if len(s) == 0 {
+		p.removeFromIndex()
 		_ = os.Rename(filename, filename+"~")
 		return os.Remove(filename)
 	}
@@ -69,7 +70,7 @@ func (p *Page) save() error {
 	if d != "." {
 		err := os.MkdirAll(d, 0755)
 		if err != nil {
-			fmt.Printf("Creating directory %s failed", d)
+			log.Printf("Creating directory %s failed: %s", d, err)
 			return err
 		}
 	}

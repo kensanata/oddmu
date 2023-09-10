@@ -19,12 +19,14 @@ func TestSearchQuestionmark(t *testing.T) {
 	_ = os.RemoveAll("testdata")
 	p := &Page{Name: "testdata/Odd?", Body: []byte(`# Even?
 
-yes or no?`)}
+We look at the plants.
+They need water. We need us.
+The silence streches.`)}
 	p.save()
 	data := url.Values{}
-	data.Set("q", "yes")
+	data.Set("q", "look")
 	body := assert.HTTPBody(searchHandler, "GET", "/search", data)
-	assert.Contains(t, body, "yes or no?")
+	assert.Contains(t, body, "We look")
 	assert.NotContains(t, body, "Odd?")
 	assert.Contains(t, body, "Even?")
 }

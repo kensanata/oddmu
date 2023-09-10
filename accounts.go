@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/parser"
 	"io"
@@ -82,7 +82,7 @@ func account(p *parser.Parser, data []byte, offset int) (int, ast.Node) {
 	uri, ok := accounts.uris[string(account)]
 	defer accounts.RUnlock()
 	if !ok {
-		fmt.Printf("Looking up %s\n", account)
+		log.Printf("Looking up %s\n", account)
 		uri = "https://" + string(domain) + "/users/" + string(user[1:])
 		accounts.uris[string(account)] = uri // prevent more lookings
 		go lookUpAccountUri(string(account), string(domain))
@@ -103,26 +103,26 @@ func lookUpAccountUri(account, domain string) {
 	uri := "https://" + domain + "/.well-known/webfinger"
 	resp, err := http.Get(uri + "?resource=acct:" + account)
 	if err != nil {
-		fmt.Printf("Failed to look up %s: %s\n", account, err)
+		log.Printf("Failed to look up %s: %s", account, err)
 		return
 	}
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Printf("Failed to read from %s: %s\n", account, err)
+		log.Printf("Failed to read from %s: %s", account, err)
 		return
 	}
 	var wf WebFinger
 	err = json.Unmarshal([]byte(body), &wf)
 	if err != nil {
-		fmt.Printf("Failed to parse the JSON from %s: %s\n", account, err)
+		log.Printf("Failed to parse the JSON from %s: %s", account, err)
 		return
 	}
 	uri, err = parseWebFinger(body)
 	if err != nil {
-		fmt.Printf("Could not find profile URI for %s: %s\n", account, err)
+		log.Printf("Could not find profile URI for %s: %s", account, err)
 	}
-	fmt.Printf("Found profile for %s: %s\n", account, uri)
+	log.Printf("Found profile for %s: %s", account, uri)
 	accounts.Lock()
 	defer accounts.Unlock()
 	accounts.uris[account] = uri
