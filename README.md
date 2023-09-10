@@ -421,15 +421,15 @@ A document with content "This is a test" when searched with the phrase
 "this test" therefore gets a score of 8: the entire phrase does not
 match but each word gets four points.
 
-Trigrams are sometimes strange: In a text containing the words
-"software" and "#socialmedia", a search for "#software" returns a
-result because the trigram "#so" is part of "#socialmedia".
+Trigrams are sometimes strange: In a text containing the words "main"
+and "rail", a search for "mail" returns a match because the trigrams
+"mai" and "ail" are found. In this situation, the result has a score
+of 0.
 
 ## Limitations
 
 Page titles are filenames with `.md` appended. If your filesystem
-cannot handle it, it can't be a page title. Specifically, *no slashes*
-in filenames.
+cannot handle it, it can't be a page name.
 
 The pages are indexed as the server starts and the index is kept in
 memory. If you have a ton of pages, this surely wastes a lot of
