@@ -14,8 +14,16 @@ img { max-width: 20%; }
     </style>
   </head>
   <body lang="en">
-    <h1>Search for {{.Query}}</h1>
-    <main>
+    <header>
+      <a href="#main">Skip navigation</a>
+      <a href="/view/index">Home</a>
+      <form role="search" action="/search" method="GET">
+        <input type="text" value="{{.Query}}" spellcheck="false" name="q" required>
+        <button>Search</button>
+      </form>
+    </header>
+    <main id="main">
+      <h1>Search for {{.Query}}</h1>
       {{if .Results}}
         {{range .Items}}
       <p><a class="result" href="/view/{{.Name}}">{{.Title}}</a> <span class="score">{{.Score}}</span></p>
