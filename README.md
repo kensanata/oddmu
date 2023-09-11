@@ -343,54 +343,6 @@ that matches everything:
 </Location>
 ```
 
-## Customization (with recompilation)
-
-The Markdown parser can be customized and
-[extensions](https://pkg.go.dev/github.com/gomarkdown/markdown/parser#Extensions)
-can be added. There's an example in the
-[usage](https://github.com/gomarkdown/markdown#usage) section. You'll
-need to make changes to the `viewHandler` yourself.
-
-### Render Gemtext
-
-In a first approximation, Gemtext is valid Markdown except for the
-rocket links (`=>`). Here's how to modify the `loadPage` so that a
-`.gmi` file is loaded if no `.md` is found, and the rocket links are
-translated into Markdown:
-
-```go
-func loadPage(name string) (*Page, error) {
-	filename := name + ".md"
-	body, err := os.ReadFile(filename)
-	if err == nil {
-		return &Page{Title: name, Name: name, Body: body}, nil
-	}
-	filename = name + ".gmi"
-	body, err = os.ReadFile(filename)
-	if err == nil {
-		re := regexp.MustCompile(`(?m)^=>\s*(\S+)\s+(.+)`)
-		body = []byte(re.ReplaceAllString(string(body), `* [$2]($1)`))
-		return &Page{Title: name, Name: name, Body: body}, nil
-	}
-	return nil, err
-}
-```
-
-There is a small problem, however: By default, Markdown expects an
-empty line before a list begins. The following change to `renderHtml`
-uses the `NoEmptyLineBeforeBlock` extension for the parser:
-
-```go
-func (p* Page) renderHtml() {
-    // Here is where a new extension is added!
-	extensions := parser.CommonExtensions | parser.NoEmptyLineBeforeBlock
-	markdownParser := parser.NewWithExtensions(extensions)
-	maybeUnsafeHTML := markdown.ToHTML(p.Body, markdownParser, nil)
-	html := bluemonday.UGCPolicy().SanitizeBytes(maybeUnsafeHTML)
-	p.Html = template.HTML(html);
-}
-```
-
 ## Understanding search
 
 The index indexes trigrams. Each group of three characters is a
