@@ -54,6 +54,12 @@ Moonlight floods the aisle`)}
 	o, err := loadPage("testdata/moon")
 	assert.NoError(t, err, "load page")
 	assert.Equal(t, p.Body, o.Body)
+	assert.FileExists(t, "testdata/moon.md")
+
+	// Saving an empty page deletes it.
+	p = &Page{Name: "testdata/moon", Body: []byte("")}
+	p.save()
+	assert.NoFileExists(t, "testdata/moon.md")
 	t.Cleanup(func() {
 		_ = os.RemoveAll("testdata")
 	})

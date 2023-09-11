@@ -60,6 +60,9 @@ func sanitizeBytes(bytes []byte) template.HTML {
 func (p *Page) save() error {
 	filename := p.Name + ".md"
 	s := bytes.ReplaceAll(p.Body, []byte{'\r'}, []byte{})
+	if len(s) == 0 {
+		return os.Remove(filename)
+	}
 	p.Body = s
 	p.updateIndex()
 	d := filepath.Dir(filename)
