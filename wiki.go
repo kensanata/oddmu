@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 	"regexp"
-	"strings"
 )
 
 // Templates are parsed at startup.
@@ -40,28 +39,25 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/view/index", http.StatusFound)
 }
 
-// viewHandler renders a text file, if the name ends in ".txt" and
-// such a file exists. Otherwise, it loads the page. If this didn't
-// work, the browser is redirected to an edit page. Otherwise, the
-// "view.html" template is used to show the rendered HTML.
+// viewHandler serves existing files (including markdown files with
+// the .md extension). If the requested file does not exist, a page
+// with the same name is loaded. This means adding the .md extension
+// and using the "view.html" template to render the HTML. Both
+// attempts fail, the browser is redirected to an edit page.
 func viewHandler(w http.ResponseWriter, r *http.Request, name string) {
-	// Short cut for text files
-	if strings.HasSuffix(name, ".txt") {
-		body, err := os.ReadFile(name)
-		if err == nil {
-			w.Write(body)
-			return
-		}
-	}
-	// Attempt to load Markdown page; edit it if this fails
-	p, err := loadPage(name)
-	if err != nil {
-		http.Redirect(w, r, "/edit/"+name, http.StatusFound)
+	body, err := os.ReadFile(name)
+	if err == nil {
+		w.Write(body)
 		return
 	}
-	p.handleTitle(true)
-	p.renderHtml()
-	renderTemplate(w, "view", p)
+	p, err := loadPage(name)
+	if err == nil {
+		p.handleTitle(true)
+		p.renderHtml()
+		renderTemplate(w, "view", p)
+		return
+	}
+	http.Redirect(w, r, "/edit/"+name, http.StatusFound)
 }
 
 // editHandler uses the "edit.html" template to present an edit page.
