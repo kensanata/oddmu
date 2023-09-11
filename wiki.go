@@ -13,10 +13,10 @@ var templates = template.Must(
 	template.ParseFiles("edit.html", "add.html", "view.html", "search.html"))
 
 // validPath is a regular expression where the second group matches a
-// page, so when the handler for "/edit/" is called, a URL path of
-// "/edit/foo" results in the editHandler being called with title
-// "foo". The regular expression doesn't define the handlers (this
-// happens in the main function).
+// page, so when the editHandler is called, a URL path of "/edit/foo"
+// results in the editHandler being called with title "foo". The
+// regular expression doesn't define the handlers (this happens in the
+// main function).
 var validPath = regexp.MustCompile("^/([^/]+)/(.+)$")
 
 // titleRegexp is a regular expression matching a level 1 header line
