@@ -109,3 +109,30 @@ It's not `)}
 		_ = os.RemoveAll("testdata")
 	})
 }
+
+func TestPageTitleWithAmp(t *testing.T) {
+	_ = os.RemoveAll("testdata")
+	p := &Page{Name: "testdata/Rock & Roll", Body: []byte("Dancing")}
+	p.save()
+
+	wr := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/view/testdata/Rock%20%26%20Roll", nil)
+	fn := makeHandler(viewHandler)
+	fn(wr, req)
+	assert.Equal(t, http.StatusOK, wr.Code)
+	assert.Regexp(t, regexp.MustCompile("Rock &amp; Roll"), wr.Body.String())
+
+	p = &Page{Name: "testdata/Rock & Roll", Body: []byte("# Sex & Drugs & Rock'n'Roll\nOh no!")}
+	p.save()
+
+	wr = httptest.NewRecorder()
+	req = httptest.NewRequest(http.MethodGet, "/view/testdata/Rock%20%26%20Roll", nil)
+	fn = makeHandler(viewHandler)
+	fn(wr, req)
+	assert.Equal(t, http.StatusOK, wr.Code)
+	assert.Regexp(t, regexp.MustCompile("Sex &amp; Drugs"), wr.Body.String())
+
+	t.Cleanup(func() {
+		// _ = os.RemoveAll("testdata")
+	})
+}
