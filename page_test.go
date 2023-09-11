@@ -2,8 +2,9 @@ package main
 
 import (
 	"os"
-	"strings"
+	"regexp"
 	"testing"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestPageTitle(t *testing.T) {
@@ -12,19 +13,10 @@ My back aches for you
 I sit, stare and type for hours
 But yearn for blue sky`)}
 	p.handleTitle(false)
-	if p.Title != "Ache" {
-		t.Logf("The page title was not extracted correctly: %s", p.Title)
-		t.Fail()
-	}
-	if !strings.HasPrefix(string(p.Body), "# Ache") {
-		t.Logf("The page title was removed: %s", p.Body)
-		t.Fail()
-	}
+	assert.Equal(t, "Ache", p.Title)
+	assert.Regexp(t, regexp.MustCompile("^# Ache"), string(p.Body))
 	p.handleTitle(true)
-	if !strings.HasPrefix(string(p.Body), "My back") {
-		t.Logf("The page title was not removed: %s", p.Body)
-		t.Fail()
-	}
+	assert.Regexp(t, regexp.MustCompile("^My back"), string(p.Body))
 }
 
 func TestPagePlainText(t *testing.T) {
@@ -32,12 +24,8 @@ func TestPagePlainText(t *testing.T) {
 The air will not come
 To inhale is an effort
 The summer heat kills`)}
-	s := p.plainText()
 	r := "Water The air will not come To inhale is an effort The summer heat kills"
-	if s != r {
-		t.Logf("The plain text version is wrong: %s", s)
-		t.Fail()
-	}
+	assert.Equal(t, r, p.plainText())
 }
 
 func TestPageHtml(t *testing.T) {
@@ -46,17 +34,13 @@ Silver leaves shine bright
 They droop, boneless, weak and sad
 A cruel sun stares down`)}
 	p.renderHtml()
-	s := string(p.Html)
 	r := `<h1>Sun</h1>
 
 <p>Silver leaves shine bright
 They droop, boneless, weak and sad
 A cruel sun stares down</p>
 `
-	if s != r {
-		t.Logf("The HTML is wrong: %s", s)
-		t.Fail()
-	}
+	assert.Equal(t, r, string(p.Html))
 }
 
 func TestPageDir(t *testing.T) {
@@ -68,10 +52,8 @@ A slow shuffle in the dark
 Moonlight floods the aisle`)}
 	p.save()
 	o, err := loadPage("testdata/moon")
-	if err != nil || string(o.Body) != string(p.Body) {
-		t.Logf("File in subdirectory not loaded: %s", p.Name)
-		t.Fail()
-	}
+	assert.NoError(t, err, "load page")
+	assert.Equal(t, p.Body, o.Body)
 	t.Cleanup(func() {
 		_ = os.RemoveAll("testdata")
 	})
@@ -82,8 +64,5 @@ func TestLanguage(t *testing.T) {
 My back hurts at night
 My shoulders won't budge today
 Winter bones I say`)
-	if l != "en" {
-		t.Logf("Language detected: %s", l)
-		t.Fail()
-	}
+	assert.Equal(t, "en", l)
 }
