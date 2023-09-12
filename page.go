@@ -7,27 +7,11 @@ import (
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/parser"
 	"github.com/microcosm-cc/bluemonday"
-	"github.com/pemistahl/lingua-go"
 	"html/template"
 	"os"
 	"path/filepath"
 	"strings"
 )
-
-// languages is the list of languages the wiki understands. This is
-// passed along to the template so that it can be added to the
-// template which allows browsers to (maybe) do hyphenation correctly.
-var languages = []lingua.Language{
-	lingua.English,
-	lingua.German,
-}
-
-// detector is built once based on the list languages.
-var detector = lingua.NewLanguageDetectorBuilder().
-	FromLanguages(languages...).
-	WithPreloadedLanguageModels().
-	WithLowAccuracyMode().
-	Build()
 
 // Page is a struct containing information about a single page. Title
 // is the title extracted from the page content using titleRegexp.
@@ -106,7 +90,8 @@ func (p *Page) handleTitle(replace bool) {
 
 // renderHtml renders the Page.Body to HTML and sets Page.Html.
 func (p *Page) renderHtml() {
-	maybeUnsafeHTML := markdown.ToHTML(p.Body, nil, nil)
+	parser := parser.New()
+	maybeUnsafeHTML := markdown.ToHTML(p.Body, parser, nil)
 	p.Html = sanitizeBytes(maybeUnsafeHTML)
 	p.Language = language(p.plainText())
 }
@@ -145,11 +130,4 @@ func (p *Page) summarize(q string) {
 	t := p.plainText()
 	p.Html = sanitize(snippets(q, t))
 	p.Language = language(t)
-}
-
-func language(s string) string {
-	if language, ok := detector.DetectLanguageOf(s); ok {
-		return strings.ToLower(language.IsoCode639_1().String())
-	}
-	return ""
 }

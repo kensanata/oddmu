@@ -165,6 +165,7 @@ func main() {
 	http.HandleFunc("/search", searchHandler)
 	fmt.Print("Indexing all pages\n")
 	loadIndex()
+	loadLanguages()
 	port := getPort()
 	fmt.Printf("Serving a wiki on port %s\n", port)
 	http.ListenAndServe(":"+port, nil)

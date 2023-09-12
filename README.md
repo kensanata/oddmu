@@ -29,11 +29,15 @@ Oddmu. 🙃
 
 ## Markdown
 
-This wiki uses Markdown. There is no additional wiki markup, most
-importantly double square brackets are not a link. If you're used to
+This wiki uses a [Markdown
+library](https://github.com/gomarkdown/markdown) to generate the web
+pages from Markdown. There is no additional wiki markup. Most
+importantly, double square brackets are not a link. If you're used to
 that, it'll be strange as you need to repeat the name: `[like
-this](like this)`. The Markdown processor comes with a few extensions,
-some of which are enable by default:
+this](like this)`.
+
+The Markdown processor comes with a few extensions, some of which are
+enable by default:
 
 * emphasis markers inside words are ignored
 * tables are supported
@@ -45,10 +49,6 @@ some of which are enable by default:
 * trailing backslashes turn into line breaks
 * definition lists are supported
 * MathJax is supported (but needs a separte setup)
-
-See the section on
-[extensions](https://github.com/gomarkdown/markdown#extensions) in the
-Markdown library for information on the various extensions.
 
 A table with footers and a columnspan:
 
@@ -73,12 +73,19 @@ Internet
 
 ## Templates
 
-Feel free to change the templates `view.html` and `edit.html` and
-restart the server. Modifying the styles in the templates would be a
-good start to get a feel for it.
+The template files are the HTML files in the working directory:
+`add.html`, `edit.html`, `search.html` and `view.html`. Feel free to
+change the templates and restart the server. The first change you
+should make is to replace the email address in `view.html`. 😄
 
-The first change you should make is to replace the email address in
-`view.html`. 😄
+See [Structuring the web
+with HTML](https://developer.mozilla.org/en-US/docs/Learn/HTML) to
+learn more about HTML.
+
+Modifying the styles in the templates would be another good start to
+get a feel for it. See [Learn to style HTML using
+CSS](https://developer.mozilla.org/en-US/docs/Learn/CSS) to learn more
+about style sheets.
 
 The templates can refer to the following properties of a page:
 
@@ -102,6 +109,11 @@ curl --form body="Did you bring a towel?" \
   http://localhost:8080/save/welcome
 ```
 
+The wiki uses the standard
+[html/template](https://pkg.go.dev/html/template) library to do this.
+There's more information on writing templates in the documentation for
+the [text/template](https://pkg.go.dev/text/template) library.
+
 ## Non-English hyphenation
 
 Automatic hyphenation by the browser requires two things: The style
@@ -110,12 +122,11 @@ and that element must have a `lang` set (usually a two letter language
 code such as `de` for German). This happens in the template files,
 such as `view.html` and `search.html`.
 
-If have pages in different languages, the problem is that they all use
-the same template and that's not good. In such cases, it might be
-better to not specificy the `lang` attribute in the template. This
-also disables hyphenation by the browser, unfortunately. It might
-still be better than using English hyphenation patterns for
-non-English languages.
+Oddmu uses the [lingua](github.com/pemistahl/lingua-go) library to
+detect languages. If you know that you're only going to use a small
+number of languages – or just a single language! – you can set the
+environment variable ODDMU_LANGUAGES to a comma-separated list of ISO
+639-1 codes, e.g. "en" or "en,de,fr,pt".
 
 ## Building
 
@@ -142,6 +153,9 @@ If you ran it in the source directory, try
 http://localhost:8080/view/README – this serves the README file you're
 currently reading.
 
+You can change the port by setting the ODDMU_PORT environment
+variable.
+
 ## Deploying it using systemd
 
 As root, on your server:
@@ -160,6 +174,7 @@ likely have to take care of:
 ExecStart=/home/oddmu/oddmu
 WorkingDirectory=/home/oddmu
 Environment="ODDMU_PORT=8080"
+Environment="ODDMU_LANGUAGES=en,de"
 ```
 
 Install the service file and enable it:
@@ -210,7 +225,7 @@ MDCertificateAgreement accepted
 
     RewriteEngine on
     RewriteRule ^/$ http://%{HTTP_HOST}:8080/view/index [redirect]
-    RewriteRule ^/(view|edit|save|search)/(.*) http://%{HTTP_HOST}:8080/$1/$2 [proxy]
+    RewriteRule ^/(view|edit|save|add|append|search)/(.*) http://%{HTTP_HOST}:8080/$1/$2 [proxy]
 </VirtualHost>
 ```
 
@@ -342,6 +357,15 @@ that matches everything:
   Require valid-user
 </Location>
 ```
+
+## Virtual hosting
+
+Virtual hosting in this context means that the program serves two
+different sites for two different domains from the same machine. Oddmu
+doesn't support that, but your webserver does. Therefore, start an
+Oddmu instance for every domain name, each listening on a different
+port. Then set up your web server such that ever domain acts as a
+reverse proxy to a different Oddmu instance.
 
 ## Understanding search
 

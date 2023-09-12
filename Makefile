@@ -25,4 +25,4 @@ test:
 upload:
 	go build
 	rsync --itemize-changes --archive oddmu oddmu.service *.html README.md sibirocobombus.root:/home/oddmu/
-	ssh sibirocobombus.root "systemctl restart oddmu; systemctl restart oddmu-alex"
+	ssh sibirocobombus.root "systemctl restart oddmu; systemctl restart alex"
