@@ -49,7 +49,7 @@ Stars flicker above
 Too faint to focus, so far
 I am cold, alone
 
-#Haiku #Cold`)}
+#Haiku #Cold_Poets`)}
 	p.renderHtml()
 	r := `<h1>Comet</h1>
 
@@ -57,7 +57,7 @@ I am cold, alone
 Too faint to focus, so far
 I am cold, alone</p>
 
-<p><a href="/search?q=%23Haiku" rel="nofollow">#Haiku</a> <a href="/search?q=%23Cold" rel="nofollow">#Cold</a></p>
+<p><a href="/search?q=%23Haiku" rel="nofollow">#Haiku</a> <a href="/search?q=%23Cold_Poets" rel="nofollow">#Cold Poets</a></p>
 `
 	assert.Equal(t, r, string(p.Html))
 }
