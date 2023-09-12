@@ -43,6 +43,25 @@ A cruel sun stares down</p>
 	assert.Equal(t, r, string(p.Html))
 }
 
+func TestPageHtmlHashtag(t *testing.T) {
+	p := &Page{Body: []byte(`# Comet
+Stars flicker above
+Too faint to focus, so far
+I am cold, alone
+
+#Haiku`)}
+	p.renderHtml()
+	r := `<h1>Comet</h1>
+
+<p>Stars flicker above
+Too faint to focus, so far
+I am cold, alone</p>
+
+<p><a href="/search?q=%23Haiku" rel="nofollow">#Haiku</a></p>
+`
+	assert.Equal(t, r, string(p.Html))
+}
+
 func TestPageDir(t *testing.T) {
 	_ = os.RemoveAll("testdata")
 	loadIndex()

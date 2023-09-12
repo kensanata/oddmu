@@ -88,9 +88,28 @@ func (p *Page) handleTitle(replace bool) {
 	}
 }
 
+func hashtag(p *parser.Parser, data []byte, offset int) (int, ast.Node) {
+	data = data[offset:]
+	i := 0
+	n := len(data)
+	for i < n && !parser.IsSpace(data[i]) {
+		i++
+	}
+	if i == 0 {
+		return 0, nil
+	}
+	link := &ast.Link{
+		Destination: append([]byte("/search?q=%23"), data[1:i]...),
+		Title: data[0:i],
+	}
+	ast.AppendChild(link, &ast.Text{Leaf: ast.Leaf{Literal: data[0:i]}})
+	return i + 1, link
+}
+
 // renderHtml renders the Page.Body to HTML and sets Page.Html.
 func (p *Page) renderHtml() {
 	parser := parser.New()
+	parser.RegisterInline('#', hashtag)
 	maybeUnsafeHTML := markdown.ToHTML(p.Body, parser, nil)
 	p.Html = sanitizeBytes(maybeUnsafeHTML)
 	p.Language = language(p.plainText())
