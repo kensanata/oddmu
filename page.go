@@ -67,13 +67,13 @@ func (p *Page) save() error {
 	p.updateIndex()
 	d := filepath.Dir(filename)
 	if d != "." {
-		err := os.MkdirAll(d, 0700)
+		err := os.MkdirAll(d, 0755)
 		if err != nil {
 			fmt.Printf("Creating directory %s failed", d)
 			return err
 		}
 	}
-	return os.WriteFile(filename, s, 0600)
+	return os.WriteFile(filename, s, 0644)
 }
 
 // loadPage loads a Page given a name. The filename loaded is that
