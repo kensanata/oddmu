@@ -4,37 +4,38 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"github.com/stretchr/testify/assert"
 )
-
-var name string = "test"
 
 // TestIndex relies on README.md being indexed
 func TestIndex(t *testing.T) {
-	_ = os.Remove(name + ".md")
 	loadIndex()
 	q := "Oddµ"
 	pages := search(q)
-	if len(pages) == 0 {
-		t.Log("Search found no result")
-		t.Fail()
-	}
+	assert.NotZero(t, len(pages))
 	for _, p := range pages {
-		if strings.Contains(p.Title, "<b>") {
-			t.Logf("Page %s contains <b>", p.Name)
-			t.Fail()
-		}
-		if !strings.Contains(string(p.Body), q) && !strings.Contains(string(p.Title), q) {
-			t.Logf("Page %s does not contain %s", p.Name, q)
-			t.Fail()
-		}
-		if p.Score == 0 {
-			t.Logf("Page %s has no score", p.Name)
-			t.Fail()
-		}
+		assert.NotContains(t, p.Title, "<b>");
+		assert.True(t, strings.Contains(string(p.Body), q) || strings.Contains(string(p.Title), q))
+		assert.NotZero(t, p.Score)
 	}
+}
+
+func TestSearchHashtag (t *testing.T) {
+	loadIndex()
+	q := "#Another_Tag"
+	pages := search(q)
+	assert.NotZero(t, len(pages))
+}
+
+func TestIndexUpdates(t *testing.T) {
+	name := "test"
+	_ = os.Remove(name + ".md")
+	loadIndex()
 	p := &Page{Name: name, Body: []byte("This is a test.")}
 	p.save()
-	pages = search("This is a test")
+
+	// Find the phrase
+	pages := search("This is a test")
 	found := false
 	for _, p := range pages {
 		if p.Name == name {
@@ -42,10 +43,9 @@ func TestIndex(t *testing.T) {
 			break
 		}
 	}
-	if !found {
-		t.Logf("Page '%s' was not found", name)
-		t.Fail()
-	}
+	assert.True(t, found)
+
+	// Find the phrase, case insensitive
 	pages = search("this is a test")
 	found = false
 	for _, p := range pages {
@@ -54,10 +54,9 @@ func TestIndex(t *testing.T) {
 			break
 		}
 	}
-	if !found {
-		t.Logf("Page '%s' was not found using the lower case text", name)
-		t.Fail()
-	}
+	assert.True(t, found)
+
+	// Find some words
 	pages = search("this test")
 	found = false
 	for _, p := range pages {
@@ -66,10 +65,9 @@ func TestIndex(t *testing.T) {
 			break
 		}
 	}
-	if !found {
-		t.Logf("Page '%s' was not found using a query missing some words", name)
-		t.Fail()
-	}
+	assert.True(t, found)
+
+	// Update the page and no longer find it with the old phrase
 	p = &Page{Name: name, Body: []byte("Guvf vf n grfg.")}
 	p.save()
 	pages = search("This is a test")
@@ -80,10 +78,9 @@ func TestIndex(t *testing.T) {
 			break
 		}
 	}
-	if found {
-		t.Logf("Page '%s' was still found using the old content: %s", name, p.Body)
-		t.Fail()
-	}
+	assert.False(t, found)
+
+	// Find page using a new word
 	pages = search("Guvf")
 	found = false
 	for _, p := range pages {
@@ -92,10 +89,8 @@ func TestIndex(t *testing.T) {
 			break
 		}
 	}
-	if !found {
-		t.Logf("Page '%s' not found using the new content: %s", name, p.Body)
-		t.Fail()
-	}
+	assert.True(t, found)
+
 	t.Cleanup(func() {
 		_ = os.Remove(name + ".md")
 	})
