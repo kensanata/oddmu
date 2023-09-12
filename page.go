@@ -103,7 +103,7 @@ func hashtag(p *parser.Parser, data []byte, offset int) (int, ast.Node) {
 		Title: data[0:i],
 	}
 	ast.AppendChild(link, &ast.Text{Leaf: ast.Leaf{Literal: data[0:i]}})
-	return i + 1, link
+	return i, link
 }
 
 // renderHtml renders the Page.Body to HTML and sets Page.Html.
