@@ -71,6 +71,19 @@ Internet
 : Vector of transmission for pictures of cats
 ```
 
+There is another extension made: hashtags link to searches for the
+hashtag. Hashtags are separate from titles because there is no space
+after the hash. Use the underscore to use hashtags consisting of
+multiple words.
+
+```
+# Title
+
+Text
+
+#Tag #Another_Tag
+```
+
 ## Templates
 
 The template files are the HTML files in the working directory:
