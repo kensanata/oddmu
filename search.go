@@ -48,16 +48,18 @@ func indexAdd(path string, info fs.FileInfo, err error) error {
 	return nil
 }
 
-func loadIndex() error {
+// loadIndex loads all the pages and indexes them. This takes a while.
+// It returns the number of pages indexed.
+func loadIndex() (int, error) {
 	index = make(trigram.Index)
 	documents = make(map[trigram.DocID]string)
 	err := filepath.Walk(".", indexAdd)
 	if err != nil {
-		fmt.Println("Indexing failed")
 		index = nil
 		documents = nil
+		return 0, err
 	}
-	return err
+	return len(documents), nil
 }
 
 func (p *Page) updateIndex() {

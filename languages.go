@@ -16,7 +16,7 @@ func getLanguages() ([]lingua.Language, error) {
 	}
 	codes := strings.Split(v, ",")
 	if len(codes) == 1 {
-		return nil, errors.New("Detection unnecessary")
+		return nil, errors.New("detection unnecessary")
 	}
 
 	var langs []lingua.Language
@@ -30,8 +30,8 @@ func getLanguages() ([]lingua.Language, error) {
 var detector lingua.LanguageDetector
 
 // loadLanguages initializes the detector using the languages returned
-// by getLanguages.
-func loadLanguages() {
+// by getLanguages and returns the number of languages loaded.
+func loadLanguages() int {
 	langs, err := getLanguages()
 	if err == nil {
 		detector = lingua.NewLanguageDetectorBuilder().
@@ -42,6 +42,7 @@ func loadLanguages() {
 	} else {
 		detector = nil
 	}
+	return len(langs)
 }
 
 // language returns the language used for a string, as a lower case

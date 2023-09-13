@@ -155,6 +155,28 @@ func getPort() string {
 	return port
 }
 
+// scheduleLoadIndex calls loadIndex and prints some messages before
+// and after. For testing, call loadIndex directly and skip the
+// messages.
+func scheduleLoadIndex() {
+	fmt.Print("Indexing pages\n")
+	n, err := loadIndex()
+	if err == nil {
+		fmt.Printf("Indexed %d pages\n", n)
+	} else {
+		fmt.Println("Indexing failed")
+	}
+}
+
+// scheduleLoadLanguages calls loadLanguages and prints some messages before
+// and after. For testing, call loadLanguages directly and skip the
+// messages.
+func scheduleLoadLanguages(){
+	fmt.Print("Loading languages\n")
+	n := loadLanguages()
+	fmt.Printf("Loaded %d languages\n", n)
+}
+
 func main() {
 	http.HandleFunc("/", rootHandler)
 	http.HandleFunc("/view/", makeHandler(viewHandler))
@@ -163,9 +185,8 @@ func main() {
 	http.HandleFunc("/add/", makeHandler(addHandler))
 	http.HandleFunc("/append/", makeHandler(appendHandler))
 	http.HandleFunc("/search", searchHandler)
-	fmt.Print("Indexing all pages\n")
-	loadIndex()
-	loadLanguages()
+	go scheduleLoadIndex()
+	go scheduleLoadLanguages()
 	port := getPort()
 	fmt.Printf("Serving a wiki on port %s\n", port)
 	http.ListenAndServe(":"+port, nil)
