@@ -1,9 +1,9 @@
 package main
 
 import (
-	"os"
 	"errors"
 	"github.com/pemistahl/lingua-go"
+	"os"
 	"strings"
 )
 
@@ -18,7 +18,7 @@ func getLanguages() ([]lingua.Language, error) {
 	if len(codes) == 1 {
 		return nil, errors.New("Detection unnecessary")
 	}
-	
+
 	var langs []lingua.Language
 	for _, lang := range codes {
 		langs = append(langs, lingua.GetLanguageFromIsoCode639_1(lingua.GetIsoCode639_1FromValue(lang)))

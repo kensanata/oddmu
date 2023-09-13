@@ -1,10 +1,10 @@
 package main
 
 import (
+	"github.com/stretchr/testify/assert"
 	"os"
 	"regexp"
 	"testing"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestPageTitle(t *testing.T) {

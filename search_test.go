@@ -1,10 +1,10 @@
 package main
 
 import (
+	"github.com/stretchr/testify/assert"
 	"os"
 	"strings"
 	"testing"
-	"github.com/stretchr/testify/assert"
 )
 
 // TestIndex relies on README.md being indexed
@@ -14,13 +14,13 @@ func TestIndex(t *testing.T) {
 	pages := search(q)
 	assert.NotZero(t, len(pages))
 	for _, p := range pages {
-		assert.NotContains(t, p.Title, "<b>");
+		assert.NotContains(t, p.Title, "<b>")
 		assert.True(t, strings.Contains(string(p.Body), q) || strings.Contains(string(p.Title), q))
 		assert.NotZero(t, p.Score)
 	}
 }
 
-func TestSearchHashtag (t *testing.T) {
+func TestSearchHashtag(t *testing.T) {
 	loadIndex()
 	q := "#Another_Tag"
 	pages := search(q)
