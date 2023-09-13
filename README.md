@@ -238,7 +238,13 @@ MDCertificateAgreement accepted
 
     RewriteEngine on
     RewriteRule ^/$ http://%{HTTP_HOST}:8080/view/index [redirect]
-    RewriteRule ^/(view|edit|save|add|append|search)/(.*) http://%{HTTP_HOST}:8080/$1/$2 [proxy]
+
+    ProxyPass /view         http://localhost:8080/view
+    ProxyPass /edit         http://localhost:8080/edit
+    ProxyPass /save         http://localhost:8080/save
+    ProxyPass /add          http://localhost:8080/add
+    ProxyPass /append       http://localhost:8080/append
+    ProxyPass /search       http://localhost:8080/search
 </VirtualHost>
 ```
 

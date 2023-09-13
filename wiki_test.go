@@ -130,3 +130,17 @@ func TestPageTitleWithAmp(t *testing.T) {
 		_ = os.RemoveAll("testdata")
 	})
 }
+
+func TestPageTitleWithQuestionMark(t *testing.T) {
+	_ = os.RemoveAll("testdata")
+
+	p := &Page{Name: "testdata/How about no?", Body: []byte("No means no")}
+	p.save()
+
+	assert.Regexp(t, regexp.MustCompile("No means no"),
+		assert.HTTPBody(makeHandler(viewHandler), "GET", "/view/testdata/How%20about%20no%3f", nil))
+
+	t.Cleanup(func() {
+		_ = os.RemoveAll("testdata")
+	})
+}
