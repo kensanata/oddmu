@@ -8,6 +8,7 @@ import (
 	"github.com/gomarkdown/markdown/parser"
 	"github.com/microcosm-cc/bluemonday"
 	"html/template"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -28,12 +29,24 @@ type Page struct {
 	Score    int
 }
 
+// santize uses bluemonday to sanitize the HTML.
 func sanitize(s string) template.HTML {
 	return template.HTML(bluemonday.UGCPolicy().Sanitize(s))
 }
 
+// santizeBytes uses bluemonday to sanitize the HTML.
 func sanitizeBytes(bytes []byte) template.HTML {
 	return template.HTML(bluemonday.UGCPolicy().SanitizeBytes(bytes))
+}
+
+// nameEscape returns the page name safe for use in URLs. That is,
+// percent escaping is used except for the slashes.
+func nameEscape(s string) string {
+	parts := strings.Split(s, "/")
+	for i, part := range parts {
+		parts[i] = url.PathEscape(part)
+	}
+	return strings.Join(parts, "/")
 }
 
 // save saves a Page. The filename is based on the Page.Name and gets
@@ -112,6 +125,7 @@ func (p *Page) renderHtml() {
 	parser := parser.New()
 	parser.RegisterInline('#', hashtag)
 	maybeUnsafeHTML := markdown.ToHTML(p.Body, parser, nil)
+	p.Name = nameEscape(p.Name)
 	p.Html = sanitizeBytes(maybeUnsafeHTML)
 	p.Language = language(p.plainText())
 }

@@ -137,8 +137,9 @@ func TestPageTitleWithQuestionMark(t *testing.T) {
 	p := &Page{Name: "testdata/How about no?", Body: []byte("No means no")}
 	p.save()
 
-	assert.Regexp(t, regexp.MustCompile("No means no"),
-		assert.HTTPBody(makeHandler(viewHandler), "GET", "/view/testdata/How%20about%20no%3f", nil))
+	body := assert.HTTPBody(makeHandler(viewHandler), "GET", "/view/testdata/How%20about%20no%3F", nil)
+	assert.Contains(t, body, "No means no")
+	assert.Contains(t, body, "<a href=\"/edit/testdata/How%20about%20no%3F\">Edit</a>")
 
 	t.Cleanup(func() {
 		_ = os.RemoveAll("testdata")

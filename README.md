@@ -105,13 +105,28 @@ The templates can refer to the following properties of a page:
 `{{.Title}}` is the page title. If the page doesn't provide its own
 title, the page name is used.
 
-`{{.Name}}` is the page name. The page name doesn't include the `.md`
-extension.
+`{{.Name}}` is the page name, escaped for use in URLs. More
+specifically, it is URI escaped except for the slashes. The page name
+doesn't include the `.md` extension.
 
 `{{.Html}}` is the rendered Markdown, as HTML.
 
 `{{printf "%s" .Body}}` is the Markdown, as a string (the data itself
 is a byte array and that's why we need to call `printf`).
+
+For the `search.html` template only:
+
+`{{.Results}}` indicates if there were any search results.
+
+`{{.Items}}` is an array of pages, each containing a search result. A
+search result is a page (with the properties seen above). Thus, to
+refer to them, you need to use a `{{range .Items}}` … `{{end}}`
+construct.
+
+For search results, `{{.Html}}` is the rendered Markdown of a page
+summary, as HTML.
+
+`{{.Score}}` is a numerical score for search results.
 
 When calling the `save` action, the page name is take from the URL and
 the page content is taken from the `body` form parameter. To
@@ -235,40 +250,32 @@ MDCertificateAgreement accepted
     ServerAdmin alex@alexschroeder.ch
     ServerName transjovian.org
     SSLEngine on
-
-    RewriteEngine on
-    RewriteRule ^/$ http://%{HTTP_HOST}:8080/view/index [redirect]
-
-    ProxyPass /view         http://localhost:8080/view
-    ProxyPass /edit         http://localhost:8080/edit
-    ProxyPass /save         http://localhost:8080/save
-    ProxyPass /add          http://localhost:8080/add
-    ProxyPass /append       http://localhost:8080/append
-    ProxyPass /search       http://localhost:8080/search
+    ProxyPassMatch ^/(search|(view|edit|save|add|append)/(.*))?$ http://localhost:8080/$1
 </VirtualHost>
 ```
 
 First, it manages the domain, getting the necessary certificates. It
 redirects regular HTTP traffic from port 80 to port 443. It turns on
-the SSL engine for port 443. It redirects `/` to `/view/index` and any
-path that starts with `/view/`, `/edit/`, `/save/`, `/add/`,
-`/append/` or `/search/` is proxied to port 8080 where the Oddmu
-program can handle it.
+the SSL engine for port 443. It proxies the requests for the wiki to
+port 8080.
 
 Thus, this is what happens:
 
-* The user tells the browser to visit `http://transjovian.org` (on port 80)
-* Apache redirects this to `http://transjovian.org/` by default (still on port 80)
-* Our first virtual host redirects this to `https://transjovian.org/` (encrypted, on port 443)
-* Our second virtual host redirects this to `https://transjovian.org/wiki/view/index` (still on port 443)
-* This is proxied to `http://transjovian.org:8080/view/index` (no on port 8080, without encryption)
-* The wiki converts `index.md` to HTML, adds it to the template, and serves it.
+* The user tells the browser to visit `transjovian.org`
+* The browser sends a request for `http://transjovian.org` (on port 80)
+* Apache redirects this to `https://transjovian.org/` by default (now on port 443)
+* This is proxied to `http://transjovian.org:8080/` (no encryption, on port 8080)
 
 Restart the server, gracefully:
 
 ```
 apachectl graceful
 ```
+
+To serve both HTTP and HTTPS, don't redirect from the first virtual
+host to the second – instead just proxy to the wiki like you did for
+the second virtual host: use a copy of the `ProxyPassMatch` directive
+instead of `RewriteEngine on` and `RewriteRule`.
 
 ## Access
 
