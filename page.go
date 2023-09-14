@@ -51,13 +51,15 @@ func nameEscape(s string) string {
 
 // save saves a Page. The filename is based on the Page.Name and gets
 // the ".md" extension. Page.Body is saved, without any carriage
-// return characters ("\r"). The file permissions used are readable
-// and writeable for the current user, i.e. u+rw or 0600. Page.Title
-// and Page.Html are not saved no caching. There is no caching.
+// return characters ("\r"). Page.Title and Page.Html are not saved.
+// There is no caching. Before removing or writing a file, the old
+// copy is renamed to a backup, appending "~". There is no error
+// checking for this.
 func (p *Page) save() error {
 	filename := p.Name + ".md"
 	s := bytes.ReplaceAll(p.Body, []byte{'\r'}, []byte{})
 	if len(s) == 0 {
+		_ = os.Rename(filename, filename + "~")
 		return os.Remove(filename)
 	}
 	p.Body = s
@@ -70,6 +72,7 @@ func (p *Page) save() error {
 			return err
 		}
 	}
+	_ = os.Rename(filename, filename + "~")
 	return os.WriteFile(filename, s, 0644)
 }
 

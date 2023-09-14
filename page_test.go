@@ -62,6 +62,7 @@ I am cold, alone</p>
 	assert.Equal(t, r, string(p.Html))
 }
 
+// wipes testdata
 func TestPageDir(t *testing.T) {
 	_ = os.RemoveAll("testdata")
 	loadIndex()
@@ -70,6 +71,7 @@ From bed to bathroom
 A slow shuffle in the dark
 Moonlight floods the aisle`)}
 	p.save()
+	
 	o, err := loadPage("testdata/moon")
 	assert.NoError(t, err, "load page")
 	assert.Equal(t, p.Body, o.Body)
@@ -79,6 +81,10 @@ Moonlight floods the aisle`)}
 	p = &Page{Name: "testdata/moon", Body: []byte("")}
 	p.save()
 	assert.NoFileExists(t, "testdata/moon.md")
+
+	// But the backup still exists.
+	assert.FileExists(t, "testdata/moon.md~")
+	
 	t.Cleanup(func() {
 		_ = os.RemoveAll("testdata")
 	})
