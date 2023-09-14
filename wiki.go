@@ -218,7 +218,7 @@ func scheduleLoadLanguages() {
 	fmt.Printf("Loaded %d languages\n", n)
 }
 
-func main() {
+func serve() {
 	http.HandleFunc("/", rootHandler)
 	http.HandleFunc("/view/", makeHandler(viewHandler))
 	http.HandleFunc("/edit/", makeHandler(editHandler))
@@ -232,4 +232,12 @@ func main() {
 	port := getPort()
 	fmt.Printf("Serving a wiki on port %s\n", port)
 	http.ListenAndServe(":"+port, nil)
+}
+
+func main() {
+	if len(os.Args) == 1 {
+		serve()
+	} else {
+		commands()
+	}
 }
