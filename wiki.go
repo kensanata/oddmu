@@ -121,10 +121,10 @@ func appendHandler(w http.ResponseWriter, r *http.Request, name string) {
 	http.Redirect(w, r, "/view/"+name, http.StatusFound)
 }
 
-// uploadHandler takes the "name" and "file" form parameters and saves
+// saveUploadHandler takes the "name" and "file" form parameters and saves
 // the file under the given name. The browser is redirected to the
 // page view.
-func uploadHandler(w http.ResponseWriter, r *http.Request) {
+func saveUploadHandler(w http.ResponseWriter, r *http.Request) {
 	filename := r.FormValue("name")
 	file, _, err := r.FormFile("file")
 	if err != nil {
@@ -225,7 +225,7 @@ func serve() {
 	http.HandleFunc("/save/", makeHandler(saveHandler))
 	http.HandleFunc("/add/", makeHandler(addHandler))
 	http.HandleFunc("/append/", makeHandler(appendHandler))
-	http.HandleFunc("/upload", uploadHandler)
+	http.HandleFunc("/save", saveUploadHandler)
 	http.HandleFunc("/search", searchHandler)
 	go scheduleLoadIndex()
 	go scheduleLoadLanguages()

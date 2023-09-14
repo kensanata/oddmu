@@ -138,7 +138,7 @@ func TestUpload(t *testing.T) {
 	err = writer.Close()
 	assert.NoError(t, err)
 	t.Log(writer.FormDataContentType())
-	HTTPUploadAndRedirectTo(t, uploadHandler, "/upload", writer.FormDataContentType(), form, "/view/testdata/ok.txt")
+	HTTPUploadAndRedirectTo(t, saveUploadHandler, "/upload", writer.FormDataContentType(), form, "/view/testdata/ok.txt")
 	assert.Regexp(t, regexp.MustCompile("Hello!"),
 		assert.HTTPBody(makeHandler(viewHandler), "GET", "/view/testdata/ok.txt", nil))
 	t.Cleanup(func() {
