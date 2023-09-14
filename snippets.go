@@ -56,6 +56,7 @@ func snippets(q string, s string) string {
 		}
 		jsnippet++
 		j = strings.Index(s, m[1])
+		wl := len(m[1])
 		if j > -1 {
 			// get the substring containing the start of
 			// the match, ending on word boundaries
@@ -69,12 +70,12 @@ func snippets(q string, s string) string {
 			} else {
 				start += from
 			}
-			to := j + snippetlen/2
+			to := j + wl + snippetlen/2
 			if to > len(s) {
 				to = len(s)
 			}
 			end := strings.LastIndex(s[:to], " ")
-			if end == -1 {
+			if end == -1 || end <= j + wl {
 				// OK, look for a longer word
 				end = strings.Index(s[to:], " ")
 				if end == -1 {
@@ -84,7 +85,10 @@ func snippets(q string, s string) string {
 				}
 			}
 			t = s[start:end]
-			res = res + t + " …"
+			res = res + t
+			if len(s) > end {
+				res = res + " …"
+			}
 			// truncate text to avoid rematching the same string.
 			s = s[end:]
 		}
