@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 	"regexp"
 )
 
@@ -119,6 +121,45 @@ func appendHandler(w http.ResponseWriter, r *http.Request, name string) {
 	http.Redirect(w, r, "/view/"+name, http.StatusFound)
 }
 
+// uploadHandler takes the "name" and "file" form parameters and saves
+// the file under the given name. The browser is redirected to the
+// page view.
+func uploadHandler(w http.ResponseWriter, r *http.Request) {
+	filename := r.FormValue("name")
+	file, _, err := r.FormFile("file")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer file.Close()
+	// backup an existing file with the same name
+	_, err = os.Stat(filename)
+	if err != nil {
+		os.Rename(filename, filename + "~")
+	}
+	// create the directory, if necessary
+	d := filepath.Dir(filename)
+	if d != "." {
+		err := os.MkdirAll(d, 0755)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+	// create the new file
+	dst, err := os.Create(filename)
+	if err != nil {
+            http.Error(w, err.Error(), http.StatusInternalServerError)
+            return
+        }
+	defer dst.Close()
+	if _, err := io.Copy(dst, file); err != nil {
+            http.Error(w, err.Error(), http.StatusInternalServerError)
+            return
+        }
+	http.Redirect(w, r, "/view/"+filename, http.StatusFound)
+}
+
 // makeHandler returns a handler that uses the URL path without the
 // first path element as its argument, e.g. if the URL path is
 // /edit/foo/bar, the editHandler is called with "foo/bar" as its
@@ -184,6 +225,7 @@ func main() {
 	http.HandleFunc("/save/", makeHandler(saveHandler))
 	http.HandleFunc("/add/", makeHandler(addHandler))
 	http.HandleFunc("/append/", makeHandler(appendHandler))
+	http.HandleFunc("/upload", uploadHandler)
 	http.HandleFunc("/search", searchHandler)
 	go scheduleLoadIndex()
 	go scheduleLoadLanguages()

@@ -1,8 +1,9 @@
 package main
 
 import (
-	"fmt"
+	"bytes"
 	"github.com/stretchr/testify/assert"
+	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -27,8 +28,7 @@ func HTTPHeaders(handler http.HandlerFunc, method, url string, values url.Values
 // HTTPRedirectTo checks that the request results in a redirect and it
 // checks the destination of the redirect. It returns whether the
 // request did in fact result in a redirect. Note: This method assumes
-// that POST requests ignore the query part of the URL which is often
-// true but not mandated by the standards.
+// that POST requests ignore the query part of the URL.
 func HTTPRedirectTo(t *testing.T, handler http.HandlerFunc, method, url string, values url.Values, destination string) bool {
 	w := httptest.NewRecorder()
 	var req *http.Request
@@ -40,19 +40,32 @@ func HTTPRedirectTo(t *testing.T, handler http.HandlerFunc, method, url string, 
 	} else {
 		req, err = http.NewRequest(method, url+"?"+values.Encode(), nil)
 	}
-	if err != nil {
-		assert.Fail(t, fmt.Sprintf("Failed to build test request, got error: %s", err))
-	}
+	assert.NoError(t, err)
 	handler(w, req)
 	code := w.Code
 	isRedirectCode := code >= http.StatusMultipleChoices && code <= http.StatusTemporaryRedirect
-	if !isRedirectCode {
-		assert.Fail(t, fmt.Sprintf("Expected HTTP redirect status code for %q but received %d", url+"?"+values.Encode(), code))
-	}
+	assert.True(t, isRedirectCode, "Expected HTTP redirect status code for %q but received %d", url+"?"+values.Encode(), code)
 	headers := w.Result().Header["Location"]
-	if len(headers) != 1 || headers[0] != destination {
-		assert.Fail(t, fmt.Sprintf("Expected HTTP redirect location %s for %q but received %v", destination, url+"?"+values.Encode(), headers))
-	}
+	assert.True(t, len(headers) == 1 && headers[0] == destination,
+		"Expected HTTP redirect location %s for %q but received %v", destination, url+"?"+values.Encode(), headers)
+	return isRedirectCode
+}
+
+// HTTPUploadAndRedirectTo checks that the request results in a redirect and it
+// checks the destination of the redirect. It returns whether the
+// request did in fact result in a redirect.
+func HTTPUploadAndRedirectTo(t *testing.T, handler http.HandlerFunc, url, contentType string, body *bytes.Buffer, destination string) bool {
+	w := httptest.NewRecorder()
+	req, err := http.NewRequest("POST", url, body)
+	req.Header.Set("Content-Type", contentType)
+	assert.NoError(t, err)
+	handler(w, req)
+	code := w.Code
+	isRedirectCode := code >= http.StatusMultipleChoices && code <= http.StatusTemporaryRedirect
+	assert.True(t, isRedirectCode, "Expected HTTP redirect status code for %q but received %d", url, code)
+	headers := w.Result().Header["Location"]
+	assert.True(t, len(headers) == 1 && headers[0] == destination,
+		"Expected HTTP redirect location %s for %q but received %v", destination, url, headers)
 	return isRedirectCode
 }
 
@@ -105,6 +118,29 @@ It's not `)}
 	assert.Regexp(t, regexp.MustCompile("It’s not barbecue"),
 		assert.HTTPBody(makeHandler(viewHandler), "GET", "/view/testdata/fire", nil))
 
+	t.Cleanup(func() {
+		_ = os.RemoveAll("testdata")
+	})
+}
+
+// wipes testdata
+func TestUpload(t *testing.T) {
+	_ = os.RemoveAll("testdata")
+	form := new(bytes.Buffer)
+	writer := multipart.NewWriter(form)
+	field, err := writer.CreateFormField("name")
+	assert.NoError(t, err)
+	_, err = field.Write([]byte("testdata/ok.txt"))
+	assert.NoError(t, err)
+	file, err := writer.CreateFormFile("file", "example.txt");
+	assert.NoError(t, err)
+	file.Write([]byte("Hello!"))
+	err = writer.Close()
+	assert.NoError(t, err)
+	t.Log(writer.FormDataContentType())
+	HTTPUploadAndRedirectTo(t, uploadHandler, "/upload", writer.FormDataContentType(), form, "/view/testdata/ok.txt")
+	assert.Regexp(t, regexp.MustCompile("Hello!"),
+		assert.HTTPBody(makeHandler(viewHandler), "GET", "/view/testdata/ok.txt", nil))
 	t.Cleanup(func() {
 		_ = os.RemoveAll("testdata")
 	})
