@@ -17,7 +17,6 @@ Environment="ODDMU_PORT=8080"
 ReadWritePaths=/home/oddmu
 ProtectHostname=yes
 RestrictSUIDSGID=yes
-UMask=0077
 RemoveIPC=yes
 MemoryDenyWriteExecute=yes
 
