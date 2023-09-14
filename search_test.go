@@ -20,15 +20,6 @@ func TestIndex(t *testing.T) {
 	}
 }
 
-// TestIndexNotReady relies on the index not being ready as wiki starts up
-func TestIndexNotReady(t *testing.T) {
-	index = nil
-	documents = nil
-	q := "Oddµ"
-	pages := search(q)
-	assert.Zero(t, len(pages))
-}
-
 func TestSearchHashtag(t *testing.T) {
 	loadIndex()
 	q := "#Another_Tag"

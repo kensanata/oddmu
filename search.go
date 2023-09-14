@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"slices"
 	"strings"
+	"sync"
 	"unicode"
 	"unicode/utf8"
 )
@@ -21,15 +22,23 @@ type Search struct {
 	Results bool
 }
 
-// index is a struct containing the trigram index for search. It is
-// generated at startup and updated after every page edit. The index
-// is case-insensitive.
-var index trigram.Index
+// idx contains the two maps used for search. Make sure to lock and
+// unlock as appropriate.
+var idx = struct {
+	sync.RWMutex
 
-// documents is a map, mapping document ids of the index to page
-// names.
-var documents map[trigram.DocID]string
+	// index is a struct containing the trigram index for search. It is
+	// generated at startup and updated after every page edit. The index
+	// is case-insensitive.
+	index trigram.Index
 
+	// documents is a map, mapping document ids of the index to page
+	// names.
+	documents map[trigram.DocID]string
+}{}
+
+// indexAdd reads a file and adds it to the index. This must happen
+// while the idx is locked, which is true when called from loadIndex.
 func indexAdd(path string, info fs.FileInfo, err error) error {
 	if err != nil {
 		return err
@@ -43,43 +52,100 @@ func indexAdd(path string, info fs.FileInfo, err error) error {
 	if err != nil {
 		return err
 	}
-	id := index.Add(strings.ToLower(string(p.Body)))
-	documents[id] = p.Name
+	id := idx.index.Add(strings.ToLower(string(p.Body)))
+	idx.documents[id] = p.Name
 	return nil
 }
 
 // loadIndex loads all the pages and indexes them. This takes a while.
 // It returns the number of pages indexed.
 func loadIndex() (int, error) {
-	index = make(trigram.Index)
-	documents = make(map[trigram.DocID]string)
+	idx.Lock()
+	defer idx.Unlock()
+	idx.index = make(trigram.Index)
+	idx.documents = make(map[trigram.DocID]string)
 	err := filepath.Walk(".", indexAdd)
 	if err != nil {
-		index = nil
-		documents = nil
+		idx.index = nil
+		idx.documents = nil
 		return 0, err
 	}
-	return len(documents), nil
+	n := len(idx.documents)
+	return n, nil
 }
 
+// updateIndex updates the index for a single page. The old text is
+// loaded from the disk and removed from the index first, if it
+// exists.
 func (p *Page) updateIndex() {
+	idx.Lock()
+	defer idx.Unlock()
 	var id trigram.DocID
-	for docId, name := range documents {
+	// This function does not rely on files actually existing, so
+	// let's quickly find the document id.
+	for docId, name := range idx.documents {
 		if name == p.Name {
 			id = docId
 			break
 		}
 	}
 	if id == 0 {
-		id = index.Add(strings.ToLower(string(p.Body)))
-		documents[id] = p.Name
+		id = idx.index.Add(strings.ToLower(string(p.Body)))
+		idx.documents[id] = p.Name
 	} else {
 		o, err := loadPage(p.Name)
 		if err == nil {
-			index.Delete(strings.ToLower(string(o.Body)), id)
+			idx.index.Delete(strings.ToLower(string(o.Body)), id)
 		}
-		index.Insert(strings.ToLower(string(p.Body)), id)
+		idx.index.Insert(strings.ToLower(string(p.Body)), id)
 	}
+}
+
+func sortItems(a, b Page) int {
+	// Sort by score
+	if a.Score < b.Score {
+		return 1
+	} else if a.Score > b.Score {
+		return -1
+	}
+	// If the score is the same and both page names start
+	// with a number (like an ISO date), sort descending.
+	ra, _ := utf8.DecodeRuneInString(a.Title)
+	rb, _ := utf8.DecodeRuneInString(b.Title)
+	if unicode.IsNumber(ra) && unicode.IsNumber(rb) {
+		if a.Title < b.Title {
+			return 1
+		} else if a.Title > b.Title {
+			return -1
+		} else {
+			return 0
+		}
+	}
+	// Otherwise sort ascending.
+	if a.Title < b.Title {
+		return -1
+	} else if a.Title > b.Title {
+		return 1
+	} else {
+		return 0
+	}
+}
+
+// loadAndSummarize loads the pages named and summarizes them for the
+// query give.
+func loadAndSummarize(names []string, q string) []Page {
+	// Load and summarize the items.
+	items := make([]Page, len(names))
+	for i, name := range names {
+		p, err := loadPage(name)
+		if err != nil {
+			fmt.Printf("Error loading %s\n", name)
+		} else {
+			p.summarize(q)
+			items[i] = *p
+		}
+	}
+	return items
 }
 
 // search returns a sorted []Page where each page contains an extract
@@ -93,47 +159,16 @@ func search(q string) []Page {
 	for _, word := range words {
 		trigrams = trigram.Extract(word, trigrams)
 	}
-	ids := index.QueryTrigrams(trigrams)
-	items := make([]Page, len(ids))
+	// Keep the read lock for a short as possible. Make a list of
+	// the names we need to load and summarize.
+	idx.RLock()
+	ids := idx.index.QueryTrigrams(trigrams)
+	names := make([]string, len(ids))
 	for i, id := range ids {
-		name := documents[id]
-		p, err := loadPage(name)
-		if err != nil {
-			fmt.Printf("Error loading %s\n", name)
-		} else {
-			p.summarize(q)
-			items[i] = *p
-		}
+		names[i] = idx.documents[id]
 	}
-	fn := func(a, b Page) int {
-		// Sort by score
-		if a.Score < b.Score {
-			return 1
-		} else if a.Score > b.Score {
-			return -1
-		}
-		// If the score is the same and both page names start
-		// with a number (like an ISO date), sort descending.
-		ra, _ := utf8.DecodeRuneInString(a.Title)
-		rb, _ := utf8.DecodeRuneInString(b.Title)
-		if unicode.IsNumber(ra) && unicode.IsNumber(rb) {
-			if a.Title < b.Title {
-				return 1
-			} else if a.Title > b.Title {
-				return -1
-			} else {
-				return 0
-			}
-		}
-		// Otherwise sort ascending.
-		if a.Title < b.Title {
-			return -1
-		} else if a.Title > b.Title {
-			return 1
-		} else {
-			return 0
-		}
-	}
-	slices.SortFunc(items, fn)
+	idx.RUnlock()
+	items := loadAndSummarize(names, q)
+	slices.SortFunc(items, sortItems)
 	return items
 }
