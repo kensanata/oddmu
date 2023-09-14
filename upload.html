@@ -12,9 +12,9 @@ form, textarea { width: 100%; }
   </head>
   <body>
     <h1>Upload File</h1>
-    <form action="/save" method="POST">
-      <input type="text" name="name" placeholder="image.jpg" autofocus>
-      <p><input type="file" name="file">
+    <form action="/save" method="POST" enctype="multipart/form-data">
+      <input type="text" name="name" placeholder="image.jpg" autofocus required>
+      <p><input type="file" name="file" required>
       <p><input type="submit" value="Save">
         <a href="/view/index"><button type="button">Cancel</button></a></p>
     </form>
