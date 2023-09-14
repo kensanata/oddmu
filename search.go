@@ -88,7 +88,7 @@ func search(q string) []Page {
 	if len(q) == 0 {
 		return make([]Page, 0)
 	}
-	words := strings.Split(strings.ToLower(q), " ")
+	words := strings.Fields(strings.ToLower(q))
 	var trigrams []trigram.T
 	for _, word := range words {
 		trigrams = trigram.Extract(word, trigrams)

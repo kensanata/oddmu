@@ -18,10 +18,7 @@ func score(q string, s string) int {
 			score += len(m)
 		}
 	}
-	for _, v := range strings.Split(q, " ") {
-		if len(v) == 0 {
-			continue
-		}
+	for _, v := range strings.Fields(q) {
 		re, err := regexp.Compile(`(?is)(\pL?)(` + v + `)(\pL?)`)
 		if err != nil {
 			continue
