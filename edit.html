@@ -13,9 +13,9 @@ form, textarea { width: 100%; }
   <body>
     <h1>Editing {{.Title}}</h1>
     <form action="/save/{{.Name}}" method="POST">
-      <div><textarea name="body" rows="20" cols="80" placeholder="# Title
+      <textarea name="body" rows="20" cols="80" placeholder="# Title
 
-Text" autofocus>{{printf "%s" .Body}}</textarea></div>
+Text" autofocus>{{printf "%s" .Body}}</textarea>
       <p><input type="submit" value="Save">
         <a href="/view/{{.Name}}"><button type="button">Cancel</button></a></p>
     </form>
