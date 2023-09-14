@@ -12,7 +12,8 @@ import (
 
 // Templates are parsed at startup.
 var templates = template.Must(
-	template.ParseFiles("edit.html", "add.html", "view.html", "search.html"))
+	template.ParseFiles("edit.html", "add.html", "view.html",
+		"search.html", "upload.html"))
 
 // validPath is a regular expression where the second group matches a
 // page, so when the editHandler is called, a URL path of "/edit/foo"
@@ -121,9 +122,15 @@ func appendHandler(w http.ResponseWriter, r *http.Request, name string) {
 	http.Redirect(w, r, "/view/"+name, http.StatusFound)
 }
 
-// saveUploadHandler takes the "name" and "file" form parameters and saves
-// the file under the given name. The browser is redirected to the
-// page view.
+// uploadHandler uses the "upload.html" template to enable uploads.
+// The file is saved using the saveUploadHandler.
+func uploadHandler(w http.ResponseWriter, r *http.Request) {
+	renderTemplate(w, "upload", nil)
+}
+
+// saveUploadHandler takes the "name" form field and the "file" form
+// file and saves the file under the given name. The browser is
+// redirected to the view of that file.
 func saveUploadHandler(w http.ResponseWriter, r *http.Request) {
 	filename := r.FormValue("name")
 	file, _, err := r.FormFile("file")
@@ -225,6 +232,7 @@ func serve() {
 	http.HandleFunc("/save/", makeHandler(saveHandler))
 	http.HandleFunc("/add/", makeHandler(addHandler))
 	http.HandleFunc("/append/", makeHandler(appendHandler))
+	http.HandleFunc("/upload", uploadHandler)
 	http.HandleFunc("/save", saveUploadHandler)
 	http.HandleFunc("/search", searchHandler)
 	go scheduleLoadIndex()

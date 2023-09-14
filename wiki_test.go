@@ -126,6 +126,7 @@ It's not `)}
 // wipes testdata
 func TestUpload(t *testing.T) {
 	_ = os.RemoveAll("testdata")
+	assert.HTTPStatusCode(t, uploadHandler, "GET", "/upload", nil, 200)
 	form := new(bytes.Buffer)
 	writer := multipart.NewWriter(form)
 	field, err := writer.CreateFormField("name")

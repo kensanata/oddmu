@@ -87,9 +87,10 @@ Text
 ## Templates
 
 The template files are the HTML files in the working directory:
-`add.html`, `edit.html`, `search.html` and `view.html`. Feel free to
-change the templates and restart the server. The first change you
-should make is to replace the email address in `view.html`. 😄
+`add.html`, `edit.html`, `search.html`, `upload.html` and `view.html`.
+Feel free to change the templates and restart the server. The first
+change you should make is to replace the email address in `view.html`.
+😄
 
 See [Structuring the web
 with HTML](https://developer.mozilla.org/en-US/docs/Learn/HTML) to
@@ -127,6 +128,8 @@ For search results, `{{.Html}}` is the rendered Markdown of a page
 summary, as HTML.
 
 `{{.Score}}` is a numerical score for search results.
+
+The `upload.html` template cannot refer to anything.
 
 When calling the `save` action, the page name is take from the URL and
 the page content is taken from the `body` form parameter. To
@@ -193,7 +196,7 @@ adduser --system --home /home/oddmu oddmu
 ```
 
 Copy all the files into `/home/oddmu` to your server: `oddmu`,
-`oddmu.service`, `view.html` and `edit.html`.
+`oddmu.service`, and all the template files ending in `.html`.
 
 Edit the `oddmu.service` file. These are the three lines you most
 likely have to take care of:
@@ -250,7 +253,7 @@ MDCertificateAgreement accepted
     ServerAdmin alex@alexschroeder.ch
     ServerName transjovian.org
     SSLEngine on
-    ProxyPassMatch ^/(search|(view|edit|save|add|append)/(.*))?$ http://localhost:8080/$1
+    ProxyPassMatch ^/(search|upload|save|(view|edit|save|add|append)/(.*))?$ http://localhost:8080/$1
 </VirtualHost>
 ```
 
@@ -308,11 +311,11 @@ htpasswd -D .htpasswd berta
 ```
 
 Modify your site configuration and protect the `/edit/`, `/save/`,
-`/add/` and `/append/` URLs with a password by adding the following to
-your `<VirtualHost *:443>` section:
+`/add/`, `/append/`, `/upload` and `/save` URLs with a password by
+adding the following to your `<VirtualHost *:443>` section:
 
 ```apache
-<LocationMatch "^/(edit|save|add|append)/">
+<LocationMatch "^/(upload|save|(edit|save|add|append)/(.*))$">
   AuthType Basic
   AuthName "Password Required"
   AuthUserFile /home/oddmu/.htpasswd
@@ -337,9 +340,9 @@ webserver can read (world readable file, world readable and executable
 directory). Populate it with files.
 
 Make sure that none of the static files look like the wiki paths
-`/view/`, `/edit/`, `/save/`, `/add/`, `/append/` or `/search/`. For
-example, create a file called `robots.txt` containing the following,
-tellin all robots that they're not welcome.
+`/view/`, `/edit/`, `/save/`, `/add/`, `/append/`, `/upload`, `/save`
+or `/search`. For example, create a file called `robots.txt`
+containing the following, tellin all robots that they're not welcome.
 
 ```text
 User-agent: *
@@ -363,7 +366,7 @@ above.
 This requires a valid login by the user "alex" or "berta":
 
 ```apache
-<LocationMatch "^/(edit|save)/intetebi/">
+<LocationMatch "^/(edit|save|add|append)/intetebi/">
   Require user alex berta
 </LocationMatch>
 ```

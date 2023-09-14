@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width">
+    <title>Upload File</title>
+    <style>
+html { max-width: 70ch; padding: 2ch; margin: auto; color: #111; background: #ffe; }
+form, textarea { width: 100%; }
+    </style>
+  </head>
+  <body>
+    <h1>Upload File</h1>
+    <form action="/save" method="POST">
+      <input type="text" name="name" placeholder="image.jpg" autofocus>
+      <p><input type="file" name="file">
+      <p><input type="submit" value="Save">
+        <a href="/view/index"><button type="button">Cancel</button></a></p>
+    </form>
+  </body>
+</html>
