@@ -437,6 +437,8 @@ The pages are indexed as the server starts and the index is kept in
 memory. If you have a ton of pages, this surely wastes a lot of
 memory.
 
+Files may not end with a tilde (`~`) – these are backup files.
+
 ## Bugs
 
 If you spot any, [contact](https://alexschroeder.ch/wiki/Contact) me.
