@@ -442,6 +442,12 @@ memory.
 
 Files may not end with a tilde (`~`) – these are backup files.
 
+You cannot edit uploaded files. If you upload a file called
+`hello.txt` and attempt to edit it by using `/edit/hello.txt` you will
+create a page with the name `hello.txt.md` instead.
+
+You cannot delete uploaded files via the web.
+
 ## Bugs
 
 If you spot any, [contact](https://alexschroeder.ch/wiki/Contact) me.
