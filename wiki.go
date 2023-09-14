@@ -171,7 +171,7 @@ func scheduleLoadIndex() {
 // scheduleLoadLanguages calls loadLanguages and prints some messages before
 // and after. For testing, call loadLanguages directly and skip the
 // messages.
-func scheduleLoadLanguages(){
+func scheduleLoadLanguages() {
 	fmt.Print("Loading languages\n")
 	n := loadLanguages()
 	fmt.Printf("Loaded %d languages\n", n)
