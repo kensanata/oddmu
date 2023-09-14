@@ -13,7 +13,7 @@ form, textarea { width: 100%; }
   <body>
     <h1>Adding to {{.Title}}</h1>
     <form action="/append/{{.Name}}" method="POST">
-      <div><textarea name="body" rows="20" cols="80" placeholder="Text" autofocus></textarea></div>
+      <textarea name="body" rows="20" cols="80" placeholder="Text" autofocus></textarea>
       <p><input type="submit" value="Add">
         <a href="/view/{{.Name}}"><button>Cancel</button></a></p>
     </form>
