@@ -1,10 +1,15 @@
 package main
 
 import (
+	"path/filepath"
 	"io"
 	"net/http"
 	"os"
 	"path"
+	"strconv"
+	"strings"
+	"github.com/anthonynsimon/bild/imgio"
+	"github.com/anthonynsimon/bild/transform"
 )
 
 // uploadHandler uses the "upload.html" template to enable uploads.
@@ -28,7 +33,12 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		http.Error(w, "file exists", http.StatusInternalServerError)
 		return
 	}
-	filename := r.FormValue("name")
+	name := r.FormValue("name")
+	filename := filepath.Base(name)
+	if filename == "." || filepath.Dir(name) != "." {
+		http.Error(w, "no filename", http.StatusInternalServerError)
+		return
+	}
 	file, _, err := r.FormFile("file")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -41,7 +51,8 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		os.Rename(filename, filename + "~")
 	}
 	// create the new file
-	dst, err := os.Create(d + "/" + filename)
+	path := d + "/" + filename
+	dst, err := os.Create(path)
 	if err != nil {
             http.Error(w, err.Error(), http.StatusInternalServerError)
             return
@@ -51,6 +62,50 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
             http.Error(w, err.Error(), http.StatusInternalServerError)
             return
         }
-	http.Redirect(w, r, "/view/"+filename, http.StatusFound)
+	// if a resize was requested
+	maxwidth := r.FormValue("maxwidth")
+	if len(maxwidth) > 0 {
+		mw, err := strconv.Atoi(maxwidth)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		ext := strings.ToLower(filepath.Ext(path))
+		var encoder imgio.Encoder
+		switch ext {
+		case "png":
+			encoder = imgio.PNGEncoder()
+		case "jpg", "jpeg":
+			q := 80
+			quality := r.FormValue("quality")
+			if len(quality) > 0 {
+				q, err = strconv.Atoi(quality)
+				if err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
+			}
+			encoder = imgio.JPEGEncoder(q)
+		default:
+			http.Error(w, "only .png, .jpg, or .jpeg files are supported", http.StatusInternalServerError)
+			return
+		}
+		img, err := imgio.Open(path)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		rect := img.Bounds()
+		width := rect.Max.X - rect.Min.X
+		if width > mw {
+			height := (rect.Max.Y - rect.Min.Y) * mw / width
+			img = transform.Resize(img, mw, height, transform.Linear)
+			if err := imgio.Save(path, img, encoder); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+		}
+		
+	}
+	http.Redirect(w, r, "/view/"+path, http.StatusFound)
 }
-
