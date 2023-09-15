@@ -74,9 +74,9 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		ext := strings.ToLower(filepath.Ext(path))
 		var encoder imgio.Encoder
 		switch ext {
-		case "png":
+		case ".png":
 			encoder = imgio.PNGEncoder()
-		case "jpg", "jpeg":
+		case ".jpg", ".jpeg":
 			q := jpeg.DefaultQuality
 			quality := r.FormValue("quality")
 			if len(quality) > 0 {
