@@ -41,5 +41,5 @@ func TestSnippetsLong(t *testing.T) {
 	assert.Equal(t,
 		"VWwXetig mty8fORN UNia4NFm SQsfyFHk BLDdgVnc AcvKP2fs q8KxPH1A IaCzFj96 J0S2fqca jp3ElV9f ULIZ1aMX … Auk5RBWs tMpfMMlU p6jGYq3Z rTIBTHVM zGFwFwQi <b>j4O1AY21</b> BJnaiScY",
 		snippets("j4O1AY21", s))
-	
+
 }

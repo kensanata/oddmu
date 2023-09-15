@@ -7,12 +7,12 @@ import (
 
 func commands() {
 	if len(os.Args) == 3 && os.Args[1] == "html" {
-		p, err := loadPage(os.Args[2]);
+		p, err := loadPage(os.Args[2])
 		if err != nil {
-			fmt.Println(err);
+			fmt.Println(err)
 		} else {
-			p.renderHtml();
-			fmt.Println(p.Html);
+			p.renderHtml()
+			fmt.Println(p.Html)
 		}
 	} else if len(os.Args) > 2 && os.Args[1] == "search" {
 		index.load()

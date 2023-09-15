@@ -12,7 +12,7 @@ import (
 func TestAddAppend(t *testing.T) {
 	_ = os.RemoveAll("testdata")
 	index.load()
-	
+
 	p := &Page{Name: "testdata/fire", Body: []byte(`# Fire
 Orange sky above
 Reflects a distant fire

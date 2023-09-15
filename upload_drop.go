@@ -1,16 +1,16 @@
 package main
 
 import (
-	"path/filepath"
-	"io"
+	"github.com/anthonynsimon/bild/imgio"
+	"github.com/anthonynsimon/bild/transform"
 	"image/jpeg"
+	"io"
 	"net/http"
 	"os"
 	"path"
+	"path/filepath"
 	"strconv"
 	"strings"
-	"github.com/anthonynsimon/bild/imgio"
-	"github.com/anthonynsimon/bild/transform"
 )
 
 // uploadHandler uses the "upload.html" template to enable uploads.
@@ -49,20 +49,20 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 	// backup an existing file with the same name
 	_, err = os.Stat(filename)
 	if err != nil {
-		os.Rename(filename, filename + "~")
+		os.Rename(filename, filename+"~")
 	}
 	// create the new file
 	path := d + "/" + filename
 	dst, err := os.Create(path)
 	if err != nil {
-            http.Error(w, err.Error(), http.StatusInternalServerError)
-            return
-        }
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	defer dst.Close()
 	if _, err := io.Copy(dst, file); err != nil {
-            http.Error(w, err.Error(), http.StatusInternalServerError)
-            return
-        }
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	// if a resize was requested
 	maxwidth := r.FormValue("maxwidth")
 	if len(maxwidth) > 0 {
@@ -106,7 +106,7 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 				return
 			}
 		}
-		
+
 	}
 	http.Redirect(w, r, "/view/"+path, http.StatusFound)
 }

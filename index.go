@@ -96,7 +96,7 @@ func (p *Page) updateIndex() {
 }
 
 func searchDocuments(q string) []string {
-		words := strings.Fields(strings.ToLower(q))
+	words := strings.Fields(strings.ToLower(q))
 	var trigrams []trigram.T
 	for _, word := range words {
 		trigrams = trigram.Extract(word, trigrams)

@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/stretchr/testify/assert"
-	"testing"
 	"net/url"
+	"testing"
 )
 
 func TestSearch(t *testing.T) {

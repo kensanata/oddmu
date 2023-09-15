@@ -59,7 +59,7 @@ func (p *Page) save() error {
 	filename := p.Name + ".md"
 	s := bytes.ReplaceAll(p.Body, []byte{'\r'}, []byte{})
 	if len(s) == 0 {
-		_ = os.Rename(filename, filename + "~")
+		_ = os.Rename(filename, filename+"~")
 		return os.Remove(filename)
 	}
 	p.Body = s
@@ -72,7 +72,7 @@ func (p *Page) save() error {
 			return err
 		}
 	}
-	_ = os.Rename(filename, filename + "~")
+	_ = os.Rename(filename, filename+"~")
 	return os.WriteFile(filename, s, 0644)
 }
 

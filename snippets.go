@@ -75,7 +75,7 @@ func snippets(q string, s string) string {
 				to = len(s)
 			}
 			end := strings.LastIndex(s[:to], " ")
-			if end == -1 || end <= j + wl {
+			if end == -1 || end <= j+wl {
 				// OK, look for a longer word
 				end = strings.Index(s[to:], " ")
 				if end == -1 {

@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"github.com/stretchr/testify/assert"
 	"image"
-	"image/png"
 	"image/jpeg"
+	"image/png"
 	"mime/multipart"
 	"os"
 	"regexp"
@@ -24,7 +24,7 @@ func TestUpload(t *testing.T) {
 	assert.NoError(t, err)
 	_, err = field.Write([]byte("ok.txt"))
 	assert.NoError(t, err)
-	file, err := writer.CreateFormFile("file", "example.txt");
+	file, err := writer.CreateFormFile("file", "example.txt")
 	assert.NoError(t, err)
 	file.Write([]byte("Hello!"))
 	err = writer.Close()
@@ -47,7 +47,7 @@ func TestUploadPng(t *testing.T) {
 	writer := multipart.NewWriter(form)
 	field, _ := writer.CreateFormField("name")
 	field.Write([]byte("ok.png"))
-	file, _ := writer.CreateFormFile("file", "ok.png");
+	file, _ := writer.CreateFormFile("file", "ok.png")
 	img := image.NewRGBA(image.Rect(0, 0, 20, 20))
 	png.Encode(file, img)
 	writer.Close()
@@ -67,7 +67,7 @@ func TestUploadJpg(t *testing.T) {
 	writer := multipart.NewWriter(form)
 	field, _ := writer.CreateFormField("name")
 	field.Write([]byte("ok.jpg"))
-	file, _ := writer.CreateFormFile("file", "ok.jpg");
+	file, _ := writer.CreateFormFile("file", "ok.jpg")
 	img := image.NewRGBA(image.Rect(0, 0, 20, 20))
 	jpeg.Encode(file, img, &jpeg.Options{Quality: 90})
 	writer.Close()

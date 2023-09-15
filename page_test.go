@@ -71,7 +71,7 @@ From bed to bathroom
 A slow shuffle in the dark
 Moonlight floods the aisle`)}
 	p.save()
-	
+
 	o, err := loadPage("testdata/moon")
 	assert.NoError(t, err, "load page")
 	assert.Equal(t, p.Body, o.Body)
@@ -84,7 +84,7 @@ Moonlight floods the aisle`)}
 
 	// But the backup still exists.
 	assert.FileExists(t, "testdata/moon.md~")
-	
+
 	t.Cleanup(func() {
 		_ = os.RemoveAll("testdata")
 	})
