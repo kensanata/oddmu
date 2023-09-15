@@ -168,3 +168,11 @@ func (p *Page) summarize(q string) {
 	p.Html = sanitize(snippets(q, t))
 	p.Language = language(t)
 }
+
+func (p *Page) Dir() string {
+	d := filepath.Dir(p.Name)
+	if d == "." {
+		return ""
+	}
+	return d
+}

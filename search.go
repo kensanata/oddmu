@@ -2,12 +2,8 @@ package main
 
 import (
 	"fmt"
-	trigram "github.com/dgryski/go-trigram"
-	"io/fs"
-	"path/filepath"
+	"net/http"
 	"slices"
-	"strings"
-	"sync"
 	"unicode"
 	"unicode/utf8"
 )
@@ -20,85 +16,6 @@ type Search struct {
 	Query   string
 	Items   []Page
 	Results bool
-}
-
-// idx contains the two maps used for search. Make sure to lock and
-// unlock as appropriate.
-var idx = struct {
-	sync.RWMutex
-
-	// index is a struct containing the trigram index for search. It is
-	// generated at startup and updated after every page edit. The index
-	// is case-insensitive.
-	index trigram.Index
-
-	// documents is a map, mapping document ids of the index to page
-	// names.
-	documents map[trigram.DocID]string
-}{}
-
-// indexAdd reads a file and adds it to the index. This must happen
-// while the idx is locked, which is true when called from loadIndex.
-func indexAdd(path string, info fs.FileInfo, err error) error {
-	if err != nil {
-		return err
-	}
-	filename := path
-	if info.IsDir() || strings.HasPrefix(filename, ".") || !strings.HasSuffix(filename, ".md") {
-		return nil
-	}
-	name := strings.TrimSuffix(filename, ".md")
-	p, err := loadPage(name)
-	if err != nil {
-		return err
-	}
-	id := idx.index.Add(strings.ToLower(string(p.Body)))
-	idx.documents[id] = p.Name
-	return nil
-}
-
-// loadIndex loads all the pages and indexes them. This takes a while.
-// It returns the number of pages indexed.
-func loadIndex() (int, error) {
-	idx.Lock()
-	defer idx.Unlock()
-	idx.index = make(trigram.Index)
-	idx.documents = make(map[trigram.DocID]string)
-	err := filepath.Walk(".", indexAdd)
-	if err != nil {
-		idx.index = nil
-		idx.documents = nil
-		return 0, err
-	}
-	n := len(idx.documents)
-	return n, nil
-}
-
-// updateIndex updates the index for a single page. The old text is
-// loaded from the disk and removed from the index first, if it
-// exists.
-func (p *Page) updateIndex() {
-	idx.Lock()
-	defer idx.Unlock()
-	var id trigram.DocID
-	// This function does not rely on files actually existing, so
-	// let's quickly find the document id.
-	for docId, name := range idx.documents {
-		if name == p.Name {
-			id = docId
-			break
-		}
-	}
-	if id == 0 {
-		id = idx.index.Add(strings.ToLower(string(p.Body)))
-		idx.documents[id] = p.Name
-	} else {
-		o, err := loadPage(p.Name)
-		if err == nil {
-			idx.index.Delete(strings.ToLower(string(o.Body)), id)
-		}
-		idx.index.Insert(strings.ToLower(string(p.Body)), id)
-	}
 }
 
 func sortItems(a, b Page) int {
@@ -154,21 +71,18 @@ func search(q string) []Page {
 	if len(q) == 0 {
 		return make([]Page, 0)
 	}
-	words := strings.Fields(strings.ToLower(q))
-	var trigrams []trigram.T
-	for _, word := range words {
-		trigrams = trigram.Extract(word, trigrams)
-	}
-	// Keep the read lock for a short as possible. Make a list of
-	// the names we need to load and summarize.
-	idx.RLock()
-	ids := idx.index.QueryTrigrams(trigrams)
-	names := make([]string, len(ids))
-	for i, id := range ids {
-		names[i] = idx.documents[id]
-	}
-	idx.RUnlock()
+	names := searchDocuments(q)
 	items := loadAndSummarize(names, q)
 	slices.SortFunc(items, sortItems)
 	return items
+}
+
+// searchHandler presents a search result. It uses the query string in
+// the form parameter "q" and the template "search.html". For each
+// page found, the HTML is just an extract of the actual body.
+func searchHandler(w http.ResponseWriter, r *http.Request) {
+	q := r.FormValue("q")
+	items := search(q)
+	s := &Search{Query: q, Items: items, Results: len(items) > 0}
+	renderTemplate(w, "search", s)
 }

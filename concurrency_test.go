@@ -7,7 +7,8 @@ import (
 
 // Use go test -race to see whether this is a race condition.
 func TestLoadAndSearch(t *testing.T) {
-	go loadIndex()
+	index.reset()
+	go index.load()
 	q := "Oddµ"
 	pages := search(q)
 	assert.Zero(t, len(pages))

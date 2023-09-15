@@ -15,7 +15,7 @@ func commands() {
 			fmt.Println(p.Html);
 		}
 	} else if len(os.Args) > 2 && os.Args[1] == "search" {
-		loadIndex()
+		index.load()
 		for _, q := range os.Args[2:] {
 			items := search(q)
 			fmt.Printf("Search %s: %d results\n", q, len(items))

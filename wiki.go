@@ -3,10 +3,8 @@ package main
 import (
 	"fmt"
 	"html/template"
-	"io"
 	"net/http"
 	"os"
-	"path/filepath"
 	"regexp"
 )
 
@@ -20,7 +18,7 @@ var templates = template.Must(
 // results in the editHandler being called with title "foo". The
 // regular expression doesn't define the handlers (this happens in the
 // main function).
-var validPath = regexp.MustCompile("^/([^/]+)/(.+)$")
+var validPath = regexp.MustCompile("^/([^/]+)/(.*)$")
 
 // titleRegexp is a regular expression matching a level 1 header line
 // in a Markdown document. The first group matches the actual text and
@@ -37,160 +35,21 @@ func renderTemplate(w http.ResponseWriter, tmpl string, data any) {
 	}
 }
 
-// rootHandler just redirects to /view/index.
-func rootHandler(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "/view/index", http.StatusFound)
-}
-
-// viewHandler serves existing files (including markdown files with
-// the .md extension). If the requested file does not exist, a page
-// with the same name is loaded. This means adding the .md extension
-// and using the "view.html" template to render the HTML. Both
-// attempts fail, the browser is redirected to an edit page.
-func viewHandler(w http.ResponseWriter, r *http.Request, name string) {
-	body, err := os.ReadFile(name)
-	if err == nil {
-		w.Write(body)
-		return
-	}
-	p, err := loadPage(name)
-	if err == nil {
-		p.handleTitle(true)
-		p.renderHtml()
-		renderTemplate(w, "view", p)
-		return
-	}
-	http.Redirect(w, r, "/edit/"+name, http.StatusFound)
-}
-
-// editHandler uses the "edit.html" template to present an edit page.
-// When editing, the page title is not overriden by a title in the
-// text. Instead, the page name is used. The edit is saved using the
-// saveHandler.
-func editHandler(w http.ResponseWriter, r *http.Request, name string) {
-	p, err := loadPage(name)
-	if err != nil {
-		p = &Page{Title: name, Name: name}
-	} else {
-		p.handleTitle(false)
-	}
-	renderTemplate(w, "edit", p)
-}
-
-// saveHandler takes the "body" form parameter and saves it. The
-// browser is redirected to the page view.
-func saveHandler(w http.ResponseWriter, r *http.Request, name string) {
-	body := r.FormValue("body")
-	p := &Page{Name: name, Body: []byte(body)}
-	err := p.save()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	http.Redirect(w, r, "/view/"+name, http.StatusFound)
-}
-
-// addHandler uses the "add.html" template to present an empty edit
-// page. What you type there is appended to the page using the
-// appendHandler.
-func addHandler(w http.ResponseWriter, r *http.Request, name string) {
-	p, err := loadPage(name)
-	if err != nil {
-		p = &Page{Title: name, Name: name}
-	} else {
-		p.handleTitle(false)
-	}
-	renderTemplate(w, "add", p)
-}
-
-// appendHandler takes the "body" form parameter and appends it. The
-// browser is redirected to the page view.
-func appendHandler(w http.ResponseWriter, r *http.Request, name string) {
-	body := r.FormValue("body")
-	p, err := loadPage(name)
-	if err != nil {
-		p = &Page{Title: name, Name: name, Body: []byte(body)}
-	} else {
-		p.handleTitle(false)
-		p.Body = append(p.Body, []byte(body)...)
-	}
-	err = p.save()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	http.Redirect(w, r, "/view/"+name, http.StatusFound)
-}
-
-// uploadHandler uses the "upload.html" template to enable uploads.
-// The file is saved using the saveUploadHandler.
-func uploadHandler(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, "upload", nil)
-}
-
-// saveUploadHandler takes the "name" form field and the "file" form
-// file and saves the file under the given name. The browser is
-// redirected to the view of that file.
-func saveUploadHandler(w http.ResponseWriter, r *http.Request) {
-	filename := r.FormValue("name")
-	file, _, err := r.FormFile("file")
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	defer file.Close()
-	// backup an existing file with the same name
-	_, err = os.Stat(filename)
-	if err != nil {
-		os.Rename(filename, filename + "~")
-	}
-	// create the directory, if necessary
-	d := filepath.Dir(filename)
-	if d != "." {
-		err := os.MkdirAll(d, 0755)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-	}
-	// create the new file
-	dst, err := os.Create(filename)
-	if err != nil {
-            http.Error(w, err.Error(), http.StatusInternalServerError)
-            return
-        }
-	defer dst.Close()
-	if _, err := io.Copy(dst, file); err != nil {
-            http.Error(w, err.Error(), http.StatusInternalServerError)
-            return
-        }
-	http.Redirect(w, r, "/view/"+filename, http.StatusFound)
-}
-
 // makeHandler returns a handler that uses the URL path without the
 // first path element as its argument, e.g. if the URL path is
 // /edit/foo/bar, the editHandler is called with "foo/bar" as its
 // argument. This uses the second group from the validPath regular
-// expression.
-func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
+// expression. The boolean argument indicates whether the following
+// path is required. When false, a URL /upload/ is OK.
+func makeHandler(fn func(http.ResponseWriter, *http.Request, string), required bool) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		m := validPath.FindStringSubmatch(r.URL.Path)
-		if m != nil {
+		if m != nil && (!required || len(m[2]) > 0) {
 			fn(w, r, m[2])
 		} else {
 			http.NotFound(w, r)
 		}
 	}
-}
-
-// searchHandler presents a search result. It uses the query string in
-// the form parameter "q" and the template "search.html". For each
-// page found, the HTML is just an extract of the actual body.
-func searchHandler(w http.ResponseWriter, r *http.Request) {
-	q := r.FormValue("q")
-	items := search(q)
-	s := &Search{Query: q, Items: items, Results: len(items) > 0}
-	renderTemplate(w, "search", s)
 }
 
 // getPort returns the environment variable ODDMU_PORT or the default
@@ -203,12 +62,12 @@ func getPort() string {
 	return port
 }
 
-// scheduleLoadIndex calls loadIndex and prints some messages before
-// and after. For testing, call loadIndex directly and skip the
+// scheduleLoadIndex calls index.load and prints some messages before
+// and after. For testing, call index.load directly and skip the
 // messages.
 func scheduleLoadIndex() {
 	fmt.Print("Indexing pages\n")
-	n, err := loadIndex()
+	n, err := index.load()
 	if err == nil {
 		fmt.Printf("Indexed %d pages\n", n)
 	} else {
@@ -227,13 +86,13 @@ func scheduleLoadLanguages() {
 
 func serve() {
 	http.HandleFunc("/", rootHandler)
-	http.HandleFunc("/view/", makeHandler(viewHandler))
-	http.HandleFunc("/edit/", makeHandler(editHandler))
-	http.HandleFunc("/save/", makeHandler(saveHandler))
-	http.HandleFunc("/add/", makeHandler(addHandler))
-	http.HandleFunc("/append/", makeHandler(appendHandler))
-	http.HandleFunc("/upload", uploadHandler)
-	http.HandleFunc("/save", saveUploadHandler)
+	http.HandleFunc("/view/", makeHandler(viewHandler, true))
+	http.HandleFunc("/edit/", makeHandler(editHandler, true))
+	http.HandleFunc("/save/", makeHandler(saveHandler, true))
+	http.HandleFunc("/add/", makeHandler(addHandler, true))
+	http.HandleFunc("/append/", makeHandler(appendHandler, true))
+	http.HandleFunc("/upload/", makeHandler(uploadHandler, false))
+	http.HandleFunc("/drop/", makeHandler(dropHandler, false))
 	http.HandleFunc("/search", searchHandler)
 	go scheduleLoadIndex()
 	go scheduleLoadLanguages()

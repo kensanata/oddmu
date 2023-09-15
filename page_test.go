@@ -65,7 +65,7 @@ I am cold, alone</p>
 // wipes testdata
 func TestPageDir(t *testing.T) {
 	_ = os.RemoveAll("testdata")
-	loadIndex()
+	index.load()
 	p := &Page{Name: "testdata/moon", Body: []byte(`# Moon
 From bed to bathroom
 A slow shuffle in the dark

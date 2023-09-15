@@ -253,7 +253,7 @@ MDCertificateAgreement accepted
     ServerAdmin alex@alexschroeder.ch
     ServerName transjovian.org
     SSLEngine on
-    ProxyPassMatch ^/(search|upload|save|(view|edit|save|add|append)/(.*))?$ http://localhost:8080/$1
+    ProxyPassMatch ^/(search|(view|edit|save|add|append|upload|drop)/(.*))?$ http://localhost:8080/$1
 </VirtualHost>
 ```
 
@@ -311,11 +311,11 @@ htpasswd -D .htpasswd berta
 ```
 
 Modify your site configuration and protect the `/edit/`, `/save/`,
-`/add/`, `/append/`, `/upload` and `/save` URLs with a password by
+`/add/`, `/append/`, `/upload/` and `/drop/` URLs with a password by
 adding the following to your `<VirtualHost *:443>` section:
 
 ```apache
-<LocationMatch "^/(upload|save|(edit|save|add|append)/(.*))$">
+<LocationMatch "^/(edit|save|add|append|upload|drop)/">
   AuthType Basic
   AuthName "Password Required"
   AuthUserFile /home/oddmu/.htpasswd
@@ -340,7 +340,7 @@ webserver can read (world readable file, world readable and executable
 directory). Populate it with files.
 
 Make sure that none of the static files look like the wiki paths
-`/view/`, `/edit/`, `/save/`, `/add/`, `/append/`, `/upload`, `/save`
+`/view/`, `/edit/`, `/save/`, `/add/`, `/append/`, `/upload/`, `/drop/`
 or `/search`. For example, create a file called `robots.txt`
 containing the following, tellin all robots that they're not welcome.
 
@@ -366,7 +366,7 @@ above.
 This requires a valid login by the user "alex" or "berta":
 
 ```apache
-<LocationMatch "^/(edit|save|add|append)/intetebi/">
+<LocationMatch "^/(edit|save|add|append|upload|drop)/intetebi/">
   Require user alex berta
 </LocationMatch>
 ```
