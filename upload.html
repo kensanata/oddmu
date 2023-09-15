@@ -7,22 +7,32 @@
     <title>Upload File</title>
     <style>
 html { max-width: 70ch; padding: 2ch; margin: auto; color: #111; background: #ffe; }
+body { hyphens: auto; }
 form, textarea { width: 100%; }
+label { display: inline-block; width: 20ch }
     </style>
   </head>
-  <body>
+  <body lang="en">
     <h1>Upload File</h1>
     <form action="/drop/{{.}}" method="POST" enctype="multipart/form-data">
       <p>When uploading pictures from a phone, its filename is going to be something cryptic like IMG_1234.JPG.
         Please provide your own filename.
-      <p><label>Filename to use: <input type="text" name="name" placeholder="image.jpg" autofocus required></label>
+      <p><label for="text">Filename to use:</label>
+        <input id="text" name="name" type="text" placeholder="image.jpg" autofocus required>
       <p>If the uploaded file is a picture from a phone, it's size is going to be too big for a regular site.
+        Resizing only works for JPG and PNG files. Most pictures from a phone are JPG images.
         Feel free to specify a max width of 1200 pixels, for example.
-      <p><label>Max width: <input type="number" min="10" name="maxwidth" placeholder="1200"></label>
+      <p><label for="maxwidth">Max width:</label>
+        <input id="maxwidth" name="maxwidth" type="number" min="10" placeholder="1200">
       <p>If the uploaded file is a JPEG-encoded picture, like most pictures from a phone, you can specify a quality.
         Typically, a quality of 60 is not too bad and a quality of 90 is more than enough.
-      <p><label>Quality: <input type="number" min="1" max="99" name="quality" placeholder="80"></label>
-      <p><input type="file" name="file" required>
+      <p><label for="quality">Quality:</label>
+        <input id="quality" name="quality" type="number" min="1" max="99" placeholder="75">
+      <p>Finally, pick the file or photo to upload.
+        Picture metadata is only removed if the picture gets resized.
+        Providing a new max width is recommended for all pictures.
+      <p><label for="file">Pick file to upload:</label>
+        <input type="file" name="file" required>
       <p><input type="submit" value="Save">
         <a href="/view/index"><button type="button">Cancel</button></a></p>
     </form>

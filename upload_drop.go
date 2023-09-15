@@ -3,6 +3,7 @@ package main
 import (
 	"path/filepath"
 	"io"
+	"image/jpeg"
 	"net/http"
 	"os"
 	"path"
@@ -76,7 +77,7 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		case "png":
 			encoder = imgio.PNGEncoder()
 		case "jpg", "jpeg":
-			q := 80
+			q := jpeg.DefaultQuality
 			quality := r.FormValue("quality")
 			if len(quality) > 0 {
 				q, err = strconv.Atoi(quality)
