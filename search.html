@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="format-detection" content="telephone=no">
@@ -10,18 +10,21 @@ html { max-width: 65ch; padding: 2ch; margin: auto; color: #111; background: #ff
 body { hyphens: auto; }
 header a { margin-right: 1ch; }
 form { display: inline-block; }
+input#search { width: 20ch; }
+button { background: #eee; color: inherit; border-radius: 4px; border-width: 1px; }
 img { max-width: 20%; }
 .result { font-size: larger }
 .score { font-size: smaller; opacity: 0.8; }
     </style>
   </head>
-  <body lang="en">
+  <body>
     <header>
       <a href="#main">Skip navigation</a>
       <a href="/view/index">Home</a>
       <form role="search" action="/search" method="GET">
-        <input type="text" value="{{.Query}}" spellcheck="false" name="q" required>
-        <button>Search</button>
+        <label for="search">Search:</label>
+        <input id="search" type="text" value="{{.Query}}" spellcheck="false" name="q" required>
+        <button>Go</button>
       </form>
     </header>
     <main id="main">

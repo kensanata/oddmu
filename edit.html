@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="format-detection" content="telephone=no">
@@ -15,7 +15,7 @@ form, textarea { width: 100%; }
     <form action="/save/{{.Name}}" method="POST">
       <textarea name="body" rows="20" cols="80" placeholder="# Title
 
-Text" autofocus>{{printf "%s" .Body}}</textarea>
+Text" lang="" autofocus>{{printf "%s" .Body}}</textarea>
       <p><input type="submit" value="Save">
         <a href="/view/{{.Name}}"><button type="button">Cancel</button></a></p>
     </form>
