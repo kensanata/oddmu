@@ -30,6 +30,11 @@ img { max-width: 20%; }
     <main id="main">
       <h1>Search for {{.Query}}</h1>
       {{if .Results}}
+      <p>
+        {{if gt .Page 2}}<a href="/search?q={{.Query}}&page=1">First</a>{{end}}
+        {{if gt .Page 1}}<a href="/search?q={{.Query}}&page={{.Previous}}">Previous</a>{{end}}
+        Page {{.Page}}
+        {{if .More}}<a href="/search?q={{.Query}}&page={{.Next}}">Next</a>{{end}}
       {{range .Items}}
       <article lang="{{.Language}}">
         <p><a class="result" href="/view/{{.Name}}">{{.Title}}</a>

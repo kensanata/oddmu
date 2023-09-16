@@ -119,6 +119,14 @@ is a byte array and that's why we need to call `printf`).
 
 For the `search.html` template only:
 
+`{{.Page}}` is the page number in the results.
+
+`{{.Previous}}` and `{{.Next}} are the previous and next page number
+in the results since doing arithmetics in templates is hard. The first
+page number is 1.
+
+`{{.More}}` indicates if there are any more search results.
+
 `{{.Results}}` indicates if there were any search results.
 
 `{{.Items}}` is an array of pages, each containing a search result. A

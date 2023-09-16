@@ -10,6 +10,6 @@ func TestLoadAndSearch(t *testing.T) {
 	index.reset()
 	go index.load()
 	q := "Oddµ"
-	pages := search(q)
+	pages, _ := search(q, 1)
 	assert.Zero(t, len(pages))
 }

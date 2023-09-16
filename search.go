@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"slices"
+	"strconv"
 	"unicode"
 	"unicode/utf8"
 )
@@ -14,11 +15,15 @@ import (
 // a search result, Body and Html are simple extracts.
 type Search struct {
 	Query   string
-	Items   []Page
+	Items   []*Page
+	Previous int
+	Page    int
+	Next    int
+	More    bool
 	Results bool
 }
 
-func sortItems(a, b Page) int {
+func sortItems(a, b *Page) int {
 	// Sort by score
 	if a.Score < b.Score {
 		return 1
@@ -48,33 +53,46 @@ func sortItems(a, b Page) int {
 	}
 }
 
-// loadAndSummarize loads the pages named and summarizes them for the
-// query give.
-func loadAndSummarize(names []string, q string) []Page {
-	// Load and summarize the items.
-	items := make([]Page, len(names))
+// load the pages named.
+func load(names []string) []*Page {
+	items := make([]*Page, len(names))
 	for i, name := range names {
 		p, err := loadPage(name)
 		if err != nil {
 			fmt.Printf("Error loading %s\n", name)
 		} else {
-			p.summarize(q)
-			items[i] = *p
+			items[i] = p
 		}
 	}
 	return items
 }
 
 // search returns a sorted []Page where each page contains an extract
-// of the actual Page.Body in its Page.Html.
-func search(q string) []Page {
+// of the actual Page.Body in its Page.Html. Page size is 20. The
+// boolean return value indicates whether there are more results.
+func search(q string, page int) ([]*Page, bool) {
 	if len(q) == 0 {
-		return make([]Page, 0)
+		return make([]*Page, 0), false
 	}
 	names := searchDocuments(q)
-	items := loadAndSummarize(names, q)
+	items := load(names)
+	for _, p := range items {
+		p.score(q)
+	}
 	slices.SortFunc(items, sortItems)
-	return items
+	from := 20*(page-1)
+	if from > len(names) {
+		return make([]*Page, 0), false
+	}
+	to := from + 20
+	if to > len(names) {
+		to = len(names)
+	}
+	items = items[from:to]
+	for _, p := range items {
+		p.summarize(q)
+	}
+	return items, to < len(names)
 }
 
 // searchHandler presents a search result. It uses the query string in
@@ -82,7 +100,11 @@ func search(q string) []Page {
 // page found, the HTML is just an extract of the actual body.
 func searchHandler(w http.ResponseWriter, r *http.Request) {
 	q := r.FormValue("q")
-	items := search(q)
-	s := &Search{Query: q, Items: items, Results: len(items) > 0}
+	page, err := strconv.Atoi(r.FormValue("page"))
+	if err != nil {
+		page = 1
+	}
+	items, more := search(q, page)
+	s := &Search{Query: q, Items: items, Previous: page-1, Page: page, Next: page+1, Results: len(items) > 0, More: more}
 	renderTemplate(w, "search", s)
 }

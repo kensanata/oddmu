@@ -186,10 +186,14 @@ func (p *Page) plainText() string {
 	return string(text)
 }
 
-// summarize for query string q sets Page.Html to an extract.
-func (p *Page) summarize(q string) {
+// score sets Page.Title and computes Page.Score.
+func (p *Page) score(q string) {
 	p.handleTitle(true)
 	p.Score = score(q, string(p.Body)) + score(q, p.Title)
+}
+
+// summarize sets Page.Html to an extract and sets Page.Language.
+func (p *Page) summarize(q string) {
 	t := p.plainText()
 	p.Html = sanitize(snippets(q, t))
 	p.Language = language(t)
