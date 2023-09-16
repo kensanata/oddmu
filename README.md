@@ -31,10 +31,25 @@ Oddmu. 🙃
 
 This wiki uses a [Markdown
 library](https://github.com/gomarkdown/markdown) to generate the web
-pages from Markdown. There is no additional wiki markup. Most
-importantly, double square brackets are not a link. If you're used to
-that, it'll be strange as you need to repeat the name: `[like
-this](like this)`.
+pages from Markdown. There are two extensions Oddmu adds to the
+library: local links and hashtags.
+
+Local links use double square brackets `[[like this]]`. If you need to
+change the link text, you need to use regular Markdown. Don't forget
+to [percent-encode](https://en.wikipedia.org/wiki/Percent-encoding)
+the link target. Example: `[here](like%20this)`.
+
+Hashtags link to searches for the hashtag. Hashtags are separate from
+titles because there is no space after the hash. Use the underscore to
+use hashtags consisting of multiple words.
+
+```
+# Title
+
+Text
+
+#Tag #Another_Tag
+```
 
 The Markdown processor comes with a few extensions, some of which are
 enable by default:
@@ -69,19 +84,6 @@ Cat
 
 Internet
 : Vector of transmission for pictures of cats
-```
-
-There is another extension made: hashtags link to searches for the
-hashtag. Hashtags are separate from titles because there is no space
-after the hash. Use the underscore to use hashtags consisting of
-multiple words.
-
-```
-# Title
-
-Text
-
-#Tag #Another_Tag
 ```
 
 ## Templates

@@ -104,6 +104,30 @@ func (p *Page) handleTitle(replace bool) {
 	}
 }
 
+// wikiLink returns an inline parser function. This indirection is
+// required because we want to call the previous definition in case
+// this is not a wikiLink.
+func wikiLink(p *parser.Parser,	fn func(p *parser.Parser, data []byte, offset int) (int, ast.Node)) func(p *parser.Parser, data []byte, offset int) (int, ast.Node) {
+	return func (p *parser.Parser, original []byte, offset int) (int, ast.Node) {
+		data := original[offset:]
+		n := len(data)
+		// minimum: [[X]]
+		if n < 5 || data[1] != '[' {
+			return fn(p, original, offset)
+		}
+		i := 2
+		for i+1 < n && data[i] != ']' && data[i+1] != ']' {
+			i++
+		}
+		text := data[2:i+1]
+		link := &ast.Link{
+			Destination: []byte(url.PathEscape(string(text))),
+		}
+		ast.AppendChild(link, &ast.Text{Leaf: ast.Leaf{Literal: text}})
+		return i+3, link
+	}
+}
+
 func hashtag(p *parser.Parser, data []byte, offset int) (int, ast.Node) {
 	data = data[offset:]
 	i := 0
@@ -126,6 +150,8 @@ func hashtag(p *parser.Parser, data []byte, offset int) (int, ast.Node) {
 // renderHtml renders the Page.Body to HTML and sets Page.Html.
 func (p *Page) renderHtml() {
 	parser := parser.New()
+	prev := parser.RegisterInline('[', nil)
+	parser.RegisterInline('[', wikiLink(parser, prev))
 	parser.RegisterInline('#', hashtag)
 	maybeUnsafeHTML := markdown.ToHTML(p.Body, parser, nil)
 	p.Name = nameEscape(p.Name)
