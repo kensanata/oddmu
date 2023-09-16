@@ -17,7 +17,7 @@ func commands() {
 	} else if len(os.Args) > 2 && os.Args[1] == "search" {
 		index.load()
 		for _, q := range os.Args[2:] {
-			items, more := search(q, 1)
+			items, more, _ := search(q, 1)
 			fmt.Printf("Search %s: %d results\n", q, len(items))
 			for _, p := range items {
 				fmt.Printf("* %s (%d)\n", p.Title, p.Score)

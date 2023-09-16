@@ -21,6 +21,9 @@ type Index struct {
 	// documents is a map, mapping document ids of the index to
 	// page names.
 	documents map[trigram.DocID]string
+
+	// names is a map, mapping page names to titles.
+	titles map[string]string
 }
 
 // idx is the global Index per wiki.
@@ -30,6 +33,7 @@ var index Index
 func (idx *Index) reset() {
 	idx.index = nil
 	idx.documents = nil
+	idx.titles = nil
 }
 
 // add reads a file and adds it to the index. This must happen while
@@ -47,8 +51,10 @@ func (idx *Index) add(path string, info fs.FileInfo, err error) error {
 	if err != nil {
 		return err
 	}
+	p.handleTitle(false)
 	id := idx.index.Add(strings.ToLower(string(p.Body)))
 	idx.documents[id] = p.Name
+	idx.titles[p.Name] = p.Title
 	return nil
 }
 
@@ -59,6 +65,7 @@ func (idx *Index) load() (int, error) {
 	defer idx.Unlock()
 	idx.index = make(trigram.Index)
 	idx.documents = make(map[trigram.DocID]string)
+	idx.titles = make(map[string]string)
 	err := filepath.Walk(".", idx.add)
 	if err != nil {
 		idx.reset()
@@ -90,23 +97,27 @@ func (p *Page) updateIndex() {
 		o, err := loadPage(p.Name)
 		if err == nil {
 			index.index.Delete(strings.ToLower(string(o.Body)), id)
+			o.handleTitle(false)
+			delete(index.titles, o.Title)
 		}
 		index.index.Insert(strings.ToLower(string(p.Body)), id)
+		p.handleTitle(false)
+		index.titles[p.Name] = p.Title
 	}
 }
 
+// searchDocuments searches the index for a string. This requires the
+// index to be locked.
 func searchDocuments(q string) []string {
 	words := strings.Fields(strings.ToLower(q))
 	var trigrams []trigram.T
 	for _, word := range words {
 		trigrams = trigram.Extract(word, trigrams)
 	}
-	index.RLock()
 	ids := index.index.QueryTrigrams(trigrams)
 	names := make([]string, len(ids))
 	for i, id := range ids {
 		names[i] = index.documents[id]
 	}
-	index.RUnlock()
 	return names
 }

@@ -119,15 +119,13 @@ is a byte array and that's why we need to call `printf`).
 
 For the `search.html` template only:
 
-`{{.Page}}` is the page number in the results.
-
-`{{.Previous}}` and `{{.Next}} are the previous and next page number
-in the results since doing arithmetics in templates is hard. The first
-page number is 1.
+`{{.Previous}}`, `{{.Page}}`, `{{.Next}}` and `{{.Last}}` are the
+previous, current, next and last page number in the results since
+doing arithmetics in templates is hard. The first page number is 1.
 
 `{{.More}}` indicates if there are any more search results.
 
-`{{.Results}}` indicates if there were any search results.
+`{{.Results}}` indicates if there were any search results at all.
 
 `{{.Items}}` is an array of pages, each containing a search result. A
 search result is a page (with the properties seen above). Thus, to
@@ -440,6 +438,22 @@ Trigrams are sometimes strange: In a text containing the words "main"
 and "rail", a search for "mail" returns a match because the trigrams
 "mai" and "ail" are found. In this situation, the result has a score
 of 0.
+
+The sorting of all the pages, however, does not depend on scoring!
+Computing the score is expensive because the page must be loaded from
+disk. Therefore, results are sorted by title:
+
+- If the page title contains the query string, it gets sorted first.
+- If the page title begins with a number, it is sorted descending.
+- All other pages follow, sorted ascending.
+
+The effect is that first, the pages with matches in the page title are
+shown, and then all the others. Within these two groups, the most
+recent blog posts are shown first, if and only if the page title
+begins with an ISO date like 2023-09-16.
+
+The score and highlighting of snippets is used to help visitors decide
+which links to click.
 
 ## Limitations
 
