@@ -20,12 +20,12 @@ img { max-width: 100%; }
     <header>
       <a href="#main">Skip navigation</a>
       <a href="/view/index">Home</a>
-      <a href="/edit/{{.Name}}">Edit</a>
-      <a href="/add/{{.Name}}">Add</a>
-      <a href="/upload/{{.Dir}}">Upload</a>
+      <a href="/edit/{{.Name}}" accesskey="e">Edit</a>
+      <a href="/add/{{.Name}}" accesskey="a">Add</a>
+      <a href="/upload/{{.Dir}}" accesskey="u">Upload</a>
       <form role="search" action="/search" method="GET">
         <label for="search">Search:</label>
-        <input id="search" type="text" spellcheck="false" name="q" required>
+        <input id="search" type="text" spellcheck="false" name="q" accesskey="f" required>
         <button>Go</button>
       </form>
     </header>
