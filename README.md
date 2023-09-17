@@ -444,25 +444,25 @@ Computing the score is expensive because the page must be loaded from
 disk. Therefore, results are sorted by title:
 
 - If the page title contains the query string, it gets sorted first.
-- If the page title begins with a number, it is sorted descending.
+- If the page name (the filename!) begins with a number, it is sorted
+  descending.
 - All other pages follow, sorted ascending.
 
 The effect is that first, the pages with matches in the page title are
 shown, and then all the others. Within these two groups, the most
-recent blog posts are shown first, if and only if the page title
-begins with an ISO date like 2023-09-16.
+recent blog posts are shown first. This assumes that blog pages start
+with an ISO date like "2023-09-16".
 
 The score and highlighting of snippets is used to help visitors decide
 which links to click.
 
 ## Limitations
 
-Page titles are filenames with `.md` appended. If your filesystem
+Page names are filenames with `.md` appended. If your filesystem
 cannot handle it, it can't be a page name.
 
 The pages are indexed as the server starts and the index is kept in
-memory. If you have a ton of pages, this surely wastes a lot of
-memory.
+memory. If you have a ton of pages, this takes a lot of memory.
 
 Files may not end with a tilde (`~`) – these are backup files.
 
@@ -470,7 +470,8 @@ You cannot edit uploaded files. If you upload a file called
 `hello.txt` and attempt to edit it by using `/edit/hello.txt` you will
 create a page with the name `hello.txt.md` instead.
 
-You cannot delete uploaded files via the web.
+You cannot delete uploaded files via the web. (You can delete regular
+wiki pages by saving an empty file.)
 
 ## Bugs
 
