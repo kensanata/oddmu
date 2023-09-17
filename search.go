@@ -53,10 +53,10 @@ func sortNames(q string) func (a, b string) int {
 				return 0
 			}
 		}
-		// Otherwise sort ascending.
-		if a < b {
+		// Otherwise sort by title, ascending.
+		if index.titles[a] < index.titles[b] {
 			return -1
-		} else if a > b {
+		} else if index.titles[a] > index.titles[b] {
 			return 1
 		} else {
 			return 0

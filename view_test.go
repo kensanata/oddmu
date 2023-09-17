@@ -46,7 +46,7 @@ func TestPageTitleWithQuestionMark(t *testing.T) {
 
 	body := assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/testdata/How%20about%20no%3F", nil)
 	assert.Contains(t, body, "No means no")
-	assert.Contains(t, body, "<a href=\"/edit/testdata/How%20about%20no%3F\">Edit</a>")
+	assert.Contains(t, body, "<a href=\"/edit/testdata/How%20about%20no%3F\" accesskey=\"e\">Edit</a>")
 
 	t.Cleanup(func() {
 		_ = os.RemoveAll("testdata")
