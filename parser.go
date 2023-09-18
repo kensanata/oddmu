@@ -52,12 +52,59 @@ func hashtag(p *parser.Parser, data []byte, offset int) (int, ast.Node) {
 	return i, link
 }
 
+// account links a social media account @account@domain to
+// https://domain/user/account.
+func account(p *parser.Parser, data []byte, offset int) (int, ast.Node) {
+	data = data[offset:]
+	i := 1 // skip @ of username
+	n := len(data)
+	d := 0
+	for i < n && (
+		data[i] >= 'a' && data[i] <= 'z' ||
+		data[i] >= 'A' && data[i] <= 'Z' ||
+		data[i] >= '0' && data[i] <= '9' ||
+		data[i] == '@' ||
+		data[i] == '.' ||
+		data[i] == '-') {
+		if data[i] == '@' {
+			if d != 0 {
+				return 0, nil
+			} else {
+				d = i+1 // skip @ of domain
+			}
+		}
+		i++
+	}
+	for i > 1 && (
+		data[i-1] == '.' ||
+		data[i-1] == '-') {
+		i--
+	}
+	if i == 0 {
+		return 0, nil
+	}
+	user := data[0:d-1] // includes @
+	domain := data[d:i]
+	dest := make([]byte, 0, 14 + len(domain) + len(user))
+	dest = append(dest, []byte("https://")...) // len 8
+	dest = append(dest, domain...)
+	dest = append(dest, []byte("/users/")...) // len 7
+	dest = append(dest, user[1:]...) // skip @
+	link := &ast.Link{
+		Destination: dest,
+		Title:       data[0:i],
+	}
+	ast.AppendChild(link, &ast.Text{Leaf: ast.Leaf{Literal: user}})
+	return i, link
+}
+
 // renderHtml renders the Page.Body to HTML and sets Page.Html.
 func (p *Page) renderHtml() {
 	parser := parser.New()
 	prev := parser.RegisterInline('[', nil)
 	parser.RegisterInline('[', wikiLink(parser, prev))
 	parser.RegisterInline('#', hashtag)
+	parser.RegisterInline('@', account)
 	maybeUnsafeHTML := markdown.ToHTML(p.Body, parser, nil)
 	p.Name = nameEscape(p.Name)
 	p.Html = sanitizeBytes(maybeUnsafeHTML)
