@@ -1,0 +1,42 @@
+ODDMU-SEARCH(1)
+
+# NAME
+
+oddmu-search - search the Oddmu pages from the command-line
+
+# SYNOPSIS
+
+*oddmu search* _terms..._
+
+# DESCRIPTION
+
+The "search" subcommand searches the Markdown files in the current
+directory (!), returning the search result as a Markdown-formatted
+list.
+
+The use of a trigram index makes it possible to find substrings and
+for the word order not to matter, but it also makes the search results
+a bit harder to understand. See _oddmu-search_(7) for more.
+
+# EXAMPLE
+
+Search for "oddmu" in the Markdown files of the current directory:
+
+```
+oddmu search oddmu
+```
+
+Result:
+
+```
+Search oddmu: 1 result
+* [Oddµ: A minimal wiki](README) (5)
+```
+
+# SEE ALSO
+
+_oddmu_(1), _oddmu-search_(7)
+
+# AUTHORS
+
+Maintained by Alex Schroeder <alex@gnu.org>.

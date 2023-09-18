@@ -22,7 +22,7 @@ func TestIndex(t *testing.T) {
 
 func TestSearchHashtag(t *testing.T) {
 	index.load()
-	q := "#Another_Tag"
+	q := "#like_this"
 	pages, _, _ := search(q, 1)
 	assert.NotZero(t, len(pages))
 }

@@ -1,0 +1,101 @@
+ODDMU(1)
+
+# NAME
+
+oddmu - a wiki server
+
+Oddmu is sometimes written Oddµ because µ is the letter mu.
+
+# SYNOPSIS
+
+*oddmu*
+
+# DESCRIPTION
+
+The oddmu program serves the current working directory as a wiki on port 8080.
+Point your browser to http://localhost:8080/ to get started. This is equivalent
+to http://localhost:8080/view/index – the first page you'll create, most likely.
+
+If you request a page that doesn't exist, oddmu tries to find a matching
+Markdown file by appending the extension ".md" to the page name. In the example
+above, the page name requested is "index" and the file name oddmu tries to read
+is "index.md". If no such file exists, oddmu offers you to create the page.
+
+If your files don't provide their own title ("# title"), the file name (without
+".md") is used for the page title.
+
+Subdirectories are created as necessary.
+
+See _oddmu_(5) for details about the page formatting.
+
+# CONFIGURATION
+
+The template files are the HTML files in the working directory: "add.html",
+"edit.html", "search.html", "upload.html" and "view.html". Feel free to change
+the templates and restart the server.
+
+The first change you should make is to replace the email address in "view.html".
+
+See _oddmu-templates_(5) for more.
+
+# ENVIRONMENT
+
+You can change the port served by setting the ODDMU_PORT environment variable.
+
+In order to limit language-detection to the languages you actually use, set the
+environment variable ODDMU_LANGUAGES to a comma-separated list of ISO 639-1
+codes, e.g. "en" or "en,de,fr,pt".
+
+# SECURITY
+
+If the machine you are running Oddmu on is accessible from the Internet, you
+must secure your installation. The best way to do this is use a regular web
+server as a reverse proxy.
+
+See _oddmu-apache_(5) for an example.
+
+# DESIGN
+
+This is a minimal wiki. There is no version history. It's well suited as a
+_secondary_ medium: collaboration and conversation happens elsewhere, in chat,
+on social media. The wiki serves as the text repository that results from these
+discussions.
+
+The wiki lists no recent changes. The expectation is that the people that care
+were involved in the discussions beforehand.
+
+The wiki also produces no feed. The assumption is that announcements are made on
+social media: blogs, news aggregators, discussion forums, the fediverse, but
+humans.
+
+The idea is that the webserver handles as many tasks as possible. It logs
+requests, does rate limiting, handles encryption, gets the certificates, and so
+on. The web server acts as a reverse proxy and the wiki ends up being a content
+management system with almost no structure – or endless malleability, depending
+on your point of view. See _oddmu-apache_(5).
+
+# NOTES
+
+Page names are filenames with ".md" appended. If your filesystem cannot handle
+it, it can't be a page name.
+
+The pages are indexed as the server starts and the index is kept in memory. If
+you have a ton of pages, this takes a lot of memory.
+
+Files may not end with a tilde ('~') – these are backup files.
+
+You cannot edit uploaded files. If you upload a file called "hello.txt" and
+attempt to edit it by using "/edit/hello.txt" you will create a page with the
+name "hello.txt.md" instead.
+
+You cannot delete uploaded files via the web – but you can delete regular wiki
+pages by saving an empty file.
+
+# SEE ALSO
+
+_oddmu_(5), _oddmu.service_(5), oddmu-apache_(5), _oddmu-html_(1),
+_oddmu-search_(1), _oddmu-search_(7)
+
+# AUTHORS
+
+Maintained by Alex Schroeder <alex@gnu.org>.

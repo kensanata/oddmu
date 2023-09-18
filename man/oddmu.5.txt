@@ -1,0 +1,102 @@
+ODDMU(5) "File Formats Manual"
+
+# NAME
+
+oddmu - text formatting of wiki pages
+
+# SYNTAX
+
+The wiki pages are UTF-8 encoded Markdown files.
+
+There are two Oddµ-specific extensions: local links and hashtags. The
+Markdown library used features some additional extensions.
+
+## Local links
+
+Local links use double square brackets [[like this]].
+
+## Hashtags
+
+Hashtags are single word links to searches for themselves. Use the
+underscore to use hashtags consisting of multiple words. Hashtags are
+distinguished from page titles because there is no space after the
+hash.
+
+```
+# Title
+
+Text
+
+#Tag #Another_Tag
+```
+
+## Tables
+
+A table with footers and a columnspan:
+
+```
+Name    | Age
+--------|------
+Bob     ||
+Alice   | 23
+========|======
+Total   | 23
+```
+
+## Definition lists:
+
+```
+Cat
+: Fluffy animal everyone likes
+
+Internet
+: Vector of transmission for pictures of cats
+```
+
+## Other extensions
+
+The Markdown processor comes with a few extensions:
+
+* emphasis markers inside words are ignored
+* fenced code blocks are supported
+* autolinking of "naked" URLs are supported
+* strikethrough using two tildes is supported (~~like this~~)
+* it is strict about prefix heading rules
+* you can specify an id for headings ({#id})
+* trailing backslashes turn into line breaks
+* MathJax is supported (but needs a separte setup)
+
+# PERCENT ENCODING
+
+If you use Markdown links to local pages, you must percent-encode the
+link target. Any character that is not an "unreserved character"
+according to RFC 3986 might need to be encoded. The unreserved
+characters are a-z, A-Z, 0-9, as well as the four characters '-',
+'\_', '.' and '~'.
+
+Percent-encoding means that each character is converted into one or
+more bytes, and each byte is represented as a percent character
+followed by a hexadecimal representation.
+
+Realistically, what probably works best is to use a browser. If you
+type "http://example.org/Alex Schröder" into the address bar, you'll
+get sent to the example domain. If you now copy the address and paste
+it back into a text editor, you'll get
+"http://example.org/Alex%20Schr%C3%B6der" and that's how you'll learn
+that the Space is encoded by %20 and that the character 'ö' is encoded
+by %C3%B6. To link to the page "Alex Schröder" you would write
+something like this: "[Alex](Alex%20Schr%C3%B6der)".
+
+# SEE ALSO
+
+_oddmu_(1)
+
+This wiki uses the Go Markdown library.
+https://github.com/gomarkdown/markdown
+
+For more about percent-encoding, see Wikipedia.
+https://en.wikipedia.org/wiki/Percent-encoding
+
+# AUTHORS
+
+Maintained by Alex Schroeder <alex@gnu.org>.

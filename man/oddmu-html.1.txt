@@ -1,0 +1,31 @@
+ODDMU-HTML(1)
+
+# NAME
+
+oddmu-html - render Oddmu page HTML from the command-line
+
+# SYNOPSIS
+
+*oddmu html* _page-name_
+
+# DESCRIPTION
+
+The "html" subcommand opens the Markdown file for the given page name
+(appending the ".md" extension) and prints the HTML to STDOUT without
+invoking the "view.html" template.
+
+# EXAMPLE
+
+Generate the HTML for "README.md":
+
+```
+oddmu html README
+```
+
+# SEE ALSO
+
+_oddmu_(1)
+
+# AUTHORS
+
+Maintained by Alex Schroeder <alex@gnu.org>.
