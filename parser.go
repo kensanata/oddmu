@@ -80,7 +80,7 @@ func account(p *parser.Parser, data []byte, offset int) (int, ast.Node) {
 		data[i-1] == '-') {
 		i--
 	}
-	if i == 0 {
+	if i == 0 || d == 0 {
 		return 0, nil
 	}
 	user := data[0:d-1] // includes @
