@@ -96,6 +96,7 @@ func serve() {
 	http.HandleFunc("/search", searchHandler)
 	go scheduleLoadIndex()
 	go scheduleLoadLanguages()
+	initAccounts()
 	port := getPort()
 	fmt.Printf("Serving a wiki on port %s\n", port)
 	http.ListenAndServe(":"+port, nil)

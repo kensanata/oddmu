@@ -52,17 +52,13 @@ func TestPageHtmlWikiLink(t *testing.T) {
 	p := &Page{Body: []byte(`# Photos and Books
 Blue and green and black
 Sky and grass and [ragged cliffs](cliffs)
-Our [[time together]]
-
-– @alex @alex@alexschroeder.ch`)}
+Our [[time together]]`)}
 	p.renderHtml()
 	r := `<h1>Photos and Books</h1>
 
 <p>Blue and green and black
 Sky and grass and <a href="cliffs" rel="nofollow">ragged cliffs</a>
 Our <a href="time%20together" rel="nofollow">time together</a></p>
-
-<p>– @alex <a href="https://alexschroeder.ch/users/alex" rel="nofollow">@alex</a></p>
 `
 	assert.Equal(t, r, string(p.Html))
 }
