@@ -38,13 +38,14 @@ func (cmd *htmlCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}
 		if err != nil {
 			fmt.Printf("Cannot load %s: %s\n", arg, err)
 		} else {
+			initAccounts()
 			if cmd.template {
 				p.handleTitle(true)
 				p.renderHtml()
 				t := "view.html"
 				err := templates.ExecuteTemplate(os.Stdout, t, p)
 				if err != nil {
-					fmt.Printf("Cannot execute %t template for %s: %s\n", t, arg, err)
+					fmt.Printf("Cannot execute %s template for %s: %s\n", t, arg, err)
 					return subcommands.ExitFailure
 				}
 			} else {
