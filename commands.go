@@ -4,16 +4,16 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"github.com/google/subcommands"
+	"github.com/hexops/gotextdiff"
+	"github.com/hexops/gotextdiff/myers"
+	"github.com/hexops/gotextdiff/span"
 	"io/fs"
 	"os"
 	"path/filepath"
 	"regexp"
 	"slices"
 	"strings"
-	"github.com/google/subcommands"
-	"github.com/hexops/gotextdiff"
-	"github.com/hexops/gotextdiff/myers"
-	"github.com/hexops/gotextdiff/span"
 )
 
 type htmlCmd struct {
@@ -23,13 +23,13 @@ type htmlCmd struct {
 func (*htmlCmd) Name() string     { return "html" }
 func (*htmlCmd) Synopsis() string { return "Render a page as HTML." }
 func (*htmlCmd) Usage() string {
-  return `html [-view] <page name>:
+	return `html [-view] <page name>:
   Render a page as HTML.
 `
 }
 
 func (cmd *htmlCmd) SetFlags(f *flag.FlagSet) {
-  f.BoolVar(&cmd.template, "view", false, "Use the 'view.html' template.")
+	f.BoolVar(&cmd.template, "view", false, "Use the 'view.html' template.")
 }
 
 func (cmd *htmlCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
@@ -62,13 +62,13 @@ type searchCmd struct {
 }
 
 func (cmd *searchCmd) SetFlags(f *flag.FlagSet) {
-  f.IntVar(&cmd.page, "page", 1, "the page in the search result set")
+	f.IntVar(&cmd.page, "page", 1, "the page in the search result set")
 }
 
 func (*searchCmd) Name() string     { return "search" }
 func (*searchCmd) Synopsis() string { return "Search pages and print a list of links." }
 func (*searchCmd) Usage() string {
-  return `search [-page <n>] <terms>:
+	return `search [-page <n>] <terms>:
   Search for pages matching terms and print the result set as a
   Markdown list. Before searching, all the pages are indexed. Thus,
   startup is slow. The benefit is that the page order and scores are
@@ -100,13 +100,13 @@ type replaceCmd struct {
 }
 
 func (cmd *replaceCmd) SetFlags(f *flag.FlagSet) {
-  f.BoolVar(&cmd.confirm, "confirm", false, "do the replacement instead of just doing a dry run")
+	f.BoolVar(&cmd.confirm, "confirm", false, "do the replacement instead of just doing a dry run")
 }
 
 func (*replaceCmd) Name() string     { return "replace" }
 func (*replaceCmd) Synopsis() string { return "Search and replace a regular expression." }
 func (*replaceCmd) Usage() string {
-  return `replace [-confirm] <regexp> <replacement>:
+	return `replace [-confirm] <regexp> <replacement>:
   Search a regular expression and replace it. By default, this is a
   dry run and nothing is saved. The replacement can use $1, $2, etc.
   to refer to capture groups in the regular expression.
@@ -137,8 +137,8 @@ func (cmd *replaceCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interfac
 		if !slices.Equal(result, body) {
 			changes++
 			if !cmd.confirm {
-				edits := myers.ComputeEdits(span.URIFromPath(path + "~"), string(body), string(result))
-				diff := fmt.Sprint(gotextdiff.ToUnified(path + "~", path, string(body), edits))
+				edits := myers.ComputeEdits(span.URIFromPath(path+"~"), string(body), string(result))
+				diff := fmt.Sprint(gotextdiff.ToUnified(path+"~", path, string(body), edits))
 				fmt.Println(diff)
 			} else {
 				fmt.Println(path)

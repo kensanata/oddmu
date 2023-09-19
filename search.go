@@ -15,29 +15,29 @@ import (
 // Currently there is no pagination of results! When a page is part of
 // a search result, Body and Html are simple extracts.
 type Search struct {
-	Query   string
-	Items   []*Page
+	Query    string
+	Items    []*Page
 	Previous int
-	Page    int
-	Next    int
-	Last    int
-	More    bool
-	Results bool
+	Page     int
+	Next     int
+	Last     int
+	More     bool
+	Results  bool
 }
 
 // sortNames returns a sort function that sorts in three stages: 1.
 // whether the query string matches the page title; 2. descending if
 // the page titles start with a digit; 3. otherwise ascending.
 // Access to the index requires a read lock!
-func sortNames(q string) func (a, b string) int {
-	return func (a, b string) int {
+func sortNames(q string) func(a, b string) int {
+	return func(a, b string) int {
 		// If only one page contains the query string, it
 		// takes precedence.
 		ia := strings.Contains(index.titles[a], q)
 		ib := strings.Contains(index.titles[b], q)
-		if (ia && !ib) {
+		if ia && !ib {
 			return -1
-		} else if (!ia && ib) {
+		} else if !ia && ib {
 			return 1
 		}
 		// If both page names start with a number (like an ISO date),
@@ -93,7 +93,7 @@ func search(q string, page int) ([]*Page, bool, int) {
 	names := searchDocuments(q)
 	slices.SortFunc(names, sortNames(q))
 	index.RUnlock()
-	from := itemsPerPage*(page-1)
+	from := itemsPerPage * (page - 1)
 	if from > len(names) {
 		return make([]*Page, 0), false, 0
 	}
@@ -106,7 +106,7 @@ func search(q string, page int) ([]*Page, bool, int) {
 		p.score(q)
 		p.summarize(q)
 	}
-	return items, to < len(names), len(names)/itemsPerPage+1
+	return items, to < len(names), len(names)/itemsPerPage + 1
 }
 
 // searchHandler presents a search result. It uses the query string in
@@ -119,7 +119,7 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 		page = 1
 	}
 	items, more, last := search(q, page)
-	s := &Search{Query: q, Items: items, Previous: page-1, Page: page, Next: page+1, Last: last,
+	s := &Search{Query: q, Items: items, Previous: page - 1, Page: page, Next: page + 1, Last: last,
 		Results: len(items) > 0, More: more}
 	renderTemplate(w, "search", s)
 }

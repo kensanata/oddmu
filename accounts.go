@@ -1,10 +1,10 @@
 package main
 
-import(
-	"github.com/gomarkdown/markdown/ast"
-	"github.com/gomarkdown/markdown/parser"
+import (
 	"encoding/json"
 	"fmt"
+	"github.com/gomarkdown/markdown/ast"
+	"github.com/gomarkdown/markdown/parser"
 	"io"
 	"net/http"
 	"sync"
@@ -43,8 +43,7 @@ func account(p *parser.Parser, data []byte, offset int) (int, ast.Node) {
 	i := 1 // skip @ of username
 	n := len(data)
 	d := 0
-	for i < n && (
-		data[i] >= 'a' && data[i] <= 'z' ||
+	for i < n && (data[i] >= 'a' && data[i] <= 'z' ||
 		data[i] >= 'A' && data[i] <= 'Z' ||
 		data[i] >= '0' && data[i] <= '9' ||
 		data[i] == '@' ||
@@ -55,22 +54,21 @@ func account(p *parser.Parser, data []byte, offset int) (int, ast.Node) {
 				// more than one @ is invalid
 				return 0, nil
 			} else {
-				d = i+1 // skip @ of domain
+				d = i + 1 // skip @ of domain
 			}
 		}
 		i++
 	}
-	for i > 1 && (
-		data[i-1] == '.' ||
+	for i > 1 && (data[i-1] == '.' ||
 		data[i-1] == '-') {
 		i--
 	}
 	if i == 0 || d == 0 {
 		return 0, nil
 	}
-	user := data[0:d-1] // includes @
-	domain := data[d:i] // excludes @
-	account := data[1:i] // excludes @
+	user := data[0 : d-1] // includes @
+	domain := data[d:i]   // excludes @
+	account := data[1:i]  // excludes @
 	accounts.RLock()
 	uri, ok := accounts.uris[string(account)]
 	defer accounts.RUnlock()
@@ -84,7 +82,7 @@ func account(p *parser.Parser, data []byte, offset int) (int, ast.Node) {
 		Destination: []byte(uri),
 		Title:       data[0:i],
 	}
-	ast.AppendChild(link, &ast.Text{Leaf: ast.Leaf{Literal: data[0:d-1]}})
+	ast.AppendChild(link, &ast.Text{Leaf: ast.Leaf{Literal: data[0 : d-1]}})
 	return i, link
 }
 
@@ -123,16 +121,16 @@ func lookUpAccountUri(account, domain string) {
 
 // Link a link in the WebFinger JSON.
 type Link struct {
-	Rel string `json:"rel"`
+	Rel  string `json:"rel"`
 	Type string `json:"type"`
 	Href string `json:"href"`
 }
 
 // WebFinger is a structure used to unmarshall JSON.
 type WebFinger struct {
-	Subject string `json:"subject"`
+	Subject string   `json:"subject"`
 	Aliases []string `json:"aliases"`
-	Links []Link `json:"links"`
+	Links   []Link   `json:"links"`
 }
 
 // parseWebFinger parses the web finger JSON and returns the profile
