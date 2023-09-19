@@ -43,6 +43,12 @@ img { max-width: 20%; }
         <blockquote>{{.Html}}</blockquote>
       </article>
       {{end}}
+      <p>
+        {{if gt .Page 2}}<a href="/search?q={{.Query}}&page=1">First</a>{{end}}
+        {{if gt .Page 1}}<a href="/search?q={{.Query}}&page={{.Previous}}">Previous</a>{{end}}
+        Page {{.Page}}
+        {{if .More}}<a href="/search?q={{.Query}}&page={{.Next}}">Next</a>{{end}}
+        {{if lt .Next .Last}}<a href="/search?q={{.Query}}&page={{.Last}}">Last</a>{{end}}
       {{else}}
       <p>No results.</p>
       {{end}}
