@@ -54,6 +54,17 @@ server as a reverse proxy.
 
 See _oddmu-apache_(5) for an example.
 
+# OPTIONS
+
+The oddmu program can be run on the command-line using various subcommands.
+
+- to generate the HTML for a page, see _oddmu-html_(1)
+- to search a regular expression and replace it across all files, see
+  _oddmu-replace_(1)
+- to emulate a search of the files, see _oddmu-search_(1); to understand how the
+  search engine indexes pages and how it sorts and scores results, see
+  _oddmu-search_(7)
+
 # DESIGN
 
 This is a minimal wiki. There is no version history. It's well suited as a
@@ -94,7 +105,7 @@ pages by saving an empty file.
 # SEE ALSO
 
 _oddmu_(5), _oddmu.service_(5), oddmu-apache_(5), _oddmu-html_(1),
-_oddmu-search_(1), _oddmu-search_(7)
+_oddmu-replace_(1), _oddmu-search_(1), _oddmu-search_(7)
 
 # AUTHORS
 

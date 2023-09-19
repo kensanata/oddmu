@@ -6,7 +6,7 @@ oddmu-search - search the Oddmu pages from the command-line
 
 # SYNOPSIS
 
-*oddmu search* _terms..._
+*oddmu search* [-page _n_] _terms..._
 
 # DESCRIPTION
 
@@ -17,6 +17,12 @@ list.
 The use of a trigram index makes it possible to find substrings and
 for the word order not to matter, but it also makes the search results
 a bit harder to understand. See _oddmu-search_(7) for more.
+
+# OPTIONS
+
+*-page* _n_
+	Search results are paginated and by default only the first
+	page is shown. This option allows you to view other pages.
 
 # EXAMPLE
 
@@ -35,7 +41,7 @@ Search oddmu: 1 result
 
 # SEE ALSO
 
-_oddmu_(1), _oddmu-search_(7)
+_oddmu_(1), _oddmu-replace_(1), _oddmu-search_(7)
 
 # AUTHORS
 

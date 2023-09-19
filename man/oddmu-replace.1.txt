@@ -1,0 +1,49 @@
+ODDMU-REPLACE(1)
+
+# NAME
+
+oddmu-replace - replace text in Oddmu pages from the command-line
+
+# SYNOPSIS
+
+*oddmu replace* [-confirm] _regexp_ _replacement_
+
+# DESCRIPTION
+
+The "replace" subcommand replaces the Markdown files in the current
+directory (!), returning the replace result as a Markdown-formatted
+list.
+
+The use of a trigram index makes it possible to find substrings and
+for the word order not to matter, but it also makes the replace results
+a bit harder to understand. See _oddmu-replace_(7) for more.
+
+# OPTIONS
+
+*-confirm*
+	By default, the replacement doesn't save the changes made.
+        Instead, a unified diff is produced and printed. Given this
+        option, the changed Markdown files are saved to disk.
+
+# EXAMPLE
+
+Replace for "oddmu" in the Markdown files of the current directory:
+
+```
+oddmu replace oddmu
+```
+
+Result:
+
+```
+Replace oddmu: 1 result
+* [Oddµ: A minimal wiki](README) (5)
+```
+
+# SEE ALSO
+
+_oddmu_(1), _oddmu-search_(7)
+
+# AUTHORS
+
+Maintained by Alex Schroeder <alex@gnu.org>.

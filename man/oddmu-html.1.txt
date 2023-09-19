@@ -6,13 +6,19 @@ oddmu-html - render Oddmu page HTML from the command-line
 
 # SYNOPSIS
 
-*oddmu html* _page-name_
+*oddmu html* [-view] _page-name_
 
 # DESCRIPTION
 
 The "html" subcommand opens the Markdown file for the given page name
 (appending the ".md" extension) and prints the HTML to STDOUT without
 invoking the "view.html" template.
+
+# OPTIONS
+
+*-view*
+	Use the "view.html" template to render the page. Without this,
+        the HTML will lack html and body tags.
 
 # EXAMPLE
 

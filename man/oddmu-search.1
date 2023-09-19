@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-SEARCH" "1" "2023-09-18"
+.TH "ODDMU-SEARCH" "1" "2023-09-19"
 .PP
 .SH NAME
 .PP
@@ -13,7 +13,7 @@ oddmu-search - search the Oddmu pages from the command-line
 .PP
 .SH SYNOPSIS
 .PP
-\fBoddmu search\fR \fIterms.\&.\&.\&\fR
+\fBoddmu search\fR [-page \fIn\fR] \fIterms.\&.\&.\&\fR
 .PP
 .SH DESCRIPTION
 .PP
@@ -25,6 +25,14 @@ The use of a trigram index makes it possible to find substrings and
 for the word order not to matter, but it also makes the search results
 a bit harder to understand.\& See \fIoddmu-search\fR(7) for more.\&
 .PP
+.SH OPTIONS
+.PP
+\fB-page\fR \fIn\fR
+.RS 4
+Search results are paginated and by default only the first
+page is shown.\& This option allows you to view other pages.\&
+.PP
+.RE
 .SH EXAMPLE
 .PP
 Search for "oddmu" in the Markdown files of the current directory:
@@ -46,7 +54,7 @@ Search oddmu: 1 result
 .PP
 .SH SEE ALSO
 .PP
-\fIoddmu\fR(1), \fIoddmu-search\fR(7)
+\fIoddmu\fR(1), \fIoddmu-replace\fR(1), \fIoddmu-search\fR(7)
 .PP
 .SH AUTHORS
 .PP
