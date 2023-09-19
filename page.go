@@ -110,6 +110,7 @@ func (p *Page) score(q string) {
 // summarize sets Page.Html to an extract and sets Page.Language.
 func (p *Page) summarize(q string) {
 	t := p.plainText()
+	p.Name = nameEscape(p.Name)
 	p.Html = sanitize(snippets(q, t))
 	p.Language = language(t)
 }
