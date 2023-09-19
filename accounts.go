@@ -21,27 +21,23 @@ type Accounts struct {
 	uris map[string]string
 }
 
-type Link struct {
-	Rel string `json:"rel"`
-	Type string `json:"type"`
-	Href string `json:"href"`
-}
-
-type WebFinger struct {
-	Subject string `json:"subject"`
-	Aliases []string `json:"aliases"`
-	Links []Link `json:"links"`
-}
-
 // accounts holds the global mapping of accounts to profile URIs.
 var accounts Accounts
 
+// initAccounts sets up the accounts map. This is called once at
+// startup and therefore does not need to be locked. On ever restart,
+// this map starts empty and is slowly repopulated as pages are
+// visited.
 func initAccounts() {
 	accounts.uris = make(map[string]string)
 }
 
-// account links a social media account @account@domain to
-// https://domain/user/account.
+// account links a social media account like @account@domain to a
+// profile page like https://domain/user/account. Any account seen for
+// the first time uses a best guess profile URI. It is also looked up
+// using webfinger, in parallel. See lookUpAccountUri. If the lookup
+// succeeds, the best guess is replaced with the new URI so on
+// subsequent requests, the URI is correct.
 func account(p *parser.Parser, data []byte, offset int) (int, ast.Node) {
 	data = data[offset:]
 	i := 1 // skip @ of username
@@ -92,6 +88,10 @@ func account(p *parser.Parser, data []byte, offset int) (int, ast.Node) {
 	return i, link
 }
 
+// lookUpAccountUri is called for accounts that haven't been seen
+// before. It calls webfinger and parses the JSON. If possible, it
+// extracts the link to the profile page and replaces the entry in
+// accounts.
 func lookUpAccountUri(account, domain string) {
 	uri := "https://" + domain + "/.well-known/webfinger"
 	resp, err := http.Get(uri + "?resource=acct:" + account)
@@ -121,6 +121,23 @@ func lookUpAccountUri(account, domain string) {
 	accounts.uris[account] = uri
 }
 
+// Link a link in the WebFinger JSON.
+type Link struct {
+	Rel string `json:"rel"`
+	Type string `json:"type"`
+	Href string `json:"href"`
+}
+
+// WebFinger is a structure used to unmarshall JSON.
+type WebFinger struct {
+	Subject string `json:"subject"`
+	Aliases []string `json:"aliases"`
+	Links []Link `json:"links"`
+}
+
+// parseWebFinger parses the web finger JSON and returns the profile
+// page URI. For unmarshalling the JSON, it uses the Link and
+// WebFinger structs.
 func parseWebFinger(body []byte) (string, error) {
 	var wf WebFinger
 	err := json.Unmarshal(body, &wf)
