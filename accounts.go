@@ -96,24 +96,24 @@ func lookUpAccountUri(account, domain string) {
 	uri := "https://" + domain + "/.well-known/webfinger"
 	resp, err := http.Get(uri + "?resource=acct:" + account)
 	if err != nil {
-		fmt.Printf("Failed to look up %s: %s\n", account, err.Error())
+		fmt.Printf("Failed to look up %s: %s\n", account, err)
 		return
 	}
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Printf("Failed to read from %s: %s\n", account, err.Error())
+		fmt.Printf("Failed to read from %s: %s\n", account, err)
 		return
 	}
 	var wf WebFinger
 	err = json.Unmarshal([]byte(body), &wf)
 	if err != nil {
-		fmt.Printf("Failed to parse the JSON from %s: %s\n", account, err.Error())
+		fmt.Printf("Failed to parse the JSON from %s: %s\n", account, err)
 		return
 	}
 	uri, err = parseWebFinger(body)
 	if err != nil {
-		fmt.Printf("Could not find profile URI for %s: %s\n", account, err.Error())
+		fmt.Printf("Could not find profile URI for %s: %s\n", account, err)
 	}
 	fmt.Printf("Found profile for %s: %s\n", account, uri)
 	accounts.Lock()
