@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU" "5" "2023-09-18" "File Formats Manual"
+.TH "ODDMU" "5" "2023-09-19" "File Formats Manual"
 .PP
 .SH NAME
 .PP
@@ -15,8 +15,9 @@ oddmu - text formatting of wiki pages
 .PP
 The wiki pages are UTF-8 encoded Markdown files.\&
 .PP
-There are two Oddµ-specific extensions: local links and hashtags.\& The
-Markdown library used features some additional extensions.\&
+There are three Oddµ-specific extensions: local links, hashtags and
+fediverse account links.\& The Markdown library used features some
+additional extensions, most importantly tables and definition lists.\&
 .PP
 .SS Local links
 .PP
@@ -65,6 +66,19 @@ Internet
 : Vector of transmission for pictures of cats
 .fi
 .RE
+.PP
+.SS Fediverse account links
+.PP
+Fediverse accounts look a bit like an at sign followed by an email
+address, e.\&g.\& @alex@alexschroeder.\&ch.\& When rendering a page, these
+turn into a username linked to a profile page.\& In this case, "@alex"
+would be linked to "https://alexschroeder.\&ch/users/alex".\&
+.PP
+In many cases, this will work as is.\& In reality, however, the link to
+the profile page needs to be retrieved via webfinger.\& Oddµ does that
+in the background, and as soon as the information is available, the
+actual profile link is used when pages are rendered.\& In the example
+above, the result would be "https://social.\&alexschroeder.\&ch/@alex".\&
 .PP
 .SS Other extensions
 .PP
