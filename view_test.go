@@ -66,8 +66,10 @@ In the autumn chill
 `), 0644))
 	fi, err := os.Stat("testdata/now.txt")
 	assert.NoError(t, err)
+	h := makeHandler(viewHandler, true)
 	assert.Equal(t, []string{fi.ModTime().UTC().Format(http.TimeFormat)},
-		HTTPHeaders(makeHandler(viewHandler, true), "GET", "/view/testdata/now.txt", nil, "Last-Modified"))
+		HTTPHeaders(h, "GET", "/view/testdata/now.txt", nil, "Last-Modified"))
+	HTTPStatusCodeIfModifiedSince(t, h, "/view/testdata/now.txt", fi.ModTime())
 	t.Cleanup(func() {
 		_ = os.RemoveAll("testdata")
 	})
@@ -84,8 +86,10 @@ I like spring better
 	p.save()
 	fi, err := os.Stat("testdata/now.md")
 	assert.NoError(t, err)
+	h := makeHandler(viewHandler, true)
 	assert.Equal(t, []string{fi.ModTime().UTC().Format(http.TimeFormat)},
-		HTTPHeaders(makeHandler(viewHandler, true), "GET", "/view/testdata/now", nil, "Last-Modified"))
+	HTTPHeaders(h, "GET", "/view/testdata/now", nil, "Last-Modified"))
+	HTTPStatusCodeIfModifiedSince(t, h, "/view/testdata/now", fi.ModTime())
 	t.Cleanup(func() {
 		_ = os.RemoveAll("testdata")
 	})

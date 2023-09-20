@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"strings"
 	"testing"
+	"time"
 )
 
 // HTTPHeaders is a helper that returns HTTP headers of the response. It returns
@@ -64,4 +65,14 @@ func HTTPUploadAndRedirectTo(t *testing.T, handler http.HandlerFunc, url, conten
 	assert.True(t, len(headers) == 1 && headers[0] == destination,
 		"Expected HTTP redirect location %s for %q but received %v", destination, url, headers)
 	return isRedirectCode
+}
+// HTTPStatusCodeIfModifiedSince checks that the request results in a
+// 304 response for the given time.
+func HTTPStatusCodeIfModifiedSince(t *testing.T, handler http.HandlerFunc, url string, ti time.Time) {
+	w := httptest.NewRecorder()
+	req, err := http.NewRequest("GET", url, nil)
+	assert.NoError(t, err)
+	req.Header.Set("If-Modified-Since", ti.UTC().Format(http.TimeFormat))
+	handler(w, req)
+	assert.Equal(t, http.StatusNotModified, w.Code)
 }
