@@ -34,11 +34,18 @@ func viewHandler(w http.ResponseWriter, r *http.Request, name string) {
 		h, ok := r.Header["If-Modified-Since"]
 		if ok {
 			ti, err := http.ParseTime(h[0])
-			if err == nil && ti.Truncate(time.Second).Equal(fi.ModTime().Truncate(time.Second)) {
+			if err == nil && !fi.ModTime().Truncate(time.Second).After(ti) {
 				w.WriteHeader(http.StatusNotModified)
 				return
 			}
 		}
+		w.Header().Set("Last-Modified", fi.ModTime().UTC().Format(http.TimeFormat))
+	}
+	if r.Method == http.MethodHead {
+		if err == nil {
+			return
+		}
+		http.Redirect(w, r, "/edit/"+name, http.StatusFound)
 	}
 	if file {
 		body, err := os.ReadFile(fn)
@@ -48,17 +55,15 @@ func viewHandler(w http.ResponseWriter, r *http.Request, name string) {
 			// are treated like pages.
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
-		w.Header().Set("Last-Modified", fi.ModTime().UTC().Format(http.TimeFormat))
 		w.Write(body)
 		return
 	}
 	p, err := loadPage(name)
-	if err == nil {
-		w.Header().Set("Last-Modified", fi.ModTime().UTC().Format(http.TimeFormat))
-		p.handleTitle(true)
-		p.renderHtml()
-		renderTemplate(w, "view", p)
+	if err != nil {
+		http.Redirect(w, r, "/edit/"+name, http.StatusFound)
 		return
 	}
-	http.Redirect(w, r, "/edit/"+name, http.StatusFound)
+	p.handleTitle(true)
+	p.renderHtml()
+	renderTemplate(w, "view", p)
 }

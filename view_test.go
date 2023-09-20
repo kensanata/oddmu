@@ -94,3 +94,29 @@ I like spring better
 		_ = os.RemoveAll("testdata")
 	})
 }
+
+
+// wipes testdata
+func TestPageHead(t *testing.T) {
+	_ = os.RemoveAll("testdata")
+	p := &Page{Name: "testdata/peace", Body: []byte(`
+No urgent typing
+No todos, no list, no queue.
+Just me and the birds.
+`)}
+	p.save()
+	fi, err := os.Stat("testdata/peace.md")
+	assert.NoError(t, err)
+	h := makeHandler(viewHandler, true)
+	assert.Equal(t, []string(nil),
+		HTTPHeaders(h, "HEAD", "/view/testdata/war", nil, "Last-Modified"))
+	assert.Equal(t, []string(nil),
+		HTTPHeaders(h, "GET", "/view/testdata/war", nil, "Last-Modified"))
+	assert.Equal(t, []string{fi.ModTime().UTC().Format(http.TimeFormat)},
+		HTTPHeaders(h, "HEAD", "/view/testdata/peace", nil, "Last-Modified"))
+	assert.Equal(t, "",
+		assert.HTTPBody(h, "HEAD", "/view/testdata/peace", nil))
+	t.Cleanup(func() {
+		_ = os.RemoveAll("testdata")
+	})
+}
