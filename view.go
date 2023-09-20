@@ -18,11 +18,19 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 func viewHandler(w http.ResponseWriter, r *http.Request, name string) {
 	body, err := os.ReadFile(name)
 	if err == nil {
+		fi, err := os.Stat(name)
+		if err == nil {
+			w.Header().Set("Last-Modified", fi.ModTime().UTC().Format(http.TimeFormat))
+		}
 		w.Write(body)
 		return
 	}
 	p, err := loadPage(name)
 	if err == nil {
+		fi, err := os.Stat(p.Name + ".md")
+		if err == nil {
+			w.Header().Set("Last-Modified", fi.ModTime().UTC().Format(http.TimeFormat))
+		}
 		p.handleTitle(true)
 		p.renderHtml()
 		renderTemplate(w, "view", p)

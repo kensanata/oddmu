@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/stretchr/testify/assert"
+	"net/http"
 	"os"
 	"regexp"
 	"testing"
@@ -38,6 +39,7 @@ func TestPageTitleWithAmp(t *testing.T) {
 	})
 }
 
+// wipes testdata
 func TestPageTitleWithQuestionMark(t *testing.T) {
 	_ = os.RemoveAll("testdata")
 
@@ -48,6 +50,42 @@ func TestPageTitleWithQuestionMark(t *testing.T) {
 	assert.Contains(t, body, "No means no")
 	assert.Contains(t, body, "<a href=\"/edit/testdata/How%20about%20no%3F\" accesskey=\"e\">Edit</a>")
 
+	t.Cleanup(func() {
+		_ = os.RemoveAll("testdata")
+	})
+}
+
+// wipes testdata
+func TestFileLastModified(t *testing.T) {
+	_ = os.RemoveAll("testdata")
+	assert.NoError(t, os.Mkdir("testdata", 0755))
+	assert.NoError(t, os.WriteFile("testdata/now.txt", []byte(`
+A spider sitting
+Unmoving and still
+In the autumn chill
+`), 0644))
+	fi, err := os.Stat("testdata/now.txt")
+	assert.NoError(t, err)
+	assert.Equal(t, []string{fi.ModTime().UTC().Format(http.TimeFormat)},
+		HTTPHeaders(makeHandler(viewHandler, true), "GET", "/view/testdata/now.txt", nil, "Last-Modified"))
+	t.Cleanup(func() {
+		_ = os.RemoveAll("testdata")
+	})
+}
+
+// wipes testdata
+func TestPageLastModified(t *testing.T) {
+	_ = os.RemoveAll("testdata")
+	p := &Page{Name: "testdata/now", Body: []byte(`
+The sky glows softly
+Sadly, the birds are quiet
+I like spring better
+`)}
+	p.save()
+	fi, err := os.Stat("testdata/now.md")
+	assert.NoError(t, err)
+	assert.Equal(t, []string{fi.ModTime().UTC().Format(http.TimeFormat)},
+		HTTPHeaders(makeHandler(viewHandler, true), "GET", "/view/testdata/now", nil, "Last-Modified"))
 	t.Cleanup(func() {
 		_ = os.RemoveAll("testdata")
 	})
