@@ -7,8 +7,14 @@ import (
 	"github.com/gomarkdown/markdown/parser"
 	"io"
 	"net/http"
+	"os"
 	"sync"
 )
+
+// useWebfinger indicates whether Oddmu looks up the profile pages of
+// fediverse accounts. To enable this, set the environment variable
+// ODDMU_WEBFINGER to "1".
+var useWebfinger = false
 
 // Accounts contains the map used to set the usernames. Make sure to
 // lock and unlock as appropriate.
@@ -29,7 +35,10 @@ var accounts Accounts
 // this map starts empty and is slowly repopulated as pages are
 // visited.
 func initAccounts() {
-	accounts.uris = make(map[string]string)
+	if os.Getenv("ODDMU_WEBFINGER") == "1" {
+		accounts.uris = make(map[string]string)
+		useWebfinger = true
+	}
 }
 
 // account links a social media account like @account@domain to a

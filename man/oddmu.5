@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU" "5" "2023-09-19" "File Formats Manual"
+.TH "ODDMU" "5" "2023-09-21" "File Formats Manual"
 .PP
 .SH NAME
 .PP
@@ -79,6 +79,10 @@ the profile page needs to be retrieved via webfinger.\& Oddµ does that
 in the background, and as soon as the information is available, the
 actual profile link is used when pages are rendered.\& In the example
 above, the result would be "https://social.\&alexschroeder.\&ch/@alex".\&
+.PP
+As this sort of packground network activity is surprising, it is not
+enabled by default.\& Set the environment variable ODDMU_WEBFINGER to
+"1" in order to enable this.\&
 .PP
 .SS Other extensions
 .PP

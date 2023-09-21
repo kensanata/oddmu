@@ -22,8 +22,8 @@ a bit harder to understand. See _oddmu-replace_(7) for more.
 
 *-confirm*
 	By default, the replacement doesn't save the changes made.
-        Instead, a unified diff is produced and printed. Given this
-        option, the changed Markdown files are saved to disk.
+	Instead, a unified diff is produced and printed. Given this
+	option, the changed Markdown files are saved to disk.
 
 # EXAMPLE
 

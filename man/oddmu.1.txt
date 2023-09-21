@@ -46,6 +46,9 @@ In order to limit language-detection to the languages you actually use, set the
 environment variable ODDMU_LANGUAGES to a comma-separated list of ISO 639-1
 codes, e.g. "en" or "en,de,fr,pt".
 
+You can enable webfinger to link fediverse accounts to their correct profile
+pages by setting ODDMU_WEBFINGER to "1". See _oddmu_(5).
+
 # SECURITY
 
 If the machine you are running Oddmu on is accessible from the Internet, you

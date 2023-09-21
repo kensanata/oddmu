@@ -18,7 +18,7 @@ invoking the "view.html" template.
 
 *-view*
 	Use the "view.html" template to render the page. Without this,
-        the HTML will lack html and body tags.
+	the HTML will lack html and body tags.
 
 # EXAMPLE
 
@@ -27,6 +27,11 @@ Generate the HTML for "README.md":
 ```
 oddmu html README
 ```
+
+# ENVIRONMENT
+
+The ODDMU_WEBFINGER environment variable has no effect in this
+situation. Fediverse accounts are no linked to their profile pages.
 
 # SEE ALSO
 

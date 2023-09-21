@@ -67,6 +67,10 @@ in the background, and as soon as the information is available, the
 actual profile link is used when pages are rendered. In the example
 above, the result would be "https://social.alexschroeder.ch/@alex".
 
+As this sort of packground network activity is surprising, it is not
+enabled by default. Set the environment variable ODDMU_WEBFINGER to
+"1" in order to enable this.
+
 ## Other extensions
 
 The Markdown processor comes with a few extensions:

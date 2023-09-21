@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-HTML" "1" "2023-09-18"
+.TH "ODDMU-HTML" "1" "2023-09-21"
 .PP
 .SH NAME
 .PP
@@ -13,7 +13,7 @@ oddmu-html - render Oddmu page HTML from the command-line
 .PP
 .SH SYNOPSIS
 .PP
-\fBoddmu html\fR \fIpage-name\fR
+\fBoddmu html\fR [-view] \fIpage-name\fR
 .PP
 .SH DESCRIPTION
 .PP
@@ -21,6 +21,14 @@ The "html" subcommand opens the Markdown file for the given page name
 (appending the ".\&md" extension) and prints the HTML to STDOUT without
 invoking the "view.\&html" template.\&
 .PP
+.SH OPTIONS
+.PP
+\fB-view\fR
+.RS 4
+Use the "view.\&html" template to render the page.\& Without this,
+the HTML will lack html and body tags.\&
+.PP
+.RE
 .SH EXAMPLE
 .PP
 Generate the HTML for "README.\&md":
@@ -30,6 +38,11 @@ Generate the HTML for "README.\&md":
 oddmu html README
 .fi
 .RE
+.PP
+.SH ENVIRONMENT
+.PP
+The ODDMU_WEBFINGER environment variable has no effect in this
+situation.\& Fediverse accounts are no linked to their profile pages.\&
 .PP
 .SH SEE ALSO
 .PP

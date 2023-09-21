@@ -57,7 +57,9 @@ func (p *Page) renderHtml() {
 	prev := parser.RegisterInline('[', nil)
 	parser.RegisterInline('[', wikiLink(parser, prev))
 	parser.RegisterInline('#', hashtag)
-	parser.RegisterInline('@', account)
+	if useWebfinger {
+		parser.RegisterInline('@', account)
+	}
 	maybeUnsafeHTML := markdown.ToHTML(p.Body, parser, nil)
 	p.Name = nameEscape(p.Name)
 	p.Html = sanitizeBytes(maybeUnsafeHTML)

@@ -12,6 +12,7 @@ MemoryHigh=120M
 ExecStart=/home/oddmu/oddmu
 WorkingDirectory=/home/oddmu
 Environment="ODDMU_PORT=8080"
+Environment="ODDMU_WEBFINGER=1"
 
 # (man "systemd.exec")
 ReadWritePaths=/home/oddmu
