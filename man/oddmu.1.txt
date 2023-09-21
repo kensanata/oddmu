@@ -65,6 +65,17 @@ The oddmu program can be run on the command-line using various subcommands.
   search engine indexes pages and how it sorts and scores results, see
   _oddmu-search_(7)
 
+# EXAMPLE
+
+When saving a page, the page name is take from the URL and the page
+content is taken from the "body" form parameter. To illustrate, here's
+how to edit a page using _curl_(1):
+
+```
+curl --form body="Did you bring a towel?" \
+  http://localhost:8080/save/welcome
+```
+
 # DESIGN
 
 This is a minimal wiki. There is no version history. It's well suited as a

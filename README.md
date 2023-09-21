@@ -29,15 +29,6 @@ This wiki uses the standard
 [html/template](https://pkg.go.dev/html/template) library to generate
 HTML.
 
-When saving a page, the page name is take from the URL and the page
-content is taken from the `body` form parameter. To illustrate, here's
-how to edit a page using `curl`:
-
-```sh
-curl --form body="Did you bring a towel?" \
-  http://localhost:8080/save/welcome
-```
-
 ## Building
 
 ```sh
