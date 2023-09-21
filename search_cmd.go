@@ -5,6 +5,8 @@ import (
 	"flag"
 	"fmt"
 	"github.com/google/subcommands"
+	"io"
+	"os"
 )
 
 type searchCmd struct {
@@ -27,19 +29,25 @@ func (*searchCmd) Usage() string {
 }
 
 func (cmd *searchCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
+	return searchCli(os.Stdout, cmd.page, f.Args())
+}
+
+// searchCli runs the search command on the command line. It is used
+// here with an io.Writer for easy testing.
+func searchCli(w io.Writer, n int, args []string) subcommands.ExitStatus {
 	index.load()
-	for _, q := range f.Args() {
-		items, more, _ := search(q, cmd.page)
+	for _, q := range args {
+		items, more, _ := search(q, n)
 		if len(items) == 1 {
-			fmt.Printf("Search for %s, page %d: 1 result\n", q, cmd.page)
+			fmt.Fprintf(w, "Search for %s, page %d: 1 result\n", q, n)
 		} else {
-			fmt.Printf("Search for %s, page %d: %d results\n", q, cmd.page, len(items))
+			fmt.Fprintf(w, "Search for %s, page %d: %d results\n", q, n, len(items))
 		}
 		for _, p := range items {
-			fmt.Printf("* [%s](%s) (%d)\n", p.Title, p.Name, p.Score)
+			fmt.Fprintf(w, "* [%s](%s) (%d)\n", p.Title, p.Name, p.Score)
 		}
 		if more {
-			fmt.Printf("There are more results\n")
+			fmt.Fprintf(w, "There are more results\n")
 		}
 	}
 	return subcommands.ExitSuccess
