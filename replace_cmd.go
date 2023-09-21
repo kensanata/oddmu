@@ -8,6 +8,7 @@ import (
 	"github.com/hexops/gotextdiff"
 	"github.com/hexops/gotextdiff/myers"
 	"github.com/hexops/gotextdiff/span"
+	"io"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -35,9 +36,12 @@ func (*replaceCmd) Usage() string {
 }
 
 func (cmd *replaceCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
-	args := f.Args()
+	return replaceCli(os.Stdout, cmd.confirm, f.Args())
+}
+
+func replaceCli(w io.Writer, confirm bool, args []string) subcommands.ExitStatus {
 	if len(args) != 2 {
-		fmt.Println("Replace takes exactly two arguments.")
+		fmt.Fprintln(w, "Replace takes exactly two arguments.")
 		return subcommands.ExitFailure
 	}
 	re := regexp.MustCompile(args[0])
@@ -57,32 +61,32 @@ func (cmd *replaceCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interfac
 		result := re.ReplaceAll(body, repl)
 		if !slices.Equal(result, body) {
 			changes++
-			if !cmd.confirm {
-				edits := myers.ComputeEdits(span.URIFromPath(path+"~"), string(body), string(result))
-				diff := fmt.Sprint(gotextdiff.ToUnified(path+"~", path, string(body), edits))
-				fmt.Println(diff)
-			} else {
-				fmt.Println(path)
+			if confirm {
+				fmt.Fprintln(w, path)
 				_ = os.Rename(path, path+"~")
 				err = os.WriteFile(path, result, 0644)
 				if err != nil {
 					return err
 				}
+			} else {
+				edits := myers.ComputeEdits(span.URIFromPath(path+"~"), string(body), string(result))
+				diff := fmt.Sprint(gotextdiff.ToUnified(path+"~", path, string(body), edits))
+				fmt.Fprintln(w, diff)
 			}
 		}
 		return nil
 	})
 	if err != nil {
-		fmt.Println(err)
+		fmt.Fprintln(w, err)
 		return subcommands.ExitFailure
 	}
 	if changes == 1 {
-		fmt.Println("1 change was made.")
+		fmt.Fprintln(w, "1 change was made.")
 	} else {
-		fmt.Printf("%d changes were made.\n", changes)
+		fmt.Fprintf(w, "%d changes were made.\n", changes)
 	}
-	if !cmd.confirm && changes > 0 {
-		fmt.Println("This is a dry run. Use -confirm to make it happen.")
+	if !confirm && changes > 0 {
+		fmt.Fprintln(w, "This is a dry run. Use -confirm to make it happen.")
 	}
 	return subcommands.ExitSuccess
 }
