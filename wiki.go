@@ -1,7 +1,10 @@
 package main
 
 import (
+	"context"
+	"flag"
 	"fmt"
+	"github.com/google/subcommands"
 	"html/template"
 	"net/http"
 	"os"
@@ -100,6 +103,23 @@ func serve() {
 	port := getPort()
 	fmt.Printf("Serving a wiki on port %s\n", port)
 	http.ListenAndServe(":"+port, nil)
+}
+
+// commands does the command line parsing in case Oddmu is called with
+// some arguments. Without any arguments, the wiki server is started.
+// At this point we already know that there is at least one
+// subcommand.
+func commands() {
+	subcommands.Register(subcommands.HelpCommand(), "")
+	subcommands.Register(subcommands.FlagsCommand(), "")
+	subcommands.Register(subcommands.CommandsCommand(), "")
+	subcommands.Register(&htmlCmd{}, "")
+	subcommands.Register(&searchCmd{}, "")
+	subcommands.Register(&replaceCmd{}, "")
+
+	flag.Parse()
+	ctx := context.Background()
+	os.Exit(int(subcommands.Execute(ctx)))
 }
 
 func main() {
