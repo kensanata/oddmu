@@ -14,10 +14,6 @@ The "replace" subcommand replaces the Markdown files in the current
 directory (!), returning the replace result as a Markdown-formatted
 list.
 
-The use of a trigram index makes it possible to find substrings and
-for the word order not to matter, but it also makes the replace results
-a bit harder to understand. See _oddmu-replace_(7) for more.
-
 # OPTIONS
 
 *-confirm*
@@ -39,6 +35,14 @@ Result:
 Replace oddmu: 1 result
 * [Oddµ: A minimal wiki](README) (5)
 ```
+
+# NOTES
+
+This is the equivalent of using _sed_(1) with the --quiet,
+--regexp-extended, --in-place=~ and --expression command with the s
+command "s/regexp/replacement/g" except that it prints a unified diff
+per default instead of making any changes and that the regexp rules
+differ slightly.
 
 # SEE ALSO
 
