@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 	"time"
+	"strings"
 )
 
 // rootHandler just redirects to /view/index.
@@ -23,10 +24,16 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 // header has not.
 func viewHandler(w http.ResponseWriter, r *http.Request, name string) {
 	file := true
+	rss := false
 	fn := name
 	fi, err := os.Stat(fn)
 	if err != nil {
 		file = false
+		if strings.HasSuffix(fn, ".rss") {
+			rss = true
+			name = fn[0:len(fn)-4]
+			fn = name
+		}
 		fn += ".md"
 		fi, err = os.Stat(fn)
 	}
@@ -64,6 +71,12 @@ func viewHandler(w http.ResponseWriter, r *http.Request, name string) {
 		return
 	}
 	p.handleTitle(true)
+	if rss {
+		it := feed(p, fi.ModTime())
+		w.Write([]byte(`<?xml version="1.0" encoding="UTF-8"?>`))
+		renderTemplate(w, "feed", it)
+		return
+	}
 	p.renderHtml()
 	renderTemplate(w, "view", p)
 }

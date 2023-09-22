@@ -14,7 +14,7 @@ import (
 // Templates are parsed at startup.
 var templates = template.Must(
 	template.ParseFiles("edit.html", "add.html", "view.html",
-		"search.html", "upload.html"))
+		"search.html", "upload.html", "feed.html"))
 
 // validPath is a regular expression where the second group matches a
 // page, so when the editHandler is called, a URL path of "/edit/foo"

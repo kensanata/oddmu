@@ -13,10 +13,6 @@ repository that results from these discussions.
 The wiki lists no recent changes. The expectation is that the people
 that care were involved in the discussions beforehand.
 
-The wiki also produces no feed. The assumption is that announcements
-are made on social media: blogs, news aggregators, discussion forums,
-the fediverse, but humans.
-
 This wiki uses a [Markdown
 library](https://github.com/gomarkdown/markdown) to generate the web
 pages from Markdown. There are two extensions Oddmu adds to the

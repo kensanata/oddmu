@@ -15,7 +15,13 @@ _{{.Name}}_ is the page name, escaped for use in URLs. More
 specifically, it is URI escaped except for the slashes. The page name
 doesn't include the _.md_ extension.
 
+For the _view.html_ template:
+
 _{{.Html}}_ is the rendered Markdown, as HTML.
+
+_{{.Hashtags}}_ is an array of strings.
+
+For the _edit.html_ template:
 
 _{{printf "%s" .Body}}_ is the Markdown, as a string (the data itself
 is a byte array and that's why we need to call _printf_).
@@ -35,20 +41,53 @@ search result is a page (with the properties seen above). Thus, to
 refer to them, you need to use a _{{range .Items}}_ … _{{end}}_
 construct.
 
-For search results, _{{.Html}}_ is the rendered Markdown of a page
-summary, as HTML.
+For items in the search result:
+
+_{{.Html}}_ is the rendered Markdown of a page summary, as HTML.
 
 _{{.Score}}_ is a numerical score for search results.
 
+For the _feed.html_ template:
+
+_{{.Name}}_ is the page name, escaped for use in URLs.
+
+_{{.Title}}_ is the title of the underlying main page.
+
+_{{.Date}}_ is the date of the last update to the underlying main page,
+in RFC 822 format.
+
+_{{.Items}}_ is an array of feed items.
+
+For items in the feed:
+
+_{{.Name}}_ is the page name, escaped for use in URLs.
+
+_{{.Title}}_ is the title of the page.
+
+_{{.Html}}_ is the rendered Markdown, as escaped (!) HTML.
+
+_{{.Hashtags}}_ is an array of strings.
+
+_{{.Date}}_, the date of the last update to this page, in RFC 822
+format.
+
 The _upload.html_ template cannot refer to anything.
 
-When calling the _save_ action, the page name is take from the URL and
-the page content is taken from the _body_ form parameter. To
-illustrate, here's how to edit a page using _curl_:
+When calling the _save_ and _append_ action, the page name is taken
+from the URL path and the page content is taken from the _body_ form
+parameter. To illustrate, here's how to edit the "welcome" page using
+_curl_:
 
 ```
 curl --form body="Did you bring a towel?" \
   http://localhost:8080/save/welcome
+```
+
+When calling the _search_ action, the query is taken from the URL
+parameter _q_.
+
+```
+curl http://localhost:8080/search?q=towel
 ```
 
 ## Non-English hyphenation

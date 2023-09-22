@@ -24,16 +24,20 @@ type Page struct {
 	Body     []byte
 	Html     template.HTML
 	Score    int
+	Hashtags []string
 }
 
 // santize uses bluemonday to sanitize the HTML.
-func sanitize(s string) template.HTML {
-	return template.HTML(bluemonday.UGCPolicy().Sanitize(s))
+// No exceptions are made because this is used for snippets.
+func sanitizeStrict(s string) template.HTML {
+	return template.HTML(bluemonday.StrictPolicy().Sanitize(s))
 }
 
 // santizeBytes uses bluemonday to sanitize the HTML.
 func sanitizeBytes(bytes []byte) template.HTML {
-	return template.HTML(bluemonday.UGCPolicy().SanitizeBytes(bytes))
+	policy := bluemonday.UGCPolicy()
+	policy.AllowAttrs("class").OnElements("a") // for hashtags
+	return template.HTML(policy.SanitizeBytes(bytes))
 }
 
 // nameEscape returns the page name safe for use in URLs. That is,
@@ -111,7 +115,7 @@ func (p *Page) score(q string) {
 func (p *Page) summarize(q string) {
 	t := p.plainText()
 	p.Name = nameEscape(p.Name)
-	p.Html = sanitize(snippets(q, t))
+	p.Html = sanitizeStrict(snippets(q, t))
 	p.Language = language(t)
 }
 

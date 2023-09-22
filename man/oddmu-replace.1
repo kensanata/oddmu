@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-REPLACE" "1" "2023-09-21"
+.TH "ODDMU-REPLACE" "1" "2023-09-22"
 .PP
 .SH NAME
 .PP
@@ -20,10 +20,6 @@ oddmu-replace - replace text in Oddmu pages from the command-line
 The "replace" subcommand replaces the Markdown files in the current
 directory (!\&), returning the replace result as a Markdown-formatted
 list.\&
-.PP
-The use of a trigram index makes it possible to find substrings and
-for the word order not to matter, but it also makes the replace results
-a bit harder to understand.\& See \fIoddmu-replace\fR(7) for more.\&
 .PP
 .SH OPTIONS
 .PP
@@ -52,6 +48,14 @@ Replace oddmu: 1 result
 * [Oddµ: A minimal wiki](README) (5)
 .fi
 .RE
+.PP
+.SH NOTES
+.PP
+This is the equivalent of using \fIsed\fR(1) with the --quiet,
+--regexp-extended, --in-place=~ and --expression command with the s
+command "s/regexp/replacement/g" except that it prints a unified diff
+per default instead of making any changes and the regexp rules differ
+slightly.\&
 .PP
 .SH SEE ALSO
 .PP

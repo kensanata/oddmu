@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU" "1" "2023-09-21"
+.TH "ODDMU" "1" "2023-09-22"
 .PP
 .SH NAME
 .PP
@@ -41,7 +41,14 @@ The template files are the HTML files in the working directory: "add.\&html",
 "edit.\&html", "search.\&html", "upload.\&html" and "view.\&html".\& Feel free to change
 the templates and restart the server.\&
 .PP
-The first change you should make is to replace the email address in "view.\&html".\&
+The first change you should make is to replace the name and email
+address in the footer of "view.\&html".\& Look for "Your Name" and
+"example.\&org".\&
+.PP
+The second change you should make is to replace the name, email
+address and domain name in "feed.\&html".\& Look for "Your Name" and
+"example.\&org".\& This second template is used to generate the RSS feeds
+(despite it'\&s ".\&html" extension).\&
 .PP
 See \fIoddmu-templates\fR(5) for more.\&
 .PP
@@ -133,7 +140,7 @@ pages by saving an empty file.\&
 .SH SEE ALSO
 .PP
 \fIoddmu\fR(5), \fIoddmu.\&service\fR(5), oddmu-apache_(5), \fIoddmu-html\fR(1),
-\fIoddmu-replace\fR(1), \fIoddmu-search\fR(1), \fIoddmu-search\fR(7)
+\fIoddmu-replace\fR(1), \fIoddmu-search\fR(1), \fIoddmu-search\fR(7), \fIoddmu-feed\fR(1)
 .PP
 .SH AUTHORS
 .PP

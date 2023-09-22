@@ -24,6 +24,9 @@ is "index.md". If no such file exists, oddmu offers you to create the page.
 If your files don't provide their own title ("# title"), the file name (without
 ".md") is used for the page title.
 
+Every file can be viewed as feed by using the extension ".rss". The
+feed items are based on links in bullet lists using the asterix ("*").
+
 Subdirectories are created as necessary.
 
 See _oddmu_(5) for details about the page formatting.
@@ -34,7 +37,14 @@ The template files are the HTML files in the working directory: "add.html",
 "edit.html", "search.html", "upload.html" and "view.html". Feel free to change
 the templates and restart the server.
 
-The first change you should make is to replace the email address in "view.html".
+The first change you should make is to replace the name and email
+address in the footer of "view.html". Look for "Your Name" and
+"example.org".
+
+The second change you should make is to replace the name, email
+address and domain name in "feed.html". Look for "Your Name" and
+"example.org". This second template is used to generate the RSS feeds
+(despite it's ".html" extension).
 
 See _oddmu-templates_(5) for more.
 
@@ -88,10 +98,6 @@ discussions.
 
 The wiki lists no recent changes. The expectation is that the people that care
 were involved in the discussions beforehand.
-
-The wiki also produces no feed. The assumption is that announcements are made on
-social media: blogs, news aggregators, discussion forums, the fediverse, but
-humans.
 
 The idea is that the webserver handles as many tasks as possible. It logs
 requests, does rate limiting, handles encryption, gets the certificates, and so

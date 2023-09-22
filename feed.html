@@ -1,0 +1,28 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+    <title>{{.Title}}</title>
+    <link>https://example.org/</link>
+    <managingEditor>you@example.org (Your Name)</managingEditor>
+    <webMaster>you@example.org (Your Name)</webMaster>
+    <atom:link href="https://example.org/view/{{.Name}}.rss" rel="self" type="application/rss+xml"/>
+    <description>This is the digital garden of Your Name.</description>
+    <image>
+      <url>https://example.org/view/logo.jpg</url>
+      <title>{{.Title}}</title>
+      <link>https://example.org/</link>
+    </image>
+    {{range .Items}}
+    <item>
+      <title>{{.Title}}</title>
+      <link>https://example.org/view/{{.Name}}</link>
+      <guid>https://example.org/view/{{.Name}}</guid>
+      <description>{{.Html}}</description>
+      <pubDate>{{.Date}}</pubDate>
+      {{range .Hashtags}}
+      <category>{{.}}</category>
+      {{end}}
+    </item>
+    {{end}}
+  </channel>
+</rss>

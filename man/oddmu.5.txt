@@ -84,6 +84,35 @@ The Markdown processor comes with a few extensions:
 * trailing backslashes turn into line breaks
 * MathJax is supported (but needs a separte setup)
 
+# FEEDS
+
+Every file can be viewed as feed by using the extension ".rss". The
+feed items are based on links in bullet lists using the asterix ("*").
+The items must point to local pages. This is why the link may not
+contain two forward slashes ("//").
+
+Assume this is the index page. The feed would be "/view/index.rss". It
+would contain the pages "Arianism", "Donatism" and "Monophysitism" but
+it would not contain the pages "Feed" and "About" since the list items
+don't start with an asterix.
+
+```
+# Main Page
+
+Hello and welcome! Here are some important links:
+
+- [Feed](index.rss)
+- [About](about)
+
+Recent posts:
+
+* [Arianism](arianism)
+* [Donatism](donatism)
+* [Monophysitism](monophysitism)
+```
+
+The feed contains at most 10 items, starting at the top.
+
 # PERCENT ENCODING
 
 If you use Markdown links to local pages, you must percent-encode the

@@ -32,31 +32,40 @@ func wikiLink(p *parser.Parser, fn func(p *parser.Parser, data []byte, offset in
 	}
 }
 
-func hashtag(p *parser.Parser, data []byte, offset int) (int, ast.Node) {
-	data = data[offset:]
-	i := 0
-	n := len(data)
-	for i < n && !parser.IsSpace(data[i]) {
-		i++
-	}
-	if i == 0 {
-		return 0, nil
-	}
-	link := &ast.Link{
-		Destination: append([]byte("/search?q=%23"), data[1:i]...),
-		Title:       data[0:i],
-	}
-	text := bytes.ReplaceAll(data[0:i], []byte("_"), []byte(" "))
-	ast.AppendChild(link, &ast.Text{Leaf: ast.Leaf{Literal: text}})
-	return i, link
+// hashtag returns an inline parser function. This indirection is
+// required because we want to receive an array of hashtags found.
+func hashtag() (func(p *parser.Parser, data []byte, offset int) (int, ast.Node), *[]string) {
+	hashtags := make([]string,0)
+	return func(p *parser.Parser, data []byte, offset int) (int, ast.Node) {
+		data = data[offset:]
+		i := 0
+		n := len(data)
+		for i < n && !parser.IsSpace(data[i]) {
+			i++
+		}
+		if i == 0 {
+			return 0, nil
+		}
+		hashtags = append(hashtags, string(data[1:i]))
+		link := &ast.Link{
+			AdditionalAttributes: []string{`class="tag"`},
+			Destination: append([]byte("/search?q=%23"), data[1:i]...),
+			Title:       data[0:i],
+		}
+		text := bytes.ReplaceAll(data[0:i], []byte("_"), []byte(" "))
+		ast.AppendChild(link, &ast.Text{Leaf: ast.Leaf{Literal: text}})
+		return i, link
+	}, &hashtags
 }
 
-// renderHtml renders the Page.Body to HTML and sets Page.Html.
+// renderHtml renders the Page.Body to HTML and sets Page.Html,
+// Page.Language, Page.Hashtags, and escapes Page.Name.
 func (p *Page) renderHtml() {
 	parser := parser.New()
 	prev := parser.RegisterInline('[', nil)
 	parser.RegisterInline('[', wikiLink(parser, prev))
-	parser.RegisterInline('#', hashtag)
+	fn, hashtags := hashtag()
+	parser.RegisterInline('#', fn)
 	if useWebfinger {
 		parser.RegisterInline('@', account)
 	}
@@ -64,6 +73,7 @@ func (p *Page) renderHtml() {
 	p.Name = nameEscape(p.Name)
 	p.Html = sanitizeBytes(maybeUnsafeHTML)
 	p.Language = language(p.plainText())
+	p.Hashtags = *hashtags
 }
 
 // plainText renders the Page.Body to plain text and returns it,

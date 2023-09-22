@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-TEMPLATES" "5" "2023-09-18" "File Formats Manual"
+.TH "ODDMU-TEMPLATES" "5" "2023-09-22" "File Formats Manual"
 .PP
 .SH NAME
 .PP
@@ -22,7 +22,13 @@ title, the page name is used.\&
 specifically, it is URI escaped except for the slashes.\& The page name
 doesn'\&t include the \fI.\&md\fR extension.\&
 .PP
+For the \fIview.\&html\fR template:
+.PP
 \fI{{.\&Html}}\fR is the rendered Markdown, as HTML.\&
+.PP
+\fI{{.\&Hashtags}}\fR is an array of strings.\&
+.PP
+For the \fIedit.\&html\fR template:
 .PP
 \fI{{printf "%s" .\&Body}}\fR is the Markdown, as a string (the data itself
 is a byte array and that'\&s why we need to call \fIprintf\fR).\&
@@ -42,21 +48,56 @@ search result is a page (with the properties seen above).\& Thus, to
 refer to them, you need to use a \fI{{range .\&Items}}\fR … \fI{{end}}\fR
 construct.\&
 .PP
-For search results, \fI{{.\&Html}}\fR is the rendered Markdown of a page
-summary, as HTML.\&
+For items in the search result:
+.PP
+\fI{{.\&Html}}\fR is the rendered Markdown of a page summary, as HTML.\&
 .PP
 \fI{{.\&Score}}\fR is a numerical score for search results.\&
 .PP
+For the \fIfeed.\&html\fR template:
+.PP
+\fI{{.\&Name}}\fR is the page name, escaped for use in URLs.\&
+.PP
+\fI{{.\&Title}}\fR is the title of the underlying main page.\&
+.PP
+\fI{{.\&Date}}\fR is the date of the last update to the underlying main page,
+in RFC 822 format.\&
+.PP
+\fI{{.\&Items}}\fR is an array of feed items.\&
+.PP
+For items in the feed:
+.PP
+\fI{{.\&Name}}\fR is the page name, escaped for use in URLs.\&
+.PP
+\fI{{.\&Title}}\fR is the title of the page.\&
+.PP
+\fI{{.\&Html}}\fR is the rendered Markdown, as HTML.\&
+.PP
+\fI{{.\&Hashtags}}\fR is an array of strings.\&
+.PP
+\fI{{.\&Date}}\fR, the date of the last update to this page, in RFC 822
+format.\&
+.PP
 The \fIupload.\&html\fR template cannot refer to anything.\&
 .PP
-When calling the \fIsave\fR action, the page name is take from the URL and
-the page content is taken from the \fIbody\fR form parameter.\& To
-illustrate, here'\&s how to edit a page using \fIcurl\fR:
+When calling the \fIsave\fR and \fIappend\fR action, the page name is taken
+from the URL path and the page content is taken from the \fIbody\fR form
+parameter.\& To illustrate, here'\&s how to edit the "welcome" page using
+\fIcurl\fR:
 .PP
 .nf
 .RS 4
 curl --form body="Did you bring a towel?" 
   http://localhost:8080/save/welcome
+.fi
+.RE
+.PP
+When calling the \fIsearch\fR action, the query is taken from the URL
+parameter \fIq\fR.\&
+.PP
+.nf
+.RS 4
+curl http://localhost:8080/search?q=towel
 .fi
 .RE
 .PP

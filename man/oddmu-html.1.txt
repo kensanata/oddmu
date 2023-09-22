@@ -31,7 +31,7 @@ oddmu html README
 # ENVIRONMENT
 
 The ODDMU_WEBFINGER environment variable has no effect in this
-situation. Fediverse accounts are no linked to their profile pages.
+situation. Fediverse accounts are not linked to their profile pages.
 
 # SEE ALSO
 
