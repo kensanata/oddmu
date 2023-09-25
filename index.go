@@ -44,9 +44,9 @@ func (idx *Index) reset() {
 
 // addDocument adds the text as a new document. This assumes that the
 // index is locked!
-func (idx *Index) addDocument(text string) docid {
+func (idx *Index) addDocument(text []byte) docid {
 	id := idx.next_id; idx.next_id++
-	for _, token := range tokens(text) {
+	for _, token := range hashtags(text) {
 		ids := idx.token[token]
 		// Don't add same ID more than once. Checking the last
 		// position of the []docid works because the id is
@@ -61,8 +61,8 @@ func (idx *Index) addDocument(text string) docid {
 
 // deleteDocument deletes the text as a new document. The id can no
 // longer be used. This assumes that the index is locked!
-func (idx *Index) deleteDocument(text string, id docid) {
-	for _, token := range tokens(text) {
+func (idx *Index) deleteDocument(text []byte, id docid) {
+	for _, token := range hashtags(text) {
 		ids := index.token[token]
 		// Tokens can appear multiple times in a text but they
 		// can only be deleted once. deleted.
@@ -106,7 +106,7 @@ func (idx *Index) add(path string, info fs.FileInfo, err error) error {
 	}
 	p.handleTitle(false)
 
-	id := idx.addDocument(string(p.Body))
+	id := idx.addDocument(p.Body)
 	idx.documents[id] = p.Name
 	idx.titles[p.Name] = p.Title
 	return nil
@@ -153,16 +153,16 @@ func (p *Page) updateIndex() {
 		}
 	}
 	if id == 0 {
-		id = index.addDocument(string(p.Body))
+		id = index.addDocument(p.Body)
 		index.documents[id] = p.Name
 		index.titles[p.Name] = p.Title
 	} else {
 		if o, err := loadPage(p.Name); err == nil {
-			index.deleteDocument(string(o.Body), id)
+			index.deleteDocument(o.Body, id)
 		}
 		// Do not reuse the old id. We need a new one for
 		// indexing to work.
-		id = index.addDocument(string(p.Body))
+		id = index.addDocument(p.Body)
 		index.documents[id] = p.Name
 		p.handleTitle(false)
 		// The page name stays the same but the title may have
@@ -194,32 +194,59 @@ func (p *Page) removeFromIndex() {
 		log.Printf("Page %s cannot removed from the index: %s", p.Name, err)
 		return
 	}
-	index.deleteDocument(string(o.Body), id)
+	index.deleteDocument(o.Body, id)
 }
 
-// searchDocuments searches the index for a query string and returns
-// page names.
+// search searches the index for a query string and returns page
+// names.
 func (idx *Index) search(q string) []string {
 	index.RLock()
 	defer index.RUnlock()
-	var r []docid
-	for _, token := range tokens(q) {
-		if ids, ok := idx.token[token]; ok {
-			if r == nil {
-				r = ids
+	names := make([]string, 0)
+	hashtags := hashtags([]byte(q))
+	if len(hashtags) > 0 {
+		var r []docid
+		for _, token := range hashtags {
+			if ids, ok := idx.token[token]; ok {
+				if r == nil {
+					r = ids
+				} else {
+					r = intersection(r, ids)
+				}
 			} else {
-				r = intersection(r, ids)
+				// Token doesn't exist therefore abort search.
+				return nil
 			}
-		} else {
-			// Token doesn't exist therefore abort search.
-			return nil
+		}
+		for _, id := range r {
+			names = append(names, idx.documents[id])
+		}
+	} else {
+		for _, name := range idx.documents {
+			names = append(names, name)
 		}
 	}
-	names := make([]string, 0)
-	for _, id := range r {
-		names = append(names, idx.documents[id])
+	return grep(tokens(q), names)
+}
+
+func grep(tokens, names []string) []string {
+	results := make([]string, 0)
+NameLoop:
+	for _, name := range names {
+		p, err := loadPage(name)
+		if err != nil {
+			log.Printf("Cannot load %s: %s", name, err)
+			continue
+		}
+		body := strings.ToLower(string(p.Body))
+		for _, token := range tokens {
+			if !strings.Contains(body, token) {
+				continue NameLoop
+			}
+		}
+		results = append(results, name)
 	}
-	return names
+	return results
 }
 
 // intersection returns the set intersection between a and b.

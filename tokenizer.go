@@ -1,30 +1,17 @@
 package main
 
 import (
+	"bytes"
 	"strings"
 	"unicode"
+	"unicode/utf8"
 )
 
-// tokenize returns a slice of tokens for the given text.
+// tokenize returns a slice of alphanumeric tokens for the given text.
 func tokenize(text string) []string {
 	return strings.FieldsFunc(text, func(r rune) bool {
-		// Split on any character that is not a letter or a
-		// number, not the hash sign (for hash tags)
-		return !unicode.IsLetter(r) && !unicode.IsNumber(r) && r != '#'
+		return !unicode.IsLetter(r) && !unicode.IsNumber(r)
 	})
-}
-
-// shortWordFilter removes all the words three characters or less
-// except for all caps words like USA, EUR, CHF and the like.
-func shortWordFilter(tokens []string) []string {
-	r := make([]string, 0, len(tokens))
-	for _, token := range tokens {
-		if len(token) > 3 ||
-			len(token) == 3 && token == strings.ToUpper(token) {
-			r = append(r, token)
-		}
-        }
-	return r
 }
 
 // lowercaseFilter returns a slice of lower case tokens.
@@ -36,10 +23,34 @@ func lowercaseFilter(tokens []string) []string {
 	return r
 }
 
-// tokens returns a slice of tokens.
+// tokens returns a slice of alphanumeric tokens.
 func tokens(text string) []string {
 	tokens := tokenize(text)
-	tokens = shortWordFilter(tokens)
 	tokens = lowercaseFilter(tokens)
 	return tokens
+}
+
+// hashtags returns a slice of hashtags.
+func hashtags(s []byte) []string {
+	hashtags := make([]string, 0)
+	for {
+		i := bytes.IndexRune(s, '#')
+		if i == -1 {
+			return hashtags
+		}
+		from := i
+		i++
+		for {
+			r, n := utf8.DecodeRune(s[i:])
+			if n > 0 && (unicode.IsLetter(r) || unicode.IsNumber(r) || r == '_') {
+				i += n
+			} else {
+				break
+			}
+		}
+		if i > from + 1 { // not just "#"
+			hashtags = append(hashtags, string(bytes.ToLower(s[from:i])))
+		}
+		s = s[i:]
+	}
 }
