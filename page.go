@@ -2,9 +2,9 @@ package main
 
 import (
 	"bytes"
-	"log"
 	"github.com/microcosm-cc/bluemonday"
 	"html/template"
+	"log"
 	"net/url"
 	"os"
 	"path/filepath"

@@ -7,7 +7,7 @@ import (
 )
 
 func TestFeed(t *testing.T) {
-	assert.Contains(t, 
+	assert.Contains(t,
 		assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/index.rss", nil),
 		"Welcome to Oddµ")
 }
@@ -16,7 +16,7 @@ func TestFeed(t *testing.T) {
 func TestFeedItems(t *testing.T) {
 	_ = os.RemoveAll("testdata")
 	index.load()
-	
+
 	p1 := &Page{Name: "testdata/cactus", Body: []byte(`# Cactus
 Green head and white hair
 A bench in the evening sun

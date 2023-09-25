@@ -1,21 +1,21 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"flag"
 	"fmt"
 	"github.com/google/subcommands"
 	"io"
-	"os"
-	"strings"
-	"bytes"
-	"slices"
-	"path/filepath"
 	"io/fs"
+	"os"
+	"path/filepath"
+	"slices"
+	"strings"
 )
 
 type searchCmd struct {
-	page int
+	page  int
 	exact bool
 }
 
@@ -42,8 +42,8 @@ func (cmd *searchCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface
 // searchCli runs the search command on the command line. It is used
 // here with an io.Writer for easy testing.
 func searchCli(w io.Writer, n int, exact bool, args []string) subcommands.ExitStatus {
-	var fn func(q string, n int) ([]*Page, bool, int);
-	if (exact) {
+	var fn func(q string, n int) ([]*Page, bool, int)
+	if exact {
 		fn = searchExact
 	} else {
 		index.load()
@@ -75,7 +75,7 @@ func searchExact(q string, page int) ([]*Page, bool, int) {
 	pages := make(map[string]*Page)
 	names := make([]string, 0)
 	index.titles = make(map[string]string)
-	err := filepath.Walk(".", func (path string, info fs.FileInfo, err error) error {
+	err := filepath.Walk(".", func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -112,7 +112,7 @@ func searchExact(q string, page int) ([]*Page, bool, int) {
 		to = len(names)
 	}
 	items := make([]*Page, 0)
-	for i := from; i<to; i++ {
+	for i := from; i < to; i++ {
 		p := pages[names[i]]
 		p.score(q)
 		p.summarize(q)

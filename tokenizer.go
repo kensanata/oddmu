@@ -48,7 +48,7 @@ func hashtags(s []byte) []string {
 				break
 			}
 		}
-		if i > from + 1 { // not just "#"
+		if i > from+1 { // not just "#"
 			hashtags = append(hashtags, string(bytes.ToLower(s[from:i])))
 		}
 		s = s[i:]

@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"flag"
-	"log"
 	"github.com/google/subcommands"
 	"html/template"
+	"log"
 	"net/http"
 	"os"
 	"regexp"

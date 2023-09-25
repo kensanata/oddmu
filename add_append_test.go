@@ -18,7 +18,7 @@ Orange sky above
 Reflects a distant fire
 It's not `)}
 	p.save()
-	
+
 	data := url.Values{}
 	data.Set("body", "barbecue")
 

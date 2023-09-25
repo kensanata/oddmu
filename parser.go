@@ -35,7 +35,7 @@ func wikiLink(p *parser.Parser, fn func(p *parser.Parser, data []byte, offset in
 // hashtag returns an inline parser function. This indirection is
 // required because we want to receive an array of hashtags found.
 func hashtag() (func(p *parser.Parser, data []byte, offset int) (int, ast.Node), *[]string) {
-	hashtags := make([]string,0)
+	hashtags := make([]string, 0)
 	return func(p *parser.Parser, data []byte, offset int) (int, ast.Node) {
 		data = data[offset:]
 		i := 0
@@ -49,8 +49,8 @@ func hashtag() (func(p *parser.Parser, data []byte, offset int) (int, ast.Node),
 		hashtags = append(hashtags, string(data[1:i]))
 		link := &ast.Link{
 			AdditionalAttributes: []string{`class="tag"`},
-			Destination: append([]byte("/search?q=%23"), data[1:i]...),
-			Title:       data[0:i],
+			Destination:          append([]byte("/search?q=%23"), data[1:i]...),
+			Title:                data[0:i],
 		}
 		text := bytes.ReplaceAll(data[0:i], []byte("_"), []byte(" "))
 		ast.AppendChild(link, &ast.Text{Leaf: ast.Leaf{Literal: text}})

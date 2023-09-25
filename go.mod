@@ -4,7 +4,6 @@ go 1.21.0
 
 require (
 	github.com/anthonynsimon/bild v0.13.0
-	github.com/dgryski/go-trigram v0.0.0-20160407183937-79ec494e1ad0
 	github.com/gomarkdown/markdown v0.0.0-20230912175223-14b07df9d538
 	github.com/google/subcommands v1.2.0
 	github.com/hexops/gotextdiff v1.0.3

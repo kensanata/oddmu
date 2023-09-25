@@ -30,7 +30,7 @@ func (cmd *htmlCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}
 }
 
 func htmlCli(w io.Writer, useTemplate bool, args []string) subcommands.ExitStatus {
-		for _, arg := range args {
+	for _, arg := range args {
 		p, err := loadPage(arg)
 		if err != nil {
 			fmt.Fprintf(w, "Cannot load %s: %s\n", arg, err)

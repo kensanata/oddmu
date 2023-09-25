@@ -3,8 +3,8 @@ package main
 import (
 	"net/http"
 	"os"
-	"time"
 	"strings"
+	"time"
 )
 
 // rootHandler just redirects to /view/index.
@@ -31,7 +31,7 @@ func viewHandler(w http.ResponseWriter, r *http.Request, name string) {
 		file = false
 		if strings.HasSuffix(fn, ".rss") {
 			rss = true
-			name = fn[0:len(fn)-4]
+			name = fn[0 : len(fn)-4]
 			fn = name
 		}
 		fn += ".md"

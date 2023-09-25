@@ -2,9 +2,9 @@ package main
 
 import (
 	"bytes"
+	"github.com/google/subcommands"
 	"github.com/stretchr/testify/assert"
 	"testing"
-	"github.com/google/subcommands"
 )
 
 func TestSearchCmd(t *testing.T) {

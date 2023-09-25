@@ -2,8 +2,8 @@ package main
 
 import (
 	"bytes"
-	"github.com/stretchr/testify/assert"
 	"github.com/google/subcommands"
+	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
 )
@@ -32,7 +32,7 @@ You are no planet`)}
 1 change was made.
 This is a dry run. Use -confirm to make it happen.
 `
-	
+
 	b := new(bytes.Buffer)
 	s := replaceCli(b, false, []string{`\bno planet`, `planetoid`})
 	assert.Equal(t, subcommands.ExitSuccess, s)

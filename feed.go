@@ -1,11 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/parser"
 	"html/template"
-	"bytes"
 	"os"
 	"path"
 	"time"

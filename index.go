@@ -4,10 +4,10 @@
 
 package main
 
-import(
+import (
 	"io/fs"
-	"path/filepath"
 	"log"
+	"path/filepath"
 	"sort"
 	"strings"
 	"sync"
@@ -45,7 +45,8 @@ func (idx *Index) reset() {
 // addDocument adds the text as a new document. This assumes that the
 // index is locked!
 func (idx *Index) addDocument(text []byte) docid {
-	id := idx.next_id; idx.next_id++
+	id := idx.next_id
+	idx.next_id++
 	for _, token := range hashtags(text) {
 		ids := idx.token[token]
 		// Don't add same ID more than once. Checking the last
@@ -136,7 +137,7 @@ func (idx *Index) dump() {
 	for token, ids := range idx.token {
 		log.Printf("%s: %v", token, ids)
 	}
-}	
+}
 
 // updateIndex updates the index for a single page. The old text is
 // loaded from the disk and removed from the index first, if it
@@ -170,7 +171,6 @@ func (p *Page) updateIndex() {
 		index.titles[p.Name] = p.Title
 	}
 }
-
 
 // removeFromIndex removes the page from the index. Do this when
 // deleting a page.

@@ -66,6 +66,7 @@ func HTTPUploadAndRedirectTo(t *testing.T, handler http.HandlerFunc, url, conten
 		"Expected HTTP redirect location %s for %q but received %v", destination, url, headers)
 	return isRedirectCode
 }
+
 // HTTPStatusCodeIfModifiedSince checks that the request results in a
 // 304 response for the given time.
 func HTTPStatusCodeIfModifiedSince(t *testing.T, handler http.HandlerFunc, url string, ti time.Time) {

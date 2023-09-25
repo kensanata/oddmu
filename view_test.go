@@ -88,13 +88,12 @@ I like spring better
 	assert.NoError(t, err)
 	h := makeHandler(viewHandler, true)
 	assert.Equal(t, []string{fi.ModTime().UTC().Format(http.TimeFormat)},
-	HTTPHeaders(h, "GET", "/view/testdata/now", nil, "Last-Modified"))
+		HTTPHeaders(h, "GET", "/view/testdata/now", nil, "Last-Modified"))
 	HTTPStatusCodeIfModifiedSince(t, h, "/view/testdata/now", fi.ModTime())
 	t.Cleanup(func() {
 		_ = os.RemoveAll("testdata")
 	})
 }
-
 
 // wipes testdata
 func TestPageHead(t *testing.T) {
