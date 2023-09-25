@@ -9,7 +9,7 @@ import (
 
 func TestSearchCmd(t *testing.T) {
 	b := new(bytes.Buffer)
-	s := searchCli(b, 1, false, []string{"oddµ"})
+	s := searchCli(b, 1, []string{"oddµ"})
 	assert.Equal(t, subcommands.ExitSuccess, s)
 	r := `Search for oddµ, page 1: 2 results
 * [Oddµ: A minimal wiki](README) (5)
