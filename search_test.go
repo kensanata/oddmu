@@ -26,7 +26,7 @@ The silence streches.`)}
 	data := url.Values{}
 	data.Set("q", "look")
 	body := assert.HTTPBody(searchHandler, "GET", "/search", data)
-	assert.Contains(t, body, "We look")
+	assert.Contains(t, body, "We <b>look</b>")
 	assert.NotContains(t, body, "Odd?")
 	assert.Contains(t, body, "Even?")
 }

@@ -27,10 +27,12 @@ type Page struct {
 	Hashtags []string
 }
 
-// santize uses bluemonday to sanitize the HTML.
-// No exceptions are made because this is used for snippets.
+// santize uses bluemonday to sanitize the HTML. An exceptions is made
+// for the b tag because this is used for snippets.
 func sanitizeStrict(s string) template.HTML {
-	return template.HTML(bluemonday.StrictPolicy().Sanitize(s))
+	policy := bluemonday.StrictPolicy()
+	policy.AllowElements("b")
+	return template.HTML(policy.Sanitize(s))
 }
 
 // santizeBytes uses bluemonday to sanitize the HTML.

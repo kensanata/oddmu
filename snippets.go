@@ -1,20 +1,21 @@
 package main
 
 import (
+	"log"
 	"regexp"
 	"strings"
 )
 
 // re returns a regular expression matching any word in q.
 func re(q string) (*regexp.Regexp, error) {
-	q = regexp.QuoteMeta(q)
-	re, err := regexp.Compile(`\s+`)
-	if err != nil {
-		return nil, err
+	fields := strings.Fields(q)
+	quoted := make([]string, len(fields))
+	for i, w := range fields {
+		quoted[i] = regexp.QuoteMeta(w)
 	}
-	words := re.ReplaceAllString(q, "|")
-	re, err = regexp.Compile(`(?i)(` + words + `)`)
+	re, err := regexp.Compile(`(?i)(` + strings.Join(quoted, "|") + `)`)
 	if err != nil {
+		log.Printf("Cannot compile %s %v: %s", q, quoted, err)
 		return nil, err
 	}
 	return re, nil
@@ -26,11 +27,15 @@ func snippets(q string, s string) string {
 	maxsnippets := 4
 	re, err := re(q)
 	// If the compilation didn't work, truncate and return
-	if err != nil || len(s) <= snippetlen {
+	if err != nil {
 		if len(s) > 400 {
 			s = s[0:400] + " …"
 		}
 		return s
+	}
+	// Short cut for short pages
+	if len(s) <= snippetlen {
+		return highlight(q, re, s)
 	}
 	// show a snippet from the beginning of the document
 	j := strings.LastIndex(s[:snippetlen], " ")
