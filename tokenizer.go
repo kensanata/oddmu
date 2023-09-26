@@ -8,6 +8,7 @@ import (
 )
 
 // tokenize returns a slice of alphanumeric tokens for the given text.
+// Use this to begin tokenizing the page body.
 func tokenize(text string) []string {
 	return strings.FieldsFunc(text, func(r rune) bool {
 		return !unicode.IsLetter(r) && !unicode.IsNumber(r)
@@ -30,7 +31,42 @@ func tokens(text string) []string {
 	return tokens
 }
 
-// hashtags returns a slice of hashtags.
+// tokenizeWithFilters returns a slice of alphanumeric tokens for the
+// given text, including colons. Use this to begin tokenizing the
+// query string.
+func tokenizeWithFilters(text string) []string {
+	return strings.FieldsFunc(text, func(r rune) bool {
+		return !unicode.IsLetter(r) && !unicode.IsNumber(r) && r != ':'
+	})
+}
+
+// predicateFilter returns two slices of tokens: the first with
+// predicates, the other without predicates. Use this for query
+// string tokens.
+func predicateFilter(tokens []string) ([]string, []string) {
+	with := make([]string, 0)
+	without := make([]string, 0)
+	for _, token := range tokens {
+		if strings.Contains(token, ":") {
+			with = append(with, token)
+		} else {
+			without = append(without, token)
+		}
+	}
+	return with, without
+}
+
+// predicatesAndTokens returns two slices of tokens: the first with
+// predicates, the other without predicates, all of them lower case.
+// Use this for query strings.
+func predicatesAndTokens(q string) ([]string, []string) {
+	tokens := tokenizeWithFilters(q)
+	tokens = lowercaseFilter(tokens)
+	return predicateFilter(tokens)
+}
+
+// hashtags returns a slice of hashtags. Use this to extract hashtags
+// from a page body.
 func hashtags(s []byte) []string {
 	hashtags := make([]string, 0)
 	for {

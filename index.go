@@ -5,6 +5,7 @@
 package main
 
 import (
+	"golang.org/x/exp/constraints"
 	"io/fs"
 	"log"
 	"path/filepath"
@@ -226,37 +227,17 @@ func (idx *Index) search(q string) []string {
 			names = append(names, name)
 		}
 	}
-	return grep(tokens(q), names)
-}
-
-func grep(tokens, names []string) []string {
-	results := make([]string, 0)
-NameLoop:
-	for _, name := range names {
-		p, err := loadPage(name)
-		if err != nil {
-			log.Printf("Cannot load %s: %s", name, err)
-			continue
-		}
-		body := strings.ToLower(string(p.Body))
-		for _, token := range tokens {
-			if !strings.Contains(body, token) {
-				continue NameLoop
-			}
-		}
-		results = append(results, name)
-	}
-	return results
+	return names
 }
 
 // intersection returns the set intersection between a and b.
 // a and b have to be sorted in ascending order and contain no duplicates.
-func intersection(a []docid, b []docid) []docid {
+func intersection[T constraints.Ordered](a []T, b []T) []T {
 	maxLen := len(a)
 	if len(b) > maxLen {
 		maxLen = len(b)
 	}
-	r := make([]docid, 0, maxLen)
+	r := make([]T, 0, maxLen)
 	var i, j int
 	for i < len(a) && j < len(b) {
 		if a[i] < b[j] {
