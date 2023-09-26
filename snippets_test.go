@@ -10,7 +10,7 @@ func TestSnippets(t *testing.T) {
 
 	h := `We are immersed in a sea of dead people. <b>All</b> the dead that have gone before us, silent now, just … to ask ourselves – or them! – what it was <b>all</b> about. Instead we drown ourselves in no<b>is</b>e. … surrounded by false friends claiming that <b>all</b> <b>is</b> <b>well</b>. And look at us! Yes, we are <b>well</b>. …`
 
-	q := "all is well"
+	q := "title:all is well"
 	r := snippets(q, s)
 	assert.Equal(t, h, r)
 }

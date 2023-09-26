@@ -31,10 +31,10 @@ func tokens(text string) []string {
 	return tokens
 }
 
-// tokenizeWithFilters returns a slice of alphanumeric tokens for the
+// tokenizeWithPredicates returns a slice of alphanumeric tokens for the
 // given text, including colons. Use this to begin tokenizing the
 // query string.
-func tokenizeWithFilters(text string) []string {
+func tokenizeWithPredicates(text string) []string {
 	return strings.FieldsFunc(text, func(r rune) bool {
 		return !unicode.IsLetter(r) && !unicode.IsNumber(r) && r != ':'
 	})
@@ -60,9 +60,29 @@ func predicateFilter(tokens []string) ([]string, []string) {
 // predicates, the other without predicates, all of them lower case.
 // Use this for query strings.
 func predicatesAndTokens(q string) ([]string, []string) {
-	tokens := tokenizeWithFilters(q)
+	tokens := tokenizeWithPredicates(q)
 	tokens = lowercaseFilter(tokens)
 	return predicateFilter(tokens)
+}
+
+// noPredicateFilter returns a slice of tokens: the predicates without
+// the predicate, and all the others. That is: "foo:bar baz" is turned
+// into ["bar", "baz"] and the predicate "foo:" is dropped.
+func noPredicateFilter(tokens []string) []string {
+	r := make([]string, 0)
+	for _, token := range tokens {
+		parts := strings.Split(token, ":")
+		r = append(r, parts[len(parts)-1])
+	}
+	return r
+}
+
+// highlightTokens returns the tokens to highlight, including title
+// predicates.
+func highlightTokens(q string) []string {
+	tokens := tokenizeWithPredicates(q)
+	tokens = lowercaseFilter(tokens)
+	return noPredicateFilter(tokens)
 }
 
 // hashtags returns a slice of hashtags. Use this to extract hashtags

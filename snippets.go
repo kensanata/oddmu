@@ -8,7 +8,7 @@ import (
 
 // re returns a regular expression matching any word in q.
 func re(q string) (*regexp.Regexp, error) {
-	fields := strings.Fields(q)
+	fields := highlightTokens(q)
 	quoted := make([]string, len(fields))
 	for i, w := range fields {
 		quoted[i] = regexp.QuoteMeta(w)

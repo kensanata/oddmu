@@ -41,9 +41,13 @@ func TestTitleSearch(t *testing.T) {
 	assert.Equal(t, 0, len(items), "no page found")
 	assert.False(t, more)
 
-	items, more = search("title:to", 1)
+	items, more = search("title:wel", 1) // README also contains "wel"
 	assert.Equal(t, 1, len(items), "one page found")
 	assert.Equal(t, "index", items[0].Name, "Welcome to Oddµ")
+	assert.False(t, more)
+
+	items, more = search("wel", 1)
+	assert.Greater(t, len(items), 1, "two pages found")
 	assert.False(t, more)
 }
 
