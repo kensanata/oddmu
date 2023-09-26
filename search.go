@@ -135,7 +135,7 @@ func filterNames(names, predicates []string) []string {
 		if strings.HasPrefix(predicate, "title:") {
 			token := predicate[6:]
 			for _, name := range names {
-				if strings.Contains(index.titles[name], token) {
+				if strings.Contains(strings.ToLower(index.titles[name]), token) {
 					r = append(r, name)
 				}
 			}
