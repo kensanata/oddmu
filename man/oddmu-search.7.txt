@@ -10,23 +10,45 @@ oddmu-search - understanding the Oddmu search engine
 
 # DESCRIPTION
 
-The index indexes trigrams. Each group of three characters is a
-trigram. A document with content "This is a test" is turned to lower
-case and indexed under the trigrams "thi", "his", "is ", "s i", " is",
-"is ", "s a", " a ", "a t", " te", "tes", "est".
+The wiki keeps an index of all the hash tags and page titles in
+memory. Using hashtags and predicates in your queries speeds them up
+because fewer files are opened.
 
-Each query is split into words and then processed the same way. A
-query with the words "this test" is turned to lower case and produces
-the trigrams "thi", "his", "tes", "est". This means that the word
-order is not considered when searching for documents.
+A hashtag starts with a number sign ("#") and contains numbers,
+letters, and the underscore ("_").
 
-This also means that there is no stemming. Searching for "testing"
-won't find "This is a test" because there are no matches for the
-trigrams "sti", "tin", "ing".
+Example: #old_school random encounter
 
-These trigrams are looked up in the index, resulting in the list of
-documents. Each document found is then scored. Each of the following
-increases the score by one point:
+The title predicate filters for pages where the term is contained in
+the page title.
+
+Example: title:geo title:cache zürich
+
+The blog predicate filters for pages where the page name begins with
+an ISO date like "2023-09-26" if true, or doesn't begin with an ISO
+date if false.
+
+Example: blog:false fountain
+
+The sorting of all the pages does not depend on the number of matches
+or any kind of score because computing the score is expensive as this
+requires the page to be loaded from disk. Therefore, results are
+sorted by title:
+
+- If the page title contains the query string, it gets sorted first.
+- If the page name starts with a number, it is sorted descending.
+- All other pages follow, sorted ascending.
+
+The effect is that first, the pages with matches in the page title are
+shown, and then all the others. Within these two groups, the most
+recent blog posts are shown first. This assumes that blog pages start
+with an ISO date like "2023-09-16".
+
+The score and highlighting of snippets is used to help visitors decide
+which links to click.
+
+Each document found is scored. Each of the following increases the
+score by one point:
 
 - the entire phrase matches
 - a word matches
@@ -37,29 +59,6 @@ increases the score by one point:
 A document with content "This is a test" when searched with the phrase
 "this test" therefore gets a score of 8: the entire phrase does not
 match but each word gets four points.
-
-Trigrams are sometimes strange: In a text containing the words "main"
-and "rail", a search for "mail" returns a match because the trigrams
-"mai" and "ail" are found. In this situation, the result has a score
-of 0.
-
-The sorting of all the pages, however, does not depend on scoring!
-Computing the score is expensive because the page must be loaded from
-disk. Therefore, results are sorted by title:
-
-- If the page title contains the query string, it gets sorted first.
-- If the page name (the filename!) begins with a number, it is sorted
-  descending.
-- All other pages follow, sorted ascending.
-
-The effect is that first, the pages with matches in the page title are
-shown, and then all the others. Within these two groups, the most
-recent blog posts are shown first. This assumes that blog pages start
-with an ISO date like "2023-09-16".
-
-The score and highlighting of snippets is used to help visitors decide
-which links to click. A score of 0 indicates that all the trigrams
-were found but _no exact matches_ for any of the terms.
 
 # SEE ALSO
 

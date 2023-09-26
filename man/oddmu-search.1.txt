@@ -14,9 +14,8 @@ The "search" subcommand searches the Markdown files in the current
 directory (!), returning the search result as a Markdown-formatted
 list.
 
-The use of a trigram index makes it possible to find substrings and
-for the word order not to matter, but it also makes the search results
-a bit harder to understand. See _oddmu-search_(7) for more.
+See _oddmu-search_(7) for more information of how pages are searched,
+sorted and scored.
 
 # OPTIONS
 

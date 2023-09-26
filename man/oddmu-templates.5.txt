@@ -28,9 +28,10 @@ is a byte array and that's why we need to call _printf_).
 
 For the _search.html_ template only:
 
-_{{.Previous}}_, _{{.Page}}_, _{{.Next}}_ and _{{.Last}}_ are the
-previous, current, next and last page number in the results since
-doing arithmetics in templates is hard. The first page number is 1.
+_{{.Previous}}_, _{{.Page}}_ and _{{.Next}}_ are the previous, current
+and next page number in the results since doing arithmetics in
+templates is hard. The first page number is 1. The last page is
+expensive to dermine and so that isn't done.
 
 _{{.More}}_ indicates if there are any more search results.
 
