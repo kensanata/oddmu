@@ -128,6 +128,8 @@ func filterNames(names, predicates []string) []string {
 	if len(predicates) == 0 {
 		return names
 	}
+	// the intersection requires sorted lists
+	slices.Sort(names)
 	index.RLock()
 	defer index.RUnlock()
 	for _, predicate := range predicates {
