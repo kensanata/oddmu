@@ -2,7 +2,6 @@ package main
 
 import (
 	"regexp"
-	"strings"
 )
 
 // score splits the query string q into terms and scores the text
@@ -10,7 +9,7 @@ import (
 // characters quoted.
 func score(q string, s string) int {
 	score := 0
-	re, err := regexp.Compile("(?i)" + q)
+	re, err := regexp.Compile("(?i)" + regexp.QuoteMeta(q))
 	if err == nil {
 		m := re.FindAllString(s, -1)
 		if m != nil {
@@ -18,8 +17,8 @@ func score(q string, s string) int {
 			score += len(m)
 		}
 	}
-	for _, v := range strings.Fields(q) {
-		re, err := regexp.Compile(`(?is)(\pL?)(` + v + `)(\pL?)`)
+	for _, token := range highlightTokens(q) {
+		re, err := regexp.Compile(`(?is)(\pL?)(` + regexp.QuoteMeta(token) + `)(\pL?)`)
 		if err != nil {
 			continue
 		}

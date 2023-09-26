@@ -32,8 +32,9 @@ func TestSortNames(t *testing.T) {
 func TestSearch(t *testing.T) {
 	data := url.Values{}
 	data.Set("q", "oddµ")
-	assert.Contains(t,
-		assert.HTTPBody(searchHandler, "GET", "/search", data), "Welcome")
+	body := assert.HTTPBody(searchHandler, "GET", "/search", data)
+	assert.Contains(t, body, "Welcome")
+	assert.Contains(t, body, `<span class="score">5</span>`)
 }
 
 func TestTitleSearch(t *testing.T) {
@@ -44,6 +45,7 @@ func TestTitleSearch(t *testing.T) {
 	items, more = search("title:wel", 1) // README also contains "wel"
 	assert.Equal(t, 1, len(items), "one page found")
 	assert.Equal(t, "index", items[0].Name, "Welcome to Oddµ")
+	assert.Greater(t, items[0].Score, 0, "matches result in a score")
 	assert.False(t, more)
 
 	items, more = search("wel", 1)
