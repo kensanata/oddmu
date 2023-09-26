@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"regexp"
 	"slices"
 	"strconv"
 	"strings"
@@ -20,7 +21,6 @@ type Search struct {
 	Previous int
 	Page     int
 	Next     int
-	Last     int
 	More     bool
 	Results  bool
 }
@@ -123,7 +123,7 @@ func search(q string, page int) ([]*Page, bool) {
 }
 
 // filterNames filters the names by all the predicats such as
-// "title:foo".
+// "title:foo" or "blog:true".
 func filterNames(names, predicates []string) []string {
 	if len(predicates) == 0 {
 		return names
@@ -131,18 +131,27 @@ func filterNames(names, predicates []string) []string {
 	index.RLock()
 	defer index.RUnlock()
 	for _, predicate := range predicates {
+		r := make([]string, 0)
 		if strings.HasPrefix(predicate, "title:") {
 			token := predicate[6:]
-			r := make([]string, 0)
 			for _, name := range names {
-				if strings.Contains(name, token) {
+				if strings.Contains(index.titles[name], token) {
 					r = append(r, name)
 				}
 			}
-			names = intersection(names, r)
+		} else if predicate == "blog:true" || predicate == "blog:false" {
+			blog := predicate == "blog:true"
+			re := regexp.MustCompile(`(^|/)\d\d\d\d-\d\d-\d\d`)
+			for _, name := range names {
+				match := re.MatchString(name)
+				if blog && match || !blog && !match {
+					r = append(r, name)
+				}
+			}
 		} else {
 			log.Printf("Unsupported predicate: %s", predicate)
 		}
+		names = intersection(names, r)
 	}
 	return names
 }
@@ -157,8 +166,8 @@ NameLoop:
 	for _, name := range names {
 		p, err := loadPage(name)
 		if err != nil {
-			log.Printf("Cannot load %s: %s", name, err)
-			continue
+			log.Printf("grep: cannot load %s: %s", name, err)
+			panic(err)
 		}
 		body := strings.ToLower(string(p.Body))
 		for _, token := range tokens {
