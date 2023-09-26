@@ -4,22 +4,20 @@ import (
 	"bytes"
 	"github.com/google/subcommands"
 	"github.com/stretchr/testify/assert"
-	"os"
 	"testing"
 )
 
-// wipes testdata
 func TestReplaceCmd(t *testing.T) {
-	_ = os.RemoveAll("testdata")
+	cleanup(t, "testdata/replace")
 	index.load()
-	p := &Page{Name: "testdata/pluto", Body: []byte(`# Pluto
+	p := &Page{Name: "testdata/replace/pluto", Body: []byte(`# Pluto
 Out there is a rock
 And more rocks uncountable
 You are no planet`)}
 	p.save()
 
-	r := `--- testdata/pluto.md~
-+++ testdata/pluto.md
+	r := `--- testdata/replace/pluto.md~
++++ testdata/replace/pluto.md
 @@ -1,4 +1,4 @@
  # Pluto
  Out there is a rock
@@ -37,8 +35,4 @@ This is a dry run. Use -confirm to make it happen.
 	s := replaceCli(b, false, []string{`\bno planet`, `planetoid`})
 	assert.Equal(t, subcommands.ExitSuccess, s)
 	assert.Equal(t, r, b.String())
-
-	t.Cleanup(func() {
-		_ = os.RemoveAll("testdata")
-	})
 }

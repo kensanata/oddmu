@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/stretchr/testify/assert"
-	"os"
 	"regexp"
 	"testing"
 )
@@ -19,30 +18,25 @@ But yearn for blue sky`)}
 	assert.Regexp(t, regexp.MustCompile("^My back"), string(p.Body))
 }
 
-// wipes testdata
 func TestPageDir(t *testing.T) {
-	_ = os.RemoveAll("testdata")
+	cleanup(t, "testdata/dir")
 	index.load()
-	p := &Page{Name: "testdata/moon", Body: []byte(`# Moon
+	p := &Page{Name: "testdata/dir/moon", Body: []byte(`# Moon
 From bed to bathroom
 A slow shuffle in the dark
 Moonlight floods the aisle`)}
 	p.save()
 
-	o, err := loadPage("testdata/moon")
+	o, err := loadPage("testdata/dir/moon")
 	assert.NoError(t, err, "load page")
 	assert.Equal(t, p.Body, o.Body)
-	assert.FileExists(t, "testdata/moon.md")
+	assert.FileExists(t, "testdata/dir/moon.md")
 
 	// Saving an empty page deletes it.
-	p = &Page{Name: "testdata/moon", Body: []byte("")}
+	p = &Page{Name: "testdata/dir/moon", Body: []byte("")}
 	p.save()
-	assert.NoFileExists(t, "testdata/moon.md")
+	assert.NoFileExists(t, "testdata/dir/moon.md")
 
 	// But the backup still exists.
-	assert.FileExists(t, "testdata/moon.md~")
-
-	t.Cleanup(func() {
-		_ = os.RemoveAll("testdata")
-	})
+	assert.FileExists(t, "testdata/dir/moon.md~")
 }

@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"os"
+	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -76,4 +78,29 @@ func HTTPStatusCodeIfModifiedSince(t *testing.T, handler http.HandlerFunc, url s
 	req.Header.Set("If-Modified-Since", ti.UTC().Format(http.TimeFormat))
 	handler(w, req)
 	assert.Equal(t, http.StatusNotModified, w.Code)
+}
+
+func cleanup(t *testing.T, dir string) {
+	t.Cleanup(func() {
+		_ = os.RemoveAll(dir)
+		index.Lock()
+		defer index.Unlock()
+		for name := range index.titles {
+			if strings.HasPrefix(name, dir) {
+				delete(index.titles, name)
+			}
+		}
+		ids := []docid{}
+		for id, name := range index.documents {
+			if strings.HasPrefix(name, dir) {
+				delete(index.documents, id)
+				ids = append(ids, id)
+			}
+		}
+		for hashtag, docs := range index.token {
+			index.token[hashtag] = slices.DeleteFunc(ids, func(id docid) bool {
+				return slices.Contains(docs, id)
+			})
+		}
+	})
 }

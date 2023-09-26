@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/stretchr/testify/assert"
-	"os"
 	"strings"
 	"testing"
 )
@@ -27,10 +26,9 @@ func TestSearchHashtag(t *testing.T) {
 	assert.NotZero(t, len(pages))
 }
 
-// wipes testdata
 func TestIndexUpdates(t *testing.T) {
-	_ = os.RemoveAll("testdata")
-	name := "testdata/test"
+	cleanup(t, "testdata/update")
+	name := "testdata/update/test"
 	index.load()
 	p := &Page{Name: name, Body: []byte("This is a test.")}
 	p.save()
@@ -91,8 +89,4 @@ func TestIndexUpdates(t *testing.T) {
 		}
 	}
 	assert.True(t, found)
-
-	t.Cleanup(func() {
-		_ = os.RemoveAll("testdata")
-	})
 }

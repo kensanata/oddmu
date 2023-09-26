@@ -12,12 +12,11 @@ import (
 	"testing"
 )
 
-// wipes testdata
 func TestUpload(t *testing.T) {
-	_ = os.RemoveAll("testdata")
+	cleanup(t, "testdata/files")
 	// for uploads, the directory is not created automatically
-	os.MkdirAll("testdata", 0755)
-	assert.HTTPStatusCode(t, makeHandler(uploadHandler, false), "GET", "/upload/testdata/", nil, 200)
+	os.MkdirAll("testdata/files", 0755)
+	assert.HTTPStatusCode(t, makeHandler(uploadHandler, false), "GET", "/upload/testdata/files/", nil, 200)
 	form := new(bytes.Buffer)
 	writer := multipart.NewWriter(form)
 	field, err := writer.CreateFormField("name")
@@ -29,20 +28,16 @@ func TestUpload(t *testing.T) {
 	file.Write([]byte("Hello!"))
 	err = writer.Close()
 	assert.NoError(t, err)
-	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/",
-		writer.FormDataContentType(), form, "/view/testdata/ok.txt")
+	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/files/",
+		writer.FormDataContentType(), form, "/view/testdata/files/ok.txt")
 	assert.Regexp(t, regexp.MustCompile("Hello!"),
-		assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/testdata/ok.txt", nil))
-	t.Cleanup(func() {
-		_ = os.RemoveAll("testdata")
-	})
+		assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/testdata/files/ok.txt", nil))
 }
 
-// wipes testdata
 func TestUploadPng(t *testing.T) {
-	_ = os.RemoveAll("testdata")
+	cleanup(t, "testdata/png")
 	// for uploads, the directory is not created automatically
-	os.MkdirAll("testdata", 0755)
+	os.MkdirAll("testdata/png", 0755)
 	form := new(bytes.Buffer)
 	writer := multipart.NewWriter(form)
 	field, _ := writer.CreateFormField("name")
@@ -51,18 +46,14 @@ func TestUploadPng(t *testing.T) {
 	img := image.NewRGBA(image.Rect(0, 0, 20, 20))
 	png.Encode(file, img)
 	writer.Close()
-	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/",
-		writer.FormDataContentType(), form, "/view/testdata/ok.png")
-	t.Cleanup(func() {
-		_ = os.RemoveAll("testdata")
-	})
+	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/png/",
+		writer.FormDataContentType(), form, "/view/testdata/png/ok.png")
 }
 
-// wipes testdata
 func TestUploadJpg(t *testing.T) {
-	_ = os.RemoveAll("testdata")
+	cleanup(t, "testdata/jpg")
 	// for uploads, the directory is not created automatically
-	os.MkdirAll("testdata", 0755)
+	os.MkdirAll("testdata/jpg", 0755)
 	form := new(bytes.Buffer)
 	writer := multipart.NewWriter(form)
 	field, _ := writer.CreateFormField("name")
@@ -71,9 +62,6 @@ func TestUploadJpg(t *testing.T) {
 	img := image.NewRGBA(image.Rect(0, 0, 20, 20))
 	jpeg.Encode(file, img, &jpeg.Options{Quality: 90})
 	writer.Close()
-	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/",
-		writer.FormDataContentType(), form, "/view/testdata/ok.jpg")
-	t.Cleanup(func() {
-		_ = os.RemoveAll("testdata")
-	})
+	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/jpg/",
+		writer.FormDataContentType(), form, "/view/testdata/jpg/ok.jpg")
 }
