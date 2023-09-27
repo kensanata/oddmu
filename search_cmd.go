@@ -38,7 +38,7 @@ func (cmd *searchCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface
 func searchCli(w io.Writer, n int, args []string) subcommands.ExitStatus {
 	index.load()
 	q := strings.Join(args, " ")
-	items, more := search(q, n)
+	items, more := search(q, ".", n)
 	if len(items) == 1 {
 		fmt.Fprintf(w, "Search for %s, page %d: 1 result\n", q, n)
 	} else {

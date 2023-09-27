@@ -90,11 +90,12 @@ const itemsPerPage = 20
 // search returns a sorted []Page where each page contains an extract
 // of the actual Page.Body in its Page.Html. Page size is 20. The
 // boolean return value indicates whether there are more results.
-func search(q string, page int) ([]*Page, bool) {
+func search(q string, dir string, page int) ([]*Page, bool) {
 	if len(q) == 0 {
 		return make([]*Page, 0), false
 	}
 	names := index.search(q) // hashtags or all names
+	names = filterPrefix(names, dir)
 	predicates, terms := predicatesAndTokens(q)
 	names = filterNames(names, predicates)
 	slices.SortFunc(names, sortNames(terms))
@@ -106,6 +107,22 @@ func search(q string, page int) ([]*Page, bool) {
 		p.summarize(q)
 	}
 	return items, more
+}
+
+// filterPrefix filters the names by prefix. A prefix of "." means
+// that all the names are returned, since this is what path.Dir
+// returns for "no directory".
+func filterPrefix(names []string, prefix string) []string {
+	if prefix == "." {
+		return names
+	}
+	r := make([]string, 0)
+	for _, name := range names {
+		if strings.HasPrefix(name, prefix) {
+			r = append(r, name)
+		}
+	}
+	return r
 }
 
 // filterNames filters the names by all the predicats such as
@@ -183,7 +200,11 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		page = 1
 	}
-	items, more := search(q, page)
+	if !strings.HasPrefix(r.URL.Path, "/search") {
+		http.NotFound(w, r)
+		return
+	}
+	items, more := search(q, r.URL.Path[7:], page)
 	s := &Search{Query: q, Items: items, Previous: page - 1, Page: page, Next: page + 1,
 		Results: len(items) > 0, More: more}
 	renderTemplate(w, "search", s)
