@@ -83,20 +83,6 @@ func sortNames(tokens []string) func(a, b string) int {
 	}
 }
 
-// load the pages named.
-func load(names []string) []*Page {
-	items := make([]*Page, len(names))
-	for i, name := range names {
-		p, err := loadPage(name)
-		if err != nil {
-			log.Printf("Error loading %s: %s", name, err)
-		} else {
-			items[i] = p
-		}
-	}
-	return items
-}
-
 // itemsPerPage says how many items to print on a page of search
 // results.
 const itemsPerPage = 20
