@@ -17,6 +17,7 @@ import (
 // a search result, Body and Html are simple extracts.
 type Search struct {
 	Query    string
+	Dir      string
 	Items    []*Page
 	Previous int
 	Page     int
@@ -194,18 +195,15 @@ NameLoop:
 // searchHandler presents a search result. It uses the query string in
 // the form parameter "q" and the template "search.html". For each
 // page found, the HTML is just an extract of the actual body.
-func searchHandler(w http.ResponseWriter, r *http.Request) {
+// Search is limited to a directory and its subdirectories.
+func searchHandler(w http.ResponseWriter, r *http.Request, dir string) {
 	q := r.FormValue("q")
 	page, err := strconv.Atoi(r.FormValue("page"))
 	if err != nil {
 		page = 1
 	}
-	if !strings.HasPrefix(r.URL.Path, "/search") {
-		http.NotFound(w, r)
-		return
-	}
-	items, more := search(q, r.URL.Path[7:], page)
-	s := &Search{Query: q, Items: items, Previous: page - 1, Page: page, Next: page + 1,
+	items, more := search(q, dir, page)
+	s := &Search{Query: q, Dir: dir, Items: items, Previous: page - 1, Page: page, Next: page + 1,
 		Results: len(items) > 0, More: more}
 	renderTemplate(w, "search", s)
 }

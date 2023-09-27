@@ -32,12 +32,12 @@ func TestSortNames(t *testing.T) {
 func TestSearch(t *testing.T) {
 	data := url.Values{}
 	data.Set("q", "oddµ")
-	
-	body := assert.HTTPBody(searchHandler, "GET", "/search", data)
+
+	body := assert.HTTPBody(makeHandler(searchHandler, false), "GET", "/search/", data)
 	assert.Contains(t, body, "Welcome")
 	assert.Contains(t, body, `<span class="score">5</span>`)
-	
-	body = assert.HTTPBody(searchHandler, "GET", "/search/testdata", data)
+
+	body = assert.HTTPBody(makeHandler(searchHandler, false), "GET", "/search/testdata", data)
 	assert.NotContains(t, body, "Welcome")
 }
 
@@ -52,17 +52,17 @@ Where is lady luck?`)}
 
 	data := url.Values{}
 	data.Set("q", "luck")
-	
-	body := assert.HTTPBody(searchHandler, "GET", "/search", data)
-	assert.Contains(t, body, "luck")
-	
-	body = assert.HTTPBody(searchHandler, "GET", "/search/testdata", data)
+
+	body := assert.HTTPBody(makeHandler(searchHandler, false), "GET", "/search/", data)
 	assert.Contains(t, body, "luck")
 
-	body = assert.HTTPBody(searchHandler, "GET", "/search/testdata/dir", data)
+	body = assert.HTTPBody(makeHandler(searchHandler, false), "GET", "/search/testdata", data)
 	assert.Contains(t, body, "luck")
 
-	body = assert.HTTPBody(searchHandler, "GET", "/search/testdata/other", data)
+	body = assert.HTTPBody(makeHandler(searchHandler, false), "GET", "/search/testdata/dir", data)
+	assert.Contains(t, body, "luck")
+
+	body = assert.HTTPBody(makeHandler(searchHandler, false), "GET", "/search/testdata/other", data)
 	assert.Contains(t, body, "No results")
 }
 
@@ -111,7 +111,7 @@ The silence streches.`)}
 	p.save()
 	data := url.Values{}
 	data.Set("q", "look")
-	body := assert.HTTPBody(searchHandler, "GET", "/search", data)
+	body := assert.HTTPBody(makeHandler(searchHandler, false), "GET", "/search/", data)
 	assert.Contains(t, body, "We <b>look</b>")
 	assert.NotContains(t, body, "Odd?")
 	assert.Contains(t, body, "Even?")
