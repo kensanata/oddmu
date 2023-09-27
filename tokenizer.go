@@ -7,14 +7,6 @@ import (
 	"unicode/utf8"
 )
 
-// tokenize returns a slice of alphanumeric tokens for the given text.
-// Use this to begin tokenizing the page body.
-func tokenize(text string) []string {
-	return strings.FieldsFunc(text, func(r rune) bool {
-		return !unicode.IsLetter(r) && !unicode.IsNumber(r)
-	})
-}
-
 // lowercaseFilter returns a slice of lower case tokens.
 func lowercaseFilter(tokens []string) []string {
 	r := make([]string, len(tokens))
@@ -24,20 +16,11 @@ func lowercaseFilter(tokens []string) []string {
 	return r
 }
 
-// tokens returns a slice of alphanumeric tokens.
-func tokens(text string) []string {
-	tokens := tokenize(text)
-	tokens = lowercaseFilter(tokens)
-	return tokens
-}
-
-// tokenizeWithPredicates returns a slice of alphanumeric tokens for the
-// given text, including colons. Use this to begin tokenizing the
-// query string.
-func tokenizeWithPredicates(text string) []string {
-	return strings.FieldsFunc(text, func(r rune) bool {
-		return !unicode.IsLetter(r) && !unicode.IsNumber(r) && r != ':'
-	})
+// tokenizeWithPredicates returns a slice of tokens for the given
+// text, including punctuation. Use this to begin tokenizing the query
+// string.
+func tokenizeOnWhitespace(q string) []string {
+	return strings.Fields(q)
 }
 
 // predicateFilter returns two slices of tokens: the first with
@@ -60,7 +43,7 @@ func predicateFilter(tokens []string) ([]string, []string) {
 // predicates, the other without predicates, all of them lower case.
 // Use this for query strings.
 func predicatesAndTokens(q string) ([]string, []string) {
-	tokens := tokenizeWithPredicates(q)
+	tokens := tokenizeOnWhitespace(q)
 	tokens = lowercaseFilter(tokens)
 	return predicateFilter(tokens)
 }
@@ -80,7 +63,7 @@ func noPredicateFilter(tokens []string) []string {
 // highlightTokens returns the tokens to highlight, including title
 // predicates.
 func highlightTokens(q string) []string {
-	tokens := tokenizeWithPredicates(q)
+	tokens := tokenizeOnWhitespace(q)
 	tokens = lowercaseFilter(tokens)
 	return noPredicateFilter(tokens)
 }
