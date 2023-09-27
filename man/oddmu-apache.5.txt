@@ -38,7 +38,7 @@ MDCertificateAgreement accepted
     ServerAdmin alex@alexschroeder.ch
     ServerName transjovian.org
     SSLEngine on
-    ProxyPassMatch ^/(search|(view|edit|save|add|append|upload|drop)/(.*))?$ http://localhost:8080/$1
+    ProxyPassMatch "^/((view|edit|save|add|append|upload|drop|search)/(.*))?$" "http://localhost:8080/$1"
 </VirtualHost>
 ```
 
@@ -121,7 +121,7 @@ DocumentRoot /home/oddmu
 
 Make sure that none of the subdirectories look like the wiki paths
 "/view/", "/edit/", "/save/", "/add/", "/append/", "/upload/",
-"/drop/" or "/search". For example, create a file called "robots.txt"
+"/drop/" or "/search/". For example, create a file called "robots.txt"
 containing the following, telling all robots that they're not welcome.
 
 ```
