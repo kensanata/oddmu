@@ -88,6 +88,7 @@ func account(p *parser.Parser, data []byte, offset int) (int, ast.Node) {
 		go lookUpAccountUri(string(account), string(domain))
 	}
 	link := &ast.Link{
+		AdditionalAttributes: []string{`class="account"`},
 		Destination: []byte(uri),
 		Title:       data[0:i],
 	}

@@ -38,7 +38,7 @@ func sanitizeStrict(s string) template.HTML {
 // santizeBytes uses bluemonday to sanitize the HTML.
 func sanitizeBytes(bytes []byte) template.HTML {
 	policy := bluemonday.UGCPolicy()
-	policy.AllowAttrs("class").OnElements("a") // for hashtags
+	policy.AllowAttrs("class", "title").OnElements("a") // for hashtags and accounts
 	return template.HTML(policy.SanitizeBytes(bytes))
 }
 

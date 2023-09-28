@@ -50,7 +50,6 @@ func hashtag() (func(p *parser.Parser, data []byte, offset int) (int, ast.Node),
 		link := &ast.Link{
 			AdditionalAttributes: []string{`class="tag"`},
 			Destination:          append([]byte("/search/?q=%23"), data[1:i]...),
-			Title:                data[0:i],
 		}
 		text := bytes.ReplaceAll(data[0:i], []byte("_"), []byte(" "))
 		ast.AppendChild(link, &ast.Text{Leaf: ast.Leaf{Literal: text}})
