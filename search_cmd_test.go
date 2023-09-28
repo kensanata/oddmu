@@ -12,8 +12,8 @@ func TestSearchCmd(t *testing.T) {
 	s := searchCli(b, 1, []string{"oddµ"})
 	assert.Equal(t, subcommands.ExitSuccess, s)
 	r := `Search for oddµ, page 1: 2 results
-* [Oddµ: A minimal wiki](README) (5)
-* [Welcome to Oddµ](index) (5)
+* [Oddµ: A minimal wiki](README)
+* [Welcome to Oddµ](index)
 `
 	assert.Equal(t, r, b.String())
 }

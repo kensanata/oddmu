@@ -24,8 +24,8 @@ func (*searchCmd) Usage() string {
 	return `search [-page <n>] <terms>:
   Search for pages matching terms and print the result set as a
   Markdown list. Before searching, all the pages are indexed. Thus,
-  startup is slow. The benefit is that the page order and scores are
-  exactly as when the wiki runs.
+  startup is slow. The benefit is that the page order is exactly as
+  when the wiki runs.
 `
 }
 
@@ -45,7 +45,7 @@ func searchCli(w io.Writer, n int, args []string) subcommands.ExitStatus {
 		fmt.Fprintf(w, "Search for %s, page %d: %d results\n", q, n, len(items))
 	}
 	for _, p := range items {
-		fmt.Fprintf(w, "* [%s](%s) (%d)\n", p.Title, p.Name, p.Score)
+		fmt.Fprintf(w, "* [%s](%s)\n", p.Title, p.Name)
 	}
 	if more {
 		fmt.Fprintf(w, "There are more results\n")
