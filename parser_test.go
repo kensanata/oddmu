@@ -43,7 +43,7 @@ I am cold, alone
 Too faint to focus, so far
 I am cold, alone</p>
 
-<p><a class="tag" href="/search?q=%23Haiku" rel="nofollow">#Haiku</a> <a class="tag" href="/search?q=%23Cold_Poets" rel="nofollow">#Cold Poets</a></p>
+<p><a class="tag" href="/search/?q=%23Haiku" rel="nofollow">#Haiku</a> <a class="tag" href="/search/?q=%23Cold_Poets" rel="nofollow">#Cold Poets</a></p>
 `
 	assert.Equal(t, r, string(p.Html))
 }
