@@ -51,10 +51,8 @@ func HTTPRedirectTo(t *testing.T, handler http.HandlerFunc, method, url string, 
 	return isRedirectCode
 }
 
-// HTTPUploadAndRedirectTo checks that the request results in a redirect and it
-// checks the destination of the redirect. It returns whether the
-// request did in fact result in a redirect.
-func HTTPUploadAndRedirectTo(t *testing.T, handler http.HandlerFunc, url, contentType string, body *bytes.Buffer, destination string) bool {
+// HTTPUploadLocation returns the location header after an upload.
+func HTTPUploadLocation(t *testing.T, handler http.HandlerFunc, url, contentType string, body *bytes.Buffer) string {
 	w := httptest.NewRecorder()
 	req, err := http.NewRequest("POST", url, body)
 	req.Header.Set("Content-Type", contentType)
@@ -64,9 +62,17 @@ func HTTPUploadAndRedirectTo(t *testing.T, handler http.HandlerFunc, url, conten
 	isRedirectCode := code >= http.StatusMultipleChoices && code <= http.StatusTemporaryRedirect
 	assert.True(t, isRedirectCode, "Expected HTTP redirect status code for %q but received %d", url, code)
 	headers := w.Result().Header["Location"]
-	assert.True(t, len(headers) == 1 && headers[0] == destination,
-		"Expected HTTP redirect location %s for %q but received %v", destination, url, headers)
-	return isRedirectCode
+	assert.True(t, len(headers) == 1, "Expected a single redirect header but got %d locations", len(headers))
+	return headers[0]
+}
+
+// HTTPUploadAndRedirectTo checks that the request results in a redirect and it
+// checks the destination of the redirect. It returns whether the
+// request did in fact result in a redirect.
+func HTTPUploadAndRedirectTo(t *testing.T, handler http.HandlerFunc, url, contentType string, body *bytes.Buffer, destination string) {
+	location := HTTPUploadLocation(t, handler, url, contentType, body)
+	assert.Equal(t, destination, location,
+		"Expected HTTP redirect location %s for %q but received %s", destination, url, location)
 }
 
 // HTTPStatusCodeIfModifiedSince checks that the request results in a

@@ -6,17 +6,57 @@ import (
 	"image/jpeg"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"path"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 )
 
+type Upload struct {
+	Dir string
+	Name string
+	Last string
+	Image bool
+	MaxWidth string
+	Quality string
+}
+
+var lastRe = regexp.MustCompile(`^(.*)([0-9]+)(.*)$`)
+
 // uploadHandler uses the "upload.html" template to enable uploads.
-// The file is saved using the saveUploadHandler.
+// The file is saved using the saveUploadHandler. URL parameter are
+// used to copy name, maxwidth and quality from the previous upload.
+// If the previous name contains a number, this is incremented by
+// one.
 func uploadHandler(w http.ResponseWriter, r *http.Request, dir string) {
-	renderTemplate(w, "upload", dir)
+	data := &Upload{Dir: dir}
+	maxwidth := r.FormValue("maxwidth")
+	if maxwidth != "" {
+		data.MaxWidth = maxwidth
+	}
+	quality := r.FormValue("quality")
+	if quality != "" {
+		data.Quality = quality
+	}
+	image := r.FormValue("image")
+	if image != "" {
+		data.Image = true
+	}
+	last := r.FormValue("last")
+	if last != "" {
+		data.Last = last
+		m := lastRe.FindStringSubmatch(last)
+		if m != nil {
+			n, err := strconv.Atoi(m[2])
+			if err == nil {
+				data.Name = m[1] + strconv.Itoa(n+1) + m[3]
+			}
+		}
+	}
+	renderTemplate(w, "upload", data)
 }
 
 // dropHandler takes the "name" form field and the "file" form
@@ -34,7 +74,9 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		http.Error(w, "file exists", http.StatusInternalServerError)
 		return
 	}
+	data := url.Values{}
 	name := r.FormValue("name")
+	data.Set("last", name)
 	filename := filepath.Base(name)
 	if filename == "." || filepath.Dir(name) != "." {
 		http.Error(w, "no filename", http.StatusInternalServerError)
@@ -71,6 +113,7 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		data.Add("maxwidth", maxwidth)
 		ext := strings.ToLower(filepath.Ext(path))
 		var encoder imgio.Encoder
 		switch ext {
@@ -85,6 +128,7 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 					http.Error(w, err.Error(), http.StatusInternalServerError)
 					return
 				}
+				data.Add("quality", quality)
 			}
 			encoder = imgio.JPEGEncoder(q)
 		default:
@@ -96,6 +140,7 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		data.Add("image", "1")
 		rect := img.Bounds()
 		width := rect.Max.X - rect.Min.X
 		if width > mw {
@@ -108,5 +153,5 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		}
 
 	}
-	http.Redirect(w, r, "/view/"+path, http.StatusFound)
+	http.Redirect(w, r, "/upload/"+d+"?"+data.Encode(), http.StatusFound)
 }

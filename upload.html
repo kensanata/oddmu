@@ -10,24 +10,31 @@ html { max-width: 70ch; padding: 2ch; margin: auto; color: #111; background: #ff
 body { hyphens: auto; }
 form, textarea { width: 100%; }
 label { display: inline-block; width: 20ch }
+.last { max-width: 20% }
     </style>
   </head>
   <body lang="en">
     <h1>Upload File</h1>
-    <form action="/drop/{{.}}" method="POST" enctype="multipart/form-data">
+    {{if ne .Last ""}}
+    <p>Previous upload: <a href="/view/{{.Dir}}/{{.Last}}">{{.Last}}</a></p>
+    {{if .Image}}
+    <p><img class="last" src="/view/{{.Dir}}/{{.Last}}"></p>
+    {{end}}
+    {{end}}
+    <form action="/drop/{{.Dir}}" method="POST" enctype="multipart/form-data">
       <p>When uploading pictures from a phone, its filename is going to be something cryptic like IMG_1234.JPG.
         Please provide your own filename.
       <p><label for="text">Filename to use:</label>
-        <input id="text" name="name" type="text" placeholder="image.jpg" autofocus required>
+        <input id="text" name="name" value="{{.Name}}" type="text" placeholder="image.jpg" autofocus required>
       <p>If the uploaded file is a picture from a phone, it is going to be too big for your site.
         Sadly, resizing only works for JPG and PNG files. Luckily, most pictures from a phone camera are JPG images.
         Feel free to specify a max width of 1200 pixels, for example.
       <p><label for="maxwidth">Max width:</label>
-        <input id="maxwidth" name="maxwidth" type="number" min="10" placeholder="1200">
+        <input id="maxwidth" name="maxwidth" value="{{.MaxWidth}}" type="number" min="10" placeholder="1200">
       <p>If the uploaded file is a JPEG-encoded picture, like most pictures from a phone, you can specify a quality.
         Typically, a quality of 60 is not too bad and a quality of 90 is more than enough.
       <p><label for="quality">Quality:</label>
-        <input id="quality" name="quality" type="number" min="1" max="99" placeholder="75">
+        <input id="quality" name="quality" value="{{.Quality}}" type="number" min="1" max="99" placeholder="75">
       <p>Finally, pick the file or photo to upload.
         Picture metadata is only removed if the picture gets resized.
         Providing a new max width is recommended for all pictures.
