@@ -127,5 +127,5 @@ func (p *Page) Dir() string {
 	if d == "." {
 		return ""
 	}
-	return d
+	return d+"/"
 }

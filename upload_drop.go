@@ -41,13 +41,14 @@ func uploadHandler(w http.ResponseWriter, r *http.Request, dir string) {
 	if quality != "" {
 		data.Quality = quality
 	}
-	image := r.FormValue("image")
-	if image != "" {
-		data.Image = true
-	}
 	last := r.FormValue("last")
 	if last != "" {
-		data.Last = last
+		ext := strings.ToLower(filepath.Ext(last))
+		switch ext {
+		case ".png", ".jpg", ".jpeg":
+			data.Image = true
+		}
+		data.Last = path.Join(dir, last)
 		m := lastRe.FindStringSubmatch(last)
 		if m != nil {
 			n, err := strconv.Atoi(m[2])
@@ -140,7 +141,6 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		data.Add("image", "1")
 		rect := img.Bounds()
 		width := rect.Max.X - rect.Min.X
 		if width > mw {
@@ -153,5 +153,5 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		}
 
 	}
-	http.Redirect(w, r, "/upload/"+d+"?"+data.Encode(), http.StatusFound)
+	http.Redirect(w, r, "/upload/"+d+"/?"+data.Encode(), http.StatusFound)
 }
