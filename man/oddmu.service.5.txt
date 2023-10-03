@@ -18,7 +18,7 @@ adduser --system --home /home/oddmu oddmu
 ```
 
 The directory "/home/oddmu" contains the templates and all the data
-files. Copy all the tempaltes files ending in ".html" from the source
+files. Copy all the templates files ending in ".html" from the source
 distribution to "/home/oddmu".
 
 If you want to keep everything in one place, copy the binary "oddmu"
