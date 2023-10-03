@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-TEMPLATES" "5" "2023-09-22" "File Formats Manual"
+.TH "ODDMU-TEMPLATES" "5" "2023-10-03" "File Formats Manual"
 .PP
 .SH NAME
 .PP
@@ -35,9 +35,10 @@ is a byte array and that'\&s why we need to call \fIprintf\fR).\&
 .PP
 For the \fIsearch.\&html\fR template only:
 .PP
-\fI{{.\&Previous}}\fR, \fI{{.\&Page}}\fR, \fI{{.\&Next}}\fR and \fI{{.\&Last}}\fR are the
-previous, current, next and last page number in the results since
-doing arithmetics in templates is hard.\& The first page number is 1.\&
+\fI{{.\&Previous}}\fR, \fI{{.\&Page}}\fR and \fI{{.\&Next}}\fR are the previous, current
+and next page number in the results since doing arithmetics in
+templates is hard.\& The first page number is 1.\& The last page is
+expensive to dermine and so that isn'\&t done.\&
 .PP
 \fI{{.\&More}}\fR indicates if there are any more search results.\&
 .PP
@@ -71,7 +72,7 @@ For items in the feed:
 .PP
 \fI{{.\&Title}}\fR is the title of the page.\&
 .PP
-\fI{{.\&Html}}\fR is the rendered Markdown, as HTML.\&
+\fI{{.\&Html}}\fR is the rendered Markdown, as escaped (!\&) HTML.\&
 .PP
 \fI{{.\&Hashtags}}\fR is an array of strings.\&
 .PP
@@ -97,7 +98,7 @@ parameter \fIq\fR.\&
 .PP
 .nf
 .RS 4
-curl http://localhost:8080/search?q=towel
+curl http://localhost:8080/search/?q=towel
 .fi
 .RE
 .PP

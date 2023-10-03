@@ -25,7 +25,8 @@ If your files don't provide their own title ("# title"), the file name (without
 ".md") is used for the page title.
 
 Every file can be viewed as feed by using the extension ".rss". The
-feed items are based on links in bullet lists using the asterix ("*").
+feed items are based on links in bullet lists using the asterix
+("\*").
 
 Subdirectories are created as necessary.
 

@@ -15,7 +15,7 @@ memory. Using hashtags and predicates in your queries speeds them up
 because fewer files are opened.
 
 A hashtag starts with a number sign ("#") and contains numbers,
-letters, and the underscore ("_").
+letters, and the underscore ("\_").
 
 Example: #old_school random encounter
 

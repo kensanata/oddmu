@@ -87,9 +87,9 @@ The Markdown processor comes with a few extensions:
 # FEEDS
 
 Every file can be viewed as feed by using the extension ".rss". The
-feed items are based on links in bullet lists using the asterix ("*").
-The items must point to local pages. This is why the link may not
-contain two forward slashes ("//").
+feed items are based on links in bullet lists using the asterix
+("\*"). The items must point to local pages. This is why the link may
+not contain two forward slashes ("//").
 
 Assume this is the index page. The feed would be "/view/index.rss". It
 would contain the pages "Arianism", "Donatism" and "Monophysitism" but

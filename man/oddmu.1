@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU" "1" "2023-09-22"
+.TH "ODDMU" "1" "2023-10-03"
 .PP
 .SH NAME
 .PP
@@ -30,6 +30,10 @@ is "index.\&md".\& If no such file exists, oddmu offers you to create the page.\
 .PP
 If your files don'\&t provide their own title ("# title"), the file name (without
 ".\&md") is used for the page title.\&
+.PP
+Every file can be viewed as feed by using the extension ".\&rss".\& The
+feed items are based on links in bullet lists using the asterix
+("*").\&
 .PP
 Subdirectories are created as necessary.\&
 .PP
@@ -110,10 +114,6 @@ discussions.\&
 The wiki lists no recent changes.\& The expectation is that the people that care
 were involved in the discussions beforehand.\&
 .PP
-The wiki also produces no feed.\& The assumption is that announcements are made on
-social media: blogs, news aggregators, discussion forums, the fediverse, but
-humans.\&
-.PP
 The idea is that the webserver handles as many tasks as possible.\& It logs
 requests, does rate limiting, handles encryption, gets the certificates, and so
 on.\& The web server acts as a reverse proxy and the wiki ends up being a content
@@ -140,7 +140,7 @@ pages by saving an empty file.\&
 .SH SEE ALSO
 .PP
 \fIoddmu\fR(5), \fIoddmu.\&service\fR(5), oddmu-apache_(5), \fIoddmu-html\fR(1),
-\fIoddmu-replace\fR(1), \fIoddmu-search\fR(1), \fIoddmu-search\fR(7), \fIoddmu-feed\fR(1)
+\fIoddmu-replace\fR(1), \fIoddmu-search\fR(1), \fIoddmu-search\fR(7)
 .PP
 .SH AUTHORS
 .PP
