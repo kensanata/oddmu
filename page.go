@@ -63,8 +63,7 @@ func (p *Page) save() error {
 	s := bytes.ReplaceAll(p.Body, []byte{'\r'}, []byte{})
 	if len(s) == 0 {
 		p.removeFromIndex()
-		_ = os.Rename(filename, filename+"~")
-		return os.Remove(filename)
+		return os.Rename(filename, filename+"~")
 	}
 	p.Body = s
 	p.updateIndex()
