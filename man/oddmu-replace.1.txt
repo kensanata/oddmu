@@ -6,13 +6,12 @@ oddmu-replace - replace text in Oddmu pages from the command-line
 
 # SYNOPSIS
 
-*oddmu replace* [-confirm] _regexp_ _replacement_
+*oddmu replace* [-confirm] [-regexp] _term_ _replacement_
 
 # DESCRIPTION
 
-The "replace" subcommand replaces the Markdown files in the current
-directory (!), returning the replace result as a Markdown-formatted
-list.
+The "replace" subcommand does a search and replace on all the Markdown
+files in the current directory and its subdirectories.
 
 # OPTIONS
 
@@ -21,19 +20,30 @@ list.
 	Instead, a unified diff is produced and printed. Given this
 	option, the changed Markdown files are saved to disk.
 
+*-regexp*
+        By default, the term to be replaced is just a string. With
+        this flag, the term is a regular expression and the
+        replacement can contain backreferences ($1, $2, $3, etc.) to
+        capture groups.
+
 # EXAMPLE
 
-Replace for "oddmu" in the Markdown files of the current directory:
+Replace "Oddmu" in the Markdown files of the current directory:
 
 ```
-oddmu replace oddmu
+oddmu replace Oddmu Oddµ
 ```
 
 Result:
 
 ```
-Replace oddmu: 1 result
-* [Oddµ: A minimal wiki](README) (5)
+--- README.md~
++++ README.md
+
+(diff omitted)
+
+1 file would be changed.
+This is a dry run. Use -confirm to make it happen.
 ```
 
 # NOTES
@@ -43,6 +53,10 @@ This is the equivalent of using _sed_(1) with the --quiet,
 command "s/regexp/replacement/g" except that it prints a unified diff
 per default instead of making any changes and the regexp rules differ
 slightly.
+
+The search is case-sensitive. To make it case-insensitive, search for
+a regular expression that sets the case-insensitive flag, e.g.
+"(?i)oddmu".
 
 # SEE ALSO
 

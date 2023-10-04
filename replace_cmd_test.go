@@ -27,12 +27,12 @@ You are no planet`)}
 +You are planetoid
 \ No newline at end of file
 
-1 change was made.
+1 file would be changed.
 This is a dry run. Use -confirm to make it happen.
 `
 
 	b := new(bytes.Buffer)
-	s := replaceCli(b, false, []string{`\bno planet`, `planetoid`})
+	s := replaceCli(b, false, true, []string{`\bno planet`, `planetoid`})
 	assert.Equal(t, subcommands.ExitSuccess, s)
 	assert.Equal(t, r, b.String())
 }
