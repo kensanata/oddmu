@@ -116,6 +116,7 @@ func commands() {
 	subcommands.Register(&htmlCmd{}, "")
 	subcommands.Register(&searchCmd{}, "")
 	subcommands.Register(&replaceCmd{}, "")
+	subcommands.Register(&missingCmd{}, "")
 
 	flag.Parse()
 	ctx := context.Background()
