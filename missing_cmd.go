@@ -9,7 +9,6 @@ import (
 	"github.com/google/subcommands"
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/ast"
-	"github.com/gomarkdown/markdown/parser"
 	"io"
         "net/url"
 	"os"
@@ -83,9 +82,7 @@ func missingCli(w io.Writer, args []string) subcommands.ExitStatus {
 
 func (p *Page) links() []string {
 	var links []string
-	parser := parser.New()
-	prev := parser.RegisterInline('[', nil)
-	parser.RegisterInline('[', wikiLink(parser, prev))
+	parser, _ := wikiParser()
 	doc := markdown.Parse(p.Body, parser)
 	ast.WalkFunc(doc, func(node ast.Node, entering bool) ast.WalkStatus {
 		switch v := node.(type) {

@@ -57,9 +57,9 @@ func hashtag() (func(p *parser.Parser, data []byte, offset int) (int, ast.Node),
 	}, &hashtags
 }
 
-// renderHtml renders the Page.Body to HTML and sets Page.Html,
-// Page.Language, Page.Hashtags, and escapes Page.Name.
-func (p *Page) renderHtml() {
+// wikiParser returns a parser with the Oddmu specific changes.
+// Specifically: [[wiki links]], #hash_tags, @webfinger@accounts.
+func wikiParser() (*parser.Parser, *[]string) {
 	parser := parser.New()
 	prev := parser.RegisterInline('[', nil)
 	parser.RegisterInline('[', wikiLink(parser, prev))
@@ -68,6 +68,13 @@ func (p *Page) renderHtml() {
 	if useWebfinger {
 		parser.RegisterInline('@', account)
 	}
+	return parser, hashtags
+}
+
+// renderHtml renders the Page.Body to HTML and sets Page.Html,
+// Page.Language, Page.Hashtags, and escapes Page.Name.
+func (p *Page) renderHtml() {
+	parser, hashtags := wikiParser()
 	maybeUnsafeHTML := markdown.ToHTML(p.Body, parser, nil)
 	p.Name = nameEscape(p.Name)
 	p.Html = sanitizeBytes(maybeUnsafeHTML)

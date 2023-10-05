@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/ast"
-	"github.com/gomarkdown/markdown/parser"
 	"html/template"
 	"os"
 	"path"
@@ -26,7 +25,7 @@ func feed(p *Page, ti time.Time) *Feed {
 	feed.Name = p.Name
 	feed.Title = p.Title
 	feed.Date = ti.Format(time.RFC1123Z)
-	parser := parser.New()
+	parser, _ := wikiParser()
 	doc := markdown.Parse(p.Body, parser)
 	items := make([]Item, 0)
 	inListItem := false
