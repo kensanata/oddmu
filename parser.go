@@ -59,8 +59,10 @@ func hashtag() (func(p *parser.Parser, data []byte, offset int) (int, ast.Node),
 
 // wikiParser returns a parser with the Oddmu specific changes.
 // Specifically: [[wiki links]], #hash_tags, @webfinger@accounts.
+// It also uses the CommonExtensions without MathJax ($).
 func wikiParser() (*parser.Parser, *[]string) {
-	parser := parser.New()
+	extensions := parser.CommonExtensions & ^parser.MathJax
+	parser := parser.NewWithExtensions(extensions)
 	prev := parser.RegisterInline('[', nil)
 	parser.RegisterInline('[', wikiLink(parser, prev))
 	fn, hashtags := hashtag()

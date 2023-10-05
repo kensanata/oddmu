@@ -82,7 +82,6 @@ The Markdown processor comes with a few extensions:
 * it is strict about prefix heading rules
 * you can specify an id for headings ({#id})
 * trailing backslashes turn into line breaks
-* MathJax is supported (but needs a separte setup)
 
 # FEEDS
 

@@ -62,3 +62,18 @@ Our <a href="time%20together" rel="nofollow">time together</a></p>
 `
 	assert.Equal(t, r, string(p.Html))
 }
+
+func TestPageHtmlDollar(t *testing.T) {
+	p := &Page{Body: []byte(`# No $dollar$ can buy this
+Dragonfly hovers
+darts chases turns lands and rests
+A mighty jewel`)}
+	p.renderHtml()
+	r := `<h1>No $dollar$ can buy this</h1>
+
+<p>Dragonfly hovers
+darts chases turns lands and rests
+A mighty jewel</p>
+`
+	assert.Equal(t, r, string(p.Html))
+}
