@@ -40,11 +40,15 @@ func missingCli(w io.Writer, args []string) subcommands.ExitStatus {
 			return err
 		}
 		filename := path
-		if info.IsDir() || strings.HasPrefix(filename, ".") || !strings.HasSuffix(filename, ".md") {
+		if info.IsDir() || strings.HasPrefix(filename, ".") {
 			return nil
 		}
-		name := strings.TrimSuffix(filename, ".md")
-		names[name] = true
+		if strings.HasSuffix(filename, ".md") {
+			name := strings.TrimSuffix(filename, ".md")
+			names[name] = true
+		} else {
+			names[filename] = false
+		}
 		return nil
 	})
 	if err != nil {
@@ -52,7 +56,10 @@ func missingCli(w io.Writer, args []string) subcommands.ExitStatus {
 		return subcommands.ExitFailure
 	}
 	fmt.Println("Page\tMissing")
-	for name := range names {
+	for name, isPage := range names {
+		if !isPage {
+			continue
+		}
 		p, err := loadPage(name)
 		if err != nil {
 			fmt.Printf("Loading %s: %s\n", name, err)
