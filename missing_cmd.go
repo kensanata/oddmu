@@ -69,9 +69,11 @@ func missingCli(w io.Writer, args []string) subcommands.ExitStatus {
 			if !strings.HasPrefix(link, "/") &&
 				!strings.HasPrefix(link, "http:") &&
 				!strings.HasPrefix(link, "https:") &&
+				!strings.HasPrefix(link, "ftp:") &&
 				!strings.HasPrefix(link, "mailto:") &&
 				!strings.HasPrefix(link, "gopher:") &&
-				!strings.HasPrefix(link, "gemini:") {
+				!strings.HasPrefix(link, "gemini:") &&
+				!strings.HasPrefix(link, "finger:") {
                                 destination, err := url.PathUnescape(link)
                                 if err != nil {
                                 	fmt.Printf("Cannot decode %s: %s\n", link, err)

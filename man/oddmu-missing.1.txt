@@ -1,0 +1,45 @@
+ODDMU-MISSING(1)
+
+# NAME
+
+oddmu-missing - list missing pages from the command-line
+
+# SYNOPSIS
+
+*oddmu missing*
+
+# DESCRIPTION
+
+The "missing" subcommand lists pages and their local links that are
+missing.
+
+Any links that seem like they might point outside the wiki are
+ignored: links that start with a slash "/" and links that start with a
+known URL schema (currently: "http:", "https:", "ftp:", "mailto:",
+"gopher:", "gemini:", "finger:").
+
+# EXAMPLE
+
+Looking for broken links:
+
+```
+oddmu missing
+```
+
+Result:
+
+```
+Page	Missing
+README	github.com/pemistahl/lingua-go
+```
+
+This shows how the README file had a link where the URL was missing
+the scheme "https://".
+
+# SEE ALSO
+
+_oddmu_(1), _oddmu-replace_(1), _oddmu-missing_(7)
+
+# AUTHORS
+
+Maintained by Alex Schroeder <alex@gnu.org>.
