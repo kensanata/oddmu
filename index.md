@@ -2,4 +2,6 @@
 
 Hello! 🙃
 
-Check out the [README](README).
+Check out the [[README]].
+
+Or [create a new page](test).

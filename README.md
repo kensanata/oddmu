@@ -51,6 +51,10 @@ indexes – lists of page links. These are important for feeds.
 man page documents the "replace" subcommand to make mass changes to
 the files much like find(1), grep(1) and sed(1) or perl (1).
 
+[oddmu-missing(1)](/oddmu.git/blob/main/man/oddmu-missing.1.txt): This
+man page documents the "missing" subcommand to list local links that
+don't point to any existing pages or files.
+
 [oddmu-html(1)](/oddmu.git/blob/main/man/oddmu-html.1.txt): This man
 page documents the "html" subcommand to generate HTML from Markdown
 pages from the command line.

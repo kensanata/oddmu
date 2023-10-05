@@ -55,14 +55,14 @@ func missingCli(w io.Writer, args []string) subcommands.ExitStatus {
 		fmt.Println(err)
 		return subcommands.ExitFailure
 	}
-	fmt.Println("Page\tMissing")
+	fmt.Fprintln(w, "Page\tMissing")
 	for name, isPage := range names {
 		if !isPage {
 			continue
 		}
 		p, err := loadPage(name)
 		if err != nil {
-			fmt.Printf("Loading %s: %s\n", name, err)
+			fmt.Fprintf(w, "Loading %s: %s\n", name, err)
 			return subcommands.ExitFailure
 		}
 		for _, link := range p.links() {
@@ -81,7 +81,7 @@ func missingCli(w io.Writer, args []string) subcommands.ExitStatus {
                                 }
 				_, ok := names[destination]
 				if !ok {
-					fmt.Printf("%s\t%s\n", name, link)
+					fmt.Fprintf(w, "%s\t%s\n", name, link)
 				}
 			}
 		}
@@ -94,9 +94,11 @@ func (p *Page) links() []string {
 	parser, _ := wikiParser()
 	doc := markdown.Parse(p.Body, parser)
 	ast.WalkFunc(doc, func(node ast.Node, entering bool) ast.WalkStatus {
-		switch v := node.(type) {
-		case *ast.Link:
-			links = append(links, string(v.Destination))
+		if entering {
+			switch v := node.(type) {
+			case *ast.Link:
+				links = append(links, string(v.Destination))
+			}
 		}
 		return ast.GoToNext
 	})

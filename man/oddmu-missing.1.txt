@@ -18,6 +18,8 @@ ignored: links that start with a slash "/" and links that start with a
 known URL schema (currently: "http:", "https:", "ftp:", "mailto:",
 "gopher:", "gemini:", "finger:").
 
+Notably, links that start with "../" are reported as missing.
+
 # EXAMPLE
 
 Looking for broken links:
