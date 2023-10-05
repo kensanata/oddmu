@@ -18,8 +18,8 @@ library](https://github.com/gomarkdown/markdown) to generate the web
 pages from Markdown. There are two extensions Oddmu adds to the
 library: local links `[[like this]]` and hashtags `#Like_This`.
 
-This wiki uses the [lingua](github.com/pemistahl/lingua-go) library to
-detect languages in order to get hyphenation right.
+This wiki uses the [lingua](https://github.com/pemistahl/lingua-go)
+library to detect languages in order to get hyphenation right.
 
 This wiki uses the standard
 [html/template](https://pkg.go.dev/html/template) library to generate
