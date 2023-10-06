@@ -7,9 +7,9 @@ import (
 	"image/jpeg"
 	"image/png"
 	"mime/multipart"
+	"net/url"
 	"os"
 	"testing"
-	"net/url"
 )
 
 func TestUpload(t *testing.T) {

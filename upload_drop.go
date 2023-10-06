@@ -16,12 +16,12 @@ import (
 )
 
 type Upload struct {
-	Dir string
-	Name string
-	Last string
-	Image bool
+	Dir      string
+	Name     string
+	Last     string
+	Image    bool
 	MaxWidth string
-	Quality string
+	Quality  string
 }
 
 var lastRe = regexp.MustCompile(`^(.*)([0-9]+)(.*)$`)

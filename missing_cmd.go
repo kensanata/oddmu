@@ -4,14 +4,14 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"io/fs"
-	"path/filepath"
-	"github.com/google/subcommands"
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/ast"
+	"github.com/google/subcommands"
 	"io"
-        "net/url"
+	"io/fs"
+	"net/url"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -34,7 +34,7 @@ func (cmd *missingCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interfac
 }
 
 func missingCli(w io.Writer, args []string) subcommands.ExitStatus {
-	names := make(map[string]bool);
+	names := make(map[string]bool)
 	err := filepath.Walk(".", func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err

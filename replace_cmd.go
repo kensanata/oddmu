@@ -19,7 +19,7 @@ import (
 
 type replaceCmd struct {
 	confirm bool
-	regexp bool
+	regexp  bool
 }
 
 func (cmd *replaceCmd) SetFlags(f *flag.FlagSet) {

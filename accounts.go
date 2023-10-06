@@ -89,8 +89,8 @@ func account(p *parser.Parser, data []byte, offset int) (int, ast.Node) {
 	}
 	link := &ast.Link{
 		AdditionalAttributes: []string{`class="account"`},
-		Destination: []byte(uri),
-		Title:       data[0:i],
+		Destination:          []byte(uri),
+		Title:                data[0:i],
 	}
 	ast.AppendChild(link, &ast.Text{Leaf: ast.Leaf{Literal: data[0 : d-1]}})
 	return i, link
