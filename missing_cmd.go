@@ -52,7 +52,7 @@ func missingCli(w io.Writer, args []string) subcommands.ExitStatus {
 		return nil
 	})
 	if err != nil {
-		fmt.Println(err)
+		fmt.Fprintln(w, err)
 		return subcommands.ExitFailure
 	}
 	fmt.Fprintln(w, "Page\tMissing")
@@ -66,19 +66,19 @@ func missingCli(w io.Writer, args []string) subcommands.ExitStatus {
 			return subcommands.ExitFailure
 		}
 		for _, link := range p.links() {
-			if !strings.HasPrefix(link, "/") &&
-				!strings.HasPrefix(link, "http:") &&
-				!strings.HasPrefix(link, "https:") &&
-				!strings.HasPrefix(link, "ftp:") &&
-				!strings.HasPrefix(link, "mailto:") &&
-				!strings.HasPrefix(link, "gopher:") &&
-				!strings.HasPrefix(link, "gemini:") &&
-				!strings.HasPrefix(link, "finger:") {
-                                destination, err := url.PathUnescape(link)
-                                if err != nil {
-                                	fmt.Printf("Cannot decode %s: %s\n", link, err)
-                                	return subcommands.ExitFailure
-                                }
+			u, err := url.Parse(link)
+			if err != nil {
+				fmt.Fprintf(w, "Cannot parse %s: %s", link, err)
+				return subcommands.ExitFailure
+			}
+			if u.Scheme == "" && !strings.HasPrefix(u.Path, "/") {
+				// feeds can work if the matching page works
+				link = strings.TrimSuffix(link, ".rss")
+				destination, err := url.PathUnescape(u.Path)
+				if err != nil {
+					fmt.Fprintf(w, "Cannot decode %s: %s\n", link, err)
+					return subcommands.ExitFailure
+				}
 				_, ok := names[destination]
 				if !ok {
 					fmt.Fprintf(w, "%s\t%s\n", name, link)
