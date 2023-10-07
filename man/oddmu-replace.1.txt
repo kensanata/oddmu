@@ -21,10 +21,10 @@ files in the current directory and its subdirectories.
 	option, the changed Markdown files are saved to disk.
 
 *-regexp*
-        By default, the term to be replaced is just a string. With
-        this flag, the term is a regular expression and the
-        replacement can contain backreferences ($1, $2, $3, etc.) to
-        capture groups.
+	By default, the term to be replaced is just a string. With
+	this flag, the term is a regular expression and the
+	replacement can contain backreferences ($1, $2, $3, etc.) to
+	capture groups.
 
 # EXAMPLE
 

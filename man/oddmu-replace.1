@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-REPLACE" "1" "2023-09-22"
+.TH "ODDMU-REPLACE" "1" "2023-10-07"
 .PP
 .SH NAME
 .PP
@@ -13,13 +13,12 @@ oddmu-replace - replace text in Oddmu pages from the command-line
 .PP
 .SH SYNOPSIS
 .PP
-\fBoddmu replace\fR [-confirm] \fIregexp\fR \fIreplacement\fR
+\fBoddmu replace\fR [-confirm] [-regexp] \fIterm\fR \fIreplacement\fR
 .PP
 .SH DESCRIPTION
 .PP
-The "replace" subcommand replaces the Markdown files in the current
-directory (!\&), returning the replace result as a Markdown-formatted
-list.\&
+The "replace" subcommand does a search and replace on all the Markdown
+files in the current directory and its subdirectories.\&
 .PP
 .SH OPTIONS
 .PP
@@ -30,13 +29,21 @@ Instead, a unified diff is produced and printed.\& Given this
 option, the changed Markdown files are saved to disk.\&
 .PP
 .RE
+\fB-regexp\fR
+.RS 4
+By default, the term to be replaced is just a string.\& With
+this flag, the term is a regular expression and the
+replacement can contain backreferences ($1, $2, $3, etc.\&) to
+capture groups.\&
+.PP
+.RE
 .SH EXAMPLE
 .PP
-Replace for "oddmu" in the Markdown files of the current directory:
+Replace "Oddmu" in the Markdown files of the current directory:
 .PP
 .nf
 .RS 4
-oddmu replace oddmu
+oddmu replace Oddmu Oddµ
 .fi
 .RE
 .PP
@@ -44,8 +51,13 @@ Result:
 .PP
 .nf
 .RS 4
-Replace oddmu: 1 result
-* [Oddµ: A minimal wiki](README) (5)
+--- README\&.md~
++++ README\&.md
+
+(diff omitted)
+
+1 file would be changed\&.
+This is a dry run\&. Use -confirm to make it happen\&.
 .fi
 .RE
 .PP
@@ -56,6 +68,10 @@ This is the equivalent of using \fIsed\fR(1) with the --quiet,
 command "s/regexp/replacement/g" except that it prints a unified diff
 per default instead of making any changes and the regexp rules differ
 slightly.\&
+.PP
+The search is case-sensitive.\& To make it case-insensitive, search for
+a regular expression that sets the case-insensitive flag, e.\&g.\&
+"(?\&i)oddmu".\&
 .PP
 .SH SEE ALSO
 .PP

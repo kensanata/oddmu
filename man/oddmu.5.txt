@@ -75,13 +75,13 @@ enabled by default. Set the environment variable ODDMU_WEBFINGER to
 
 The Markdown processor comes with a few extensions:
 
-* emphasis markers inside words are ignored
-* fenced code blocks are supported
-* autolinking of "naked" URLs are supported
-* strikethrough using two tildes is supported (~~like this~~)
-* it is strict about prefix heading rules
-* you can specify an id for headings ({#id})
-* trailing backslashes turn into line breaks
+- emphasis markers inside words are ignored
+- fenced code blocks are supported
+- autolinking of "naked" URLs are supported
+- strikethrough using two tildes is supported (~~like this~~)
+- it is strict about prefix heading rules
+- you can specify an id for headings ({#id})
+- trailing backslashes turn into line breaks
 
 # FEEDS
 

@@ -89,6 +89,7 @@ func missingCli(w io.Writer, args []string) subcommands.ExitStatus {
 	return subcommands.ExitSuccess
 }
 
+// links parses the page content and returns an array of link destinations.
 func (p *Page) links() []string {
 	var links []string
 	parser, _ := wikiParser()
