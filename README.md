@@ -59,6 +59,11 @@ don't point to any existing pages or files.
 page documents the "html" subcommand to generate HTML from Markdown
 pages from the command line.
 
+[oddmu-static(1)](/oddmu.git/blob/main/man/oddmu-static.1.txt): This
+man page documents the "static" subcommand to generate an entire
+static website from the command line, avoiding the need to run Oddmu
+as a server. Also great for archiving.
+
 [oddmu-templates(5)](/oddmu.git/blob/main/man/oddmu-templates.5.txt):
 This man page documents how the templates can be changed (how they
 *must* be changed) and lists the attributes available for the various

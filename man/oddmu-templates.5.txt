@@ -15,7 +15,7 @@ _{{.Name}}_ is the page name, escaped for use in URLs. More
 specifically, it is URI escaped except for the slashes. The page name
 doesn't include the _.md_ extension.
 
-For the _view.html_ template:
+For the _view.html_ and _static.html_ template:
 
 _{{.Html}}_ is the rendered Markdown, as HTML.
 
