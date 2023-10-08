@@ -6,7 +6,19 @@ oddmu - text formatting of wiki pages
 
 # SYNTAX
 
-The wiki pages are UTF-8 encoded Markdown files.
+The wiki pages are UTF-8 encoded Markdown files. Oddmu links are
+regular Markdown links:
+
+```
+[link text](page-name)
+```
+
+The page name has to be percent-encoded. See the section "Percent
+Encoding".
+
+If you link to the actual Markdown file (with the ".md" extension),
+then Oddmu serves the Markdon file! That's why link destinations just
+contain the percent-encoded page name (without the ".md" extension).
 
 There are three Oddµ-specific extensions: local links, hashtags and
 fediverse account links. The Markdown library used features some
