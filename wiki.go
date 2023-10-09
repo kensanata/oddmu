@@ -13,7 +13,7 @@ import (
 
 // Templates are parsed at startup.
 var templates = template.Must(
-	template.ParseFiles("edit.html", "add.html", "view.html",
+	template.ParseFiles("edit.html", "add.html", "view.html", "diff.html",
 		"search.html", "static.html", "upload.html", "feed.html"))
 
 // validPath is a regular expression where the second group matches a
@@ -90,6 +90,7 @@ func scheduleLoadLanguages() {
 func serve() {
 	http.HandleFunc("/", rootHandler)
 	http.HandleFunc("/view/", makeHandler(viewHandler, true))
+	http.HandleFunc("/diff/", makeHandler(diffHandler, true))
 	http.HandleFunc("/edit/", makeHandler(editHandler, true))
 	http.HandleFunc("/save/", makeHandler(saveHandler, true))
 	http.HandleFunc("/add/", makeHandler(addHandler, true))

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="{{.Language}}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width">
+    <title>{{.Title}}</title>
+    <style>
+html { max-width: 65ch; padding: 1ch; margin: auto; color: #111; background: #ffe; }
+body { hyphens: auto; }
+del  { color: #844 }
+ins  { color: #484 }
+    </style>
+  </head>
+  <body>
+    <header>
+      <a href="/view/{{.Name}}">Back</a>
+    </header>
+    <main id="main">
+      <h1>{{.Title}}</h1>
+      <pre>
+{{.Diff}}
+      </pre>
+    </main>
+  </body>
+</html>
