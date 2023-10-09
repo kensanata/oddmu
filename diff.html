@@ -18,6 +18,7 @@ ins  { color: #484 }
     </header>
     <main id="main">
       <h1>{{.Title}}</h1>
+      <p>This is the diff between <a href="/view/{{.Name}}.md~">the backup</a> and <a href="/view/{{.Name}}.md">the current copy</a>.</p>
       <pre>
 {{.Diff}}
       </pre>
