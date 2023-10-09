@@ -6,24 +6,22 @@ oddmu-apache - how to setup Apache as a reverse proxy for Oddmu
 
 ## DESCRIPTION
 
-The oddmu program serves the current working directory as a wiki on
-port 8080. This is an unpriviledged port so an ordinary use account
-can do this.
+The oddmu program serves the current working directory as a wiki on port 8080.
+This is an unpriviledged port so an ordinary use account can do this.
 
-The best way to protect the wiki against vandalism and spam is to use
-a regular web server as reverse proxy. This page explains how to setup
-Apache on Debian to do this.
+The best way to protect the wiki against vandalism and spam is to use a regular
+web server as reverse proxy. This page explains how to setup Apache on Debian to
+do this.
 
 ## CONFIGURATION
 
-HTTPS is not part of the wiki. You probably want to configure this in
-your webserver. I guess you could use stunnel, too. If you're using
-Apache, you can use "mod_md" to manage your domain.
+HTTPS is not part of the wiki. You probably want to configure this in your
+webserver. I guess you could use stunnel, too. If you're using Apache, you can
+use "mod_md" to manage your domain.
 
 In the example below, the site is configured in a file called
-"/etc/apache2/sites-available/500-transjovian.conf" and a link poins
-there from "/etc/apache2/sites-enabled". Create this link using
-_a2ensite_(1).
+"/etc/apache2/sites-available/500-transjovian.conf" and a link poins there from
+"/etc/apache2/sites-enabled". Create this link using _a2ensite_(1).
 
 ```
 MDomain transjovian.org
@@ -42,10 +40,9 @@ MDCertificateAgreement accepted
 </VirtualHost>
 ```
 
-First, it manages the domain, getting the necessary certificates. It
-redirects regular HTTP traffic from port 80 to port 443. It turns on
-the SSL engine for port 443. It proxies the requests for the wiki to
-port 8080.
+First, it manages the domain, getting the necessary certificates. It redirects
+regular HTTP traffic from port 80 to port 443. It turns on the SSL engine for
+port 443. It proxies the requests for the wiki to port 8080.
 
 Thus, this is what happens:
 
@@ -60,16 +57,16 @@ Restart the server, gracefully:
 apachectl graceful
 ```
 
-To serve both HTTP and HTTPS, don't redirect from the first virtual
-host to the second – instead just proxy to the wiki like you did for
-the second virtual host: use a copy of the "ProxyPassMatch" directive
-instead of "RewriteEngine on" and "RewriteRule".
+To serve both HTTP and HTTPS, don't redirect from the first virtual host to the
+second – instead just proxy to the wiki like you did for the second virtual
+host: use a copy of the "ProxyPassMatch" directive instead of "RewriteEngine on"
+and "RewriteRule".
 
 ## Access
 
-Access control is not part of the wiki. By default, the wiki is
-editable by all. This is most likely not what you want unless you're
-running it stand-alone, unconnected to the Internet.
+Access control is not part of the wiki. By default, the wiki is editable by all.
+This is most likely not what you want unless you're running it stand-alone,
+unconnected to the Internet.
 
 Create a new password file called ".htpasswd" and add the user "alex":
 
@@ -92,9 +89,9 @@ To remove a user:
 htpasswd -D .htpasswd berta
 ```
 
-Modify your site configuration and protect the "/edit/", "/save/",
-"/add/", "/append/", "/upload/" and "/drop/" URLs with a password by
-adding the following to your "<VirtualHost \*:443>" section:
+Modify your site configuration and protect the "/edit/", "/save/", "/add/",
+"/append/", "/upload/" and "/drop/" URLs with a password by adding the following
+to your "<VirtualHost \*:443>" section:
 
 ```
 <LocationMatch "^/(edit|save|add|append|upload|drop)/">
@@ -107,10 +104,9 @@ adding the following to your "<VirtualHost \*:443>" section:
 
 ## Serve static files
 
-If you want to serve static files as well, add a document root to your
-webserver configuration. In this case, the document root is the
-directory where all the data files are. Apache will not serve files
-such as ".htpasswd".
+If you want to serve static files as well, add a document root to your webserver
+configuration. In this case, the document root is the directory where all the
+data files are. Apache will not serve files such as ".htpasswd".
 
 ```
 DocumentRoot /home/oddmu
@@ -119,26 +115,25 @@ DocumentRoot /home/oddmu
 </Directory>
 ```
 
-Make sure that none of the subdirectories look like the wiki paths
-"/view/", "/edit/", "/save/", "/add/", "/append/", "/upload/",
-"/drop/" or "/search/". For example, create a file called "robots.txt"
-containing the following, telling all robots that they're not welcome.
+Make sure that none of the subdirectories look like the wiki paths "/view/",
+"/diff/", "/edit/", "/save/", "/add/", "/append/", "/upload/", "/drop/" or
+"/search/". For example, create a file called "robots.txt" containing the
+following, telling all robots that they're not welcome.
 
 ```
 User-agent: *
 Disallow: /
 ```
 
-You site now serves "/robots.txt" without interfering with the wiki,
-and without needing a wiki page.
+You site now serves "/robots.txt" without interfering with the wiki, and without
+needing a wiki page.
 
 ## Different logins for different access rights
 
-What if you have a site with various subdirectories and each
-subdirectory is for a different group of friends? You can set this up
-using your webserver. One way to do this is to require specific
-usernames (which must have a password in the password file mentioned
-above.
+What if you have a site with various subdirectories and each subdirectory is for
+a different group of friends? You can set this up using your webserver. One way
+to do this is to require specific usernames (which must have a password in the
+password file mentioned above.
 
 This requires a valid login by the user "alex" or "berta":
 
@@ -150,9 +145,8 @@ This requires a valid login by the user "alex" or "berta":
 
 ## Private wikis
 
-Based on the above, you can prevent people from _reading_ the wiki.
-The "LocationMatch" must cover the "/view/" URLs in order to protect
-*everything*.
+Based on the above, you can prevent people from _reading_ the wiki. The
+"LocationMatch" must cover all the URLs in order to protect everything.
 
 ```
 <Location />
@@ -165,12 +159,11 @@ The "LocationMatch" must cover the "/view/" URLs in order to protect
 
 ## Virtual hosting
 
-Virtual hosting in this context means that the program serves two
-different sites for two different domains from the same machine. Oddmu
-doesn't support that, but your webserver does. Therefore, start an
-Oddmu instance for every domain name, each listening on a different
-port. Then set up your web server such that ever domain acts as a
-reverse proxy to a different Oddmu instance.
+Virtual hosting in this context means that the program serves two different
+sites for two different domains from the same machine. Oddmu doesn't support
+that, but your webserver does. Therefore, start an Oddmu instance for every
+domain name, each listening on a different port. Then set up your web server
+such that ever domain acts as a reverse proxy to a different Oddmu instance.
 
 # SEE ALSO
 

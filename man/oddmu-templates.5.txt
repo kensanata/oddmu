@@ -8,12 +8,12 @@ oddmu-templates - how to write the templates
 
 The templates can refer to the following properties of a page:
 
-_{{.Title}}_ is the page title. If the page doesn't provide its own
-title, the page name is used.
+_{{.Title}}_ is the page title. If the page doesn't provide its own title, the
+page name is used.
 
-_{{.Name}}_ is the page name, escaped for use in URLs. More
-specifically, it is URI escaped except for the slashes. The page name
-doesn't include the _.md_ extension.
+_{{.Name}}_ is the page name, escaped for use in URLs. More specifically, it is
+URI escaped except for the slashes. The page name doesn't include the _.md_
+extension.
 
 For the _view.html_ and _static.html_ template:
 
@@ -21,26 +21,31 @@ _{{.Html}}_ is the rendered Markdown, as HTML.
 
 _{{.Hashtags}}_ is an array of strings.
 
+For the _diff.html_ template:
+
+_{{.Diff}}_ is the diff for this page. This is only computed on demand so it can
+be used in other templates, too. It probably doesn't make much sense to do so,
+however.
+
 For the _edit.html_ template:
 
-_{{printf "%s" .Body}}_ is the Markdown, as a string (the data itself
-is a byte array and that's why we need to call _printf_).
+_{{printf "%s" .Body}}_ is the Markdown, as a string (the data itself is a byte
+array and that's why we need to call _printf_).
 
 For the _search.html_ template only:
 
-_{{.Previous}}_, _{{.Page}}_ and _{{.Next}}_ are the previous, current
-and next page number in the results since doing arithmetics in
-templates is hard. The first page number is 1. The last page is
-expensive to dermine and so that isn't done.
+_{{.Previous}}_, _{{.Page}}_ and _{{.Next}}_ are the previous, current and next
+page number in the results since doing arithmetics in templates is hard. The
+first page number is 1. The last page is expensive to dermine and so that isn't
+done.
 
 _{{.More}}_ indicates if there are any more search results.
 
 _{{.Results}}_ indicates if there were any search results at all.
 
-_{{.Items}}_ is an array of pages, each containing a search result. A
-search result is a page (with the properties seen above). Thus, to
-refer to them, you need to use a _{{range .Items}}_ … _{{end}}_
-construct.
+_{{.Items}}_ is an array of pages, each containing a search result. A search
+result is a page (with the properties seen above). Thus, to refer to them, you
+need to use a _{{range .Items}}_ … _{{end}}_ construct.
 
 For items in the search result:
 
@@ -54,8 +59,8 @@ _{{.Name}}_ is the page name, escaped for use in URLs.
 
 _{{.Title}}_ is the title of the underlying main page.
 
-_{{.Date}}_ is the date of the last update to the underlying main page,
-in RFC 822 format.
+_{{.Date}}_ is the date of the last update to the underlying main page, in RFC
+822 format.
 
 _{{.Items}}_ is an array of feed items.
 
@@ -69,23 +74,20 @@ _{{.Html}}_ is the rendered Markdown, as escaped (!) HTML.
 
 _{{.Hashtags}}_ is an array of strings.
 
-_{{.Date}}_, the date of the last update to this page, in RFC 822
-format.
+_{{.Date}}_, the date of the last update to this page, in RFC 822 format.
 
 The _upload.html_ template cannot refer to anything.
 
-When calling the _save_ and _append_ action, the page name is taken
-from the URL path and the page content is taken from the _body_ form
-parameter. To illustrate, here's how to edit the "welcome" page using
-_curl_:
+When calling the _save_ and _append_ action, the page name is taken from the URL
+path and the page content is taken from the _body_ form parameter. To
+illustrate, here's how to edit the "welcome" page using _curl_:
 
 ```
 curl --form body="Did you bring a towel?" \
   http://localhost:8080/save/welcome
 ```
 
-When calling the _search_ action, the query is taken from the URL
-parameter _q_.
+When calling the _search_ action, the query is taken from the URL parameter _q_.
 
 ```
 curl http://localhost:8080/search/?q=towel
@@ -93,29 +95,27 @@ curl http://localhost:8080/search/?q=towel
 
 ## Non-English hyphenation
 
-Automatic hyphenation by the browser requires two things: The style
-sheet must indicate "hyphen: auto" for an HTML element such as "body",
-and that element must have a "lang" set (usually a two letter language
-code such as "de" for German).
+Automatic hyphenation by the browser requires two things: The style sheet must
+indicate "hyphen: auto" for an HTML element such as "body", and that element
+must have a "lang" set (usually a two letter language code such as "de" for
+German).
 
-Oddmu attempts to detect the correct language for each page. It
-assumes that languages are not mixed on the same page. If you know
-that you're only going to use a small number of languages – or just a
-single language! – you can set the environment variable
-ODDMU_LANGUAGES to a comma-separated list of ISO 639-1 codes, e.g.
-"en" or "en,de,fr,pt".
+Oddmu attempts to detect the correct language for each page. It assumes that
+languages are not mixed on the same page. If you know that you're only going to
+use a small number of languages – or just a single language! – you can set the
+environment variable ODDMU_LANGUAGES to a comma-separated list of ISO 639-1
+codes, e.g. "en" or "en,de,fr,pt".
 
-"view.html" is used the template to render a single page and so the
-language detected is added to the "html" element.
+"view.html" is used the template to render a single page and so the language
+detected is added to the "html" element.
 
-"search.html" is the template used to render search results and so
-"en" is used for the "html" element and the language detected for
-every page in the search result is added to the "article" element for
-each snippet.
+"search.html" is the template used to render search nresults and so "en" is used
+for the "html" element and the language detected for every page in the search
+result is added to the "article" element for each snippet.
 
-"edit.html" and "add.html" are the templates used to edit a page and
-at that point, the language isn't known, so "en" is used for the
-"html" element and no language is used for the "textarea" element.
+"edit.html" and "add.html" are the templates used to edit a page and at that
+point, the language isn't known, so "en" is used for the "html" element and no
+language is used for the "textarea" element.
 
 SEE ALSO
 
@@ -127,16 +127,15 @@ https://developer.mozilla.org/en-US/docs/Learn/HTML
 "Learn to style HTML using CSS"
 https://developer.mozilla.org/en-US/docs/Learn/CSS
 
-The "text/template" library explains how to write templates from a
-programmer perspective. https://pkg.go.dev/text/template
+The "text/template" library explains how to write templates from a programmer
+perspective. https://pkg.go.dev/text/template
 
-The "html/template" library explains how the templates are made more
-secure in a HTML context. https://pkg.go.dev/html/template
+The "html/template" library explains how the templates are made more secure in a
+HTML context. https://pkg.go.dev/html/template
 
 "Lingua" is the library used to detect languages.
 https://github.com/pemistahl/lingua-go
 
 # AUTHORS
 
-Maintained by Alex Schroeder <alex@gnu.org>. Up-to-date sources can be
-found at https://alexschroeder.ch/cgit/oddmu/.
+Maintained by Alex Schroeder <alex@gnu.org>.

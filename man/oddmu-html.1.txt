@@ -10,15 +10,15 @@ oddmu-html - render Oddmu page HTML from the command-line
 
 # DESCRIPTION
 
-The "html" subcommand opens the Markdown file for the given page name
-(appending the ".md" extension) and prints the HTML to STDOUT without
-invoking the "view.html" template.
+The "html" subcommand opens the Markdown file for the given page name (appending
+the ".md" extension) and prints the HTML to STDOUT without invoking the
+"view.html" template.
 
 # OPTIONS
 
 *-view*
-	Use the "view.html" template to render the page. Without this,
-	the HTML will lack html and body tags.
+	Use the "view.html" template to render the page. Without this, the HTML
+	lacks html and body tags.
 
 # EXAMPLE
 
@@ -30,8 +30,8 @@ oddmu html README
 
 # ENVIRONMENT
 
-The ODDMU_WEBFINGER environment variable has no effect in this
-situation. Fediverse accounts are not linked to their profile pages.
+The ODDMU_WEBFINGER environment variable has no effect in this situation.
+Fediverse accounts are not linked to their profile pages.
 
 # SEE ALSO
 

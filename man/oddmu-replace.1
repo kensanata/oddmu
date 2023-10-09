@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-REPLACE" "1" "2023-10-07"
+.TH "ODDMU-REPLACE" "1" "2023-10-09"
 .PP
 .SH NAME
 .PP
@@ -17,24 +17,23 @@ oddmu-replace - replace text in Oddmu pages from the command-line
 .PP
 .SH DESCRIPTION
 .PP
-The "replace" subcommand does a search and replace on all the Markdown
-files in the current directory and its subdirectories.\&
+The "replace" subcommand does a search and replace on all the Markdown files in
+the current directory and its subdirectories.\&
 .PP
 .SH OPTIONS
 .PP
 \fB-confirm\fR
 .RS 4
-By default, the replacement doesn'\&t save the changes made.\&
-Instead, a unified diff is produced and printed.\& Given this
-option, the changed Markdown files are saved to disk.\&
+By default, the replacement doesn'\&t save the changes made.\& Instead, a
+unified diff is produced and printed.\& Given this option, the changed
+Markdown files are saved to disk.\&
 .PP
 .RE
 \fB-regexp\fR
 .RS 4
-By default, the term to be replaced is just a string.\& With
-this flag, the term is a regular expression and the
-replacement can contain backreferences ($1, $2, $3, etc.\&) to
-capture groups.\&
+By default, the term to be replaced is just a string.\& With this flag,
+the term is a regular expression and the replacement can contain
+backreferences ($1, $2, $3, etc.\&) to capture groups.\&
 .PP
 .RE
 .SH EXAMPLE
@@ -63,15 +62,13 @@ This is a dry run\&. Use -confirm to make it happen\&.
 .PP
 .SH NOTES
 .PP
-This is the equivalent of using \fIsed\fR(1) with the --quiet,
---regexp-extended, --in-place=~ and --expression command with the s
-command "s/regexp/replacement/g" except that it prints a unified diff
-per default instead of making any changes and the regexp rules differ
-slightly.\&
+This is the equivalent of using \fIsed\fR(1) with the --quiet, --regexp-extended,
+--in-place=~ and --expression command with the s command
+"s/regexp/replacement/g" except that it prints a unified diff per default
+instead of making any changes and the regexp rules differ slightly.\&
 .PP
-The search is case-sensitive.\& To make it case-insensitive, search for
-a regular expression that sets the case-insensitive flag, e.\&g.\&
-"(?\&i)oddmu".\&
+The search is case-sensitive.\& To make it case-insensitive, search for a regular
+expression that sets the case-insensitive flag, e.\&g.\& "(?\&i)oddmu".\&
 .PP
 .SH SEE ALSO
 .PP

@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU.SERVICE" "5" "2023-10-07"
+.TH "ODDMU.SERVICE" "5" "2023-10-09"
 .PP
 .SH NAME
 .PP
@@ -13,12 +13,11 @@ oddmu.\&service - how to setup Oddmu using systemd
 .PP
 .SS DESCRIPTION
 .PP
-Here'\&s how to setup a wiki using systemd such that it starts
-automatically when the system boots and gets restarted automatically
-when it crashes.\&
+Here'\&s how to setup a wiki using systemd such that it starts automatically when
+the system boots and gets restarted automatically when it crashes.\&
 .PP
-First, create a new user called "oddmu" with it'\&s own home directory
-but without a login.\&
+First, create a new user called "oddmu" with it'\&s own home directory but without
+a login.\&
 .PP
 .nf
 .RS 4
@@ -26,15 +25,15 @@ adduser --system --home /home/oddmu oddmu
 .fi
 .RE
 .PP
-The directory "/home/oddmu" contains the templates and all the data
-files.\& Copy all the templates files ending in ".\&html" from the source
-distribution to "/home/oddmu".\&
+The directory "/home/oddmu" contains the templates and all the data files.\& Copy
+all the templates files ending in ".\&html" from the source distribution to
+"/home/oddmu".\&
 .PP
-If you want to keep everything in one place, copy the binary "oddmu"
-and the service file "oddmu.\&service" to "/home/oddmu", too.\&
+If you want to keep everything in one place, copy the binary "oddmu" and the
+service file "oddmu.\&service" to "/home/oddmu", too.\&
 .PP
-Edit the `oddmu.\&service` file.\& These are the lines you most likely
-have to take care of:
+Edit the `oddmu.\&service` file.\& These are the lines you most likely have to take
+care of:
 .PP
 .nf
 .RS 4
@@ -54,8 +53,7 @@ systemctl enable --now oddmu
 .fi
 .RE
 .PP
-You should be able to visit the wiki at
-http://localhost:8080/.\&
+You should be able to visit the wiki at http://localhost:8080/.\&
 .PP
 Check the log:
 .PP

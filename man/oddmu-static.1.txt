@@ -10,17 +10,16 @@ oddmu-static - create a static copy of the site
 
 # DESCRIPTION
 
-The "static" subcommand generates a static copy of the pages in the
-current directory and saves them in the given target directory. The
-target directory must not exist to unser no existing files are
-clobbered.
+The "static" subcommand generates a static copy of the pages in the current
+directory and saves them in the given target directory. The target directory
+must not exist to unser no existing files are clobbered.
 
-All pages (files with the ".md" extension) are turned into HTML files
-(with the ".html" extension) using the "static.html" template. Links
-pointing to existing pages get ".html" appended.
+All pages (files with the ".md" extension) are turned into HTML files (with the
+".html" extension) using the "static.html" template. Links pointing to existing
+pages get ".html" appended.
 
-Hidden files and directories (starting with a ".") and backup files
-(ending with a "~") are skipped.
+Hidden files and directories (starting with a ".") and backup files (ending with
+a "~") are skipped.
 
 All other files are _linked_ into the same directory.
 
@@ -34,16 +33,16 @@ oddmu static ../archive
 
 # LIMITATIONS
 
-Links from files to pages do not get ".html" appended. This affects
-existing HTML or XML files including SVG files.
+Links from files to pages do not get ".html" appended. This affects existing
+HTML or XML files including SVG files.
 
-Links to absolute URLs (starting with "/") are not changed at all. It
-is up to you to migrate static folders and applications.
+Links to absolute URLs (starting with "/") are not changed at all. It is up to
+you to migrate static folders and applications.
 
 # ENVIRONMENT
 
-The ODDMU_WEBFINGER environment variable has no effect in this
-situation. Fediverse accounts are not linked to their profile pages.
+The ODDMU_WEBFINGER environment variable has no effect in this situation.
+Fediverse accounts are not linked to their profile pages.
 
 # SEE ALSO
 

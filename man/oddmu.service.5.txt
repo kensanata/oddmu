@@ -6,26 +6,25 @@ oddmu.service - how to setup Oddmu using systemd
 
 ## DESCRIPTION
 
-Here's how to setup a wiki using systemd such that it starts
-automatically when the system boots and gets restarted automatically
-when it crashes.
+Here's how to setup a wiki using systemd such that it starts automatically when
+the system boots and gets restarted automatically when it crashes.
 
-First, create a new user called "oddmu" with it's own home directory
-but without a login.
+First, create a new user called "oddmu" with it's own home directory but without
+a login.
 
 ```
 adduser --system --home /home/oddmu oddmu
 ```
 
-The directory "/home/oddmu" contains the templates and all the data
-files. Copy all the templates files ending in ".html" from the source
-distribution to "/home/oddmu".
+The directory "/home/oddmu" contains the templates and all the data files. Copy
+all the templates files ending in ".html" from the source distribution to
+"/home/oddmu".
 
-If you want to keep everything in one place, copy the binary "oddmu"
-and the service file "oddmu.service" to "/home/oddmu", too.
+If you want to keep everything in one place, copy the binary "oddmu" and the
+service file "oddmu.service" to "/home/oddmu", too.
 
-Edit the `oddmu.service` file. These are the lines you most likely
-have to take care of:
+Edit the `oddmu.service` file. These are the lines you most likely have to take
+care of:
 
 ```
 ExecStart=/home/oddmu/oddmu
@@ -41,8 +40,7 @@ ln -s /home/oddmu/oddmu.service /etc/systemd/system/
 systemctl enable --now oddmu
 ```
 
-You should be able to visit the wiki at
-http://localhost:8080/.
+You should be able to visit the wiki at http://localhost:8080/.
 
 Check the log:
 

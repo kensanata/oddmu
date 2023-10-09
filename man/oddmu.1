@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU" "1" "2023-10-03"
+.TH "ODDMU" "1" "2023-10-09"
 .PP
 .SH NAME
 .PP
@@ -41,9 +41,9 @@ See \fIoddmu\fR(5) for details about the page formatting.\&
 .PP
 .SH CONFIGURATION
 .PP
-The template files are the HTML files in the working directory: "add.\&html",
-"edit.\&html", "search.\&html", "upload.\&html" and "view.\&html".\& Feel free to change
-the templates and restart the server.\&
+The template files are the HTML files in the working directory:
+"add.\&html", "diff.\&html", "edit.\&html", "search.\&html", "upload.\&html" and
+"view.\&html".\& Feel free to change the templates and restart the server.\&
 .PP
 The first change you should make is to replace the name and email
 address in the footer of "view.\&html".\& Look for "Your Name" and
@@ -93,9 +93,9 @@ search engine indexes pages and how it sorts and scores results, see
 .PP
 .SH EXAMPLE
 .PP
-When saving a page, the page name is take from the URL and the page
-content is taken from the "body" form parameter.\& To illustrate, here'\&s
-how to edit a page using \fIcurl\fR(1):
+When saving a page, the page name is take from the URL and the page content is
+taken from the "body" form parameter.\& To illustrate, here'\&s how to edit a page
+using \fIcurl\fR(1):
 .PP
 .nf
 .RS 4
@@ -110,9 +110,6 @@ This is a minimal wiki.\& There is no version history.\& It'\&s well suited as a
 \fIsecondary\fR medium: collaboration and conversation happens elsewhere, in chat,
 on social media.\& The wiki serves as the text repository that results from these
 discussions.\&
-.PP
-The wiki lists no recent changes.\& The expectation is that the people that care
-were involved in the discussions beforehand.\&
 .PP
 The idea is that the webserver handles as many tasks as possible.\& It logs
 requests, does rate limiting, handles encryption, gets the certificates, and so
@@ -131,11 +128,17 @@ you have a ton of pages, this takes a lot of memory.\&
 Files may not end with a tilde ('\&~'\&) – these are backup files.\&
 .PP
 You cannot edit uploaded files.\& If you upload a file called "hello.\&txt" and
-attempt to edit it by using "/edit/hello.\&txt" you will create a page with the
-name "hello.\&txt.\&md" instead.\&
+attempt to edit it by using "/edit/hello.\&txt" you create a page with the name
+"hello.\&txt.\&md" instead.\&
 .PP
 You cannot delete uploaded files via the web – but you can delete regular wiki
 pages by saving an empty file.\&
+.PP
+When editing a page, the form has a checkbox that controls whether a link the
+page is added to the "changes" page.\& This checkbox is checked by default.\& The
+result is that "/view/changes" acts as a traditional Recent Changes page, except
+that it is itself editable.\& You probably want to uncheck the checkbox if you do
+edit the changes page itself.\&
 .PP
 .SH SEE ALSO
 .PP

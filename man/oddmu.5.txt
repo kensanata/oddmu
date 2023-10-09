@@ -6,37 +6,35 @@ oddmu - text formatting of wiki pages
 
 # SYNTAX
 
-The wiki pages are UTF-8 encoded Markdown files (with the ".md"
-extension). Oddmu links are regular Markdown links to page names
-(without the ".md" extension):
+The wiki pages are UTF-8 encoded Markdown files (with the ".md" extension).
+Oddmu links are regular Markdown links to page names (without the ".md"
+extension):
 
 ```
 [link text](page-name)
 ```
 
-The page name has to be percent-encoded. See the section "Percent
-Encoding".
+The page name has to be percent-encoded. See the section "Percent Encoding".
 
-If you link to the actual Markdown file (with the ".md" extension),
-then Oddmu serves the Markdon file!
+If you link to the actual Markdown file (with the ".md" extension), then Oddmu
+serves the Markdon file!
 
-There are three Oddµ-specific extensions: local links, hashtags and
-fediverse account links. The Markdown library used features some
-additional extensions, most importantly tables and definition lists.
+There are three Oddµ-specific extensions: local links, hashtags and fediverse
+account links. The Markdown library used features some additional extensions,
+most importantly tables and definition lists.
 
 ## Local links
 
-Local links use double square brackets [[like this]]. Oddmu does not
-treat underscores like spaces, so [[like this]] and [[like_this]] link
-to different destinations and are served by different files: "like
-this.md" and "like_this.md".
+Local links use double square brackets [[like this]]. Oddmu does not treat
+underscores like spaces, so [[like this]] and [[like_this]] link to different
+destinations and are served by different files: "like this.md" and
+"like_this.md".
 
 ## Hashtags
 
-Hashtags are single word links to searches for themselves. Use the
-underscore to use hashtags consisting of multiple words. Hashtags are
-distinguished from page titles because there is no space after the
-hash.
+Hashtags are single word links to searches for themselves. Use the underscore to
+use hashtags consisting of multiple words. Hashtags are distinguished from page
+titles because there is no space after the hash.
 
 ```
 # Title
@@ -71,20 +69,20 @@ Internet
 
 ## Fediverse account links
 
-Fediverse accounts look a bit like an at sign followed by an email
-address, e.g. @alex@alexschroeder.ch. When rendering a page, these
-turn into a username linked to a profile page. In this case, "@alex"
-would be linked to "https://alexschroeder.ch/users/alex".
+Fediverse accounts look a bit like an at sign followed by an email address, e.g.
+@alex@alexschroeder.ch. When rendering a page, these turn into a username linked
+to a profile page. In this case, "@alex" would be linked to
+"https://alexschroeder.ch/users/alex".
 
-In many cases, this works as is. In reality, however, the link to the
-profile page needs to be retrieved via webfinger. Oddµ does that in
-the background, and as soon as the information is available, the
-actual profile link is used when pages are rendered. In the example
-above, the result would be "https://social.alexschroeder.ch/@alex".
+In many cases, this works as is. In reality, however, the link to the profile
+page needs to be retrieved via webfinger. Oddµ does that in the background, and
+as soon as the information is available, the actual profile link is used when
+pages are rendered. In the example above, the result would be
+"https://social.alexschroeder.ch/@alex".
 
-As this sort of packground network activity is surprising, it is not
-enabled by default. Set the environment variable ODDMU_WEBFINGER to
-"1" in order to enable this.
+As this sort of packground network activity is surprising, it is not enabled by
+default. Set the environment variable ODDMU_WEBFINGER to "1" in order to enable
+this.
 
 ## Other extensions
 
@@ -100,15 +98,15 @@ The Markdown processor comes with a few extensions:
 
 # FEEDS
 
-Every file can be viewed as feed by using the extension ".rss". The
-feed items are based on links in bullet lists using the asterix
-("\*"). The items must point to local pages. This is why the link may
-not contain two forward slashes ("//").
+Every file can be viewed as feed by using the extension ".rss". The feed items
+are based on links in bullet lists using the asterix ("\*"). The items must
+point to local pages. This is why the link may not contain two forward slashes
+("//").
 
-Assume this is the index page. The feed would be "/view/index.rss". It
-would contain the pages "Arianism", "Donatism" and "Monophysitism" but
-it would not contain the pages "Feed" and "About" since the list items
-don't start with an asterix.
+Assume this is the index page. The feed would be "/view/index.rss". It would
+contain the pages "Arianism", "Donatism" and "Monophysitism" but it would not
+contain the pages "Feed" and "About" since the list items don't start with an
+asterix.
 
 ```
 # Main Page
@@ -129,24 +127,22 @@ The feed contains at most 10 items, starting at the top.
 
 # PERCENT ENCODING
 
-If you use Markdown links to local pages, you must percent-encode the
-link target. Any character that is not an "unreserved character"
-according to RFC 3986 might need to be encoded. The unreserved
-characters are a-z, A-Z, 0-9, as well as the four characters '-',
-'\_', '.' and '~'.
+If you use Markdown links to local pages, you must percent-encode the link
+target. Any character that is not an "unreserved character" according to RFC
+3986 might need to be encoded. The unreserved characters are a-z, A-Z, 0-9, as
+well as the four characters '-', '\_', '.' and '~'.
 
-Percent-encoding means that each character is converted into one or
-more bytes, and each byte is represented as a percent character
-followed by a hexadecimal representation.
+Percent-encoding means that each character is converted into one or more bytes,
+and each byte is represented as a percent character followed by a hexadecimal
+representation.
 
-Realistically, what probably works best is to use a browser. If you
-type "http://example.org/Alex Schröder" into the address bar, you'll
-get sent to the example domain. If you now copy the address and paste
-it back into a text editor, you'll get
-"http://example.org/Alex%20Schr%C3%B6der" and that's how you'll learn
-that the Space is encoded by %20 and that the character 'ö' is encoded
-by %C3%B6. To link to the page "Alex Schröder" you would write
-something like this: "[Alex](Alex%20Schr%C3%B6der)".
+Realistically, what probably works best is to use a browser. If you type
+"http://example.org/Alex Schröder" into the address bar, you'll get sent to the
+example domain. If you now copy the address and paste it back into a text
+editor, you'll get "http://example.org/Alex%20Schr%C3%B6der" and that's how
+you'll learn that the Space is encoded by %20 and that the character 'ö' is
+encoded by %C3%B6. To link to the page "Alex Schröder" you would write something
+like this: "[Alex](Alex%20Schr%C3%B6der)".
 
 # SEE ALSO
 
