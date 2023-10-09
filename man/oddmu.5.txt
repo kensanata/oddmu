@@ -6,8 +6,9 @@ oddmu - text formatting of wiki pages
 
 # SYNTAX
 
-The wiki pages are UTF-8 encoded Markdown files. Oddmu links are
-regular Markdown links:
+The wiki pages are UTF-8 encoded Markdown files (with the ".md"
+extension). Oddmu links are regular Markdown links to page names
+(without the ".md" extension):
 
 ```
 [link text](page-name)
@@ -17,8 +18,7 @@ The page name has to be percent-encoded. See the section "Percent
 Encoding".
 
 If you link to the actual Markdown file (with the ".md" extension),
-then Oddmu serves the Markdon file! That's why link destinations just
-contain the percent-encoded page name (without the ".md" extension).
+then Oddmu serves the Markdon file!
 
 There are three Oddµ-specific extensions: local links, hashtags and
 fediverse account links. The Markdown library used features some
@@ -26,7 +26,10 @@ additional extensions, most importantly tables and definition lists.
 
 ## Local links
 
-Local links use double square brackets [[like this]].
+Local links use double square brackets [[like this]]. Oddmu does not
+treat underscores like spaces, so [[like this]] and [[like_this]] link
+to different destinations and are served by different files: "like
+this.md" and "like_this.md".
 
 ## Hashtags
 
@@ -73,9 +76,9 @@ address, e.g. @alex@alexschroeder.ch. When rendering a page, these
 turn into a username linked to a profile page. In this case, "@alex"
 would be linked to "https://alexschroeder.ch/users/alex".
 
-In many cases, this will work as is. In reality, however, the link to
-the profile page needs to be retrieved via webfinger. Oddµ does that
-in the background, and as soon as the information is available, the
+In many cases, this works as is. In reality, however, the link to the
+profile page needs to be retrieved via webfinger. Oddµ does that in
+the background, and as soon as the information is available, the
 actual profile link is used when pages are rendered. In the example
 above, the result would be "https://social.alexschroeder.ch/@alex".
 
