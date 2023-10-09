@@ -16,6 +16,7 @@ form, textarea { width: 100%; }
       <textarea name="body" rows="20" cols="80" placeholder="# Title
 
 Text" lang="" autofocus>{{printf "%s" .Body}}</textarea>
+      <p><label><input type="checkbox" name="notify" checked> Add link to <a href="/view/changes">the list of changes</a>.</label></p>
       <p><input type="submit" value="Save">
         <a href="/view/{{.Name}}"><button type="button">Cancel</button></a></p>
     </form>

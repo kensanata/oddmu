@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 )
 
@@ -27,6 +28,12 @@ func saveHandler(w http.ResponseWriter, r *http.Request, name string) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
+	}
+	if r.FormValue("notify") == "on" {
+		err = p.notify()
+		if err != nil {
+			log.Println("notify:", err)
+		}
 	}
 	http.Redirect(w, r, "/view/"+name, http.StatusFound)
 }

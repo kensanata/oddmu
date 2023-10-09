@@ -165,10 +165,10 @@ func (p *Page) updateIndex() {
 		// Do not reuse the old id. We need a new one for
 		// indexing to work.
 		id = index.addDocument(p.Body)
-		index.documents[id] = p.Name
-		p.handleTitle(false)
 		// The page name stays the same but the title may have
 		// changed.
+		index.documents[id] = p.Name
+		p.handleTitle(false)
 		index.titles[p.Name] = p.Title
 	}
 }

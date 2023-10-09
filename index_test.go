@@ -30,7 +30,7 @@ func TestIndexUpdates(t *testing.T) {
 	cleanup(t, "testdata/update")
 	name := "testdata/update/test"
 	index.load()
-	p := &Page{Name: name, Body: []byte("This is a test.")}
+	p := &Page{Name: name, Body: []byte("#Old Name\nThis is a test.")}
 	p.save()
 
 	// Find the phrase
@@ -67,7 +67,7 @@ func TestIndexUpdates(t *testing.T) {
 	assert.True(t, found)
 
 	// Update the page and no longer find it with the old phrase
-	p = &Page{Name: name, Body: []byte("Guvf vf n grfg.")}
+	p = &Page{Name: name, Body: []byte("# New page\nGuvf vf n grfg.")}
 	p.save()
 	pages, _ = search("This is a test", "", 1)
 	found = false
@@ -89,4 +89,9 @@ func TestIndexUpdates(t *testing.T) {
 		}
 	}
 	assert.True(t, found)
+
+	// Make sure the title was updated
+	index.RLock()
+	defer index.RUnlock()
+	assert.Equal(t, index.titles[name], "New page")
 }

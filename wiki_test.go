@@ -86,21 +86,27 @@ func HTTPStatusCodeIfModifiedSince(t *testing.T, handler http.HandlerFunc, url s
 	assert.Equal(t, http.StatusNotModified, w.Code)
 }
 
-func cleanup(t *testing.T, dir string) {
+func cleanup(t *testing.T, dirs ...string) {
 	t.Cleanup(func() {
-		_ = os.RemoveAll(dir)
+		for _, dir := range dirs {
+			_ = os.RemoveAll(dir)
+		}
 		index.Lock()
 		defer index.Unlock()
 		for name := range index.titles {
-			if strings.HasPrefix(name, dir) {
-				delete(index.titles, name)
+			for _, dir := range dirs {
+				if strings.HasPrefix(name, dir) {
+					delete(index.titles, name)
+				}
 			}
 		}
 		ids := []docid{}
 		for id, name := range index.documents {
-			if strings.HasPrefix(name, dir) {
-				delete(index.documents, id)
-				ids = append(ids, id)
+			for _, dir := range dirs {
+				if strings.HasPrefix(name, dir) {
+					delete(index.documents, id)
+					ids = append(ids, id)
+				}
 			}
 		}
 		for hashtag, docs := range index.token {

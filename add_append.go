@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 )
 
@@ -23,15 +24,21 @@ func appendHandler(w http.ResponseWriter, r *http.Request, name string) {
 	body := r.FormValue("body")
 	p, err := loadPage(name)
 	if err != nil {
-		p = &Page{Title: name, Name: name, Body: []byte(body)}
+		p = &Page{Name: name, Body: []byte(body)}
 	} else {
-		p.handleTitle(false)
 		p.Body = append(p.Body, []byte(body)...)
 	}
+	p.handleTitle(false)
 	err = p.save()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
+	}
+	if r.FormValue("notify") == "on" {
+		err = p.notify()
+		if err != nil {
+			log.Println("notify:", err)
+		}
 	}
 	http.Redirect(w, r, "/view/"+name, http.StatusFound)
 }
