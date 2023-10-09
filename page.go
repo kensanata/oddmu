@@ -97,7 +97,7 @@ func (p *Page) notify() error {
 		if loc != nil {
 			r := c.Body[:loc[0]]
 			if loc[1] < len(c.Body) {
-				r = append(r, c.Body[loc[1]+1:]...)
+				r = append(r, c.Body[loc[1]:]...)
 			}
 			c.Body = r
 		}

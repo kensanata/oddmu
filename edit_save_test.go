@@ -116,3 +116,21 @@ func TestEditSaveNotificationWithUpdateToChangesList(t *testing.T) {
 	// the change was already listed, but now it moved up and has a new title
 	assert.Equal(t, intro+new_line+other, string(s))
 }
+
+func TestEditSaveNotificationWithUpdateToChangesListTop(t *testing.T) {
+	cleanup(t, "testdata/notification", "changes.md")
+	intro := "# Changes\n\nThis is a paragraph.\n\n"
+	other := "* [other change](testdata/notification/whatever)\n"
+	line := "* [a change](testdata/notification/alex)\n"
+	os.WriteFile("changes.md", []byte(intro+line+other), 0644)
+	data := url.Values{}
+	data.Set("body", "Hallo!")
+	data.Add("notify", "on")
+	HTTPRedirectTo(t, makeHandler(saveHandler, true),
+		"POST", "/save/testdata/notification/alex", data, "/view/testdata/notification/alex")
+	s, err := os.ReadFile("changes.md")
+	assert.NoError(t, err)
+	new_line := "* [testdata/notification/alex](testdata/notification/alex)\n"
+	// the change was already listed at the top, so just use the new title
+	assert.Equal(t, intro+new_line+other, string(s))
+}
