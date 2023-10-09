@@ -100,6 +100,34 @@ your browser to http://localhost:8080/ to use it.
 
 If you spot any, [contact](https://alexschroeder.ch/wiki/Contact) me.
 
+## Source
+
+If you're interested in making changes to the code, here's a
+high-level introduction to the various source files.
+
+- *_test.go are the test files; a few library functions are defined in
+  wiki_test.go.
+- *_cmd.go are the files implementing the various subcommands with
+  matching names
+- accounts.go implements the webfinger code to fetch fediverse account
+  link destinations with the URI provided by webfinger
+- add_append.go implements the /add and /append handlers
+- edit_save.go implements the /edit and /save handlers
+- feed.go implements the feed for a page based on the links it lists
+- highlight.go implements the bold tags for matches when showing
+  search results
+- index.go implements the index of all the hashtags
+- languages.go implements the language detection
+- page.go implements the page loading and saving
+- parser.go implements the Markdown parsing
+- score.go implements the page scoring when showing search results
+- search.go implements the /search handler
+- snippets.go implements the page summaries for search results
+- tokenizer.go implements the various tokenizers used
+- upload_drop.go implements the /upload and /drop handlers
+- view.go implements the /view handler
+- wiki.go implements the main function
+
 ## References
 
 [Writing Web Applications](https://golang.org/doc/articles/wiki/)
