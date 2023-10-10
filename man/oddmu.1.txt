@@ -128,8 +128,16 @@ edit the changes page itself.
 
 # SEE ALSO
 
-_oddmu_(5), _oddmu.service_(5), oddmu-apache_(5), _oddmu-html_(1),
-_oddmu-replace_(1), _oddmu-search_(1), _oddmu-search_(7)
+- _oddmu_(5), about the markup syntax and how feeds are generated based on link lists
+- _oddmu.service_(5), on how to run the service under systemd
+- _oddmu-apache_(5), on how to set up a web server such as Apache
+- _oddmu-html_(1), on how to render a page from the command-line
+- _oddmu-missing_(1), on how to find broken local links from the command-line
+- _oddmu-replace_(1), on how to search and replace text from the command-line
+- _oddmu-search_(1), on how to run a search from the command-line
+- _oddmu-search_(7), on how search actually works
+- _oddmu-static_(1), on generating a static site from the command-line
+- _oddmu-templates_(5), on how to write the HTML templates
 
 # AUTHORS
 

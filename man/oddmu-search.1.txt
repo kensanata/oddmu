@@ -22,7 +22,7 @@ scored.
 # OPTIONS
 
 *-extract*
-        Print search extracts for interactive use from the command-line.
+	Print search extracts for interactive use from the command-line.
 *-page* _n_
 	Search results are paginated and by default only the first page is
 	shown. This option allows you to view other pages.

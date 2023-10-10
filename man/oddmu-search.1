@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-SEARCH" "1" "2023-10-09"
+.TH "ODDMU-SEARCH" "1" "2023-10-10"
 .PP
 .SH NAME
 .PP
@@ -13,18 +13,25 @@ oddmu-search - search the Oddmu pages from the command-line
 .PP
 .SH SYNOPSIS
 .PP
-\fBoddmu search\fR [-page \fIn\fR] \fIterms.\&.\&.\&\fR
+\fBoddmu search\fR [-extract] [-page \fIn\fR] \fIterms.\&.\&.\&\fR
 .PP
 .SH DESCRIPTION
 .PP
-The "search" subcommand searches the Markdown files in the current directory
-(!\&), returning the search result as a Markdown-formatted list.\&
+The "search" subcommand searches the Markdown files in the current
+directory.\&
+.PP
+Be default, this returns a Markdown-formatted list suitable for pasting into
+Oddmu pages.\&
 .PP
 See \fIoddmu-search\fR(7) for more information of how pages are searched, sorted and
 scored.\&
 .PP
 .SH OPTIONS
 .PP
+\fB-extract\fR
+.RS 4
+Print search extracts for interactive use from the command-line.\&
+.RE
 \fB-page\fR \fIn\fR
 .RS 4
 Search results are paginated and by default only the first page is
