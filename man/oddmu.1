@@ -120,7 +120,18 @@ on your point of view.\& See \fIoddmu-apache\fR(5).\&
 .SH NOTES
 .PP
 Page names are filenames with ".\&md" appended.\& If your filesystem cannot handle
-it, it can'\&t be a page name.\&
+it, it can'\&t be a page name.\& Filenames can contain slashes and oddmu creates
+subdirectories as necessary.\&
+.PP
+There are two special files: "index.\&md" is the default page.\& People visiting the
+"root" of the site are redirected to "/view/index".\& "changes.\&md" is the page
+where links to changed files are added.\& As an author, you can prevent this from
+happening by deselecting the checkbox "Add link to the list of changes.\&" Changes
+made using the "replace" subcommand do not affect the "changes.\&md" page.\& See
+\fIoddmu-replace\fR(1) for more.\& "changes.\&md" can be edited like every other page.\&
+.PP
+If you want to link to "/view/changes", you need to do this yourself.\& The
+"view.\&html" template currently doesn'\&t do it.\& See \fIoddmu-templates\fR(5) for more.\&
 .PP
 The pages are indexed as the server starts and the index is kept in memory.\& If
 you have a ton of pages, this takes a lot of memory.\&
@@ -133,12 +144,6 @@ attempt to edit it by using "/edit/hello.\&txt" you create a page with the name
 .PP
 You cannot delete uploaded files via the web – but you can delete regular wiki
 pages by saving an empty file.\&
-.PP
-When editing a page, the form has a checkbox that controls whether a link the
-page is added to the "changes" page.\& This checkbox is checked by default.\& The
-result is that "/view/changes" acts as a traditional Recent Changes page, except
-that it is itself editable.\& You probably want to uncheck the checkbox if you do
-edit the changes page itself.\&
 .PP
 .SH SEE ALSO
 .PP
