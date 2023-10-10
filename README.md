@@ -112,6 +112,7 @@ high-level introduction to the various source files.
 - accounts.go implements the webfinger code to fetch fediverse account
   link destinations with the URI provided by webfinger
 - add_append.go implements the /add and /append handlers
+- diff.go implements the /diff handler
 - edit_save.go implements the /edit and /save handlers
 - feed.go implements the feed for a page based on the links it lists
 - highlight.go implements the bold tags for matches when showing
