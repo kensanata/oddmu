@@ -6,18 +6,23 @@ oddmu-search - search the Oddmu pages from the command-line
 
 # SYNOPSIS
 
-*oddmu search* [-page _n_] _terms..._
+*oddmu search* [-extract] [-page _n_] _terms..._
 
 # DESCRIPTION
 
-The "search" subcommand searches the Markdown files in the current directory
-(!), returning the search result as a Markdown-formatted list.
+The "search" subcommand searches the Markdown files in the current
+directory.
+
+Be default, this returns a Markdown-formatted list suitable for pasting into
+Oddmu pages.
 
 See _oddmu-search_(7) for more information of how pages are searched, sorted and
 scored.
 
 # OPTIONS
 
+*-extract*
+        Print search extracts for interactive use from the command-line.
 *-page* _n_
 	Search results are paginated and by default only the first page is
 	shown. This option allows you to view other pages.
