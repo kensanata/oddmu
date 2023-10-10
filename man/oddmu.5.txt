@@ -144,9 +144,26 @@ you'll learn that the Space is encoded by %20 and that the character 'ö' is
 encoded by %C3%B6. To link to the page "Alex Schröder" you would write something
 like this: "[Alex](Alex%20Schr%C3%B6der)".
 
+Another thing that's common is that your page name contains a colon.
+This is legal. The URL parser might still reject it. If you run the
+"missing" subcommand, you'll get to see error: "first path segment in
+URL cannot contain colon". The solution is to prepend "./"!
+
+Example:
+
+```
+[2021-10-15 Re: Mark It Down](2021-10-15_Re:_Mark_It_Down)
+```
+
+Fixed:
+
+```
+[2021-10-15 Re: Mark It Down](./2021-10-15_Re:_Mark_It_Down)
+```
+
 # SEE ALSO
 
-_oddmu_(1)
+_oddmu_(1), _oddmu-missing_(1)
 
 This wiki uses the Go Markdown library.
 https://github.com/gomarkdown/markdown
