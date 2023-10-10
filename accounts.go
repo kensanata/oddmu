@@ -57,6 +57,7 @@ func account(p *parser.Parser, data []byte, offset int) (int, ast.Node) {
 		data[i] >= '0' && data[i] <= '9' ||
 		data[i] == '@' ||
 		data[i] == '.' ||
+		data[i] == '_' ||
 		data[i] == '-') {
 		if data[i] == '@' {
 			if d != 0 {
