@@ -68,7 +68,7 @@ func missingCli(w io.Writer, args []string) subcommands.ExitStatus {
 		for _, link := range p.links() {
 			u, err := url.Parse(link)
 			if err != nil {
-				fmt.Fprintf(w, "Cannot parse %s: %s", link, err)
+				fmt.Fprintln(w, err)
 				return subcommands.ExitFailure
 			}
 			if u.Scheme == "" && !strings.HasPrefix(u.Path, "/") {
