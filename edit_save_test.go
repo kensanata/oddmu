@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"os"
 	"testing"
+	"time"
 )
 
 func TestEditSave(t *testing.T) {
@@ -47,5 +48,6 @@ func TestEditSaveChanges(t *testing.T) {
 	// The changes.md file was created
 	s, err := os.ReadFile("changes.md")
 	assert.NoError(t, err)
-	assert.Equal(t, "# Changes\n\n* [testdata/notification/alex](testdata/notification/alex)\n", string(s))
+	d := time.Now().Format(time.DateOnly)
+	assert.Equal(t, "# Changes\n\n# " + d + "\n* [testdata/notification/alex](testdata/notification/alex)\n", string(s))
 }

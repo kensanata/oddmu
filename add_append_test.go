@@ -6,6 +6,7 @@ import (
 	"os"
 	"regexp"
 	"testing"
+	"time"
 )
 
 func TestAddAppend(t *testing.T) {
@@ -51,5 +52,6 @@ Blue and green and pebbles gray
 	// The changes.md file was created
 	s, err := os.ReadFile("changes.md")
 	assert.NoError(t, err)
-	assert.Equal(t, "# Changes\n\n* [Water](testdata/notification2/water)\n", string(s))
+	d := time.Now().Format(time.DateOnly)
+	assert.Equal(t, "# Changes\n\n# " + d + "\n* [Water](testdata/notification2/water)\n", string(s))
 }
