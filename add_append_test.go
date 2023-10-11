@@ -34,7 +34,7 @@ It's not `)}
 			"GET", "/view/testdata/add/fire", nil))
 }
 
-func TestAddAppendNotificationNoChanges(t *testing.T) {
+func TestAddAppendChanges(t *testing.T) {
 	cleanup(t, "testdata/notification2", "changes.md")
 	os.Remove("changes.md")
 	p := &Page{Name: "testdata/notification2/water", Body: []byte(`# Water
