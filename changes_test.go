@@ -28,7 +28,7 @@ func TestChangesWithList(t *testing.T) {
 	cleanup(t, "changes.md")
 	intro := "# Changes\n\nThis is a paragraph.\n\n"
 	line := "* [a change](change)\n"
-	d := "# " + time.Now().Format(time.DateOnly) + "\n"
+	d := "## " + time.Now().Format(time.DateOnly) + "\n"
 	os.WriteFile("changes.md", []byte(intro+d+line), 0644)
 	p := &Page{Name: "testdata/changes/alex", Body: []byte(`Hallo!`)}
 	p.notify()
@@ -43,8 +43,8 @@ func TestChangesWithOldList(t *testing.T) {
 	cleanup(t, "changes.md")
 	intro := "# Changes\n\nThis is a paragraph.\n\n"
 	line := "* [a change](change)\n"
-	y := "# " + time.Now().Add(-24*time.Hour).Format(time.DateOnly) + "\n"
-	d := "# " + time.Now().Format(time.DateOnly) + "\n"
+	y := "## " + time.Now().Add(-24*time.Hour).Format(time.DateOnly) + "\n"
+	d := "## " + time.Now().Format(time.DateOnly) + "\n"
 	os.WriteFile("changes.md", []byte(intro+y+line), 0644)
 	p := &Page{Name: "testdata/changes/alex", Body: []byte(`Hallo!`)}
 	p.notify()
@@ -59,8 +59,8 @@ func TestChangesWithOldDisappearingListAtTheEnd(t *testing.T) {
 	cleanup(t, "changes.md")
 	intro := "# Changes\n\nThis is a paragraph.\n\n"
 	line := "* [a change](testdata/changes/alex)\n"
-	y := "# " + time.Now().Add(-24*time.Hour).Format(time.DateOnly) + "\n"
-	d := "# " + time.Now().Format(time.DateOnly) + "\n"
+	y := "## " + time.Now().Add(-24*time.Hour).Format(time.DateOnly) + "\n"
+	d := "## " + time.Now().Format(time.DateOnly) + "\n"
 	os.WriteFile("changes.md", []byte(intro+y+line), 0644)
 	p := &Page{Name: "testdata/changes/alex", Body: []byte(`Hallo!`)}
 	p.notify()
@@ -76,9 +76,9 @@ func TestChangesWithOldDisappearingListInTheMiddle(t *testing.T) {
 	intro := "# Changes\n\nThis is a paragraph.\n\n"
 	line := "* [a change](testdata/changes/alex)\n"
 	other := "* [other change](testdata/changes/whatever)\n"
-	yy := "# " + time.Now().Add(-48*time.Hour).Format(time.DateOnly) + "\n"
-	y := "# " + time.Now().Add(-24*time.Hour).Format(time.DateOnly) + "\n"
-	d := "# " + time.Now().Format(time.DateOnly) + "\n"
+	yy := "## " + time.Now().Add(-48*time.Hour).Format(time.DateOnly) + "\n"
+	y := "## " + time.Now().Add(-24*time.Hour).Format(time.DateOnly) + "\n"
+	d := "## " + time.Now().Format(time.DateOnly) + "\n"
 	os.WriteFile("changes.md", []byte(intro+y+line+yy+other), 0644)
 	p := &Page{Name: "testdata/changes/alex", Body: []byte(`Hallo!`)}
 	p.notify()
@@ -92,7 +92,7 @@ func TestChangesWithOldDisappearingListInTheMiddle(t *testing.T) {
 func TestChangesWithListAtTheTop(t *testing.T) {
 	cleanup(t, "testdata/changes", "changes.md")
 	line := "* [a change](change)\n"
-	d := "# " + time.Now().Format(time.DateOnly) + "\n"
+	d := "## " + time.Now().Format(time.DateOnly) + "\n"
 	os.WriteFile("changes.md", []byte(line), 0644)
 	p := &Page{Name: "testdata/changes/alex", Body: []byte(`Hallo!`)}
 	p.notify()
@@ -106,7 +106,7 @@ func TestChangesWithListAtTheTop(t *testing.T) {
 func TestChangesWithNoList(t *testing.T) {
 	cleanup(t, "testdata/changes", "changes.md")
 	intro := "# Changes\n\nThis is a paragraph."
-	d := "# " + time.Now().Format(time.DateOnly) + "\n"
+	d := "## " + time.Now().Format(time.DateOnly) + "\n"
 	os.WriteFile("changes.md", []byte(intro), 0644)
 	p := &Page{Name: "testdata/changes/alex", Body: []byte(`Hallo!`)}
 	p.notify()
@@ -121,7 +121,7 @@ func TestChangesWithUpdate(t *testing.T) {
 	cleanup(t, "testdata/changes", "changes.md")
 	intro := "# Changes\n\nThis is a paragraph.\n\n"
 	other := "* [other change](testdata/changes/whatever)\n"
-	d := "# " + time.Now().Format(time.DateOnly) + "\n"
+	d := "## " + time.Now().Format(time.DateOnly) + "\n"
 	line := "* [a change](testdata/changes/alex)\n"
 	os.WriteFile("changes.md", []byte(intro+d+other+line), 0644)
 	p := &Page{Name: "testdata/changes/alex", Body: []byte(`Hallo!`)}
@@ -138,7 +138,7 @@ func TestChangesWithNoChangeToTheOrder(t *testing.T) {
 	intro := "# Changes\n\nThis is a paragraph.\n\n"
 	other := "* [other change](testdata/changes/whatever)\n"
 	line := "* [a change](testdata/changes/alex)\n"
-	d := "# " + time.Now().Format(time.DateOnly) + "\n"
+	d := "## " + time.Now().Format(time.DateOnly) + "\n"
 	os.WriteFile("changes.md", []byte(intro+d+line+other), 0644)
 	p := &Page{Name: "testdata/changes/alex", Body: []byte(`Hallo!`)}
 	p.notify()

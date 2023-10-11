@@ -53,5 +53,5 @@ Blue and green and pebbles gray
 	s, err := os.ReadFile("changes.md")
 	assert.NoError(t, err)
 	d := time.Now().Format(time.DateOnly)
-	assert.Equal(t, "# Changes\n\n# " + d + "\n* [Water](testdata/notification2/water)\n", string(s))
+	assert.Equal(t, "# Changes\n\n## " + d + "\n* [Water](testdata/notification2/water)\n", string(s))
 }

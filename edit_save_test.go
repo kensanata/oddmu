@@ -49,5 +49,5 @@ func TestEditSaveChanges(t *testing.T) {
 	s, err := os.ReadFile("changes.md")
 	assert.NoError(t, err)
 	d := time.Now().Format(time.DateOnly)
-	assert.Equal(t, "# Changes\n\n# " + d + "\n* [testdata/notification/alex](testdata/notification/alex)\n", string(s))
+	assert.Equal(t, "# Changes\n\n## " + d + "\n* [testdata/notification/alex](testdata/notification/alex)\n", string(s))
 }
