@@ -10,8 +10,9 @@ as a *secondary* medium: collaboration and conversation happens
 elsewhere, in chat, on social media. The wiki serves as the text
 repository that results from these discussions.
 
-The wiki lists no recent changes. The expectation is that the people
-that care were involved in the discussions beforehand.
+If you're the only user and it just runs on your laptop, then you can
+think of it as a [memex](https://en.wikipedia.org/wiki/Memex), a
+memory extender.
 
 This wiki uses a [Markdown
 library](https://github.com/gomarkdown/markdown) to generate the web
