@@ -96,7 +96,7 @@ func replaceCli(w io.Writer, isConfirmed bool, isRegexp bool, args []string) sub
 		}
 	} else {
 		if isConfirmed {
-			fmt.Fprintf(w, "%d files was changed.\n", changes)
+			fmt.Fprintf(w, "%d files were changed.\n", changes)
 		} else {
 			fmt.Fprintf(w, "%d files would be changed.\n", changes)
 		}
