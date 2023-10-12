@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-APACHE" "5" "2023-10-09"
+.TH "ODDMU-APACHE" "5" "2023-10-12"
 .PP
 .SH NAME
 .PP
@@ -14,7 +14,7 @@ oddmu-apache - how to setup Apache as a reverse proxy for Oddmu
 .SS DESCRIPTION
 .PP
 The oddmu program serves the current working directory as a wiki on port 8080.\&
-This is an unpriviledged port so an ordinary use account can do this.\&
+This is an unpriviledged port so an ordinary user account can do this.\&
 .PP
 The best way to protect the wiki against vandalism and spam is to use a regular
 web server as reverse proxy.\& This page explains how to setup Apache on Debian to
@@ -22,7 +22,7 @@ do this.\&
 .PP
 .SS CONFIGURATION
 .PP
-HTTPS is not part of the wiki.\& You probably want to configure this in your
+HTTPS is not part of Oddmu.\& You probably want to configure this in your
 webserver.\& I guess you could use stunnel, too.\& If you'\&re using Apache, you can
 use "mod_md" to manage your domain.\&
 .PP
@@ -44,21 +44,23 @@ MDCertificateAgreement accepted
     ServerAdmin alex@alexschroeder\&.ch
     ServerName transjovian\&.org
     SSLEngine on
-    ProxyPassMatch "^/((view|edit|save|add|append|upload|drop|search)/(\&.*))?$" "http://localhost:8080/$1"
+    ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search)/(\&.*))?$" "http://localhost:8080/$1"
 </VirtualHost>
 .fi
 .RE
 .PP
 First, it manages the domain, getting the necessary certificates.\& It redirects
 regular HTTP traffic from port 80 to port 443.\& It turns on the SSL engine for
-port 443.\& It proxies the requests for the wiki to port 8080.\&
+port 443.\& It proxies the requests for Oddmu to port 8080.\& Importantly, it
+doesn'\&t send \fIall\fR the requests to Oddmu.\& This allows us to still host static
+files using the web server.\&
 .PP
-Thus, this is what happens:
+This is what happens:
 .PP
 \fB The user tells the browser to visit `transjovian.\&org`
 \fR The browser sends a request for `http://transjovian.\&org` (on port 80)
 \fB Apache redirects this to `https://transjovian.\&org/` by default (now on port 443)
-\fR This is proxied to `http://transjovian.\&org:8080/` (no encryption, on port 8080)
+\fR This is proxied to `http://transjovian.\&org:8080/` (now on port 8080)
 .PP
 Restart the server, gracefully:
 .PP
@@ -75,11 +77,16 @@ and "RewriteRule".\&
 .PP
 .SS Access
 .PP
-Access control is not part of the wiki.\& By default, the wiki is editable by all.\&
+Access control is not part of Oddmu.\& By default, the wiki is editable by all.\&
 This is most likely not what you want unless you'\&re running it stand-alone,
-unconnected to the Internet.\&
+unconnected to the Internet – a person memex on your laptop, for example.\&
 .PP
-Create a new password file called ".\&htpasswd" and add the user "alex":
+The following instructions create user accounts with passwords just for Oddmu.\&
+These users are not real users on the web server and don'\&t have access to a
+shell, mail, or any other service.\&
+.PP
+Create a new password file called ".\&htpasswd" and add the user "alex".\& The "-c"
+flag creates the file.\&
 .PP
 .nf
 .RS 4
@@ -88,9 +95,8 @@ htpasswd -c \&.htpasswd alex
 .fi
 .RE
 .PP
-To add more users, don'\&t use the "-c" option or you will overwrite it!\&
-.PP
-To add another user:
+To add more users, don'\&t use the "-c" option or you will overwrite the existing
+file.\& To add another user, use no option at all.\&
 .PP
 .nf
 .RS 4
@@ -98,7 +104,7 @@ htpasswd \&.htpasswd berta
 .fi
 .RE
 .PP
-To remove a user:
+To remove a user, use the "-D" option.\&
 .PP
 .nf
 .RS 4
@@ -125,7 +131,7 @@ to your "<VirtualHost *:443>" section:
 .PP
 If you want to serve static files as well, add a document root to your webserver
 configuration.\& In this case, the document root is the directory where all the
-data files are.\& Apache will not serve files such as ".\&htpasswd".\&
+data files are.\& Apache does not serve files such as ".\&htpasswd".\&
 .PP
 .nf
 .RS 4
@@ -150,6 +156,9 @@ Disallow: /
 .PP
 You site now serves "/robots.\&txt" without interfering with the wiki, and without
 needing a wiki page.\&
+.PP
+Another option would be to create a CSS file and use it with a <link> element in
+all the templates instead of relying on the <style> element.\&
 .PP
 .SS Different logins for different access rights
 .PP
@@ -207,6 +216,12 @@ https://httpd.\&apache.\&org/docs/current/mod/mod_proxy.\&html
 .PP
 "Robot exclusion standard" on Wikipedia.\&
 https://en.\&wikipedia.\&org/wiki/Robot_exclusion_standard
+.PP
+"<style>: The Style Information element"
+https://developer.\&mozilla.\&org/en-US/docs/Web/HTML/Element/style
+.PP
+"<link>: The External Resource Link element"
+https://developer.\&mozilla.\&org/en-US/docs/Web/HTML/Element/link
 .PP
 .SH AUTHORS
 .PP

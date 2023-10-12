@@ -45,7 +45,7 @@ address in the footer of "view.html". Look for "Your Name" and
 The second change you should make is to replace the name, email
 address and domain name in "feed.html". Look for "Your Name" and
 "example.org". This second template is used to generate the RSS feeds
-(despite it's ".html" extension).
+(despite its ".html" extension).
 
 See _oddmu-templates_(5) for more.
 
