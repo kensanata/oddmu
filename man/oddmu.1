@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU" "1" "2023-10-10"
+.TH "ODDMU" "1" "2023-10-12"
 .PP
 .SH NAME
 .PP
@@ -133,8 +133,11 @@ made using the "replace" subcommand do not affect the "changes.\&md" page.\& See
 If you want to link to "/view/changes", you need to do this yourself.\& The
 "view.\&html" template currently doesn'\&t do it.\& See \fIoddmu-templates\fR(5) for more.\&
 .PP
-The pages are indexed as the server starts and the index is kept in memory.\& If
-you have a ton of pages, this takes a lot of memory.\&
+The page names, titles and hashtags are loaded into memory when the server
+starts.\& If you have a lot of pages, this takes a lot of memory.\& If you change
+the files while the wiki runs, changes to names (creating, renaming or deleting
+files), titles or hashtags confuse Oddmu.\& Restart the program in order to
+resolve this.\&
 .PP
 Files may not end with a tilde ('\&~'\&) – these are backup files.\&
 .PP
@@ -143,7 +146,7 @@ attempt to edit it by using "/edit/hello.\&txt" you create a page with the name
 "hello.\&txt.\&md" instead.\&
 .PP
 You cannot delete uploaded files via the web – but you can delete regular wiki
-pages by saving an empty file.\&
+pages by saving an empty page.\&
 .PP
 .SH SEE ALSO
 .PP
