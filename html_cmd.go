@@ -33,7 +33,7 @@ func htmlCli(w io.Writer, useTemplate bool, args []string) subcommands.ExitStatu
 	for _, arg := range args {
 		p, err := loadPage(arg)
 		if err != nil {
-			fmt.Fprintf(w, "Cannot load %s: %s\n", arg, err)
+			fmt.Fprintf(os.Stderr, "Cannot load %s: %s\n", arg, err)
 			return subcommands.ExitFailure
 		}
 		initAccounts()
@@ -43,7 +43,7 @@ func htmlCli(w io.Writer, useTemplate bool, args []string) subcommands.ExitStatu
 			t := "view.html"
 			err := templates.ExecuteTemplate(w, t, p)
 			if err != nil {
-				fmt.Fprintf(w, "Cannot execute %s template for %s: %s\n", t, arg, err)
+				fmt.Fprintf(os.Stderr, "Cannot execute %s template for %s: %s\n", t, arg, err)
 				return subcommands.ExitFailure
 			}
 		} else {

@@ -44,7 +44,7 @@ func (cmd *replaceCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interfac
 
 func replaceCli(w io.Writer, isConfirmed bool, isRegexp bool, args []string) subcommands.ExitStatus {
 	if len(args) != 2 {
-		fmt.Fprintln(w, "Replace takes exactly two arguments.")
+		fmt.Fprintln(os.Stderr, "Replace takes exactly two arguments.")
 		return subcommands.ExitFailure
 	}
 	var re *regexp.Regexp
@@ -85,7 +85,7 @@ func replaceCli(w io.Writer, isConfirmed bool, isRegexp bool, args []string) sub
 		return nil
 	})
 	if err != nil {
-		fmt.Fprintln(w, err)
+		fmt.Fprintln(os.Stderr, err)
 		return subcommands.ExitFailure
 	}
 	if changes == 1 {

@@ -55,36 +55,48 @@ func missingCli(w io.Writer, args []string) subcommands.ExitStatus {
 		fmt.Fprintln(w, err)
 		return subcommands.ExitFailure
 	}
-	fmt.Fprintln(w, "Page\tMissing")
+	found := false
 	for name, isPage := range names {
 		if !isPage {
 			continue
 		}
 		p, err := loadPage(name)
 		if err != nil {
-			fmt.Fprintf(w, "Loading %s: %s\n", name, err)
+			fmt.Fprintf(os.Stderr, "Loading %s: %s\n", name, err)
 			return subcommands.ExitFailure
 		}
 		for _, link := range p.links() {
 			u, err := url.Parse(link)
 			if err != nil {
-				fmt.Fprintln(w, name, err)
+				fmt.Fprintln(os.Stderr, name, err)
 				return subcommands.ExitFailure
 			}
 			if u.Scheme == "" && u.Path != "" && !strings.HasPrefix(u.Path, "/") {
 				// feeds can work if the matching page works
 				u.Path = strings.TrimSuffix(u.Path, ".rss")
+				// links to the source file can work
+				u.Path = strings.TrimSuffix(u.Path, ".md")
+				// pages containing a colon need the ./ prefix
+				u.Path = strings.TrimPrefix(u.Path, "./")
+				// check whether the destinatino is a known page
 				destination, err := url.PathUnescape(u.Path)
 				if err != nil {
-					fmt.Fprintf(w, "Cannot decode %s: %s\n", link, err)
+					fmt.Fprintf(os.Stderr, "Cannot decode %s: %s\n", link, err)
 					return subcommands.ExitFailure
 				}
 				_, ok := names[destination]
 				if !ok {
+					if !found {
+						fmt.Fprintln(w, "Page\tMissing")
+						found = true
+					}
 					fmt.Fprintf(w, "%s\t%s\n", name, link)
 				}
 			}
 		}
+	}
+	if !found {
+		fmt.Fprintln(w, "No missing pages found.")
 	}
 	return subcommands.ExitSuccess
 }

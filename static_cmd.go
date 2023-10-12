@@ -86,7 +86,7 @@ func staticPage(filename, dir string) error {
 	name := strings.TrimSuffix(filename, ".md")
 	p, err := loadPage(name)
 	if err != nil {
-		fmt.Printf("Cannot load %s: %s\n", name, err)
+		fmt.Fprintf(os.Stderr, "Cannot load %s: %s\n", name, err)
 		return err
 	}
 	p.handleTitle(true)
@@ -135,12 +135,12 @@ func (p *Page) write(destination string) error {
 	t := "static.html"
 	f, err := os.Create(destination)
 	if err != nil {
-		fmt.Printf("Cannot create %s.html: %s\n", destination, err)
+		fmt.Fprintf(os.Stderr, "Cannot create %s.html: %s\n", destination, err)
 		return err
 	}
 	err = templates.ExecuteTemplate(f, t, p)
 	if err != nil {
-		fmt.Printf("Cannot execute %s template for %s: %s\n", t, destination, err)
+		fmt.Fprintf(os.Stderr, "Cannot execute %s template for %s: %s\n", t, destination, err)
 		return err
 	}
 	return nil
