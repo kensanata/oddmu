@@ -173,7 +173,7 @@ NameLoop:
 		p, err := loadPage(name)
 		if err != nil {
 			log.Printf("grep: cannot load %s: %s", name, err)
-			panic(err)
+			continue NameLoop
 		}
 		body := strings.ToLower(string(p.Body))
 		for _, token := range tokens {
