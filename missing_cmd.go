@@ -73,7 +73,7 @@ func missingCli(w io.Writer, args []string) subcommands.ExitStatus {
 			}
 			if u.Scheme == "" && !strings.HasPrefix(u.Path, "/") {
 				// feeds can work if the matching page works
-				link = strings.TrimSuffix(link, ".rss")
+				u.Path = strings.TrimSuffix(u.Path, ".rss")
 				destination, err := url.PathUnescape(u.Path)
 				if err != nil {
 					fmt.Fprintf(w, "Cannot decode %s: %s\n", link, err)
