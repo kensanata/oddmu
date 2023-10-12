@@ -71,7 +71,7 @@ func missingCli(w io.Writer, args []string) subcommands.ExitStatus {
 				fmt.Fprintln(w, name, err)
 				return subcommands.ExitFailure
 			}
-			if u.Scheme == "" && !strings.HasPrefix(u.Path, "/") {
+			if u.Scheme == "" && u.Path != "" && !strings.HasPrefix(u.Path, "/") {
 				// feeds can work if the matching page works
 				u.Path = strings.TrimSuffix(u.Path, ".rss")
 				destination, err := url.PathUnescape(u.Path)
