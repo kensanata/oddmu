@@ -6,6 +6,7 @@ import (
 )
 
 func (p *Page) notify() error {
+	org := ""
 	c, err := loadPage("changes")
 	p.handleTitle(false)
 	if p.Title == "" {
@@ -17,6 +18,7 @@ func (p *Page) notify() error {
 		// create a new page
 		c = &Page{Name: "changes", Body: []byte("# Changes\n\n## " + d + "\n* [" + p.Title + "](" + esc + ")\n")}
 	} else {
+		org = string(c.Body)
 		// remove the old match, if one exists
 		re := regexp.MustCompile(`(?m)^\* \[[^\]]+\]\(` + esc + `\)\n`)
 		loc := re.FindIndex(c.Body)
@@ -89,5 +91,8 @@ func (p *Page) notify() error {
 		r = append(r, c.Body[loc[0]:]...)
 		c.Body = r
 	}
-	return c.save()
+	if string(c.Body) != org {
+		return c.save()
+	}
+	return nil
 }

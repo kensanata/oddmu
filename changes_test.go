@@ -10,7 +10,7 @@ import (
 // Note TestEditSaveChanges and TestAddAppendChanges.
 
 func TestChanges(t *testing.T) {
-	cleanup(t, "changes.md")
+	cleanup(t, "changes.md", "changes.md~")
 	os.Remove("changes.md")
 	p := &Page{Name: "testdata/machine",
 		Body: []byte(`# Washing machine
@@ -25,7 +25,7 @@ Out of sight and dark`)}
 }
 
 func TestChangesWithList(t *testing.T) {
-	cleanup(t, "changes.md")
+	cleanup(t, "changes.md", "changes.md~")
 	intro := "# Changes\n\nThis is a paragraph.\n\n"
 	line := "* [a change](change)\n"
 	d := "## " + time.Now().Format(time.DateOnly) + "\n"
@@ -40,7 +40,7 @@ func TestChangesWithList(t *testing.T) {
 }
 
 func TestChangesWithOldList(t *testing.T) {
-	cleanup(t, "changes.md")
+	cleanup(t, "changes.md", "changes.md~")
 	intro := "# Changes\n\nThis is a paragraph.\n\n"
 	line := "* [a change](change)\n"
 	y := "## " + time.Now().Add(-24*time.Hour).Format(time.DateOnly) + "\n"
@@ -56,7 +56,7 @@ func TestChangesWithOldList(t *testing.T) {
 }
 
 func TestChangesWithOldDisappearingListAtTheEnd(t *testing.T) {
-	cleanup(t, "changes.md")
+	cleanup(t, "changes.md", "changes.md~")
 	intro := "# Changes\n\nThis is a paragraph.\n\n"
 	line := "* [a change](testdata/changes/alex)\n"
 	y := "## " + time.Now().Add(-24*time.Hour).Format(time.DateOnly) + "\n"
@@ -72,7 +72,7 @@ func TestChangesWithOldDisappearingListAtTheEnd(t *testing.T) {
 }
 
 func TestChangesWithOldDisappearingListInTheMiddle(t *testing.T) {
-	cleanup(t, "changes.md")
+	cleanup(t, "changes.md", "changes.md~")
 	intro := "# Changes\n\nThis is a paragraph.\n\n"
 	line := "* [a change](testdata/changes/alex)\n"
 	other := "* [other change](testdata/changes/whatever)\n"
@@ -90,7 +90,7 @@ func TestChangesWithOldDisappearingListInTheMiddle(t *testing.T) {
 }
 
 func TestChangesWithListAtTheTop(t *testing.T) {
-	cleanup(t, "testdata/changes", "changes.md")
+	cleanup(t, "testdata/changes", "changes.md", "changes.md~")
 	line := "* [a change](change)\n"
 	d := "## " + time.Now().Format(time.DateOnly) + "\n"
 	os.WriteFile("changes.md", []byte(line), 0644)
@@ -104,7 +104,7 @@ func TestChangesWithListAtTheTop(t *testing.T) {
 }
 
 func TestChangesWithNoList(t *testing.T) {
-	cleanup(t, "testdata/changes", "changes.md")
+	cleanup(t, "testdata/changes", "changes.md", "changes.md~")
 	intro := "# Changes\n\nThis is a paragraph."
 	d := "## " + time.Now().Format(time.DateOnly) + "\n"
 	os.WriteFile("changes.md", []byte(intro), 0644)
@@ -118,7 +118,7 @@ func TestChangesWithNoList(t *testing.T) {
 }
 
 func TestChangesWithUpdate(t *testing.T) {
-	cleanup(t, "testdata/changes", "changes.md")
+	cleanup(t, "testdata/changes", "changes.md", "changes.md~")
 	intro := "# Changes\n\nThis is a paragraph.\n\n"
 	other := "* [other change](testdata/changes/whatever)\n"
 	d := "## " + time.Now().Format(time.DateOnly) + "\n"
@@ -134,7 +134,7 @@ func TestChangesWithUpdate(t *testing.T) {
 }
 
 func TestChangesWithNoChangeToTheOrder(t *testing.T) {
-	cleanup(t, "testdata/changes", "changes.md")
+	cleanup(t, "testdata/changes", "changes.md", "changes.md~")
 	intro := "# Changes\n\nThis is a paragraph.\n\n"
 	other := "* [other change](testdata/changes/whatever)\n"
 	line := "* [a change](testdata/changes/alex)\n"
@@ -147,4 +147,22 @@ func TestChangesWithNoChangeToTheOrder(t *testing.T) {
 	new_line := "* [testdata/changes/alex](testdata/changes/alex)\n"
 	// the change was already listed at the top, so just use the new title
 	assert.Equal(t, intro+d+new_line+other, string(s))
+}
+
+func TestChangesWithNoChanges(t *testing.T) {
+	cleanup(t, "testdata/changes", "changes.md", "changes.md~")
+	intro := "# Changes\n\nThis is a paragraph.\n\n"
+	other := "* [other change](testdata/changes/whatever)\n"
+	line := "* [a change](testdata/changes/alex)\n"
+	d := "## " + time.Now().Format(time.DateOnly) + "\n"
+	os.Remove("changes.md~")
+	os.WriteFile("changes.md", []byte(intro+d+line+other), 0644)
+	p := &Page{Name: "testdata/changes/alex", Body: []byte("# a change\nHallo!")}
+	p.notify()
+	s, err := os.ReadFile("changes.md")
+	assert.NoError(t, err)
+	// the change was already listed at the top, so no change was necessary
+	assert.Equal(t, intro+d+line+other, string(s))
+	// since the file hasn't changed, no backup was necessary
+	assert.NoFileExists(t, "changes.md~")
 }

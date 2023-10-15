@@ -36,7 +36,7 @@ It's not `)}
 }
 
 func TestAddAppendChanges(t *testing.T) {
-	cleanup(t, "testdata/notification2", "changes.md")
+	cleanup(t, "testdata/notification2", "changes.md", "changes.md~")
 	os.Remove("changes.md")
 	p := &Page{Name: "testdata/notification2/water", Body: []byte(`# Water
 Sunlight dancing fast
