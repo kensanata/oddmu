@@ -77,3 +77,9 @@ A mighty jewel</p>
 `
 	assert.Equal(t, r, string(p.Html))
 }
+
+func TestLazyLoadImages(t *testing.T) {
+	p := &Page{Body: []byte(`![](test.jpg)`)}
+	p.renderHtml()
+	assert.Contains(t, string(p.Html), "lazy")
+}

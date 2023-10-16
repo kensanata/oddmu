@@ -5,6 +5,7 @@ import (
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/parser"
+	"github.com/gomarkdown/markdown/html"
 	"net/url"
 )
 
@@ -73,11 +74,21 @@ func wikiParser() (*parser.Parser, *[]string) {
 	return parser, hashtags
 }
 
+// wikiRenderer is a Renderer for Markdown that adds lazy loading of images. This in turn requires an exception for the
+// sanitization policy!
+func wikiRenderer() *html.Renderer {
+	htmlFlags := html.CommonFlags | html.LazyLoadImages
+	opts := html.RendererOptions{Flags: htmlFlags}
+	renderer := html.NewRenderer(opts)
+	return renderer
+}
+	
 // renderHtml renders the Page.Body to HTML and sets Page.Html,
 // Page.Language, Page.Hashtags, and escapes Page.Name.
 func (p *Page) renderHtml() {
 	parser, hashtags := wikiParser()
-	maybeUnsafeHTML := markdown.ToHTML(p.Body, parser, nil)
+	renderer := wikiRenderer()
+	maybeUnsafeHTML := markdown.ToHTML(p.Body, parser, renderer)
 	p.Name = nameEscape(p.Name)
 	p.Html = sanitizeBytes(maybeUnsafeHTML)
 	p.Language = language(p.plainText())

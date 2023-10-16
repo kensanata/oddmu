@@ -41,6 +41,7 @@ func sanitizeBytes(bytes []byte) template.HTML {
 	policy := bluemonday.UGCPolicy()
 	policy.AllowURLSchemes("gemini", "gopher")
 	policy.AllowAttrs("class", "title").OnElements("a") // for hashtags and accounts
+	policy.AllowAttrs("loading").OnElements("img") // for lazy loading
 	return template.HTML(policy.SanitizeBytes(bytes))
 }
 
