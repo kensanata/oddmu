@@ -54,6 +54,13 @@ Follow the log:
 journalctl --follow --unit oddmu
 ```
 
+For it to restart when the server reboots:
+
+```
+sudo ln -sf /home/oddmu/oddmu.service \
+  /etc/systemd/system/multi-user.target.wants/
+```
+
 # SEE ALSO
 
 _oddmu_(1), _systemd.exec_(5), _capabilities_(7)
