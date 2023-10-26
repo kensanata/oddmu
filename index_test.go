@@ -10,7 +10,7 @@ import (
 func TestIndex(t *testing.T) {
 	index.load()
 	q := "Oddµ"
-	pages, _ := search(q, "", 1)
+	pages, _ := search(q, "", 1, false)
 	assert.NotZero(t, len(pages))
 	for _, p := range pages {
 		assert.NotContains(t, p.Title, "<b>")
@@ -22,7 +22,7 @@ func TestIndex(t *testing.T) {
 func TestSearchHashtag(t *testing.T) {
 	index.load()
 	q := "#like_this"
-	pages, _ := search(q, "", 1)
+	pages, _ := search(q, "", 1, false)
 	assert.NotZero(t, len(pages))
 }
 
@@ -34,7 +34,7 @@ func TestIndexUpdates(t *testing.T) {
 	p.save()
 
 	// Find the phrase
-	pages, _ := search("This is a test", "", 1)
+	pages, _ := search("This is a test", "", 1, false)
 	found := false
 	for _, p := range pages {
 		if p.Name == name {
@@ -45,7 +45,7 @@ func TestIndexUpdates(t *testing.T) {
 	assert.True(t, found)
 
 	// Find the phrase, case insensitive
-	pages, _ = search("this is a test", "", 1)
+	pages, _ = search("this is a test", "", 1, false)
 	found = false
 	for _, p := range pages {
 		if p.Name == name {
@@ -56,7 +56,7 @@ func TestIndexUpdates(t *testing.T) {
 	assert.True(t, found)
 
 	// Find some words
-	pages, _ = search("this test", "", 1)
+	pages, _ = search("this test", "", 1, false)
 	found = false
 	for _, p := range pages {
 		if p.Name == name {
@@ -69,7 +69,7 @@ func TestIndexUpdates(t *testing.T) {
 	// Update the page and no longer find it with the old phrase
 	p = &Page{Name: name, Body: []byte("# New page\nGuvf vf n grfg.")}
 	p.save()
-	pages, _ = search("This is a test", "", 1)
+	pages, _ = search("This is a test", "", 1, false)
 	found = false
 	for _, p := range pages {
 		if p.Name == name {
@@ -80,7 +80,7 @@ func TestIndexUpdates(t *testing.T) {
 	assert.False(t, found)
 
 	// Find page using a new word
-	pages, _ = search("Guvf", "", 1)
+	pages, _ = search("Guvf", "", 1, false)
 	found = false
 	for _, p := range pages {
 		if p.Name == name {

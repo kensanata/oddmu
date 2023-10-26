@@ -88,10 +88,11 @@ func sortNames(tokens []string) func(a, b string) int {
 // results.
 const itemsPerPage = 20
 
-// search returns a sorted []Page where each page contains an extract
-// of the actual Page.Body in its Page.Html. Page size is 20. The
-// boolean return value indicates whether there are more results.
-func search(q string, dir string, page int) ([]*Page, bool) {
+// search returns a sorted []Page where each page contains an extract of the actual Page.Body in its Page.Html. Page
+// size is 20. Specify either the page number to return, or that all the results should be returned. Only ask for all
+// results if runtime is not an issue, like on the command line. The boolean return value indicates whether there are
+// more results.
+func search(q string, dir string, page int, all bool) ([]*Page, bool) {
 	if len(q) == 0 {
 		return make([]*Page, 0), false
 	}
@@ -102,7 +103,7 @@ func search(q string, dir string, page int) ([]*Page, bool) {
 	slices.SortFunc(names, sortNames(terms))
 	from := itemsPerPage * (page - 1)
 	to := from + itemsPerPage - 1
-	items, more := grep(terms, names, from, to)
+	items, more := grep(terms, names, from, to, all)
 	for _, p := range items {
 		p.score(q)
 		p.summarize(q)
@@ -165,7 +166,7 @@ func filterNames(names, predicates []string) []string {
 // grep searches the files for matches to all the tokens. It returns
 // just a single page of results based [from:to-1] and returns if
 // there are more results.
-func grep(tokens, names []string, from, to int) ([]*Page, bool) {
+func grep(tokens, names []string, from, to int, all bool) ([]*Page, bool) {
 	pages := make([]*Page, 0)
 	i := 0
 NameLoop:
@@ -182,10 +183,10 @@ NameLoop:
 			}
 		}
 		i++
-		if i > from {
+		if all || i > from {
 			pages = append(pages, p)
 		}
-		if i > to {
+		if !all && i > to {
 			return pages, true
 		}
 	}
@@ -202,7 +203,7 @@ func searchHandler(w http.ResponseWriter, r *http.Request, dir string) {
 	if err != nil {
 		page = 1
 	}
-	items, more := search(q, dir, page)
+	items, more := search(q, dir, page, false)
 	s := &Search{Query: q, Dir: dir, Items: items, Previous: page - 1, Page: page, Next: page + 1,
 		Results: len(items) > 0, More: more}
 	renderTemplate(w, "search", s)

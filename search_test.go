@@ -67,17 +67,17 @@ Where is lady luck?`)}
 }
 
 func TestTitleSearch(t *testing.T) {
-	items, more := search("title:readme", "", 1)
+	items, more := search("title:readme", "", 1, false)
 	assert.Equal(t, 0, len(items), "no page found")
 	assert.False(t, more)
 
-	items, more = search("title:wel", "", 1) // README also contains "wel"
+	items, more = search("title:wel", "", 1, false) // README also contains "wel"
 	assert.Equal(t, 1, len(items), "one page found")
 	assert.Equal(t, "index", items[0].Name, "Welcome to Oddµ")
 	assert.Greater(t, items[0].Score, 0, "matches result in a score")
 	assert.False(t, more)
 
-	items, more = search("wel", "", 1)
+	items, more = search("wel", "", 1, false)
 	assert.Greater(t, len(items), 1, "two pages found")
 	assert.False(t, more)
 }
@@ -91,12 +91,12 @@ Was it 2015
 We met in the park?`)}
 	p.save()
 
-	items, _ := search("blog:false", "", 1)
+	items, _ := search("blog:false", "", 1, false)
 	for _, item := range items {
 		assert.NotEqual(t, "Back then", item.Title, item.Name)
 	}
 
-	items, _ = search("blog:true", "", 1)
+	items, _ = search("blog:true", "", 1, false)
 	assert.Equal(t, 1, len(items), "one blog page found")
 	assert.Equal(t, "Back then", items[0].Title, items[0].Name)
 }
@@ -127,18 +127,18 @@ func TestSearchPagination(t *testing.T) {
 		p.save()
 	}
 
-	items, more := search("secretA", "", 1)
+	items, more := search("secretA", "", 1, false)
 	assert.Equal(t, 1, len(items), "one page found, %v", items)
 	assert.Equal(t, "testdata/pagination/A", items[0].Name)
 	assert.False(t, more)
 
-	items, more = search("secretX", "", 1)
+	items, more = search("secretX", "", 1, false)
 	assert.Equal(t, itemsPerPage, len(items))
 	assert.Equal(t, "testdata/pagination/A", items[0].Name)
 	assert.Equal(t, "testdata/pagination/T", items[itemsPerPage-1].Name)
 	assert.True(t, more)
 
-	items, more = search("secretX", "", 2)
+	items, more = search("secretX", "", 2, false)
 	assert.Equal(t, 6, len(items))
 	assert.Equal(t, "testdata/pagination/U", items[0].Name)
 	assert.Equal(t, "testdata/pagination/Z", items[5].Name)
