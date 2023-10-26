@@ -96,9 +96,9 @@ func loadPage(name string) (*Page, error) {
 	return &Page{Title: name, Name: name, Body: body, Language: ""}, nil
 }
 
-// handleTitle extracts the title from a Page and sets Page.Title, if
-// any. If replace is true, the page title is also removed from
-// Page.Body. Make sure not to save this! This is only for rendering.
+// handleTitle extracts the title from a Page and sets Page.Title, if any. If replace is true, the page title is also
+// removed from Page.Body. Make sure not to save this! This is only for rendering. In a template, the title is a
+// separate attribute and is not repeated in the HTML.
 func (p *Page) handleTitle(replace bool) {
 	s := string(p.Body)
 	m := titleRegexp.FindStringSubmatch(s)

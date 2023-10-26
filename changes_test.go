@@ -24,6 +24,31 @@ Out of sight and dark`)}
 	assert.Contains(t, string(s), "[Washing machine](testdata/machine)")
 }
 
+func TestChangesWithHashtag(t *testing.T) {
+	cleanup(t, "changes.md", "changes.md~")
+	os.Remove("changes.md")
+	intro := "# Haiku\n"
+	line := "* [Hotel room](testdata/changes/hotel)\n"
+	h := &Page{Name: "testdata/changes/Haiku", Body: []byte(intro)}
+	h.save()
+	p := &Page{Name: "testdata/changes/hotel",
+		Body: []byte(`# Hotel room
+White linen and white light
+Wooden floor and painted walls
+Home away from home
+
+#Haiku #Poetry`)}
+	p.notify()
+	assert.FileExists(t, "changes.md")
+	s, err := os.ReadFile("changes.md")
+	assert.NoError(t, err)
+	assert.Contains(t, string(s), line)
+	s, err = os.ReadFile("testdata/changes/Haiku.md")
+	assert.NoError(t, err)
+	assert.Equal(t, intro + line, string(s))
+	assert.NoFileExists(t, "testdata/changes/Poetry.md")
+}
+
 func TestChangesWithList(t *testing.T) {
 	cleanup(t, "changes.md", "changes.md~")
 	intro := "# Changes\n\nThis is a paragraph.\n\n"

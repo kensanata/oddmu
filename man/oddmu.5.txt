@@ -37,12 +37,17 @@ use hashtags consisting of multiple words. Hashtags are distinguished from page
 titles because there is no space after the hash.
 
 ```
-# Title
+# Example
 
 Text
 
 #Tag #Another_Tag
 ```
+
+When a page containing hashtags is saved, a link to that page is added to every
+page with the same name as the hashtag, if it exists. In the example above, if
+the file "Tag.md" or the file "Another_Tag.md" exists, a link to the Example
+page is added.
 
 ## Tables
 

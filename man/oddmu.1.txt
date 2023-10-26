@@ -119,6 +119,9 @@ _oddmu-replace_(1) for more. "changes.md" can be edited like every other page.
 If you want to link to "/view/changes", you need to do this yourself. The
 "view.html" template currently doesn't do it. See _oddmu-templates_(5) for more.
 
+If the page contains hashtags, any existing pages with the same name as the
+hashtag, in the same directory, similarly get a link.
+
 The page names, titles and hashtags are loaded into memory when the server
 starts. If you have a lot of pages, this takes a lot of memory. If you change
 the files while the wiki runs, changes to names (creating, renaming or deleting
