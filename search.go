@@ -101,6 +101,7 @@ func search(q string, dir string, page int, all bool) ([]*Page, bool) {
 	predicates, terms := predicatesAndTokens(q)
 	names = filterNames(names, predicates)
 	slices.SortFunc(names, sortNames(terms))
+	names = prependQueryPage(names, q)
 	from := itemsPerPage * (page - 1)
 	to := from + itemsPerPage - 1
 	items, more := grep(terms, names, from, to, all)
@@ -191,6 +192,32 @@ NameLoop:
 		}
 	}
 	return pages, false
+}
+
+// prependQueryPage prepends the query itself, if a matching page name exists. This helps if people remember the name
+// exactly, or if searching for a hashtag. This function assumes that q is not the empty string.
+func prependQueryPage (names []string, q string) []string {
+	index.RLock()
+	defer index.RUnlock()
+	if q[0] == '#' && !strings.Contains(q[1:], "#") {
+		q = q[1:]
+	}
+	// if q exists in names, move it to the front
+	i := slices.Index(names, q)
+	if i == 0 {
+		return names
+	} else if i != -1 {
+		r := []string{q}
+		r = append(r, names[0:i]...)
+		r = append(r, names[i+1:]...)
+		return r
+	}
+	// otherwise, if q is a known page name, prepend it
+	_, ok := index.titles[q]
+	if ok {
+		return append([]string{q}, names...)
+	}
+	return names
 }
 
 // searchHandler presents a search result. It uses the query string in

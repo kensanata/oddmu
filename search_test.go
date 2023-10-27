@@ -29,6 +29,25 @@ func TestSortNames(t *testing.T) {
 	assert.True(t, slices.IsSorted(names), fmt.Sprintf("Sorted: %v", names))
 }
 
+
+func TestPrependMatches(t *testing.T) {
+	index.Lock()
+	for _, s := range []string{"Alex", "Berta", "Chris"} {
+		index.titles[s] = s
+	}
+	index.Unlock()
+	r := []string{"Berta", "Chris"} // does not prepend
+	u := []string{"Alex", "Berta", "Chris"} // does prepend
+	assert.Equal(t, u, prependQueryPage(r, "Alex"), "prepend q")
+	assert.Equal(t, r, prependQueryPage(r, "lex"), "exact matches only")
+	assert.Equal(t, u, prependQueryPage(r, "#Alex"), "prepend hashtag")
+	assert.Equal(t, r, prependQueryPage(r, "#Alex #Berta"), "do not prepend two hashtags")
+	assert.Equal(t, r, prependQueryPage(r, "#alex"), "do not ignore case")
+	assert.Equal(t, u, prependQueryPage(u, "Alex"), "do not prepend q twice")
+	assert.Equal(t, u, prependQueryPage([]string{"Berta", "Alex", "Chris"}, "Alex"), "sort q to the front")
+	assert.Equal(t, u, prependQueryPage([]string{"Berta", "Chris", "Alex"}, "Alex"), "sort q to the front")
+}
+
 func TestSearch(t *testing.T) {
 	data := url.Values{}
 	data.Set("q", "oddµ")
