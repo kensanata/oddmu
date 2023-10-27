@@ -16,10 +16,9 @@ func (p *Page) notify() error {
 	esc := nameEscape(p.Name)
 	link := "* [" + p.Title + "](" + esc + ")\n"
 	re := regexp.MustCompile(`(?m)^\* \[[^\]]+\]\(` + esc + `\)\n`)
-	date := time.Now().Format(time.DateOnly)
 	dir := path.Dir(p.Name)
 	p.renderHtml() // to set hashtags
-	addLinkWithDate("changes", link, date, re)
+	addLinkWithDate("changes", link, re)
 	for _, hashtag := range p.Hashtags {
 		err := addLink(path.Join(dir, hashtag), link, re)
 		if err != nil {
@@ -29,7 +28,11 @@ func (p *Page) notify() error {
 	return nil
 }
 
-func addLinkWithDate(name, link, date string, re *regexp.Regexp) error {
+// addLinkWithDate adds the link to a page, with date header for today. If a match already exists, it is removed. If
+// this leaves a date header without any links, it is removed as well. If a list is found, the link is added at the top
+// of the list. Lists must use the asterisk, not the minus character.
+func addLinkWithDate(name, link string, re *regexp.Regexp) error {
+	date := time.Now().Format(time.DateOnly)
 	org := ""
 	c, err := loadPage(name)
 	if err != nil {
@@ -108,29 +111,36 @@ func addLinkWithDate(name, link, date string, re *regexp.Regexp) error {
 		r = append(r, c.Body[loc[0]:]...)
 		c.Body = r
 	}
+	// only save if something changed
 	if string(c.Body) != org {
 		return c.save()
 	}
 	return nil
 }
 
+// addLink adds a link to page assuming it doesn't exist, yet.
 func addLink(name, link string, re *regexp.Regexp) error {
 	c, err := loadPage(name)
 	if err != nil {
 		// Skip non-existing files: no error
 		return nil
 	}
-	// if a link exists, no need to do anything
+	org := string(c.Body)
+	// if a link exists, that's the place to insert the new link (in which case loc[0] and loc[1] differ)
 	loc := re.FindIndex(c.Body)
-	if loc != nil {
-		return nil
-	}
-	// locate the beginning of the list to insert the line
-	re = regexp.MustCompile(`(?m)^\* \[[^\]]+\]\([^\)]+\)\n`)
-	loc = re.FindIndex(c.Body)
+	// if no link exists, find a good place to insert it
 	if loc == nil {
-		// if no list was found, use the end of the page
-		loc = []int{len(c.Body)}
+		// locate the beginning of the list to insert the line
+		re = regexp.MustCompile(`(?m)^\* \[[^\]]+\]\([^\)]+\)\n`)
+		loc = re.FindIndex(c.Body)
+		if loc == nil {
+			// if no list was found, use the end of the page
+			m := len(c.Body)
+			loc = []int{m, m}
+		} else {
+			// if a list item was found, use just the beginning as insertion point
+			loc[1] = loc[0]
+		}
 	}
 	// start with new page content
 	r := []byte("")
@@ -139,7 +149,11 @@ func addLink(name, link string, re *regexp.Regexp) error {
 	// append link
 	r = append(r, []byte(link)...)
 	// append the rest
-	r = append(r, c.Body[loc[0]:]...)
+	r = append(r, c.Body[loc[1]:]...)
 	c.Body = r
-	return c.save()
+	// only save if something changed
+	if string(c.Body) != org {
+		return c.save()
+	}
+	return nil
 }
