@@ -56,10 +56,15 @@ and then all the others.\& Within these two groups, the most recent blog posts a
 shown first.\& This assumes that blog pages start with an ISO date like
 "2023-09-16".\&
 .PP
-When searching for a hashtag, a page matching the hashtag exactly (without the
-leading '\&#'\&) is listed first, even if it doesn'\&t contain the hashtag.\& It is
-assumed that this page offers some kind of introduction to people searching for
-the hashtag.\&
+When searching for a hashtag, a page name (not the title!\&) matching the hashtag
+exactly (without the leading '\&#'\&) is listed first, even if it doesn'\&t contain
+the hashtag.\& It is assumed that this page offers some kind of introduction to
+people searching for the hashtag.\&
+.PP
+Example: When people click on the hashtag "#Oddµ" and a page named "Oddµ" exists
+(in other words, the file "Oddµ.\&md" exists), it is prepended to the results even
+if it doesn'\&t have the hashtag "#Oddµ" and even if it has a title of "Oddµ, a
+minimal wiki" (which wouldn'\&t be an exact match).\&
 .PP
 The score and highlighting of snippets is used to help visitors decide which
 links to click.\&
