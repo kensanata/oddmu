@@ -11,27 +11,33 @@ import (
 
 func TestChanges(t *testing.T) {
 	cleanup(t, "changes.md", "changes.md~")
+	restore(t, "index.md")
 	os.Remove("changes.md")
-	p := &Page{Name: "testdata/machine",
+	p := &Page{Name: "testdata/2023-10-28-machine",
 		Body: []byte(`# Washing machine
 Churning growling thing
 Water spraying in a box 
 Out of sight and dark`)}
 	p.notify()
-	assert.FileExists(t, "changes.md")
+	// Link added to changes.md file
 	s, err := os.ReadFile("changes.md")
 	assert.NoError(t, err)
-	assert.Contains(t, string(s), "[Washing machine](testdata/machine)")
+	assert.Contains(t, string(s), "[Washing machine](testdata/2023-10-28-machine)")
+	// Link added to index.md file
+	s, err = os.ReadFile("index.md")
+	assert.NoError(t, err)
+	assert.Contains(t, string(s), "\n* [Washing machine](testdata/2023-10-28-machine)\n")
 }
 
 func TestChangesWithHashtag(t *testing.T) {
 	cleanup(t, "changes.md", "changes.md~")
+	restore(t, "index.md")
 	os.Remove("changes.md")
 	intro := "# Haiku\n"
-	line := "* [Hotel room](testdata/changes/hotel)\n"
+	line := "* [Hotel room](testdata/changes/2023-10-27-hotel)\n"
 	h := &Page{Name: "testdata/changes/Haiku", Body: []byte(intro)}
 	h.save()
-	p := &Page{Name: "testdata/changes/hotel",
+	p := &Page{Name: "testdata/changes/2023-10-27-hotel",
 		Body: []byte(`# Hotel room
 White linen and white light
 Wooden floor and painted walls
@@ -39,7 +45,6 @@ Home away from home
 
 #Haiku #Poetry`)}
 	p.notify()
-	assert.FileExists(t, "changes.md")
 	s, err := os.ReadFile("changes.md")
 	assert.NoError(t, err)
 	assert.Contains(t, string(s), line)

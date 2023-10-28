@@ -37,8 +37,9 @@ It's not `)}
 
 func TestAddAppendChanges(t *testing.T) {
 	cleanup(t, "testdata/notification2", "changes.md", "changes.md~")
+	restore(t, "index.md")
 	os.Remove("changes.md")
-	p := &Page{Name: "testdata/notification2/water", Body: []byte(`# Water
+	p := &Page{Name: "testdata/notification2/2023-10-28-water", Body: []byte(`# Water
 Sunlight dancing fast
 Blue and green and pebbles gray
 `)}
@@ -48,10 +49,15 @@ Blue and green and pebbles gray
 	data.Set("body", "Stand in cold water")
 	data.Add("notify", "on")
 	HTTPRedirectTo(t, makeHandler(appendHandler, true),
-		"POST", "/append/testdata/notification2/water", data, "/view/testdata/notification2/water")
+		"POST", "/append/testdata/notification2/2023-10-28-water",
+		data, "/view/testdata/notification2/2023-10-28-water")
 	// The changes.md file was created
 	s, err := os.ReadFile("changes.md")
 	assert.NoError(t, err)
 	d := time.Now().Format(time.DateOnly)
-	assert.Equal(t, "# Changes\n\n## " + d + "\n* [Water](testdata/notification2/water)\n", string(s))
+	assert.Equal(t, "# Changes\n\n## " + d + "\n* [Water](testdata/notification2/2023-10-28-water)\n", string(s))
+	// Link added to index.md file
+	s, err = os.ReadFile("index.md")
+	assert.NoError(t, err)
+	assert.Contains(t, string(s), "\n* [Water](testdata/notification2/2023-10-28-water)\n")
 }

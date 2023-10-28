@@ -7,7 +7,9 @@ import (
 	"log"
 	"net/url"
 	"os"
+	"path"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
@@ -26,6 +28,8 @@ type Page struct {
 	Score    int
 	Hashtags []string
 }
+
+var blogRe = regexp.MustCompile(`^\d\d\d\d-\d\d-\d\d`)
 
 // santizeStrict uses bluemonday to sanitize the HTML away. No elements are allowed except for the b tag because this is
 // used for snippets.
@@ -122,6 +126,12 @@ func (p *Page) summarize(q string) {
 	p.Name = nameEscape(p.Name)
 	p.Html = sanitizeStrict(snippets(q, t))
 	p.Language = language(t)
+}
+
+// isBlog returns true if the page name starts with an ISO date
+func (p *Page) isBlog() bool {
+	name := path.Base(p.Name)
+	return blogRe.MatchString(name)
 }
 
 // Dir returns the directory the page is in. It's either the empty string if the page is in the Oddmu working directory,

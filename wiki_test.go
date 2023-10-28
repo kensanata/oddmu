@@ -86,6 +86,42 @@ func HTTPStatusCodeIfModifiedSince(t *testing.T, handler http.HandlerFunc, url s
 	assert.Equal(t, http.StatusNotModified, w.Code)
 }
 
+// restore remembers the file content before the test starts and restores the file at the end. Important for files such
+// as "index.md".
+func restore(t *testing.T, files ...string) {
+	data := make(map[string][]byte)
+	stat := make(map[string]os.FileInfo)
+	for _, file := range files {
+		s, err := os.Stat(file)
+		if err != nil {
+			t.Log("Could not stat ", file, ": ", err)
+			continue;
+		}
+		c, err := os.ReadFile(file)
+		if err != nil {
+			t.Log("Could not read ", file, ": ", err)
+			continue;
+		}
+		stat[file] = s
+		data[file] = c
+
+	}
+	t.Cleanup(func() {
+		for file, c := range data {
+			m := stat[file].Mode()
+			err := os.WriteFile(file, c, m)
+			if err != nil {
+				t.Log("Could not restore ", file, ": ", err)
+			}
+			t := stat[file].ModTime()
+			os.Chtimes(file, t, t)
+		}
+	})
+}
+
+// cleanup deletes any directories mentioned and removes all pages in those directories from the index. Incidentally, if
+// a filename such as "changes.md" or "changes.md~" is provided instead of a directory, then that page file is removed
+// and any mention of it is removed from the index.
 func cleanup(t *testing.T, dirs ...string) {
 	t.Cleanup(func() {
 		for _, dir := range dirs {

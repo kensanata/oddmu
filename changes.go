@@ -17,12 +17,23 @@ func (p *Page) notify() error {
 	link := "* [" + p.Title + "](" + esc + ")\n"
 	re := regexp.MustCompile(`(?m)^\* \[[^\]]+\]\(` + esc + `\)\n`)
 	dir := path.Dir(p.Name)
-	p.renderHtml() // to set hashtags
-	addLinkWithDate("changes", link, re)
-	for _, hashtag := range p.Hashtags {
-		err := addLink(path.Join(dir, hashtag), link, re)
+	// Recent changes for all pages
+	err := addLinkWithDate("changes", link, re)
+	if err != nil {
+		return err
+	}
+	// Blog index and hashtag lists are for date pages only
+	if p.isBlog() {
+		err := addLink("index", link, re)
 		if err != nil {
 			return err
+		}
+		p.renderHtml() // to set hashtags
+		for _, hashtag := range p.Hashtags {
+			err := addLink(path.Join(dir, hashtag), link, re)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil
@@ -118,7 +129,8 @@ func addLinkWithDate(name, link string, re *regexp.Regexp) error {
 	return nil
 }
 
-// addLink adds a link to page assuming it doesn't exist, yet.
+// addLink adds a link to a named page, if the page exists and doesn't contain the link. If the link exists but with a
+// different title, the title is fixed.
 func addLink(name, link string, re *regexp.Regexp) error {
 	c, err := loadPage(name)
 	if err != nil {
