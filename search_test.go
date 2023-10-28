@@ -38,14 +38,22 @@ func TestPrependMatches(t *testing.T) {
 	index.Unlock()
 	r := []string{"Berta", "Chris"} // does not prepend
 	u := []string{"Alex", "Berta", "Chris"} // does prepend
-	assert.Equal(t, u, prependQueryPage(r, "Alex"), "prepend q")
-	assert.Equal(t, r, prependQueryPage(r, "lex"), "exact matches only")
-	assert.Equal(t, u, prependQueryPage(r, "#Alex"), "prepend hashtag")
-	assert.Equal(t, r, prependQueryPage(r, "#Alex #Berta"), "do not prepend two hashtags")
-	assert.Equal(t, r, prependQueryPage(r, "#alex"), "do not ignore case")
-	assert.Equal(t, u, prependQueryPage(u, "Alex"), "do not prepend q twice")
-	assert.Equal(t, u, prependQueryPage([]string{"Berta", "Alex", "Chris"}, "Alex"), "sort q to the front")
-	assert.Equal(t, u, prependQueryPage([]string{"Berta", "Chris", "Alex"}, "Alex"), "sort q to the front")
+	v, _ := prependQueryPage(r, "", "Alex")
+	assert.Equal(t, u, v, "prepend q")
+	v, _ = prependQueryPage(r, "", "lex")
+	assert.Equal(t, r, v, "exact matches only")
+	v, _ = prependQueryPage(r, "", "#Alex")
+	assert.Equal(t, u, v, "prepend hashtag")
+	v, _ = prependQueryPage(r, "", "#Alex #Berta")
+	assert.Equal(t, r, v, "do not prepend two hashtags")
+	v, _ = prependQueryPage(r, "", "#alex")
+	assert.Equal(t, r, v, "do not ignore case")
+	v, _ = prependQueryPage(u, "", "Alex")
+	assert.Equal(t, u, v, "do not prepend q twice")
+	v, _ = prependQueryPage([]string{"Berta", "Alex", "Chris"}, "", "Alex")
+	assert.Equal(t, u, v, "sort q to the front")
+	v, _ = prependQueryPage([]string{"Berta", "Chris", "Alex"}, "", "Alex")
+	assert.Equal(t, u, v, "sort q to the front")
 }
 
 func TestSearch(t *testing.T) {
@@ -118,6 +126,27 @@ We met in the park?`)}
 	items, _ = search("blog:true", "", 1, false)
 	assert.Equal(t, 1, len(items), "one blog page found")
 	assert.Equal(t, "Back then", items[0].Title, items[0].Name)
+}
+
+func TestHashtagSearch(t *testing.T) {
+	cleanup(t, "testdata/hashtag")
+	
+	p := &Page{Name: "testdata/hashtag/Haiku", Body: []byte("# Haikus\n")}
+	p.save()
+	
+	p = &Page{Name: "testdata/hashtag/2023-10-28", Body: []byte(`# Tea
+
+My tongue is on fire
+It looked so calm and peaceful
+A quick sip too quick
+
+#Haiku`)}
+	p.save()
+
+	items, _ := search("#Haiku", "testdata/hashtag", 1, false)
+	assert.Equal(t, 2, len(items), "two pages found")
+	assert.Equal(t, "Haikus", items[0].Title, items[0].Name)
+	assert.Equal(t, "Tea", items[1].Title, items[1].Name)
 }
 
 func TestSearchQuestionmark(t *testing.T) {

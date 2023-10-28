@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"path"
 	"regexp"
 	"slices"
 	"strconv"
@@ -101,10 +102,10 @@ func search(q string, dir string, page int, all bool) ([]*Page, bool) {
 	predicates, terms := predicatesAndTokens(q)
 	names = filterNames(names, predicates)
 	slices.SortFunc(names, sortNames(terms))
-	names = prependQueryPage(names, q)
+	names, keepFirst := prependQueryPage(names, dir, q)
 	from := itemsPerPage * (page - 1)
 	to := from + itemsPerPage - 1
-	items, more := grep(terms, names, from, to, all)
+	items, more := grep(terms, names, from, to, all, keepFirst)
 	for _, p := range items {
 		p.score(q)
 		p.summarize(q)
@@ -164,23 +165,25 @@ func filterNames(names, predicates []string) []string {
 	return names
 }
 
-// grep searches the files for matches to all the tokens. It returns
-// just a single page of results based [from:to-1] and returns if
-// there are more results.
-func grep(tokens, names []string, from, to int, all bool) ([]*Page, bool) {
+// grep searches the files for matches to all the tokens. It returns just a single page of results based [from:to-1] and
+// returns if there are more results. The all parameter ignores pagination (the from and to parameters). The keepFirst
+// parameter keeps the first page in the list, even if there is no match. This is used for hashtag pages.
+func grep(tokens, names []string, from, to int, all, keepFirst bool) ([]*Page, bool) {
 	pages := make([]*Page, 0)
 	i := 0
 NameLoop:
-	for _, name := range names {
+	for n, name := range names {
 		p, err := loadPage(name)
 		if err != nil {
 			log.Printf("grep: cannot load %s: %s", name, err)
 			continue NameLoop
 		}
-		body := strings.ToLower(string(p.Body))
-		for _, token := range tokens {
-			if !strings.Contains(body, token) {
-				continue NameLoop
+		if n != 0 || !keepFirst {
+			body := strings.ToLower(string(p.Body))
+			for _, token := range tokens {
+				if !strings.Contains(body, token) {
+					continue NameLoop
+				}
 			}
 		}
 		i++
@@ -195,29 +198,31 @@ NameLoop:
 }
 
 // prependQueryPage prepends the query itself, if a matching page name exists. This helps if people remember the name
-// exactly, or if searching for a hashtag. This function assumes that q is not the empty string.
-func prependQueryPage (names []string, q string) []string {
+// exactly, or if searching for a hashtag. This function assumes that q is not the empty string. Return wether a page
+// was prepended or not.
+func prependQueryPage (names []string, dir, q string) ([]string, bool) {
 	index.RLock()
 	defer index.RUnlock()
 	if q[0] == '#' && !strings.Contains(q[1:], "#") {
 		q = q[1:]
 	}
+	q = path.Join(dir, q)
 	// if q exists in names, move it to the front
 	i := slices.Index(names, q)
 	if i == 0 {
-		return names
+		return names, false
 	} else if i != -1 {
 		r := []string{q}
 		r = append(r, names[0:i]...)
 		r = append(r, names[i+1:]...)
-		return r
+		return r, false
 	}
 	// otherwise, if q is a known page name, prepend it
 	_, ok := index.titles[q]
 	if ok {
-		return append([]string{q}, names...)
+		return append([]string{q}, names...), true
 	}
-	return names
+	return names, false
 }
 
 // searchHandler presents a search result. It uses the query string in
