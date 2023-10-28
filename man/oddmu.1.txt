@@ -72,7 +72,9 @@ See _oddmu-apache_(5) for an example.
 
 The oddmu program can be run on the command-line using various subcommands.
 
-- to generate the HTML for a page, see _oddmu-html_(1)
+- to generate the HTML for a single page, see _oddmu-html_(1)
+- to generate the HTML for the entire site, using Oddmu as a static site
+  generator, see _oddmu-static_(1)
 - to search a regular expression and replace it across all files, see
   _oddmu-replace_(1)
 - to emulate a search of the files, see _oddmu-search_(1); to understand how the
@@ -109,26 +111,58 @@ Page names are filenames with ".md" appended. If your filesystem cannot handle
 it, it can't be a page name. Filenames can contain slashes and oddmu creates
 subdirectories as necessary.
 
-There are two special files: "index.md" is the default page. People visiting the
-"root" of the site are redirected to "/view/index". "changes.md" is the page
-where links to changed files are added. As an author, you can prevent this from
-happening by deselecting the checkbox "Add link to the list of changes." Changes
-made using the "replace" subcommand do not affect the "changes.md" page. See
-_oddmu-replace_(1) for more. "changes.md" can be edited like every other page.
+Files may not end with a tilde ('~') – these are backup files.
 
-If you want to link to "/view/changes", you need to do this yourself. The
-"view.html" template currently doesn't do it. See _oddmu-templates_(5) for more.
+The *index* page is the default page. People visiting the "root" of the site are
+redirected to "/view/index".
 
-If the page contains hashtags, any existing pages with the same name as the
-hashtag, in the same directory, similarly get a link.
+The *changes* page is where links to new and changed files are added. As an
+author, you can prevent this from happening by deselecting the checkbox "Add
+link to the list of changes." The changes page can be edited like every other
+page, so it's easy to undo mistakes.
+
+Links on the changes page are grouped by date. When new links are added, the
+current date of the machine Oddmu is running on is used. If a link already
+exists on the changes page, it is moved up to the current date. If that leaves
+an old date without any links, that date heading is removed.
+
+If you want to link to the changes page, you need to do this yourself. Add a
+link from the index, for example. The "view.html" template currently doesn't do
+it. See _oddmu-templates_(5) if you want to add the link to the template.
+
+A page whose name starts with an ISO date (YYYY-MM-DD, e.g. "2023-10-28") is
+called a *blog* page. When creating or editing blog pages, links to it are added
+from other pages.
+
+The first link created is from the index page back to the blog page being
+created or edited. Again, you can prevent this from happening by deselecting the
+checkbox "Add link to the list of changes." The index page can be edited like
+every other page, so it's easy to undo mistakes.
+
+For every *hashtag* used, another link might be created. If a page named like
+the hashtag exists, a backlink is added to it, linking to the new or edited blog
+page.
+
+If a link to the new or edited blog page already exists but it's title is no
+longer correct, it is updated.
+
+New links added for blog pages are added at the top of the first unnumbered list
+using the asterisk ('\*'). If no such list exists, a new one is started at the
+bottom of the page. This allows you to have a different unnumbered list further
+up on the page, as long as it uses the minus for items ('-').
+
+Changes made using the "replace" subcommand do not create any links on the
+changes page or on any hashtag pages. The same is true for any other changes
+made manually. See _oddmu-replace_(1) for more about the "replace" subcommand.
+
+A hashtag consists of a number sign ('#') followed by Unicode letters, numbers
+or the underscore ('\_'). Thus, a hashtag ends with punctuation or whitespace.
 
 The page names, titles and hashtags are loaded into memory when the server
 starts. If you have a lot of pages, this takes a lot of memory. If you change
 the files while the wiki runs, changes to names (creating, renaming or deleting
 files), titles or hashtags confuse Oddmu. Restart the program in order to
 resolve this.
-
-Files may not end with a tilde ('~') – these are backup files.
 
 You cannot edit uploaded files. If you upload a file called "hello.txt" and
 attempt to edit it by using "/edit/hello.txt" you create a page with the name
@@ -146,7 +180,7 @@ pages by saving an empty page.
 - _oddmu-missing_(1), on how to find broken local links from the command-line
 - _oddmu-replace_(1), on how to search and replace text from the command-line
 - _oddmu-search_(1), on how to run a search from the command-line
-- _oddmu-search_(7), on how search actually works
+- _oddmu-search_(7), on how search works
 - _oddmu-static_(1), on generating a static site from the command-line
 - _oddmu-templates_(5), on how to write the HTML templates
 

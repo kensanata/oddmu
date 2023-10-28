@@ -14,8 +14,8 @@ The wiki keeps an index of all the hash tags and page titles in memory. Using
 hashtags and predicates in your queries speeds them up because fewer files are
 opened.
 
-A hashtag starts with a number sign ("#") and contains numbers, letters, and the
-underscore ("\_").
+A hashtag starts with a number sign ('#') and contains numbers, letters, and the
+underscore ('\_').
 
 Example: #old_school random encounter
 
@@ -33,7 +33,8 @@ The sorting of all the pages does not depend on the number of matches or any
 kind of score because computing the score is expensive as this requires the page
 to be loaded from disk. Therefore, results are sorted by title:
 
-- If the page title contains the query string, it gets sorted first.
+- If a page title matches the query string exactly, it gets sorted first.
+- If the page title contains the query string, it gets sorted next.
 - If the page name starts with a number, it is sorted descending.
 - All other pages follow, sorted ascending.
 
@@ -41,6 +42,11 @@ The effect is that first, the pages with matches in the page title are shown,
 and then all the others. Within these two groups, the most recent blog posts are
 shown first. This assumes that blog pages start with an ISO date like
 "2023-09-16".
+
+When searching for a hashtag, a page matching the hashtag exactly (without the
+leading '#') is listed first, even if it doesn't contain the hashtag. It is
+assumed that this page offers some kind of introduction to people searching for
+the hashtag.
 
 The score and highlighting of snippets is used to help visitors decide which
 links to click.

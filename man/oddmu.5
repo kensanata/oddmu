@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU" "5" "2023-10-12" "File Formats Manual"
+.TH "ODDMU" "5" "2023-10-28" "File Formats Manual"
 .PP
 .SH NAME
 .PP
@@ -47,13 +47,18 @@ titles because there is no space after the hash.\&
 .PP
 .nf
 .RS 4
-# Title
+# Example
 
 Text
 
 #Tag #Another_Tag
 .fi
 .RE
+.PP
+When a page containing hashtags is saved, a link to that page is added to every
+page with the same name as the hashtag, if it exists.\& In the example above, if
+the file "Tag.\&md" or the file "Another_Tag.\&md" exists, a link to the Example
+page is added.\&
 .PP
 .SS Tables
 .PP

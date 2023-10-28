@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-SEARCH" "7" "2023-10-09"
+.TH "ODDMU-SEARCH" "7" "2023-10-28"
 .PP
 .SH NAME
 .PP
@@ -21,8 +21,8 @@ The wiki keeps an index of all the hash tags and page titles in memory.\& Using
 hashtags and predicates in your queries speeds them up because fewer files are
 opened.\&
 .PP
-A hashtag starts with a number sign ("#") and contains numbers, letters, and the
-underscore ("_").\&
+A hashtag starts with a number sign ('\&#'\&) and contains numbers, letters, and the
+underscore ('\&_'\&).\&
 .PP
 Example: #old_school random encounter
 .PP
@@ -42,7 +42,9 @@ to be loaded from disk.\& Therefore, results are sorted by title:
 .PP
 .PD 0
 .IP \(bu 4
-If the page title contains the query string, it gets sorted first.\&
+If a page title matches the query string exactly, it gets sorted first.\&
+.IP \(bu 4
+If the page title contains the query string, it gets sorted next.\&
 .IP \(bu 4
 If the page name starts with a number, it is sorted descending.\&
 .IP \(bu 4
@@ -53,6 +55,11 @@ The effect is that first, the pages with matches in the page title are shown,
 and then all the others.\& Within these two groups, the most recent blog posts are
 shown first.\& This assumes that blog pages start with an ISO date like
 "2023-09-16".\&
+.PP
+When searching for a hashtag, a page matching the hashtag exactly (without the
+leading '\&#'\&) is listed first, even if it doesn'\&t contain the hashtag.\& It is
+assumed that this page offers some kind of introduction to people searching for
+the hashtag.\&
 .PP
 The score and highlighting of snippets is used to help visitors decide which
 links to click.\&
