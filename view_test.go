@@ -6,6 +6,7 @@ import (
 	"os"
 	"regexp"
 	"testing"
+	"net/url"
 )
 
 func TestRootHandler(t *testing.T) {
@@ -16,6 +17,14 @@ func TestRootHandler(t *testing.T) {
 func TestViewHandler(t *testing.T) {
 	assert.Regexp(t, regexp.MustCompile("Welcome to Oddµ"),
 		assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/index", nil))
+}
+
+// relies on index.md in the current directory!
+func TestViewHandlerWithId(t *testing.T) {
+	data := make(url.Values)
+	data.Set("id", "index")
+	assert.Regexp(t, regexp.MustCompile("Welcome to Oddµ"),
+		assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/", data))
 }
 
 func TestPageTitleWithAmp(t *testing.T) {

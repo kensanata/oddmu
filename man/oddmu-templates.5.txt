@@ -12,8 +12,13 @@ _{{.Title}}_ is the page title. If the page doesn't provide its own title, the
 page name is used.
 
 _{{.Name}}_ is the page name, escaped for use in URLs. More specifically, it is
-URI escaped except for the slashes. The page name doesn't include the _.md_
+percent-escaped except for the slashes. The page name doesn't include the _.md_
 extension.
+
+_{{.Dir}}_ is the page directory, percent-escaped except for the slashes.
+
+_{{.Today}}_ is the current date, in ISO format. This is useful for "new page"
+like links or forms (see *EXAMPLE* below).
 
 For the _view.html_ and _static.html_ template:
 
@@ -116,6 +121,26 @@ result is added to the "article" element for each snippet.
 "edit.html" and "add.html" are the templates used to edit a page and at that
 point, the language isn't known, so "en" is used for the "html" element and no
 language is used for the "textarea" element.
+
+# EXAMPLE
+
+The following link in a template takes people to today's page. If no such page
+exists, they are redirected to the edit form where it can be created.
+
+```
+<a href="/view/{{.Today}}" accesskey="t">Today</a>
+```
+
+The following form allows people to edit the suggested page name.
+
+```
+<form role="new" action="/edit/{{.Dir}}" method="GET">
+  <label for="id">New page:</label>
+  <input id="id" type="text" spellcheck="false" name="id"
+	  accesskey="g" value="{{.Today}}" required>
+  <button>Edit</button>
+</form>
+```
 
 # NOTES
 

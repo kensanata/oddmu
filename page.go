@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"time"
 )
 
 // Page is a struct containing information about a single page. Title
@@ -142,4 +143,9 @@ func (p *Page) Dir() string {
 		return ""
 	}
 	return d + "/"
+}
+
+// Today returns the date, as a string, for use in templates.
+func (p *Page) Today() string {
+	return time.Now().Format(time.DateOnly)
 }

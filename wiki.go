@@ -38,20 +38,28 @@ func renderTemplate(w http.ResponseWriter, tmpl string, data any) {
 	}
 }
 
-// makeHandler returns a handler that uses the URL path without the
-// first path element as its argument, e.g. if the URL path is
-// /edit/foo/bar, the editHandler is called with "foo/bar" as its
-// argument. This uses the second group from the validPath regular
-// expression. The boolean argument indicates whether the following
-// path is required. When false, a URL /upload/ is OK.
+// makeHandler returns a handler that uses the URL path without the first path element as its argument, e.g. if the URL
+// path is /edit/foo/bar, the editHandler is called with "foo/bar" as its argument. This uses the second group from the
+// validPath regular expression. The boolean argument indicates whether the following path is required. When false, a
+// URL like /upload/ is OK. The argument can also be provided using a form parameter, i.e. call /edit/?id=foo/bar.
 func makeHandler(fn func(http.ResponseWriter, *http.Request, string), required bool) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		m := validPath.FindStringSubmatch(r.URL.Path)
 		if m != nil && (!required || len(m[2]) > 0) {
 			fn(w, r, m[2])
-		} else {
-			http.NotFound(w, r)
+			return
 		}
+		err := r.ParseForm()
+		if err != nil {
+			http.Error(w, "Cannot parse form", 400)
+			return
+		}
+		id := r.Form.Get("id")
+		if m != nil {
+			fn(w, r, id)
+			return
+		}
+		http.NotFound(w, r)
 	}
 }
 

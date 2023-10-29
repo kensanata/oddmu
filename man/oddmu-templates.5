@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-TEMPLATES" "5" "2023-10-12" "File Formats Manual"
+.TH "ODDMU-TEMPLATES" "5" "2023-10-29" "File Formats Manual"
 .PP
 .SH NAME
 .PP
@@ -19,8 +19,13 @@ The templates can refer to the following properties of a page:
 page name is used.\&
 .PP
 \fI{{.\&Name}}\fR is the page name, escaped for use in URLs.\& More specifically, it is
-URI escaped except for the slashes.\& The page name doesn'\&t include the \fI.\&md\fR
+percent-escaped except for the slashes.\& The page name doesn'\&t include the \fI.\&md\fR
 extension.\&
+.PP
+\fI{{.\&Dir}}\fR is the page directory, percent-escaped except for the slashes.\&
+.PP
+\fI{{.\&Today}}\fR is the current date, in ISO format.\& This is useful for "new page"
+like links or forms (see \fBEXAMPLE\fR below).\&
 .PP
 For the \fIview.\&html\fR and \fIstatic.\&html\fR template:
 .PP
@@ -127,6 +132,30 @@ result is added to the "article" element for each snippet.\&
 "edit.\&html" and "add.\&html" are the templates used to edit a page and at that
 point, the language isn'\&t known, so "en" is used for the "html" element and no
 language is used for the "textarea" element.\&
+.PP
+.SH EXAMPLE
+.PP
+The following link in a template takes people to today'\&s page.\& If no such page
+exists, they are redirected to the edit form where it can be created.\&
+.PP
+.nf
+.RS 4
+<a href="/view/{{\&.Today}}" accesskey="t">Today</a>
+.fi
+.RE
+.PP
+The following form allows people to edit the suggested page name.\&
+.PP
+.nf
+.RS 4
+<form role="new" action="/edit/{{\&.Dir}}" method="GET">
+  <label for="id">New page:</label>
+  <input id="id" type="text" spellcheck="false" name="id"
+	  accesskey="g" value="{{\&.Today}}" required>
+  <button>Edit</button>
+</form>
+.fi
+.RE
 .PP
 .SH NOTES
 .PP
