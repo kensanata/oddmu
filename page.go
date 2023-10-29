@@ -135,7 +135,7 @@ func (p *Page) isBlog() bool {
 }
 
 // Dir returns the directory the page is in. It's either the empty string if the page is in the Oddmu working directory,
-// or it ends in a slash.
+// or it ends in a slash. This is used to create the upload link in "view.html", for example.
 func (p *Page) Dir() string {
 	d := filepath.Dir(p.Name)
 	if d == "." {
