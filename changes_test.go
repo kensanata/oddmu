@@ -109,7 +109,7 @@ func TestChangesWithOldDisappearingListInTheMiddle(t *testing.T) {
 	yy := "## " + time.Now().Add(-48*time.Hour).Format(time.DateOnly) + "\n"
 	y := "## " + time.Now().Add(-24*time.Hour).Format(time.DateOnly) + "\n"
 	d := "## " + time.Now().Format(time.DateOnly) + "\n"
-	os.WriteFile("changes.md", []byte(intro+y+line+yy+other), 0644)
+	os.WriteFile("changes.md", []byte(intro+y+line+"\n"+yy+other), 0644)
 	p := &Page{Name: "testdata/changes/alex", Body: []byte(`Hallo!`)}
 	p.notify()
 	s, err := os.ReadFile("changes.md")
