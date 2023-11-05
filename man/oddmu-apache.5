@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-APACHE" "5" "2023-10-12"
+.TH "ODDMU-APACHE" "5" "2023-11-05"
 .PP
 .SH NAME
 .PP
@@ -57,10 +57,16 @@ files using the web server.\&
 .PP
 This is what happens:
 .PP
-\fB The user tells the browser to visit `transjovian.\&org`
-\fR The browser sends a request for `http://transjovian.\&org` (on port 80)
-\fB Apache redirects this to `https://transjovian.\&org/` by default (now on port 443)
-\fR This is proxied to `http://transjovian.\&org:8080/` (now on port 8080)
+.PD 0
+.IP \(bu 4
+The user tells the browser to visit "transjovian.\&org"
+.IP \(bu 4
+The browser sends a request for "http://transjovian.\&org" (on port 80)
+.IP \(bu 4
+Apache redirects this to "https://transjovian.\&org/" by default (now on port 443)
+.IP \(bu 4
+This is proxied to "http://transjovian.\&org:8080/" (now on port 8080)
+.PD
 .PP
 Restart the server, gracefully:
 .PP

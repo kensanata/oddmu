@@ -80,6 +80,9 @@ The oddmu program can be run on the command-line using various subcommands.
 - to emulate a search of the files, see _oddmu-search_(1); to understand how the
   search engine indexes pages and how it sorts and scores results, see
   _oddmu-search_(7)
+- to find missing pages (local links that go nowhere), see _oddmu-missing_(1)
+- to add links to changes, index and hashtag pages to pages you created locally,
+  see _oddmu-notify_(1)
 
 # EXAMPLE
 
@@ -151,9 +154,9 @@ using the asterisk ('\*'). If no such list exists, a new one is started at the
 bottom of the page. This allows you to have a different unnumbered list further
 up on the page, as long as it uses the minus for items ('-').
 
-Changes made using the "replace" subcommand do not create any links on the
-changes page or on any hashtag pages. The same is true for any other changes
-made manually. See _oddmu-replace_(1) for more about the "replace" subcommand.
+Changes made locally do not create any links on the changes page, the index page
+or on any hashtag pages. See _oddmu-notify_(1) for a way to add the necessary
+links to the changes page and possibly to the index and hashtag pages.
 
 A hashtag consists of a number sign ('#') followed by Unicode letters, numbers
 or the underscore ('\_'). Thus, a hashtag ends with punctuation or whitespace.

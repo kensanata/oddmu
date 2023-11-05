@@ -48,10 +48,10 @@ files using the web server.
 
 This is what happens:
 
-* The user tells the browser to visit `transjovian.org`
-* The browser sends a request for `http://transjovian.org` (on port 80)
-* Apache redirects this to `https://transjovian.org/` by default (now on port 443)
-* This is proxied to `http://transjovian.org:8080/` (now on port 8080)
+- The user tells the browser to visit "transjovian.org"
+- The browser sends a request for "http://transjovian.org" (on port 80)
+- Apache redirects this to "https://transjovian.org/" by default (now on port 443)
+- This is proxied to "http://transjovian.org:8080/" (now on port 8080)
 
 Restart the server, gracefully:
 

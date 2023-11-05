@@ -1,0 +1,52 @@
+ODDMU-NOTIFY(1)
+
+# NAME
+
+oddmu-notify - add links to changes.md, index.md, and hashtag pages
+
+# SYNOPSIS
+
+*oddmu notify* _page names..._ 
+
+# DESCRIPTION
+
+The "notify" subcommand takes all the page names provided (without the ".md"
+extension) and adds links to it from other pages.
+
+A new link is added to the *changes* page if it doesn't exist. The current date
+of the machine Oddmu is running on is used as the heading. If the requested link
+already exists on the changes page, it is moved up to the current date. If that
+leaves an old date without any links, that date heading is removed.
+
+A page whose name starts with an ISO date (YYYY-MM-DD, e.g. "2023-10-28") is
+called a *blog* page. A link created is from the *index* page to blog pages.
+
+For every *hashtag* used on the pages named, another link might be created. If a
+page named like the hashtag exists, a backlink is added to it. A hashtag
+consists of a number sign ('#') followed by Unicode letters, numbers or the
+underscore ('\_'). Thus, a hashtag ends with punctuation or whitespace.
+
+If a link already exists but it's title is no longer correct, it is updated.
+
+New links added for blog pages are added at the top of the first unnumbered list
+using the asterisk ('\*'). If no such list exists, a new one is started at the
+bottom of the page. This allows you to have a different unnumbered list further
+up on the page, as long as it uses the minus for items ('-').
+
+# EXAMPLE
+
+After writing the file "2023-11-05-climate.md" containing the hashtag
+"#Climate", add links to it from "index.md", "changes.md", and "Climate.md" (if
+it exists):
+
+```
+oddmu notify 2023-11-05-climate
+```
+
+# SEE ALSO
+
+_oddmu_(1)
+
+# AUTHORS
+
+Maintained by Alex Schroeder <alex@gnu.org>.

@@ -19,7 +19,7 @@ type missingCmd struct {
 }
 
 func (*missingCmd) Name() string     { return "missing" }
-func (*missingCmd) Synopsis() string { return "Listing the missing pages." }
+func (*missingCmd) Synopsis() string { return "list missing pages" }
 func (*missingCmd) Usage() string {
 	return `missing:
   Listing pages with links to missing pages.

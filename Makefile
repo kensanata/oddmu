@@ -31,7 +31,7 @@ test:
 upload:
 	go build
 	rsync --itemize-changes --archive oddmu sibirocobombus.root:/home/oddmu/
-	ssh sibirocobombus.root "systemctl restart oddmu; systemctl restart alex"
+	ssh sibirocobombus.root "systemctl restart oddmu; systemctl restart alex; systemctl restart claudia"
 	@echo Changes to the template files need careful consideration
 
 docs:

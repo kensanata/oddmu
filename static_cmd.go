@@ -20,7 +20,7 @@ type staticCmd struct {
 }
 
 func (*staticCmd) Name() string     { return "static" }
-func (*staticCmd) Synopsis() string { return "Render site into static HTML files." }
+func (*staticCmd) Synopsis() string { return "generate static HTML files for all pages" }
 func (*staticCmd) Usage() string {
 	return `static <dir name>:
   Create static copies in the given directory.

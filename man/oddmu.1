@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU" "1" "2023-10-28"
+.TH "ODDMU" "1" "2023-11-05"
 .PP
 .SH NAME
 .PP
@@ -92,6 +92,11 @@ to search a regular expression and replace it across all files, see
 to emulate a search of the files, see \fIoddmu-search\fR(1); to understand how the
 search engine indexes pages and how it sorts and scores results, see
 \fIoddmu-search\fR(7)
+.IP \(bu 4
+to find missing pages (local links that go nowhere), see \fIoddmu-missing\fR(1)
+.IP \(bu 4
+to add links to changes, index and hashtag pages to pages you created locally,
+see \fIoddmu-notify\fR(1)
 .PD
 .PP
 .SH EXAMPLE
@@ -166,9 +171,9 @@ using the asterisk ('\&*'\&).\& If no such list exists, a new one is started at 
 bottom of the page.\& This allows you to have a different unnumbered list further
 up on the page, as long as it uses the minus for items ('\&-'\&).\&
 .PP
-Changes made using the "replace" subcommand do not create any links on the
-changes page or on any hashtag pages.\& The same is true for any other changes
-made manually.\& See \fIoddmu-replace\fR(1) for more about the "replace" subcommand.\&
+Changes made locally do not create any links on the changes page, the index page
+or on any hashtag pages.\& See \fIoddmu-notify\fR(1) for a way to add the necessary
+links to the changes page and possibly to the index and hashtag pages.\&
 .PP
 A hashtag consists of a number sign ('\&#'\&) followed by Unicode letters, numbers
 or the underscore ('\&_'\&).\& Thus, a hashtag ends with punctuation or whitespace.\&

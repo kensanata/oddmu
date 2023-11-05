@@ -28,7 +28,7 @@ func (cmd *replaceCmd) SetFlags(f *flag.FlagSet) {
 }
 
 func (*replaceCmd) Name() string     { return "replace" }
-func (*replaceCmd) Synopsis() string { return "Search and replace in all the pages." }
+func (*replaceCmd) Synopsis() string { return "search and replace in all the pages" }
 func (*replaceCmd) Usage() string {
 	return `replace [-confirm] [-regexp] <term> <replacement>:
   Search a string or a regular expression and replace it. By default,

@@ -14,7 +14,7 @@ type htmlCmd struct {
 }
 
 func (*htmlCmd) Name() string     { return "html" }
-func (*htmlCmd) Synopsis() string { return "Render a page as HTML." }
+func (*htmlCmd) Synopsis() string { return "render a page as HTML" }
 func (*htmlCmd) Usage() string {
 	return `html [-view] <page name>:
   Render a page as HTML.

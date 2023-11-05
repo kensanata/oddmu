@@ -111,7 +111,10 @@ func serve() {
 	initAccounts()
 	port := getPort()
 	log.Printf("Serving a wiki on port %s", port)
-	http.ListenAndServe(":"+port, nil)
+	err := http.ListenAndServe(":"+port, nil)
+	if err != nil {
+		log.Println(err)
+	}
 }
 
 // commands does the command line parsing in case Oddmu is called with
@@ -127,6 +130,7 @@ func commands() {
 	subcommands.Register(&searchCmd{}, "")
 	subcommands.Register(&replaceCmd{}, "")
 	subcommands.Register(&missingCmd{}, "")
+	subcommands.Register(&notifyCmd{}, "")
 
 	flag.Parse()
 	ctx := context.Background()
