@@ -13,7 +13,8 @@ func TestChanges(t *testing.T) {
 	cleanup(t, "changes.md", "changes.md~")
 	restore(t, "index.md")
 	os.Remove("changes.md")
-	p := &Page{Name: "testdata/2023-10-28-machine",
+	today := time.Now().Format(time.DateOnly)
+	p := &Page{Name: "testdata/" + today + "-machine",
 		Body: []byte(`# Washing machine
 Churning growling thing
 Water spraying in a box 
@@ -22,11 +23,11 @@ Out of sight and dark`)}
 	// Link added to changes.md file
 	s, err := os.ReadFile("changes.md")
 	assert.NoError(t, err)
-	assert.Contains(t, string(s), "[Washing machine](testdata/2023-10-28-machine)")
+	assert.Contains(t, string(s), "[Washing machine](testdata/" + today + "-machine)")
 	// Link added to index.md file
 	s, err = os.ReadFile("index.md")
 	assert.NoError(t, err)
-	assert.Contains(t, string(s), "\n* [Washing machine](testdata/2023-10-28-machine)\n")
+	assert.Contains(t, string(s), "\n* [Washing machine](testdata/" + today + "-machine)\n")
 }
 
 func TestChangesWithHashtag(t *testing.T) {

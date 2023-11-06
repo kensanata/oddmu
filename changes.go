@@ -1,9 +1,10 @@
 package main
 
 import (
-	"regexp"
-	"time"
 	"path"
+	"regexp"
+	"strings"
+	"time"
 )
 
 // notify adds a link to the "changes" page, as well as to all the existing hashtag pages. If the "changes" page does
@@ -22,12 +23,16 @@ func (p *Page) notify() error {
 	if err != nil {
 		return err
 	}
-	// Blog index and hashtag lists are for date pages only
+	// For blog pages only…
 	if p.isBlog() {
-		err := addLink("index", link, re)
-		if err != nil {
-			return err
+		// Add to the index only if the blog post is for the current year
+		if strings.HasPrefix(path.Base(p.Name), time.Now().Format("2006")) {
+			err := addLink("index", link, re)
+			if err != nil {
+				return err
+			}
 		}
+		// Update hashtag pages
 		p.renderHtml() // to set hashtags
 		for _, hashtag := range p.Hashtags {
 			err := addLink(path.Join(dir, hashtag), link, re)

@@ -19,7 +19,14 @@ already exists on the changes page, it is moved up to the current date. If that
 leaves an old date without any links, that date heading is removed.
 
 A page whose name starts with an ISO date (YYYY-MM-DD, e.g. "2023-10-28") is
-called a *blog* page. A link created is from the *index* page to blog pages.
+called a *blog* page.
+
+A link is created from the *index* page to blog pages if and only if the blog
+pages are from the current year. The idea is that the front page contains a lot
+of links to blog posts but eventually the blog post links are moved onto archive
+pages (one per year, for example), or simply deleted. As when editing older
+pages, links to those pages should not get added to the index as if those older
+pages were new again. A link on the changes page is enough.
 
 For every *hashtag* used on the pages named, another link might be created. If a
 page named like the hashtag exists, a backlink is added to it. A hashtag

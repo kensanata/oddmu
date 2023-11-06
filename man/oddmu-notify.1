@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-NOTIFY" "1" "2023-11-05"
+.TH "ODDMU-NOTIFY" "1" "2023-11-06"
 .PP
 .SH NAME
 .PP
@@ -26,7 +26,14 @@ already exists on the changes page, it is moved up to the current date.\& If tha
 leaves an old date without any links, that date heading is removed.\&
 .PP
 A page whose name starts with an ISO date (YYYY-MM-DD, e.\&g.\& "2023-10-28") is
-called a \fBblog\fR page.\& A link created is from the \fBindex\fR page to blog pages.\&
+called a \fBblog\fR page.\&
+.PP
+A link is created from the \fBindex\fR page to blog pages if and only if the blog
+pages are from the current year.\& The idea is that the front page contains a lot
+of links to blog posts but eventually the blog post links are moved onto archive
+pages (one per year, for example), or simply deleted.\& As when editing older
+pages, links to those pages should not get added to the index as if those older
+pages were new again.\& A link on the changes page is enough.\&
 .PP
 For every \fBhashtag\fR used on the pages named, another link might be created.\& If a
 page named like the hashtag exists, a backlink is added to it.\& A hashtag

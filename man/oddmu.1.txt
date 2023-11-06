@@ -137,10 +137,11 @@ A page whose name starts with an ISO date (YYYY-MM-DD, e.g. "2023-10-28") is
 called a *blog* page. When creating or editing blog pages, links to it are added
 from other pages.
 
-The first link created is from the index page back to the blog page being
-created or edited. Again, you can prevent this from happening by deselecting the
-checkbox "Add link to the list of changes." The index page can be edited like
-every other page, so it's easy to undo mistakes.
+If the blog page name starts with the current year, a link is created from the
+index page back to the blog page being created or edited. Again, you can prevent
+this from happening by deselecting the checkbox "Add link to the list of
+changes." The index page can be edited like every other page, so it's easy to
+undo mistakes.
 
 For every *hashtag* used, another link might be created. If a page named like
 the hashtag exists, a backlink is added to it, linking to the new or edited blog
