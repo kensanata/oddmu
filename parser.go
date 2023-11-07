@@ -58,11 +58,10 @@ func hashtag() (func(p *parser.Parser, data []byte, offset int) (int, ast.Node),
 	}, &hashtags
 }
 
-// wikiParser returns a parser with the Oddmu specific changes.
-// Specifically: [[wiki links]], #hash_tags, @webfinger@accounts.
-// It also uses the CommonExtensions without MathJax ($).
+// wikiParser returns a parser with the Oddmu specific changes. Specifically: [[wiki links]], #hash_tags,
+// @webfinger@accounts. It also uses the CommonExtensions and Block Attributes, and no MathJax ($).
 func wikiParser() (*parser.Parser, *[]string) {
-	extensions := parser.CommonExtensions & ^parser.MathJax
+	extensions := (parser.CommonExtensions | parser.Attributes) & ^parser.MathJax
 	parser := parser.NewWithExtensions(extensions)
 	prev := parser.RegisterInline('[', nil)
 	parser.RegisterInline('[', wikiLink(parser, prev))
@@ -83,8 +82,8 @@ func wikiRenderer() *html.Renderer {
 	return renderer
 }
 	
-// renderHtml renders the Page.Body to HTML and sets Page.Html,
-// Page.Language, Page.Hashtags, and escapes Page.Name.
+// renderHtml renders the Page.Body to HTML and sets Page.Html, Page.Language, Page.Hashtags, and escapes Page.Name.
+// Note: If the rendered HTML doesn't contain the attributes or elements you expect it to contain, check sanitizeBytes!
 func (p *Page) renderHtml() {
 	parser, hashtags := wikiParser()
 	renderer := wikiRenderer()

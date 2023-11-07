@@ -47,6 +47,7 @@ func sanitizeBytes(bytes []byte) template.HTML {
 	policy.AllowURLSchemes("gemini", "gopher")
 	policy.AllowAttrs("class", "title").OnElements("a") // for hashtags and accounts
 	policy.AllowAttrs("loading").OnElements("img") // for lazy loading
+	policy.AllowAttrs("class").OnElements("p") // for floating images
 	return template.HTML(policy.SanitizeBytes(bytes))
 }
 
