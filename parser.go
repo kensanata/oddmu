@@ -6,6 +6,7 @@ import (
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/parser"
 	"github.com/gomarkdown/markdown/html"
+	"html/template"
 	"net/url"
 )
 
@@ -89,7 +90,7 @@ func (p *Page) renderHtml() {
 	renderer := wikiRenderer()
 	maybeUnsafeHTML := markdown.ToHTML(p.Body, parser, renderer)
 	p.Name = nameEscape(p.Name)
-	p.Html = sanitizeBytes(maybeUnsafeHTML)
+	p.Html = template.HTML(maybeUnsafeHTML)
 	p.Language = language(p.plainText())
 	p.Hashtags = *hashtags
 }

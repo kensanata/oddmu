@@ -9,6 +9,7 @@ import (
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
 	"github.com/google/subcommands"
+	"html/template"
 	"io/fs"
 	"net/url"
 	"os"
@@ -100,7 +101,7 @@ func staticPage(filename, dir string) error {
 	renderer := html.NewRenderer(opts)
 	maybeUnsafeHTML := markdown.Render(doc, renderer)
 	p.Name = nameEscape(p.Name)
-	p.Html = sanitizeBytes(maybeUnsafeHTML)
+	p.Html = template.HTML(maybeUnsafeHTML)
 	p.Language = language(p.plainText())
 	p.Hashtags = *hashtags
 	return p.write(filepath.Join(dir, name+".html"))

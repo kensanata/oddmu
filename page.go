@@ -40,17 +40,6 @@ func sanitizeStrict(s string) template.HTML {
 	return template.HTML(policy.Sanitize(s))
 }
 
-// santizeBytes uses bluemonday to sanitize the HTML used for pages. This is where you make changes if you want to be
-// more lenient.
-func sanitizeBytes(bytes []byte) template.HTML {
-	policy := bluemonday.UGCPolicy()
-	policy.AllowURLSchemes("gemini", "gopher")
-	policy.AllowAttrs("class", "title").OnElements("a") // for hashtags and accounts
-	policy.AllowAttrs("loading").OnElements("img") // for lazy loading
-	policy.AllowAttrs("class").OnElements("p") // for floating images
-	return template.HTML(policy.SanitizeBytes(bytes))
-}
-
 // nameEscape returns the page name safe for use in URLs. That is,
 // percent escaping is used except for the slashes.
 func nameEscape(s string) string {
