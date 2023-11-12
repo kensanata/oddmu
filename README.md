@@ -17,7 +17,8 @@ memory extender.
 This wiki uses a [Markdown
 library](https://github.com/gomarkdown/markdown) to generate the web
 pages from Markdown. There are two extensions Oddmu adds to the
-library: local links `[[like this]]` and hashtags `#Like_This`.
+library: local links `[[like this]]`, hashtags `#Like_This` and
+fediverse account links like @alex@alexschroeder.ch.
 
 This wiki uses the [lingua](https://github.com/pemistahl/lingua-go)
 library to detect languages in order to get hyphenation right.
