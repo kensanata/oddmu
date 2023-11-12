@@ -17,7 +17,7 @@ extension):
 The page name has to be percent-encoded. See the section "Percent Encoding".
 
 If you link to the actual Markdown file (with the ".md" extension), then Oddmu
-serves the Markdon file!
+serves the Markdown file!
 
 There are three Oddµ-specific extensions: local links, hashtags and fediverse
 account links. The Markdown library used features some additional extensions,
