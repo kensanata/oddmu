@@ -51,15 +51,15 @@ Blue and green and pebbles gray
 	data.Set("body", "Stand in cold water")
 	data.Add("notify", "on")
 	HTTPRedirectTo(t, makeHandler(appendHandler, true),
-		"POST", "/append/testdata/notification2/" + today + "-water",
-		data, "/view/testdata/notification2/" + today + "-water")
+		"POST", "/append/testdata/notification2/"+today+"-water",
+		data, "/view/testdata/notification2/"+today+"-water")
 	// The changes.md file was created
 	s, err := os.ReadFile("changes.md")
 	assert.NoError(t, err)
 	d := time.Now().Format(time.DateOnly)
-	assert.Equal(t, "# Changes\n\n## " + d + "\n* [Water](testdata/notification2/" + today + "-water)\n", string(s))
+	assert.Equal(t, "# Changes\n\n## "+d+"\n* [Water](testdata/notification2/"+today+"-water)\n", string(s))
 	// Link added to index.md file
 	s, err = os.ReadFile("index.md")
 	assert.NoError(t, err)
-	assert.Contains(t, string(s), "\n* [Water](testdata/notification2/" + today + "-water)\n")
+	assert.Contains(t, string(s), "\n* [Water](testdata/notification2/"+today+"-water)\n")
 }

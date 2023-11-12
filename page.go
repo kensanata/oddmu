@@ -59,9 +59,9 @@ func sanitizeBytes(bytes []byte) template.HTML {
 	// Manually delete "script", "crossorigin", all attributes starting with "on", "ping"
 	// and add elements without attributes allowed
 	// (while (re-search-forward "\tpolicy.AllowAttrs(\\(.*\\)).OnElements(\\(.*\\))\n\tpolicy.AllowAttrs(\\1).OnElements(\\(.*\\))" nil t)
-        //   (replace-match "\tpolicy.AllowAttrs(\\1).OnElements(\\2, \\3)"))
+	//   (replace-match "\tpolicy.AllowAttrs(\\1).OnElements(\\2, \\3)"))
 	// (while (re-search-forward "\tpolicy.AllowAttrs(\\(.*\\)).OnElements(\\(.*\\))\n\tpolicy.AllowAttrs(\\(.*\\)).OnElements(\\2)" nil t)
-        //   (replace-match "\tpolicy.AllowAttrs(\\1, \\2).OnElements(\\3)"))
+	//   (replace-match "\tpolicy.AllowAttrs(\\1, \\2).OnElements(\\3)"))
 	policy.AllowNoAttrs().OnElements("defs")
 	policy.AllowAttrs("alignment-baseline", "baseline-shift", "clip-path", "clip-rule", "color", "color-interpolation", "color-interpolation-filters", "cursor", "direction", "display", "dominant-baseline", "fill-opacity", "fill-rule", "filter", "flood-color", "flood-opacity", "font-family", "font-size", "font-size-adjust", "font-stretch", "font-style", "font-variant", "font-weight", "glyph-orientation-horizontal", "glyph-orientation-vertical", "image-rendering", "letter-spacing", "lighting-color", "marker-end", "marker-mid", "marker-start", "mask", "mask-type", "opacity", "overflow", "paint-order", "pointer-events", "shape-rendering", "stop-color", "stop-opacity", "stroke", "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke-width", "text-anchor", "text-decoration", "text-overflow", "text-rendering", "transform-origin", "unicode-bidi", "vector-effect", "visibility", "white-space", "word-spacing", "writing-mode").Globally() // SVG elements
 	policy.AllowAttrs("accumulate", "additive", "by", "calcMode", "from", "keySplines", "keyTimes", "values").OnElements("animate", "animateMotion", "animateTransform")

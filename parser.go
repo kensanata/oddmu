@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/ast"
-	"github.com/gomarkdown/markdown/parser"
 	"github.com/gomarkdown/markdown/html"
+	"github.com/gomarkdown/markdown/parser"
 	"net/url"
 )
 
@@ -81,7 +81,7 @@ func wikiRenderer() *html.Renderer {
 	renderer := html.NewRenderer(opts)
 	return renderer
 }
-	
+
 // renderHtml renders the Page.Body to HTML and sets Page.Html, Page.Language, Page.Hashtags, and escapes Page.Name.
 // Note: If the rendered HTML doesn't contain the attributes or elements you expect it to contain, check sanitizeBytes!
 func (p *Page) renderHtml() {

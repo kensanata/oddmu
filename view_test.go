@@ -3,10 +3,10 @@ package main
 import (
 	"github.com/stretchr/testify/assert"
 	"net/http"
+	"net/url"
 	"os"
 	"regexp"
 	"testing"
-	"net/url"
 )
 
 func TestRootHandler(t *testing.T) {

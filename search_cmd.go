@@ -13,8 +13,8 @@ import (
 )
 
 type searchCmd struct {
-	page int
-	all bool
+	page    int
+	all     bool
 	extract bool
 }
 
@@ -46,16 +46,16 @@ func searchCli(w io.Writer, n int, all, extract bool, quiet bool, args []string)
 	q := strings.Join(args, " ")
 	items, more := search(q, ".", n, true)
 	if !quiet {
-	    fmt.Fprint(os.Stderr, "Search for ", q)
-	    if !all {
-		    fmt.Fprint(os.Stderr, ", page ", n)
-	    }
-	    fmt.Fprint(os.Stderr, ": ", len(items))
-	    if len(items) == 1 {
-		    fmt.Fprint(os.Stderr, " result\n")
-	    } else {
-		    fmt.Fprint(os.Stderr, " results\n")
-	    }
+		fmt.Fprint(os.Stderr, "Search for ", q)
+		if !all {
+			fmt.Fprint(os.Stderr, ", page ", n)
+		}
+		fmt.Fprint(os.Stderr, ": ", len(items))
+		if len(items) == 1 {
+			fmt.Fprint(os.Stderr, " result\n")
+		} else {
+			fmt.Fprint(os.Stderr, " results\n")
+		}
 	}
 	if extract {
 		searchExtract(w, items)

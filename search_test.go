@@ -29,14 +29,13 @@ func TestSortNames(t *testing.T) {
 	assert.True(t, slices.IsSorted(names), fmt.Sprintf("Sorted: %v", names))
 }
 
-
 func TestPrependMatches(t *testing.T) {
 	index.Lock()
 	for _, s := range []string{"Alex", "Berta", "Chris"} {
 		index.titles[s] = s
 	}
 	index.Unlock()
-	r := []string{"Berta", "Chris"} // does not prepend
+	r := []string{"Berta", "Chris"}         // does not prepend
 	u := []string{"Alex", "Berta", "Chris"} // does prepend
 	v, _ := prependQueryPage(r, "", "Alex")
 	assert.Equal(t, u, v, "prepend q")
@@ -130,10 +129,10 @@ We met in the park?`)}
 
 func TestHashtagSearch(t *testing.T) {
 	cleanup(t, "testdata/hashtag")
-	
+
 	p := &Page{Name: "testdata/hashtag/Haiku", Body: []byte("# Haikus\n")}
 	p.save()
-	
+
 	p = &Page{Name: "testdata/hashtag/2023-10-28", Body: []byte(`# Tea
 
 My tongue is on fire

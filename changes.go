@@ -68,7 +68,7 @@ func addLinkWithDate(name, link string, re *regexp.Regexp) error {
 				// remove the preceding date if there are now two dates following each other
 				re := regexp.MustCompile(`(?m)^## (\d\d\d\d-\d\d-\d\d)\n\n## (\d\d\d\d-\d\d-\d\d)\n`)
 				if re.Match(c.Body[loc[0]-14 : loc[0]+15]) {
-					c.Body = append(c.Body[0 : loc[0]-14], c.Body[loc[0]+1 : ]...)
+					c.Body = append(c.Body[0:loc[0]-14], c.Body[loc[0]+1:]...)
 				}
 			} else if len(c.Body) == loc[0] {
 				// remove a trailing date
@@ -94,7 +94,7 @@ func addLinkWithDate(name, link string, re *regexp.Regexp) error {
 			m := re.Find(c.Body[loc[0]-14 : loc[0]])
 			if m == nil {
 				// not a date: insert date, don't move insertion point
-			} else if string(c.Body[loc[0]-11 : loc[0]-1]) == date {
+			} else if string(c.Body[loc[0]-11:loc[0]-1]) == date {
 				// if the date is our date, don't add it, don't move insertion point
 				addDate = false
 			} else {

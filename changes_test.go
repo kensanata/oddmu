@@ -23,11 +23,11 @@ Out of sight and dark`)}
 	// Link added to changes.md file
 	s, err := os.ReadFile("changes.md")
 	assert.NoError(t, err)
-	assert.Contains(t, string(s), "[Washing machine](testdata/" + today + "-machine)")
+	assert.Contains(t, string(s), "[Washing machine](testdata/"+today+"-machine)")
 	// Link added to index.md file
 	s, err = os.ReadFile("index.md")
 	assert.NoError(t, err)
-	assert.Contains(t, string(s), "\n* [Washing machine](testdata/" + today + "-machine)\n")
+	assert.Contains(t, string(s), "\n* [Washing machine](testdata/"+today+"-machine)\n")
 }
 
 func TestChangesWithHashtag(t *testing.T) {
@@ -51,7 +51,7 @@ Home away from home
 	assert.Contains(t, string(s), line)
 	s, err = os.ReadFile("testdata/changes/Haiku.md")
 	assert.NoError(t, err)
-	assert.Equal(t, intro + line, string(s))
+	assert.Equal(t, intro+line, string(s))
 	assert.NoFileExists(t, "testdata/changes/Poetry.md")
 }
 

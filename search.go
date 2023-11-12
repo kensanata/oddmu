@@ -200,7 +200,7 @@ NameLoop:
 // prependQueryPage prepends the query itself, if a matching page name exists. This helps if people remember the name
 // exactly, or if searching for a hashtag. This function assumes that q is not the empty string. Return wether a page
 // was prepended or not.
-func prependQueryPage (names []string, dir, q string) ([]string, bool) {
+func prependQueryPage(names []string, dir, q string) ([]string, bool) {
 	index.RLock()
 	defer index.RUnlock()
 	if q[0] == '#' && !strings.Contains(q[1:], "#") {

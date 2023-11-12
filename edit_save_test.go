@@ -51,7 +51,7 @@ func TestEditSaveChanges(t *testing.T) {
 	s, err := os.ReadFile("changes.md")
 	assert.NoError(t, err)
 	d := time.Now().Format(time.DateOnly)
-	assert.Equal(t, "# Changes\n\n## " + d +
+	assert.Equal(t, "# Changes\n\n## "+d+
 		"\n* [testdata/notification/2023-10-28-alex](testdata/notification/2023-10-28-alex)\n",
 		string(s))
 	// Link added to index.md file

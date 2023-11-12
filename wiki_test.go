@@ -95,12 +95,12 @@ func restore(t *testing.T, files ...string) {
 		s, err := os.Stat(file)
 		if err != nil {
 			t.Log("Could not stat ", file, ": ", err)
-			continue;
+			continue
 		}
 		c, err := os.ReadFile(file)
 		if err != nil {
 			t.Log("Could not read ", file, ": ", err)
-			continue;
+			continue
 		}
 		stat[file] = s
 		data[file] = c
