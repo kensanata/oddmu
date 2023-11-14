@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU" "1" "2023-11-06"
+.TH "ODDMU" "1" "2023-11-14"
 .PP
 .SH NAME
 .PP
@@ -74,6 +74,10 @@ must secure your installation.\& The best way to do this is use a regular web
 server as a reverse proxy.\&
 .PP
 See \fIoddmu-apache\fR(5) for an example.\&
+.PP
+Oddmu assumes that all the users that can edit pages or upload files are trusted
+users and therefore their content is trusted.\& Therefore, Oddmu doesn'\&t perform
+HTML sanitization!\&
 .PP
 .SH OPTIONS
 .PP

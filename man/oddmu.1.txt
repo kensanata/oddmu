@@ -68,6 +68,10 @@ server as a reverse proxy.
 
 See _oddmu-apache_(5) for an example.
 
+Oddmu assumes that all the users that can edit pages or upload files are trusted
+users and therefore their content is trusted. Therefore, Oddmu doesn't perform
+HTML sanitization!
+
 # OPTIONS
 
 The oddmu program can be run on the command-line using various subcommands.
