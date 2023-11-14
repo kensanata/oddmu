@@ -15,9 +15,9 @@ func TestHtmlCmd(t *testing.T) {
 
 <p>Hello! 🙃</p>
 
-<p>Check out the <a href="README" rel="nofollow">README</a>.</p>
+<p>Check out the <a href="README">README</a>.</p>
 
-<p>Or <a href="test" rel="nofollow">create a new page</a>.</p>
+<p>Or <a href="test">create a new page</a>.</p>
 
 `
 	assert.Equal(t, r, b.String())

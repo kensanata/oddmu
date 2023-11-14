@@ -100,7 +100,7 @@ func staticPage(filename, dir string) error {
 	renderer := html.NewRenderer(opts)
 	maybeUnsafeHTML := markdown.Render(doc, renderer)
 	p.Name = nameEscape(p.Name)
-	p.Html = sanitizeBytes(maybeUnsafeHTML)
+	p.Html = unsafeBytes(maybeUnsafeHTML)
 	p.Language = language(p.plainText())
 	p.Hashtags = *hashtags
 	return p.write(filepath.Join(dir, name+".html"))

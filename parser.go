@@ -89,7 +89,7 @@ func (p *Page) renderHtml() {
 	renderer := wikiRenderer()
 	maybeUnsafeHTML := markdown.ToHTML(p.Body, parser, renderer)
 	p.Name = nameEscape(p.Name)
-	p.Html = sanitizeBytes(maybeUnsafeHTML)
+	p.Html = unsafeBytes(maybeUnsafeHTML)
 	p.Language = language(p.plainText())
 	p.Hashtags = *hashtags
 }

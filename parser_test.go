@@ -43,7 +43,7 @@ I am cold, alone
 Too faint to focus, so far
 I am cold, alone</p>
 
-<p><a class="tag" href="/search/?q=%23Haiku" rel="nofollow">#Haiku</a> <a class="tag" href="/search/?q=%23Cold_Poets" rel="nofollow">#Cold Poets</a></p>
+<p><a class="tag" href="/search/?q=%23Haiku">#Haiku</a> <a class="tag" href="/search/?q=%23Cold_Poets">#Cold Poets</a></p>
 `
 	assert.Equal(t, r, string(p.Html))
 }
@@ -57,8 +57,8 @@ Our [[time together]]`)}
 	r := `<h1>Photos and Books</h1>
 
 <p>Blue and green and black
-Sky and grass and <a href="cliffs" rel="nofollow">ragged cliffs</a>
-Our <a href="time%20together" rel="nofollow">time together</a></p>
+Sky and grass and <a href="cliffs">ragged cliffs</a>
+Our <a href="time%20together">time together</a></p>
 `
 	assert.Equal(t, r, string(p.Html))
 }

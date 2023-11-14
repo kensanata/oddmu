@@ -30,7 +30,7 @@ It's not `)}
 			"GET", "/add/testdata/add/fire", nil))
 	HTTPRedirectTo(t, makeHandler(appendHandler, true),
 		"POST", "/append/testdata/add/fire", data, "/view/testdata/add/fire")
-	assert.Regexp(t, regexp.MustCompile("It’s not barbecue"),
+	assert.Regexp(t, regexp.MustCompile("not barbecue"),
 		assert.HTTPBody(makeHandler(viewHandler, true),
 			"GET", "/view/testdata/add/fire", nil))
 }

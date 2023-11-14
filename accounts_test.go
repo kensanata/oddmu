@@ -10,7 +10,7 @@ import (
 // 	initAccounts()
 // 	p := &Page{Body: []byte(`@alex, @alex@alexschroeder.ch said`)}
 // 	p.renderHtml()
-// 	r := `<p>@alex, <a href="https://alexschroeder.ch/users/alex" rel="nofollow">@alex</a> said</p>
+// 	r := `<p>@alex, <a href="https://alexschroeder.ch/users/alex">@alex</a> said</p>
 // `
 // 	assert.Equal(t, r, string(p.Html))
 // }
