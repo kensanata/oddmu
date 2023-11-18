@@ -9,6 +9,18 @@ import (
 	"time"
 )
 
+func TestEmptyLineAdd(t *testing.T) {
+	p := &Page{Name: "testdata/add/fire", Body: []byte(`# Coal
+Black rocks light as foam
+Shaking, puring, shoveling`)}
+	p.append([]byte("Into the oven"))
+	assert.Equal(t, string(p.Body), `# Coal
+Black rocks light as foam
+Shaking, puring, shoveling
+
+Into the oven`)
+}
+
 func TestAddAppend(t *testing.T) {
 	cleanup(t, "testdata/add")
 	index.load()
@@ -30,7 +42,7 @@ It's not `)}
 			"GET", "/add/testdata/add/fire", nil))
 	HTTPRedirectTo(t, makeHandler(appendHandler, true),
 		"POST", "/append/testdata/add/fire", data, "/view/testdata/add/fire")
-	assert.Regexp(t, regexp.MustCompile("not barbecue"),
+	assert.Regexp(t, regexp.MustCompile(`not</p>\s*<p>barbecue`),
 		assert.HTTPBody(makeHandler(viewHandler, true),
 			"GET", "/view/testdata/add/fire", nil))
 }

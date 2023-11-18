@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"log"
 	"net/http"
 )
@@ -26,7 +27,7 @@ func appendHandler(w http.ResponseWriter, r *http.Request, name string) {
 	if err != nil {
 		p = &Page{Name: name, Body: []byte(body)}
 	} else {
-		p.Body = append(p.Body, []byte(body)...)
+		p.append([]byte(body))
 	}
 	p.handleTitle(false)
 	err = p.save()
@@ -41,4 +42,15 @@ func appendHandler(w http.ResponseWriter, r *http.Request, name string) {
 		}
 	}
 	http.Redirect(w, r, "/view/"+name, http.StatusFound)
+}
+
+func (p *Page) append(body []byte) {
+	// ensure an empty line at the end
+	if bytes.HasSuffix(p.Body, []byte("\n\n")) {
+	} else if bytes.HasSuffix(p.Body, []byte("\n")) {
+		p.Body = append(p.Body, '\n')
+	} else {
+		p.Body = append(p.Body, '\n', '\n')
+	}
+	p.Body = append(p.Body, body...)
 }
