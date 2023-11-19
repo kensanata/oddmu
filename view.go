@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"os"
+	"path"
 	"strings"
 	"time"
 )
@@ -12,19 +13,22 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/view/index", http.StatusFound)
 }
 
-// viewHandler serves existing files (including markdown files with
-// the .md extension). If the requested file does not exist, a page
-// with the same name is loaded. This means adding the .md extension
-// and using the "view.html" template to render the HTML. Both
-// attempts fail, the browser is redirected to an edit page. As far as
-// caching goes: we respond with a 304 NOT MODIFIED if the request has
-// an If-Modified-Since header that matches the file's modification
-// time, truncated to one second, because the file's modtime has
-// sub-second precision and the HTTP timestamp for the Last-Modified
-// header has not.
+// viewHandler serves pages. If the requested URL maps to an existing file, it is served. If the requested URL maps to a
+// directory, the browser is redirected to the index page. If the requested URL ends in ".rss" and the corresponding
+// file ending with ".md" exists, a feed is generated and the "feed.html" template is used (it is used to generate a RSS
+// 2.0 feed, no matter what the template's extension is). If the requested URL maps to a page name, the corresponding
+// file (ending in ".md") is loaded and served using the "view.html" template. If none of the above, the browser is
+// redirected to an edit page.
+//
+// Caching: a 304 NOT MODIFIED is returned if the request has an If-Modified-Since header that matches the file's
+// modification time, truncated to one second. Truncation is required because the file's modtime has sub-second
+// precision and the HTTP timestamp for the Last-Modified header has not.
 func viewHandler(w http.ResponseWriter, r *http.Request, name string) {
 	file := true
 	rss := false
+	if name == "" {
+		name = "index"
+	}
 	fn := name
 	fi, err := os.Stat(fn)
 	if err != nil {
@@ -36,6 +40,9 @@ func viewHandler(w http.ResponseWriter, r *http.Request, name string) {
 		}
 		fn += ".md"
 		fi, err = os.Stat(fn)
+	} else if fi.IsDir() {
+		http.Redirect(w, r, path.Join(fn, "index"), http.StatusFound)
+		return
 	}
 	if err == nil {
 		h, ok := r.Header["If-Modified-Since"]

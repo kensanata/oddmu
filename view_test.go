@@ -19,6 +19,12 @@ func TestViewHandler(t *testing.T) {
 		assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/index", nil))
 }
 
+func TestViewHandlerDir(t *testing.T) {
+	assert.Regexp(t, regexp.MustCompile("Welcome to Oddµ"),
+		assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/", nil))
+	HTTPRedirectTo(t, makeHandler(viewHandler, true), "GET", "/view/man", nil, "/view/man/index")
+}
+
 // relies on index.md in the current directory!
 func TestViewHandlerWithId(t *testing.T) {
 	data := make(url.Values)
