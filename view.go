@@ -27,7 +27,7 @@ func viewHandler(w http.ResponseWriter, r *http.Request, name string) {
 	file := true
 	rss := false
 	if name == "" {
-		name = "index"
+		name = "."
 	}
 	fn := name
 	fi, err := os.Stat(fn)
@@ -41,7 +41,7 @@ func viewHandler(w http.ResponseWriter, r *http.Request, name string) {
 		fn += ".md"
 		fi, err = os.Stat(fn)
 	} else if fi.IsDir() {
-		http.Redirect(w, r, path.Join(fn, "index"), http.StatusFound)
+		http.Redirect(w, r, path.Join("/view", name, "index"), http.StatusFound)
 		return
 	}
 	if err == nil {
