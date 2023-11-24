@@ -80,8 +80,20 @@ func (p *Page) save() error {
 			return err
 		}
 	}
-	_ = os.Rename(filename, filename+"~")
+	backup(filename)
 	return os.WriteFile(filename, s, 0644)
+}
+
+// backup a file by renaming (!) it unless the existing backup is less than an hour old. A backup gets a tilde appended
+// to it ("~"). This is true even if the file refers to a binary file like "image.png" and most applications don't know
+// what to do with a file called "image.png~".
+func backup(filename string) error {
+	backup := filename + "~"
+	fi, err := os.Stat(backup)
+	if err != nil || time.Since(fi.ModTime()).Minutes() >= 60 {
+		return os.Rename(filename, backup)
+	}
+	return nil
 }
 
 // loadPage loads a Page given a name. The filename loaded is that

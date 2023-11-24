@@ -55,6 +55,30 @@ instead of making any changes and the regexp rules differ slightly.
 The search is case-sensitive. To make it case-insensitive, search for a regular
 expression that sets the case-insensitive flag, e.g. "(?i)oddmu".
 
+# SECURITY
+
+Consider creating a backup before doing replacements!
+
+The following Bash script creates a copy of the current directory using hard
+links. If you're in a directory called "wiki", it creates a sibling directory
+called "wiki-2023-11-24" (using the current date) full of links. This takes
+little space and time. It works as a backup as long as you don't use an
+application that edits files in place. Most programs overwrite old files by
+creating new files with the same name, so you should be safe.
+
+```
+#!/usr/bin/bash
+d=$(basename $(pwd))
+t=$(date --iso-8601)
+echo Creating a snapshot of $d in ../$d-$t
+rsync --link-dest "../$d" --archive . "../$d-$t/"
+```
+
+The above wouldn't work for database files, for example. There, the database
+changes the file in place thus the file is changed in the backup directory as
+well. For Oddmu and the usual text editors, it works. If you use Emacs, don't
+set _backup-by-copying_, _backup-by-copying-when-linked_ and related variables.
+
 # SEE ALSO
 
 _oddmu_(1), _oddmu-search_(7)

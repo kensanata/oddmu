@@ -89,11 +89,7 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		return
 	}
 	defer file.Close()
-	// backup an existing file with the same name
-	_, err = os.Stat(filename)
-	if err != nil {
-		os.Rename(filename, filename+"~")
-	}
+	backup(filename)
 	// create the new file
 	path := d + "/" + filename
 	dst, err := os.Create(path)
