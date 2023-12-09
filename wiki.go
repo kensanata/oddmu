@@ -126,6 +126,7 @@ func commands() {
 	subcommands.Register(subcommands.FlagsCommand(), "")
 	subcommands.Register(subcommands.CommandsCommand(), "")
 	subcommands.Register(&htmlCmd{}, "")
+	subcommands.Register(&listCmd{}, "")
 	subcommands.Register(&staticCmd{}, "")
 	subcommands.Register(&searchCmd{}, "")
 	subcommands.Register(&replaceCmd{}, "")
