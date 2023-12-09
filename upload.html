@@ -23,9 +23,9 @@ label { display: inline-block; width: 20ch }
     {{end}}
     <form action="/drop/{{.Dir}}" method="POST" enctype="multipart/form-data">
       <p>When uploading pictures from a phone, its filename is going to be something cryptic like IMG_1234.JPG.
-        Please provide your own filename.
+        Please provide your own filename. End the filename with "-1" to auto-increment.
       <p><label for="text">Filename to use:</label>
-        <input id="text" name="name" value="{{.Name}}" type="text" placeholder="image.jpg" autofocus required>
+        <input id="text" name="name" value="{{.Name}}" type="text" placeholder="image-1.jpg" autofocus required>
       <p>If the uploaded file is a picture from a phone, it is going to be too big for your site.
         Sadly, resizing only works for JPG and PNG files. Luckily, most pictures from a phone camera are JPG images.
         Feel free to specify a max width of 1200 pixels, for example.
