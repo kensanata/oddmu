@@ -3,8 +3,11 @@ package main
 import (
 	"github.com/anthonynsimon/bild/imgio"
 	"github.com/anthonynsimon/bild/transform"
+	"github.com/kensanata/goheif"
 	"image/jpeg"
+	"image/png"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -26,11 +29,9 @@ type Upload struct {
 
 var lastRe = regexp.MustCompile(`^(.*)([0-9]+)(.*)$`)
 
-// uploadHandler uses the "upload.html" template to enable uploads.
-// The file is saved using the saveUploadHandler. URL parameter are
-// used to copy name, maxwidth and quality from the previous upload.
-// If the previous name contains a number, this is incremented by
-// one.
+// uploadHandler uses the "upload.html" template to enable uploads. The file is saved using the dropHandler. URL
+// parameters are used to copy name, maxwidth and quality from the previous upload. If the previous name contains a
+// number, this is incremented by one.
 func uploadHandler(w http.ResponseWriter, r *http.Request, dir string) {
 	data := &Upload{Dir: dir}
 	maxwidth := r.FormValue("maxwidth")
@@ -60,9 +61,8 @@ func uploadHandler(w http.ResponseWriter, r *http.Request, dir string) {
 	renderTemplate(w, "upload", data)
 }
 
-// dropHandler takes the "name" form field and the "file" form
-// file and saves the file under the given name. The browser is
-// redirected to the view of that file.
+// dropHandler takes the "name" form field and the "file" form file and saves the file under the given name. The browser
+// is redirected to the view of that file.
 func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 	d := path.Dir(dir)
 	// ensure the directory exists
@@ -98,10 +98,6 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		return
 	}
 	defer dst.Close()
-	if _, err := io.Copy(dst, file); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
 	// if a resize was requested
 	maxwidth := r.FormValue("maxwidth")
 	if len(maxwidth) > 0 {
@@ -111,6 +107,7 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 			return
 		}
 		data.Add("maxwidth", maxwidth)
+		// determine how the file will be written
 		ext := strings.ToLower(filepath.Ext(path))
 		var encoder imgio.Encoder
 		switch ext {
@@ -129,13 +126,22 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 			}
 			encoder = imgio.JPEGEncoder(q)
 		default:
-			http.Error(w, "only .png, .jpg, or .jpeg files are supported", http.StatusInternalServerError)
+			http.Error(w, "Resizing images requires a .png, .jpg or .jpeg extension for the filename", http.StatusInternalServerError)
 			return
 		}
-		img, err := imgio.Open(path)
+		// try and decode the data in various formats
+		img, err := jpeg.Decode(file)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+			log.Println("Decoding image for " + path + " as JPEG: ", err)
+			img, err = png.Decode(file)
+		}
+		if err != nil {
+			log.Println("Decoding image for " + path + " as PNG: ", err)
+			img, err = goheif.Decode(file)
+		}
+		if err != nil {
+			log.Println("Decoding image for " + path + " as HEIC: ", err)
+			http.Error(w, "Only PNG, JPEG or HEIC file formats can be decoded for resizing", http.StatusInternalServerError)
 		}
 		rect := img.Bounds()
 		width := rect.Max.X - rect.Min.X
@@ -147,7 +153,12 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 				return
 			}
 		}
-
+	} else {
+		// just copy the bytes
+		if _, err := io.Copy(dst, file); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
 	http.Redirect(w, r, "/upload/"+d+"/?"+data.Encode(), http.StatusFound)
 }

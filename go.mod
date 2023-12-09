@@ -8,6 +8,7 @@ require (
 	github.com/gomarkdown/markdown v0.0.0-20230922112808-5421fefb8386
 	github.com/google/subcommands v1.2.0
 	github.com/hexops/gotextdiff v1.0.3
+	github.com/kensanata/goheif v0.0.0-20231209194913-91b10fff2db5
 	github.com/microcosm-cc/bluemonday v1.0.25
 	github.com/pemistahl/lingua-go v1.4.0
 	github.com/sergi/go-diff v1.3.1
@@ -27,6 +28,7 @@ require (
 	github.com/muesli/termenv v0.15.2 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
+	github.com/rwcarlsen/goexif v0.0.0-20190401172101-9e8deecbddbd // indirect
 	github.com/shopspring/decimal v1.3.1 // indirect
 	golang.org/x/image v0.10.0 // indirect
 	golang.org/x/net v0.17.0 // indirect
