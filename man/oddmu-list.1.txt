@@ -1,0 +1,40 @@
+ODDMU-LIST(1)
+
+# NAME
+
+oddmu-list - list page names and titles from the command-line
+
+# SYNOPSIS
+
+*oddmu list* [-dir string]
+
+# DESCRIPTION
+
+The "list" subcommand lists page names and their titles, separated by a TAB
+character. This saves you from opening and parsing all the files yourself if you
+need the page titles.
+
+If a subdirectory is provided, only files from the tree starting at that
+subdirectory are listed, and the subdirectory is stripped from the page name.
+
+# EXAMPLE
+
+Create list of links to pages in the "dad" directory, filter it for date pages
+(starting with "2"), format it as a list of links and sort in reverse order.
+This is a list of links you could append to "dad/index.md" if it doesn't already
+have a list of links.
+
+```
+oddmu list -dir dad \
+| grep '^2' \
+| awk -F "\t" -e '{ print "* [" $2 "](" $1 ")" }' \
+| sort -r
+```
+
+# SEE ALSO
+
+_oddmu_(1), _oddmu-search_(1)
+
+# AUTHORS
+
+Maintained by Alex Schroeder <alex@gnu.org>.
