@@ -3,11 +3,10 @@ package main
 import (
 	"github.com/anthonynsimon/bild/imgio"
 	"github.com/anthonynsimon/bild/transform"
-	"github.com/kensanata/goheif"
+	"github.com/bashdrew/goheif"
 	"image/jpeg"
 	"image/png"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -132,16 +131,13 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		// try and decode the data in various formats
 		img, err := jpeg.Decode(file)
 		if err != nil {
-			log.Println("Decoding image for " + path + " as JPEG: ", err)
 			img, err = png.Decode(file)
 		}
 		if err != nil {
-			log.Println("Decoding image for " + path + " as PNG: ", err)
 			img, err = goheif.Decode(file)
 		}
 		if err != nil {
-			log.Println("Decoding image for " + path + " as HEIC: ", err)
-			http.Error(w, "Only PNG, JPEG or HEIC file formats can be decoded for resizing", http.StatusInternalServerError)
+			http.Error(w, "The image could not be decoded (only PNG, JPG and HEIC formats are supported for resizing)", http.StatusInternalServerError)
 		}
 		rect := img.Bounds()
 		width := rect.Max.X - rect.Min.X
@@ -152,6 +148,9 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
+		} else {
+			http.Error(w, "The file is too small for this", http.StatusInternalServerError)
+			return
 		}
 	} else {
 		// just copy the bytes

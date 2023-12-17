@@ -4,11 +4,11 @@ go 1.21.0
 
 require (
 	github.com/anthonynsimon/bild v0.13.0
+	github.com/bashdrew/goheif v0.0.0-20230406184952-7a08ca9c9bdd
 	github.com/charmbracelet/lipgloss v0.9.1
 	github.com/gomarkdown/markdown v0.0.0-20231115200524-a660076da3fd
 	github.com/google/subcommands v1.2.0
 	github.com/hexops/gotextdiff v1.0.3
-	github.com/kensanata/goheif v0.0.0-20231209194913-91b10fff2db5
 	github.com/microcosm-cc/bluemonday v1.0.26
 	github.com/pemistahl/lingua-go v1.4.0
 	github.com/sergi/go-diff v1.3.1
