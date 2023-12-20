@@ -16,7 +16,7 @@ type listCmd struct {
 }
 
 func (cmd *listCmd) SetFlags(f *flag.FlagSet) {
-	f.StringVar(&cmd.dir, "dir", "", "List only pages within this sub-directory")
+	f.StringVar(&cmd.dir, "dir", "", "list only pages within this sub-directory")
 }
 
 func (*listCmd) Name() string     { return "list" }

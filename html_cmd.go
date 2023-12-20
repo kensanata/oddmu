@@ -22,7 +22,7 @@ func (*htmlCmd) Usage() string {
 }
 
 func (cmd *htmlCmd) SetFlags(f *flag.FlagSet) {
-	f.BoolVar(&cmd.useTemplate, "view", false, "Use the 'view.html' template.")
+	f.BoolVar(&cmd.useTemplate, "view", false, "use the 'view.html' template.")
 }
 
 func (cmd *htmlCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
