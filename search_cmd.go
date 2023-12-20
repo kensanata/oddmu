@@ -13,12 +13,14 @@ import (
 )
 
 type searchCmd struct {
+	dir     string
 	page    int
 	all     bool
 	extract bool
 }
 
 func (cmd *searchCmd) SetFlags(f *flag.FlagSet) {
+	f.StringVar(&cmd.dir, "dir", "", "search only pages within this sub-directory")
 	f.IntVar(&cmd.page, "page", 1, "the page in the search result set, default 1")
 	f.BoolVar(&cmd.all, "all", false, "show all the pages and ignore -page")
 	f.BoolVar(&cmd.extract, "extract", false, "print page extract instead of link list")
@@ -27,7 +29,7 @@ func (cmd *searchCmd) SetFlags(f *flag.FlagSet) {
 func (*searchCmd) Name() string     { return "search" }
 func (*searchCmd) Synopsis() string { return "Search pages and print a list of links." }
 func (*searchCmd) Usage() string {
-	return `search [-page <n>] <terms>:
+	return `search [-dir string] [-page <n>|-all] [-extract] <terms>:
   Search for pages matching terms and print the result set as a
   Markdown list. Before searching, all the pages are indexed. Thus,
   startup is slow. The benefit is that the page order is exactly as
@@ -36,15 +38,19 @@ func (*searchCmd) Usage() string {
 }
 
 func (cmd *searchCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
-	return searchCli(os.Stdout, cmd.page, cmd.all, cmd.extract, false, f.Args())
+	return searchCli(os.Stdout, cmd.dir, cmd.page, cmd.all, cmd.extract, false, f.Args())
 }
 
 // searchCli runs the search command on the command line. It is used
 // here with an io.Writer for easy testing.
-func searchCli(w io.Writer, n int, all, extract bool, quiet bool, args []string) subcommands.ExitStatus {
+func searchCli(w io.Writer, dir string, n int, all, extract bool, quiet bool, args []string) subcommands.ExitStatus {
+	dir, err := checkDir(dir)
+	if err != nil {
+		return subcommands.ExitFailure
+	}
 	index.load()
 	q := strings.Join(args, " ")
-	items, more := search(q, ".", n, true)
+	items, more := search(q, dir, n, true)
 	if !quiet {
 		fmt.Fprint(os.Stderr, "Search for ", q)
 		if !all {

@@ -34,20 +34,9 @@ func (cmd *listCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}
 // listCli runs the list command on the command line. It is used
 // here with an io.Writer for easy testing.
 func listCli(w io.Writer, dir string, args []string) subcommands.ExitStatus {
-	if dir != "" {
-		fi, err := os.Stat(dir)
-		if err != nil {
-			fmt.Println(err)
-			return subcommands.ExitFailure
-		}
-		if !fi.IsDir() {
-			fmt.Println("This is not a sub-directory:", dir)
-			return subcommands.ExitFailure
-		}
-		dir = filepath.ToSlash(dir);
-		if (!strings.HasSuffix(dir, "/")) {
-			dir += "/"
-		}
+	dir, err := checkDir(dir)
+	if err != nil {
+		return subcommands.ExitFailure
 	}
 	index.load()
 	index.RLock()
@@ -59,4 +48,24 @@ func listCli(w io.Writer, dir string, args []string) subcommands.ExitStatus {
 		}
 	}
 	return subcommands.ExitSuccess
+}
+
+// checkDir returns an error if the directory doesn't exist. If if exists, it returns a copy ending in a slash.
+func checkDir (dir string) (string, error) {
+	if dir != "" {
+		fi, err := os.Stat(dir)
+		if err != nil {
+			fmt.Println(err)
+			return "", err
+		}
+		if !fi.IsDir() {
+			fmt.Println("This is not a sub-directory:", dir)
+			return "", err
+		}
+		dir = filepath.ToSlash(dir);
+		if (!strings.HasSuffix(dir, "/")) {
+			dir += "/"
+		}
+	}
+	return dir, nil
 }
