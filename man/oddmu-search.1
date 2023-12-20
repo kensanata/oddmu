@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-SEARCH" "1" "2023-10-10"
+.TH "ODDMU-SEARCH" "1" "2023-12-20"
 .PP
 .SH NAME
 .PP
@@ -23,11 +23,18 @@ directory.\&
 Be default, this returns a Markdown-formatted list suitable for pasting into
 Oddmu pages.\&
 .PP
+If a directory is provided, only files from the tree starting at that
+subdirectory are listed, and the directory is stripped from the page name.\&
+.PP
 See \fIoddmu-search\fR(7) for more information of how pages are searched, sorted and
 scored.\&
 .PP
 .SH OPTIONS
 .PP
+\fB-dir\fR \fIstring\fR
+.RS 4
+Limit search to a particular directory.\&
+.RE
 \fB-extract\fR
 .RS 4
 Print search extracts for interactive use from the command-line.\&
@@ -36,6 +43,10 @@ Print search extracts for interactive use from the command-line.\&
 .RS 4
 Search results are paginated and by default only the first page is
 shown.\& This option allows you to view other pages.\&
+.RE
+\fB-all\fR
+.RS 4
+Ignore pagination and just print a long list of results.\&
 .PP
 .RE
 .SH EXAMPLE

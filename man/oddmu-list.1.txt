@@ -14,8 +14,13 @@ The "list" subcommand lists page names and their titles, separated by a TAB
 character. This saves you from opening and parsing all the files yourself if you
 need the page titles.
 
-If a subdirectory is provided, only files from the tree starting at that
-subdirectory are listed, and the subdirectory is stripped from the page name.
+If a directory is provided, only files from the tree starting at that
+subdirectory are listed, and the directory is stripped from the page name.
+
+# OPTIONS
+
+*-dir* _string_
+	Limit the list to a particular directory.
 
 # EXAMPLE
 

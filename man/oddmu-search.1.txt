@@ -16,16 +16,23 @@ directory.
 Be default, this returns a Markdown-formatted list suitable for pasting into
 Oddmu pages.
 
+If a directory is provided, only files from the tree starting at that
+subdirectory are listed, and the directory is stripped from the page name.
+
 See _oddmu-search_(7) for more information of how pages are searched, sorted and
 scored.
 
 # OPTIONS
 
+*-dir* _string_
+	Limit search to a particular directory.
 *-extract*
 	Print search extracts for interactive use from the command-line.
 *-page* _n_
 	Search results are paginated and by default only the first page is
 	shown. This option allows you to view other pages.
+*-all*
+	Ignore pagination and just print a long list of results.
 
 # EXAMPLE
 
