@@ -67,7 +67,11 @@ func searchCli(w io.Writer, dir string, n int, all, extract bool, quiet bool, ar
 		searchExtract(w, items)
 	} else {
 		for _, p := range items {
-			fmt.Fprintf(w, "* [%s](%s)\n", p.Title, p.Name)
+			name := p.Name
+			if strings.HasPrefix(name, dir) {
+				name = strings.Replace(name, dir, "", 1)
+			}
+			fmt.Fprintf(w, "* [%s](%s)\n", p.Title, name)
 		}
 	}
 	if more {

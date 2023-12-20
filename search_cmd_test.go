@@ -27,7 +27,7 @@ we hear that moment`)}
 	b := new(bytes.Buffer)
 	s := searchCli(b, "testdata/search", 1, false, false, true, []string{"speak"})
 	assert.Equal(t, subcommands.ExitSuccess, s)
-	r := `* [Wait](testdata/search/wait)
+	r := `* [Wait](wait)
 `
 	assert.Equal(t, r, b.String())
 }
