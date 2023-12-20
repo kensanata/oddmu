@@ -45,13 +45,17 @@ links. Local links must use percent encoding for page names so there
 is a section about percent encoding. The man page also explains how
 feeds are generated.
 
+[oddmu-list(1)](/oddmu.git/blob/main/man/oddmu-list.1.txt): This man
+page documents the "list" subcommand which you can use to get page
+names and page titles.
+
 [oddmu-search(1)](/oddmu.git/blob/main/man/oddmu-search.1.txt): This
 man page documents the "search" subcommand which you can use to build
 indexes – lists of page links. These are important for feeds.
 
 [oddmu-replace(1)](/oddmu.git/blob/main/man/oddmu-replace.1.txt): This
 man page documents the "replace" subcommand to make mass changes to
-the files much like find(1), grep(1) and sed(1) or perl (1).
+the files much like find(1), grep(1) and sed(1) or perl(1).
 
 [oddmu-missing(1)](/oddmu.git/blob/main/man/oddmu-missing.1.txt): This
 man page documents the "missing" subcommand to list local links that
