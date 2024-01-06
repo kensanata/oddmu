@@ -1,31 +1,34 @@
 # Oddµ: A minimal wiki
 
-This program runs a wiki. It serves all the Markdown files (ending in
-`.md`) into web pages and allows you to edit them. If your files don't
-provide their own title (`# title`), the file name (without `.md`) is
-used for the title. Subdirectories are created as necessary.
-
-This is a minimal wiki. There is no version history. It's well suited
-as a *secondary* medium: collaboration and conversation happens
-elsewhere, in chat, on social media. The wiki serves as the text
-repository that results from these discussions.
+This program helps you run a minimal wiki. There is no version
+history. It's well suited as a *secondary* medium: collaboration and
+conversation happens elsewhere, in chat, on social media. The wiki
+serves as the text repository that results from these discussions.
 
 If you're the only user and it just runs on your laptop, then you can
 think of it as a [memex](https://en.wikipedia.org/wiki/Memex), a
 memory extender.
 
-This wiki uses a [Markdown
-library](https://github.com/gomarkdown/markdown) to generate the web
-pages from Markdown. There are two extensions Oddmu adds to the
-library: local links `[[like this]]`, hashtags `#Like_This` and
-fediverse account links like @alex@alexschroeder.ch.
+Oddµ can be used as a web server behind a reverse proxy such as Apache
+or it can be used as a static site generator.
 
-This wiki uses the [lingua](https://github.com/pemistahl/lingua-go)
-library to detect languages in order to get hyphenation right.
+When Oddµ runs as a web server, it serves all the Markdown files
+(ending in `.md`) as web pages and allows you to edit them.
 
-This wiki uses the standard
-[html/template](https://pkg.go.dev/html/template) library to generate
-HTML.
+If your files don't provide their own title (`# title`), the file name
+(without `.md`) is used for the title. Subdirectories are created as
+necessary.
+
+Oddµ uses a [Markdown library](https://github.com/gomarkdown/markdown)
+to generate the web pages from Markdown. Oddmu adds the following
+extensions: local links `[[like this]]`, hashtags `#Like_This` and
+fediverse account links like `@alex@alexschroeder.ch`.
+
+The [lingua](https://github.com/pemistahl/lingua-go) library detects
+languages in order to get hyphenation right.
+
+The standard [html/template](https://pkg.go.dev/html/template) library
+is used to generate HTML.
 
 ## Documentation
 
