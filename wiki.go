@@ -11,27 +11,20 @@ import (
 	"regexp"
 )
 
-// Templates are parsed at startup.
-var templates = template.Must(
-	template.ParseFiles("edit.html", "add.html", "view.html", "diff.html",
-		"search.html", "static.html", "upload.html", "feed.html"))
-
-// validPath is a regular expression where the second group matches a
-// page, so when the editHandler is called, a URL path of "/edit/foo"
-// results in the editHandler being called with title "foo". The
-// regular expression doesn't define the handlers (this happens in the
-// main function).
+// validPath is a regular expression where the second group matches a page, so when the editHandler is called, a URL
+// path of "/edit/foo" results in the editHandler being called with title "foo". The regular expression doesn't define
+// the handlers (this happens in the main function).
 var validPath = regexp.MustCompile("^/([^/]+)/(.*)$")
 
-// titleRegexp is a regular expression matching a level 1 header line
-// in a Markdown document. The first group matches the actual text and
-// is used to provide an title for pages. If no title exists in the
-// document, the page name is used instead.
+// titleRegexp is a regular expression matching a level 1 header line in a Markdown document. The first group matches
+// the actual text and is used to provide an title for pages. If no title exists in the document, the page name is used
+// instead.
 var titleRegexp = regexp.MustCompile("(?m)^#\\s*(.*)\n+")
 
-// renderTemplate is the helper that is used render the templates with
-// data.
+// renderTemplate is the helper that is used render the templates with data. If the templates cannot be found, that's
+// fatal.
 func renderTemplate(w http.ResponseWriter, tmpl string, data any) {
+	templates := loadTemplates()
 	err := templates.ExecuteTemplate(w, tmpl+".html", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -63,8 +56,7 @@ func makeHandler(fn func(http.ResponseWriter, *http.Request, string), required b
 	}
 }
 
-// getPort returns the environment variable ODDMU_PORT or the default
-// port, "8080".
+// getPort returns the environment variable ODDMU_PORT or the default port, "8080".
 func getPort() string {
 	port := os.Getenv("ODDMU_PORT")
 	if port == "" {
@@ -73,9 +65,8 @@ func getPort() string {
 	return port
 }
 
-// scheduleLoadIndex calls index.load and prints some messages before
-// and after. For testing, call index.load directly and skip the
-// messages.
+// scheduleLoadIndex calls index.load and prints some messages before and after. For testing, call index.load directly
+// and skip the messages.
 func scheduleLoadIndex() {
 	log.Print("Indexing pages")
 	n, err := index.load()
@@ -86,13 +77,24 @@ func scheduleLoadIndex() {
 	}
 }
 
-// scheduleLoadLanguages calls loadLanguages and prints some messages before
-// and after. For testing, call loadLanguages directly and skip the
-// messages.
+// scheduleLoadLanguages calls loadLanguages and prints some messages before and after. For testing, call loadLanguages
+// directly and skip the messages.
 func scheduleLoadLanguages() {
 	log.Print("Loading languages")
 	n := loadLanguages()
 	log.Printf("Loaded %d languages", n)
+}
+
+// loadTemplates loads the templates. These aren't always required. If the templates are required and cannot be loaded,
+// this a fatal error and the program exits.
+func loadTemplates() *template.Template {
+	templates, err := template.ParseFiles("edit.html", "add.html", "view.html",
+		"diff.html", "search.html", "static.html", "upload.html", "feed.html")
+	if err != nil {
+		log.Println("Templates:", err)
+		os.Exit(1)
+	}
+	return templates
 }
 
 func serve() {
@@ -117,10 +119,8 @@ func serve() {
 	}
 }
 
-// commands does the command line parsing in case Oddmu is called with
-// some arguments. Without any arguments, the wiki server is started.
-// At this point we already know that there is at least one
-// subcommand.
+// commands does the command line parsing in case Oddmu is called with some arguments. Without any arguments, the wiki
+// server is started. At this point we already know that there is at least one subcommand.
 func commands() {
 	subcommands.Register(subcommands.HelpCommand(), "")
 	subcommands.Register(subcommands.FlagsCommand(), "")

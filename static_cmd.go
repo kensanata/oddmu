@@ -9,6 +9,7 @@ import (
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
 	"github.com/google/subcommands"
+	"html/template"
 	"io/fs"
 	"net/url"
 	"os"
@@ -46,8 +47,9 @@ func staticCli(dir string) subcommands.ExitStatus {
 		return subcommands.ExitFailure
 	}
 	initAccounts()
+	templates := loadTemplates();
 	err = filepath.Walk(".", func(path string, info fs.FileInfo, err error) error {
-		return staticFile(path, dir, info, err)
+		return staticFile(path, dir, info, templates, err)
 	})
 	if err != nil {
 		fmt.Println(err)
@@ -58,7 +60,7 @@ func staticCli(dir string) subcommands.ExitStatus {
 
 // staticFile is used to walk the file trees and do the right thing for the destination directory: create
 // subdirectories, link files, render HTML files.
-func staticFile(path, dir string, info fs.FileInfo, err error) error {
+func staticFile(path, dir string, info fs.FileInfo, templates *template.Template, err error) error {
 	if err != nil {
 		return err
 	}
@@ -75,14 +77,14 @@ func staticFile(path, dir string, info fs.FileInfo, err error) error {
 	}
 	// render pages
 	if strings.HasSuffix(filename, ".md") {
-		return staticPage(filename, dir)
+		return staticPage(filename, dir, templates)
 	}
 	// remaining files are linked
 	return os.Link(filename, filepath.Join(dir, filename))
 }
 
 // staticPage takes the filename of a page (ending in ".md") and generates a static HTML page.
-func staticPage(filename, dir string) error {
+func staticPage(filename, dir string, templates *template.Template) error {
 	name := strings.TrimSuffix(filename, ".md")
 	p, err := loadPage(name)
 	if err != nil {
@@ -103,7 +105,7 @@ func staticPage(filename, dir string) error {
 	p.Html = unsafeBytes(maybeUnsafeHTML)
 	p.Language = language(p.plainText())
 	p.Hashtags = *hashtags
-	return p.write(filepath.Join(dir, name+".html"))
+	return p.write(filepath.Join(dir, name+".html"), templates)
 }
 
 // staticLinks checks a node and if it is a link to a local page, it appends ".html" to the link destination.
@@ -131,7 +133,7 @@ func staticLinks(node ast.Node, entering bool) ast.WalkStatus {
 	return ast.GoToNext
 }
 
-func (p *Page) write(destination string) error {
+func (p *Page) write(destination string, templates *template.Template) error {
 	t := "static.html"
 	f, err := os.Create(destination)
 	if err != nil {
