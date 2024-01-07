@@ -42,3 +42,6 @@ install:
 	for n in 1 5 7; do install -D -t $$HOME/.local/share/man/man$$n man/*.$$n; done
 	go build
 	install -D -t $$HOME/.local/bin oddmu
+
+missing:
+	for f in man/*.txt; do grep --quiet "$$f" README.md || echo $$f is not in the README; done

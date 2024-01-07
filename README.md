@@ -56,6 +56,9 @@ names and page titles.
 man page documents the "search" subcommand which you can use to build
 indexes – lists of page links. These are important for feeds.
 
+[oddmu-search(7)](/oddmu.git/blob/main/man/oddmu-search.7.txt): This
+man page documents how search and scoring work.
+
 [oddmu-replace(1)](/oddmu.git/blob/main/man/oddmu-replace.1.txt): This
 man page documents the "replace" subcommand to make mass changes to
 the files much like find(1), grep(1) and sed(1) or perl(1).
@@ -73,6 +76,11 @@ man page documents the "static" subcommand to generate an entire
 static website from the command line, avoiding the need to run Oddmu
 as a server. Also great for archiving.
 
+[oddmu-notify(1)](/oddmu.git/blob/main/man/oddmu-notify.1.txt): This
+man page documents the "notify" subcommand to add links to hashtag
+pages, index and changes for a given page. This is useful when you
+edit the Markdown files locally.
+
 [oddmu-templates(5)](/oddmu.git/blob/main/man/oddmu-templates.5.txt):
 This man page documents how the templates can be changed (how they
 *must* be changed) and lists the attributes available for the various
@@ -84,7 +92,7 @@ tasks such as using logins to limit what visitors can edit.
 
 [oddmu.service(5)](/oddmu.git/blob/main/man/oddmu.service.5.txt): This
 man page documents how to setup a systemd unit and have it manage
-Oddmu. “Great configurability brings brings great burdens.”
+Oddmu. “Great configurability brings great burdens.”
 
 ## Building
 
