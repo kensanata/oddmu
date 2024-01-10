@@ -47,10 +47,17 @@ func staticCli(dir string) subcommands.ExitStatus {
 		return subcommands.ExitFailure
 	}
 	initAccounts()
-	templates := loadTemplates();
+	fmt.Printf("Loaded %d languages\n", loadLanguages())
+	templates := loadTemplates()
+	n := 0;
 	err = filepath.Walk(".", func(path string, info fs.FileInfo, err error) error {
+		n++
+		if (n < 100 || n < 1000 && n % 10 == 0 || n % 100 == 0) {
+			fmt.Fprintf(os.Stdout, "\r%d", n)
+		}
 		return staticFile(path, dir, info, templates, err)
 	})
+	fmt.Printf("\r%d\n", n)
 	if err != nil {
 		fmt.Println(err)
 		return subcommands.ExitFailure
