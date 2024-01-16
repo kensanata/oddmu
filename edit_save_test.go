@@ -43,20 +43,21 @@ func TestEditSaveChanges(t *testing.T) {
 	data := url.Values{}
 	data.Set("body", "Hallo!")
 	data.Add("notify", "on")
+	date := time.Now().Format("2006-01-02")
 	// Posting to the save URL saves a page
 	HTTPRedirectTo(t, makeHandler(saveHandler, true),
-		"POST", "/save/testdata/notification/2023-10-28-alex",
-		data, "/view/testdata/notification/2023-10-28-alex")
+		"POST", "/save/testdata/notification/" + date,
+		data, "/view/testdata/notification/" + date)
 	// The changes.md file was created
 	s, err := os.ReadFile("changes.md")
 	assert.NoError(t, err)
 	d := time.Now().Format(time.DateOnly)
 	assert.Equal(t, "# Changes\n\n## "+d+
-		"\n* [testdata/notification/2023-10-28-alex](testdata/notification/2023-10-28-alex)\n",
+		"\n* [testdata/notification/"+date+"](testdata/notification/"+date+")\n",
 		string(s))
 	// Link added to index.md file
 	s, err = os.ReadFile("index.md")
 	assert.NoError(t, err)
 	assert.Contains(t, string(s),
-		"\n* [testdata/notification/2023-10-28-alex](testdata/notification/2023-10-28-alex)\n")
+		"\n* [testdata/notification/"+date+"](testdata/notification/"+date+")\n")
 }
