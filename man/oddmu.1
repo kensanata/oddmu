@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU" "1" "2023-12-17"
+.TH "ODDMU" "1" "2024-01-16"
 .PP
 .SH NAME
 .PP
@@ -60,6 +60,20 @@ See \fIoddmu-templates\fR(5) for more.\&
 .PP
 You can change the port served by setting the ODDMU_PORT environment variable.\&
 .PP
+You can change the address served by setting the ODDMU_ADDRESS environment
+variable.\&  This is very flexible; you can have oddmu serve on an IPV4
+address, an IPv6 address, or a Unix-domain socket.\&  Using a Unix-domain
+socket requires support from the web server you are using as a reverse proxy.\&
+Lighttpd, Nginx, and Apache are known to support reverse proxying HTTP over a
+Unix-domain socket.\&
+If ODDMU_ADDRESS is unset, then the program listens on all available
+unicast addresses, both IPv4 and IPv6.\&
+Here are a few example addresses.\&
+.PP
+ODDMU_ADDRESS=/run/oddmu/oddmu.\&sock  # Unix-domain (AKA AF_LOCAL) socket.\&
+ODDMU_ADDRESS=127.\&0.\&0.\&1 # The loopback IPv4 address.\&
+ODDMU_ADDRESS=2001:db8::3:1 # An IPv6 address.\&
+.PP
 In order to limit language-detection to the languages you actually use, set the
 environment variable ODDMU_LANGUAGES to a comma-separated list of ISO 639-1
 codes, e.\&g.\& "en" or "en,de,fr,pt".\&
@@ -78,6 +92,8 @@ See \fIoddmu-apache\fR(5) for an example.\&
 Oddmu assumes that all the users that can edit pages or upload files are trusted
 users and therefore their content is trusted.\& Therefore, Oddmu doesn'\&t perform
 HTML sanitization!\&
+.PP
+For an extra dose of security, consider using a Unix-domain socket.\&
 .PP
 .SH OPTIONS
 .PP
