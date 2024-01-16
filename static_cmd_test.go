@@ -8,7 +8,7 @@ import (
 
 func TestStatusCmd(t *testing.T) {
 	cleanup(t, "testdata/static")
-	s := staticCli("testdata/static")
+	s := staticCli("testdata/static", true)
 	assert.Equal(t, subcommands.ExitSuccess, s)
 	// pages
 	assert.FileExists(t, "testdata/static/index.html")

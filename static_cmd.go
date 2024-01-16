@@ -37,27 +37,33 @@ func (cmd *staticCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface
 		fmt.Println("Exactly one target directory is required")
 		return subcommands.ExitFailure
 	}
-	return staticCli(filepath.Clean(args[0]))
+	return staticCli(filepath.Clean(args[0]), false)
 }
 
-func staticCli(dir string) subcommands.ExitStatus {
+// staticCli generates a static site in the designated directory. The quiet flag is used to suppress output when running
+// tests.
+func staticCli(dir string, quiet bool) subcommands.ExitStatus {
 	err := os.Mkdir(dir, 0755)
 	if err != nil {
 		fmt.Println(err)
 		return subcommands.ExitFailure
 	}
 	initAccounts()
-	fmt.Printf("Loaded %d languages\n", loadLanguages())
+	if (!quiet) {
+		fmt.Printf("Loaded %d languages\n", loadLanguages())
+	}
 	templates := loadTemplates()
 	n := 0;
 	err = filepath.Walk(".", func(path string, info fs.FileInfo, err error) error {
 		n++
-		if (n < 100 || n < 1000 && n % 10 == 0 || n % 100 == 0) {
+		if (!quiet && (n < 100 || n < 1000 && n % 10 == 0 || n % 100 == 0)) {
 			fmt.Fprintf(os.Stdout, "\r%d", n)
 		}
 		return staticFile(path, dir, info, templates, err)
 	})
-	fmt.Printf("\r%d\n", n)
+	if (!quiet) {
+		fmt.Printf("\r%d\n", n)
+	}
 	if err != nil {
 		fmt.Println(err)
 		return subcommands.ExitFailure
