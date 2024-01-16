@@ -70,23 +70,18 @@ func getPort() string {
 	return port
 }
 
-// getListener returns a net.Listener listening on the address from
-// ODDMU_ADDRESS and the port from ODDMU_PORT.
-// ODDMU_ADDRESS may be either an IPV4 address, an IPv6 address, or the
-// path to a Unix-domain socket.  In the latter case, the value of ODDMU_PORT
-// is ignored, because it is not applicable.
-// If ODDMU_ADDRESS is unspecified, then the listener listens on all
-// available unicast addresses, both IPv4 and IPv6.
-// When ODDMU_ADDRESS begins with a / it is taken to be the path of a
-// Unix domain socket.
+// getListener returns a net.Listener listening on the address from ODDMU_ADDRESS and the port from ODDMU_PORT.
+// ODDMU_ADDRESS may be either an IPV4 address, an IPv6 address, or the path to a Unix-domain socket. In the latter
+// case, the value of ODDMU_PORT is ignored, because it is not applicable. If ODDMU_ADDRESS is unspecified, then the
+// listener listens on all available unicast addresses, both IPv4 and IPv6. When ODDMU_ADDRESS contains a / it is taken
+// to be the path of a Unix domain socket.
 func getListener() (net.Listener, error) {
 	family := "tcp"
 	address := os.Getenv("ODDMU_ADDRESS")
 	port := getPort()
 	if strings.ContainsRune(address, '/') {
 		family = "unix"
-		// Remove stale Unix-domain socket.  ENOENT is ignored, and often
-		// expected.
+		// Remove stale Unix-domain socket. ENOENT is ignored, and often expected.
 		err := os.Remove(address)
 		if err != nil && !errors.Is(err, fs.ErrNotExist) {
 			return nil, err
