@@ -2,13 +2,18 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
+	"fmt"
 	"github.com/google/subcommands"
 	"html/template"
+	"io/fs"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"regexp"
+	"strings"
 )
 
 // validPath is a regular expression where the second group matches a page, so when the editHandler is called, a URL
@@ -65,6 +70,36 @@ func getPort() string {
 	return port
 }
 
+// getListener returns a net.Listener listening on the address from
+// ODDMU_ADDRESS and the port from ODDMU_PORT.
+// ODDMU_ADDRESS may be either an IPV4 address, an IPv6 address, or the
+// path to a Unix-domain socket.  In the latter case, the value of ODDMU_PORT
+// is ignored, because it is not applicable.
+// If ODDMU_ADDRESS is unspecified, then the listener listens on all
+// available unicast addresses, both IPv4 and IPv6.
+// When ODDMU_ADDRESS begins with a / it is taken to be the path of a
+// Unix domain socket.
+func getListener() (net.Listener, error) {
+	family := "tcp"
+	address := os.Getenv("ODDMU_ADDRESS")
+	port := getPort()
+	if strings.ContainsRune(address, '/') {
+		family = "unix"
+		// Remove stale Unix-domain socket.  ENOENT is ignored, and often
+		// expected.
+		err := os.Remove(address)
+		if err != nil && !errors.Is(err, fs.ErrNotExist) {
+			return nil, err
+		}
+	} else if strings.ContainsRune(address, ':') {
+		address = fmt.Sprintf("[%s]:%s", address, port)
+	} else {
+		address = fmt.Sprintf("%s:%s", address, port)
+	}
+	log.Printf("Serving a wiki at address %s", address)
+	return net.Listen(family, address)
+}
+
 // scheduleLoadIndex calls index.load and prints some messages before and after. For testing, call index.load directly
 // and skip the messages.
 func scheduleLoadIndex() {
@@ -111,11 +146,14 @@ func serve() {
 	go scheduleLoadIndex()
 	go scheduleLoadLanguages()
 	initAccounts()
-	port := getPort()
-	log.Printf("Serving a wiki on port %s", port)
-	err := http.ListenAndServe(":"+port, nil)
-	if err != nil {
+	listener, err := getListener()
+	if listener == nil {
 		log.Println(err)
+	} else {
+		err := http.Serve(listener, nil)
+		if err != nil {
+			log.Println(err)
+		}
 	}
 }
 
