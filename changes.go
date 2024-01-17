@@ -1,42 +1,54 @@
 package main
 
 import (
+	"log"
+	"os"
 	"path"
 	"regexp"
 	"strings"
 	"time"
 )
 
-// notify adds a link to the "changes" page, as well as to all the existing hashtag pages. If the "changes" page does
-// not exist, it is created. If the hashtag page does not exist, it is not. Hashtag pages are considered optional.
+// notify adds a link to the "changes" page, the "index" page, as well as to all the existing hashtag pages. The link to
+// the "index" page is only added if the page being edited is a blog page for the current year. The link to existing
+// hashtag pages is only added for blog pages. If the "changes" page does not exist, it is created. If the hashtag page
+// does not exist, it is not. Hashtag pages are considered optional. If the page that's being edited is in a
+// subdirectory, then the "changes", "index" and hashtag pages of that particular subdirectory are affected. Every
+// subdirectory is treated like a potentially independent wiki.
 func (p *Page) notify() error {
 	p.handleTitle(false)
 	if p.Title == "" {
 		p.Title = p.Name
 	}
-	esc := nameEscape(p.Name)
+	esc := nameEscape(path.Base(p.Name))
 	link := "* [" + p.Title + "](" + esc + ")\n"
 	re := regexp.MustCompile(`(?m)^\* \[[^\]]+\]\(` + esc + `\)\n`)
 	dir := path.Dir(p.Name)
-	// Recent changes for all pages
-	err := addLinkWithDate("changes", link, re)
+	if dir != "." {
+		err := os.MkdirAll(dir, 0755)
+		if err != nil {
+			log.Printf("Creating directory %s failed: %s", dir, err)
+			return err
+		}
+	}
+	err := addLinkWithDate(path.Join(dir, "changes"), link, re)
 	if err != nil {
 		return err
 	}
-	// For blog pages only…
 	if p.isBlog() {
 		// Add to the index only if the blog post is for the current year
 		if strings.HasPrefix(path.Base(p.Name), time.Now().Format("2006")) {
-			err := addLink("index", link, re)
+			err := addLink(path.Join(dir, "index"), true, link, re)
 			if err != nil {
+				log.Printf("Updating index in %s failed: %s", dir, err)
 				return err
 			}
 		}
-		// Update hashtag pages
 		p.renderHtml() // to set hashtags
 		for _, hashtag := range p.Hashtags {
-			err := addLink(path.Join(dir, hashtag), link, re)
+			err := addLink(path.Join(dir, hashtag), false, link, re)
 			if err != nil {
+				log.Printf("Updating hashtag %s in %s failed: %s", hashtag, dir, err)
 				return err
 			}
 		}
@@ -53,7 +65,7 @@ func addLinkWithDate(name, link string, re *regexp.Regexp) error {
 	c, err := loadPage(name)
 	if err != nil {
 		// create a new page
-		c = &Page{Name: "changes", Body: []byte("# Changes\n\n## " + date + "\n" + link)}
+		c = &Page{Name: name, Body: []byte("# Changes\n\n## " + date + "\n" + link)}
 	} else {
 		org = string(c.Body)
 		// remove the old match, if one exists
@@ -136,11 +148,16 @@ func addLinkWithDate(name, link string, re *regexp.Regexp) error {
 
 // addLink adds a link to a named page, if the page exists and doesn't contain the link. If the link exists but with a
 // different title, the title is fixed.
-func addLink(name, link string, re *regexp.Regexp) error {
+func addLink(name string, mandatory bool, link string, re *regexp.Regexp) error {
 	c, err := loadPage(name)
 	if err != nil {
-		// Skip non-existing files: no error
-		return nil
+		if (mandatory) {
+			c = &Page{Name: name, Body: []byte(link)}
+			return c.save()
+		} else {
+			// Skip non-existing files: no error
+			return nil
+		}
 	}
 	org := string(c.Body)
 	// if a link exists, that's the place to insert the new link (in which case loc[0] and loc[1] differ)

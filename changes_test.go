@@ -10,32 +10,29 @@ import (
 // Note TestEditSaveChanges and TestAddAppendChanges.
 
 func TestChanges(t *testing.T) {
-	cleanup(t, "changes.md", "changes.md~")
-	restore(t, "index.md")
-	os.Remove("changes.md")
+	cleanup(t, "testdata/washing")
 	today := time.Now().Format(time.DateOnly)
-	p := &Page{Name: "testdata/" + today + "-machine",
+	p := &Page{Name: "testdata/washing/" + today + "-machine",
 		Body: []byte(`# Washing machine
 Churning growling thing
 Water spraying in a box 
 Out of sight and dark`)}
 	p.notify()
 	// Link added to changes.md file
-	s, err := os.ReadFile("changes.md")
+	s, err := os.ReadFile("testdata/washing/changes.md")
 	assert.NoError(t, err)
-	assert.Contains(t, string(s), "[Washing machine](testdata/"+today+"-machine)")
+	assert.Contains(t, string(s), "[Washing machine]("+today+"-machine)")
 	// Link added to index.md file
-	s, err = os.ReadFile("index.md")
+	s, err = os.ReadFile("testdata/washing/index.md")
 	assert.NoError(t, err)
-	assert.Contains(t, string(s), "\n* [Washing machine](testdata/"+today+"-machine)\n")
+	// New index contains just the link
+	assert.Equal(t, string(s), "* [Washing machine]("+today+"-machine)\n")
 }
 
 func TestChangesWithHashtag(t *testing.T) {
-	cleanup(t, "changes.md", "changes.md~")
-	restore(t, "index.md")
-	os.Remove("changes.md")
+	cleanup(t, "testdata/changes")
 	intro := "# Haiku\n"
-	line := "* [Hotel room](testdata/changes/2023-10-27-hotel)\n"
+	line := "* [Hotel room](2023-10-27-hotel)\n"
 	h := &Page{Name: "testdata/changes/Haiku", Body: []byte(intro)}
 	h.save()
 	p := &Page{Name: "testdata/changes/2023-10-27-hotel",
@@ -46,7 +43,7 @@ Home away from home
 
 #Haiku #Poetry`)}
 	p.notify()
-	s, err := os.ReadFile("changes.md")
+	s, err := os.ReadFile("testdata/changes/changes.md")
 	assert.NoError(t, err)
 	assert.Contains(t, string(s), line)
 	s, err = os.ReadFile("testdata/changes/Haiku.md")
@@ -56,144 +53,154 @@ Home away from home
 }
 
 func TestChangesWithList(t *testing.T) {
-	cleanup(t, "changes.md", "changes.md~")
+	cleanup(t, "testdata/changes")
 	intro := "# Changes\n\nThis is a paragraph.\n\n"
-	line := "* [a change](change)\n"
 	d := "## " + time.Now().Format(time.DateOnly) + "\n"
-	os.WriteFile("changes.md", []byte(intro+d+line), 0644)
+	line := "* [a change](change)\n"
+	assert.NoError(t, os.MkdirAll("testdata/changes", 0755))
+	assert.NoError(t, os.WriteFile("testdata/changes/changes.md", []byte(intro+d+line), 0644))
 	p := &Page{Name: "testdata/changes/alex", Body: []byte(`Hallo!`)}
 	p.notify()
-	s, err := os.ReadFile("changes.md")
+	s, err := os.ReadFile("testdata/changes/changes.md")
 	assert.NoError(t, err)
-	new_line := "* [testdata/changes/alex](testdata/changes/alex)\n"
+	new_line := "* [testdata/changes/alex](alex)\n"
 	// new line was added at the beginning of the list
 	assert.Equal(t, intro+d+new_line+line, string(s))
 }
 
 func TestChangesWithOldList(t *testing.T) {
-	cleanup(t, "changes.md", "changes.md~")
+	cleanup(t, "testdata/changes")
 	intro := "# Changes\n\nThis is a paragraph.\n\n"
 	line := "* [a change](change)\n"
 	y := "## " + time.Now().Add(-24*time.Hour).Format(time.DateOnly) + "\n"
 	d := "## " + time.Now().Format(time.DateOnly) + "\n"
-	os.WriteFile("changes.md", []byte(intro+y+line), 0644)
+	assert.NoError(t, os.MkdirAll("testdata/changes", 0755))
+	assert.NoError(t, os.WriteFile("testdata/changes/changes.md", []byte(intro+y+line), 0644))
 	p := &Page{Name: "testdata/changes/alex", Body: []byte(`Hallo!`)}
 	p.notify()
-	s, err := os.ReadFile("changes.md")
+	s, err := os.ReadFile("testdata/changes/changes.md")
 	assert.NoError(t, err)
-	new_line := "* [testdata/changes/alex](testdata/changes/alex)\n"
+	new_line := "* [testdata/changes/alex](alex)\n"
 	// new line was added at the beginning of the list
 	assert.Equal(t, intro+d+new_line+"\n"+y+line, string(s))
 }
 
 func TestChangesWithOldDisappearingListAtTheEnd(t *testing.T) {
-	cleanup(t, "changes.md", "changes.md~")
+	cleanup(t, "testdata/changes")
 	intro := "# Changes\n\nThis is a paragraph.\n\n"
-	line := "* [a change](testdata/changes/alex)\n"
+	line := "* [a change](alex)\n"
 	y := "## " + time.Now().Add(-24*time.Hour).Format(time.DateOnly) + "\n"
 	d := "## " + time.Now().Format(time.DateOnly) + "\n"
-	os.WriteFile("changes.md", []byte(intro+y+line), 0644)
+	assert.NoError(t, os.MkdirAll("testdata/changes", 0755))
+	assert.NoError(t, os.WriteFile("testdata/changes/changes.md", []byte(intro+y+line), 0644))
 	p := &Page{Name: "testdata/changes/alex", Body: []byte(`Hallo!`)}
 	p.notify()
-	s, err := os.ReadFile("changes.md")
+	s, err := os.ReadFile("testdata/changes/changes.md")
 	assert.NoError(t, err)
-	new_line := "* [testdata/changes/alex](testdata/changes/alex)\n"
+	new_line := "* [testdata/changes/alex](alex)\n"
 	// new line was added at the beginning of the list, with the new date, and the old date disappeared
 	assert.Equal(t, intro+d+new_line, string(s))
 }
 
 func TestChangesWithOldDisappearingListInTheMiddle(t *testing.T) {
-	cleanup(t, "changes.md", "changes.md~")
+	cleanup(t, "testdata/changes")
 	intro := "# Changes\n\nThis is a paragraph.\n\n"
-	line := "* [a change](testdata/changes/alex)\n"
-	other := "* [other change](testdata/changes/whatever)\n"
+	line := "* [a change](alex)\n"
+	other := "* [other change](whatever)\n"
 	yy := "## " + time.Now().Add(-48*time.Hour).Format(time.DateOnly) + "\n"
 	y := "## " + time.Now().Add(-24*time.Hour).Format(time.DateOnly) + "\n"
 	d := "## " + time.Now().Format(time.DateOnly) + "\n"
-	os.WriteFile("changes.md", []byte(intro+y+line+"\n"+yy+other), 0644)
+	assert.NoError(t, os.MkdirAll("testdata/changes", 0755))
+	assert.NoError(t, os.WriteFile("testdata/changes/changes.md", []byte(intro+y+line+"\n"+yy+other), 0644))
 	p := &Page{Name: "testdata/changes/alex", Body: []byte(`Hallo!`)}
 	p.notify()
-	s, err := os.ReadFile("changes.md")
+	s, err := os.ReadFile("testdata/changes/changes.md")
 	assert.NoError(t, err)
-	new_line := "* [testdata/changes/alex](testdata/changes/alex)\n"
+	new_line := "* [testdata/changes/alex](alex)\n"
 	// new line was added at the beginning of the list, with the new date, and the old date disappeared
 	assert.Equal(t, intro+d+new_line+"\n"+yy+other, string(s))
 }
 
 func TestChangesWithListAtTheTop(t *testing.T) {
-	cleanup(t, "testdata/changes", "changes.md", "changes.md~")
+	cleanup(t, "testdata/changes")
 	line := "* [a change](change)\n"
 	d := "## " + time.Now().Format(time.DateOnly) + "\n"
-	os.WriteFile("changes.md", []byte(line), 0644)
+	assert.NoError(t, os.MkdirAll("testdata/changes", 0755))
+	assert.NoError(t, os.WriteFile("testdata/changes/changes.md", []byte(line), 0644))
 	p := &Page{Name: "testdata/changes/alex", Body: []byte(`Hallo!`)}
 	p.notify()
-	s, err := os.ReadFile("changes.md")
+	s, err := os.ReadFile("testdata/changes/changes.md")
 	assert.NoError(t, err)
-	new_line := "* [testdata/changes/alex](testdata/changes/alex)\n"
+	new_line := "* [testdata/changes/alex](alex)\n"
 	// new line was added at the top, no error due to missing introduction
 	assert.Equal(t, d+new_line+line, string(s))
 }
 
 func TestChangesWithNoList(t *testing.T) {
-	cleanup(t, "testdata/changes", "changes.md", "changes.md~")
+	cleanup(t, "testdata/changes")
 	intro := "# Changes\n\nThis is a paragraph."
 	d := "## " + time.Now().Format(time.DateOnly) + "\n"
-	os.WriteFile("changes.md", []byte(intro), 0644)
+	assert.NoError(t, os.MkdirAll("testdata/changes", 0755))
+	assert.NoError(t, os.WriteFile("testdata/changes/changes.md", []byte(intro), 0644))
 	p := &Page{Name: "testdata/changes/alex", Body: []byte(`Hallo!`)}
 	p.notify()
-	s, err := os.ReadFile("changes.md")
+	s, err := os.ReadFile("testdata/changes/changes.md")
 	assert.NoError(t, err)
-	new_line := "* [testdata/changes/alex](testdata/changes/alex)\n"
+	new_line := "* [testdata/changes/alex](alex)\n"
 	// into is still there and a new list was started
 	assert.Equal(t, intro+"\n\n"+d+new_line, string(s))
 }
 
 func TestChangesWithUpdate(t *testing.T) {
-	cleanup(t, "testdata/changes", "changes.md", "changes.md~")
+	cleanup(t, "testdata/changes")
 	intro := "# Changes\n\nThis is a paragraph.\n\n"
-	other := "* [other change](testdata/changes/whatever)\n"
+	other := "* [other change](whatever)\n"
 	d := "## " + time.Now().Format(time.DateOnly) + "\n"
-	line := "* [a change](testdata/changes/alex)\n"
-	os.WriteFile("changes.md", []byte(intro+d+other+line), 0644)
+	line := "* [a change](alex)\n"
+	assert.NoError(t, os.MkdirAll("testdata/changes", 0755))
+	assert.NoError(t, os.WriteFile("testdata/changes/changes.md", []byte(intro+d+other+line), 0644))
 	p := &Page{Name: "testdata/changes/alex", Body: []byte(`Hallo!`)}
 	p.notify()
-	s, err := os.ReadFile("changes.md")
+	s, err := os.ReadFile("testdata/changes/changes.md")
 	assert.NoError(t, err)
-	new_line := "* [testdata/changes/alex](testdata/changes/alex)\n"
+	new_line := "* [testdata/changes/alex](alex)\n"
 	// the change was already listed, but now it moved up and has a new title
 	assert.Equal(t, intro+d+new_line+other, string(s))
 }
 
 func TestChangesWithNoChangeToTheOrder(t *testing.T) {
-	cleanup(t, "testdata/changes", "changes.md", "changes.md~")
+	cleanup(t, "testdata/changes")
 	intro := "# Changes\n\nThis is a paragraph.\n\n"
-	other := "* [other change](testdata/changes/whatever)\n"
-	line := "* [a change](testdata/changes/alex)\n"
 	d := "## " + time.Now().Format(time.DateOnly) + "\n"
-	os.WriteFile("changes.md", []byte(intro+d+line+other), 0644)
+	line := "* [a change](alex)\n"
+	other := "* [other change](whatever)\n"
+	assert.NoError(t, os.MkdirAll("testdata/changes", 0755))
+	assert.NoError(t, os.WriteFile("testdata/changes/changes.md", []byte(intro+d+line+other), 0644))
 	p := &Page{Name: "testdata/changes/alex", Body: []byte(`Hallo!`)}
 	p.notify()
-	s, err := os.ReadFile("changes.md")
+	s, err := os.ReadFile("testdata/changes/changes.md")
 	assert.NoError(t, err)
-	new_line := "* [testdata/changes/alex](testdata/changes/alex)\n"
+	new_line := "* [testdata/changes/alex](alex)\n"
 	// the change was already listed at the top, so just use the new title
 	assert.Equal(t, intro+d+new_line+other, string(s))
+	// since the file has changed, a backup was necessary
+	assert.FileExists(t, "testdata/changes/changes.md~")
 }
 
 func TestChangesWithNoChanges(t *testing.T) {
-	cleanup(t, "testdata/changes", "changes.md", "changes.md~")
+	cleanup(t, "testdata/changes")
 	intro := "# Changes\n\nThis is a paragraph.\n\n"
-	other := "* [other change](testdata/changes/whatever)\n"
-	line := "* [a change](testdata/changes/alex)\n"
 	d := "## " + time.Now().Format(time.DateOnly) + "\n"
-	os.Remove("changes.md~")
-	os.WriteFile("changes.md", []byte(intro+d+line+other), 0644)
+	line := "* [a change](alex)\n"
+	other := "* [other change](whatever)\n"
+	assert.NoError(t, os.MkdirAll("testdata/changes", 0755))
+	assert.NoError(t, os.WriteFile("testdata/changes/changes.md", []byte(intro+d+line+other), 0644))
 	p := &Page{Name: "testdata/changes/alex", Body: []byte("# a change\nHallo!")}
 	p.notify()
-	s, err := os.ReadFile("changes.md")
+	s, err := os.ReadFile("testdata/changes/changes.md")
 	assert.NoError(t, err)
 	// the change was already listed at the top, so no change was necessary
 	assert.Equal(t, intro+d+line+other, string(s))
 	// since the file hasn't changed, no backup was necessary
-	assert.NoFileExists(t, "changes.md~")
+	assert.NoFileExists(t, "testdata/changes/changes.md~")
 }

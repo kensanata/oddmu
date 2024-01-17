@@ -11,8 +11,8 @@ oddmu-static - create a static copy of the site
 # DESCRIPTION
 
 The "static" subcommand generates a static copy of the pages in the current
-directory and saves them in the given target directory. The target directory
-must not exist.
+directory and saves them in the given destination directory. The destination
+directory must not exist.
 
 All pages (files with the ".md" extension) are turned into HTML files (with the
 ".html" extension) using the "static.html" template. Links pointing to existing
@@ -27,7 +27,12 @@ GiB of JPG files and 0.02 GiB of Markdown files. There is no point in copying
 all those images, most of the time.
 
 Note, however: Hard links cannot span filesystems. A hard link is just an extra
-name for the same file. In-place editing changes the file for all names.
+name for the same file. This is why the destination directory for the static
+site has to be on same filesystem as the current directory, if it contains any
+other place.
+
+Furthermore, in-place editing changes the file for all names. Avoid editing the
+image files in the destination directory, just to be on the safe side.
 
 # EXAMPLE
 

@@ -37,27 +37,25 @@ func TestEditSave(t *testing.T) {
 }
 
 func TestEditSaveChanges(t *testing.T) {
-	cleanup(t, "testdata/notification", "changes.md")
-	restore(t, "index.md")
-	os.Remove("changes.md")
+	cleanup(t, "testdata/notification")
 	data := url.Values{}
 	data.Set("body", "Hallo!")
 	data.Add("notify", "on")
-	date := time.Now().Format("2006-01-02")
+	today := time.Now().Format("2006-01-02")
 	// Posting to the save URL saves a page
 	HTTPRedirectTo(t, makeHandler(saveHandler, true),
-		"POST", "/save/testdata/notification/" + date,
-		data, "/view/testdata/notification/" + date)
+		"POST", "/save/testdata/notification/" + today,
+		data, "/view/testdata/notification/" + today)
 	// The changes.md file was created
-	s, err := os.ReadFile("changes.md")
+	s, err := os.ReadFile("testdata/notification/changes.md")
 	assert.NoError(t, err)
 	d := time.Now().Format(time.DateOnly)
 	assert.Equal(t, "# Changes\n\n## "+d+
-		"\n* [testdata/notification/"+date+"](testdata/notification/"+date+")\n",
+		"\n* [testdata/notification/"+today+"]("+today+")\n",
 		string(s))
 	// Link added to index.md file
-	s, err = os.ReadFile("index.md")
+	s, err = os.ReadFile("testdata/notification/index.md")
 	assert.NoError(t, err)
-	assert.Contains(t, string(s),
-		"\n* [testdata/notification/"+date+"](testdata/notification/"+date+")\n")
+	// New index contains just the link
+	assert.Equal(t, string(s), "* [testdata/notification/"+today+"]("+today+")\n")
 }

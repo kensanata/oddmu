@@ -20,20 +20,22 @@ oddmu-notify - add links to changes.\&md, index.\&md, and hashtag pages
 The "notify" subcommand takes all the page names provided (without the ".\&md"
 extension) and adds links to it from other pages.\&
 .PP
-A new link is added to the \fBchanges\fR page if it doesn'\&t exist.\& The current date
-of the machine Oddmu is running on is used as the heading.\& If the requested link
-already exists on the changes page, it is moved up to the current date.\& If that
-leaves an old date without any links, that date heading is removed.\&
+A new link is added to the \fBchanges\fR page in the current directory if it doesn'\&t
+exist.\& The current date of the machine Oddmu is running on is used as the
+heading.\& If the requested link already exists on the changes page, it is moved
+up to the current date.\& If that leaves an old date without any links, that date
+heading is removed.\&
 .PP
 A page whose name starts with an ISO date (YYYY-MM-DD, e.\&g.\& "2023-10-28") is
 called a \fBblog\fR page.\&
 .PP
-A link is created from the \fBindex\fR page to blog pages if and only if the blog
-pages are from the current year.\& The idea is that the front page contains a lot
-of links to blog posts but eventually the blog post links are moved onto archive
-pages (one per year, for example), or simply deleted.\& As when editing older
-pages, links to those pages should not get added to the index as if those older
-pages were new again.\& A link on the changes page is enough.\&
+A link is created from the \fBindex\fR page in the current directory to blog pages
+if and only if the blog pages are from the current year.\& The idea is that the
+front page contains a lot of links to blog posts but eventually the blog post
+links are moved onto archive pages (one per year, for example), or simply
+deleted.\& As when editing older pages, links to those pages should not get added
+to the index as if those older pages were new again.\& A link on the changes page
+is enough.\&
 .PP
 For every \fBhashtag\fR used on the pages named, another link might be created.\& If a
 page named like the hashtag exists, a backlink is added to it.\& A hashtag
@@ -56,6 +58,44 @@ it exists):
 .nf
 .RS 4
 oddmu notify 2023-11-05-climate
+.fi
+.RE
+.PP
+The changes file might look as follows:
+.PP
+.nf
+.RS 4
+# Changes
+
+This page lists all the changes made to the wiki\&.
+
+## 2023-11-05
+
+* [Global warming](2023-11-05-climate)
+.fi
+.RE
+.PP
+The index file might look as follows:
+.PP
+.nf
+.RS 4
+# Blog
+
+This page links to all the blog posts\&.
+
+* [Global warming](2023-11-05-climate)
+.fi
+.RE
+.PP
+The hashtag file might look as follows:
+.PP
+.nf
+.RS 4
+# Climate
+
+This page links to all the blog posts tagged #Climate\&.
+
+* [Global warming](2023-11-05-climate)
 .fi
 .RE
 .PP
