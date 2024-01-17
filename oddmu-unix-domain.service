@@ -1,0 +1,53 @@
+[Unit]
+Description=Oddmu
+After=network.target
+Requires=oddmu-unix-domain.socket
+[Install]
+WantedBy=multi-user.target
+[Service]
+Type=simple
+Restart=always
+StandardInput=socket
+StandardOutput=journal
+StandardError=journal
+DynamicUser=true
+MemoryMax=256M
+MemoryHigh=128M
+ExecStart=/home/oddmu/oddmu
+WorkingDirectory=/home/oddmu
+Environment="ODDMU_PORT=8080"
+Environment="ODDMU_WEBFINGER=1"
+
+# (man "systemd.exec")
+ReadWritePaths=/home/oddmu
+ProtectHostname=yes
+RestrictSUIDSGID=yes
+RemoveIPC=yes
+MemoryDenyWriteExecute=yes
+
+# Sandboxing options to harden security
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictNamespaces=yes
+RestrictRealtime=yes
+DevicePolicy=closed
+ProtectSystem=full
+ProtectControlGroups=yes
+ProtectKernelModules=yes
+ProtectKernelTunables=yes
+LockPersonality=yes
+SystemCallFilter=~@clock @debug @module @mount @obsolete @reboot @setuid @swap
+
+# Denying access to capabilities that should not be relevant
+# (man "capabilities")
+CapabilityBoundingSet=~CAP_RAWIO CAP_MKNOD
+CapabilityBoundingSet=~CAP_AUDIT_CONTROL CAP_AUDIT_READ CAP_AUDIT_WRITE
+CapabilityBoundingSet=~CAP_SYS_BOOT CAP_SYS_TIME CAP_SYS_MODULE CAP_SYS_PACCT
+CapabilityBoundingSet=~CAP_LEASE CAP_LINUX_IMMUTABLE CAP_IPC_LOCK
+CapabilityBoundingSet=~CAP_BLOCK_SUSPEND CAP_WAKE_ALARM
+CapabilityBoundingSet=~CAP_SYS_TTY_CONFIG
+CapabilityBoundingSet=~CAP_MAC_ADMIN CAP_MAC_OVERRIDE
+CapabilityBoundingSet=~CAP_NET_ADMIN CAP_NET_BROADCAST CAP_NET_RAW
+CapabilityBoundingSet=~CAP_SYS_ADMIN CAP_SYS_PTRACE CAP_SYSLOG

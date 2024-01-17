@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"flag"
 	"fmt"
 	"github.com/google/subcommands"
@@ -70,29 +69,35 @@ func getPort() string {
 	return port
 }
 
-// getListener returns a net.Listener listening on the address from ODDMU_ADDRESS and the port from ODDMU_PORT.
-// ODDMU_ADDRESS may be either an IPV4 address, an IPv6 address, or the path to a Unix-domain socket. In the latter
-// case, the value of ODDMU_PORT is ignored, because it is not applicable. If ODDMU_ADDRESS is unspecified, then the
-// listener listens on all available unicast addresses, both IPv4 and IPv6. When ODDMU_ADDRESS contains a / it is taken
-// to be the path of a Unix domain socket.
+// When stdin is a socket, getListener returns a listener that listens
+// on the socket passed as stdin.  This allows systemd-style socket
+// activation.
+// Otherwise, getListener returns a net.Listener listening on the address from
+// ODDMU_ADDRESS and the port from ODDMU_PORT.
+// ODDMU_ADDRESS may be either an IPV4 address or an IPv6 address.
+// If ODDMU_ADDRESS is unspecified, then the
+// listener listens on all available unicast addresses, both IPv4 and IPv6.
 func getListener() (net.Listener, error) {
-	family := "tcp"
 	address := os.Getenv("ODDMU_ADDRESS")
 	port := getPort()
-	if strings.ContainsRune(address, '/') {
-		family = "unix"
-		// Remove stale Unix-domain socket. ENOENT is ignored, and often expected.
-		err := os.Remove(address)
-		if err != nil && !errors.Is(err, fs.ErrNotExist) {
-			return nil, err
-		}
-	} else if strings.ContainsRune(address, ':') {
+
+	stat, err := os.Stdin.Stat()
+	if stat == nil {
+		return nil, err
+	}
+	if stat.Mode().Type() == fs.ModeSocket {
+		// Listening socket passed on stdin, through systemd socket
+		// activation or similar:
+		log.Println("Serving a wiki on a listening socket passed by systemd.")
+		return net.FileListener(os.Stdin)
+	}
+	if strings.ContainsRune(address, ':') {
 		address = fmt.Sprintf("[%s]:%s", address, port)
 	} else {
 		address = fmt.Sprintf("%s:%s", address, port)
 	}
 	log.Printf("Serving a wiki at address %s", address)
-	return net.Listen(family, address)
+	return net.Listen("tcp", address)
 }
 
 // scheduleLoadIndex calls index.load and prints some messages before and after. For testing, call index.load directly

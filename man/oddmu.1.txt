@@ -54,16 +54,13 @@ See _oddmu-templates_(5) for more.
 You can change the port served by setting the ODDMU_PORT environment variable.
 
 You can change the address served by setting the ODDMU_ADDRESS environment
-variable.  This is very flexible; you can have oddmu serve on an IPV4
-address, an IPv6 address, or a Unix-domain socket.  Using a Unix-domain
-socket requires support from the web server you are using as a reverse proxy.
-Lighttpd, Nginx, and Apache are known to support reverse proxying HTTP over a
-Unix-domain socket.
+variable to either an IPv4 address or an IPv6 address.
 If ODDMU_ADDRESS is unset, then the program listens on all available
 unicast addresses, both IPv4 and IPv6.
+See the Socket Activation section for an alternative method of listening
+which supports Unix-domain sockets.
 Here are a few example addresses.
 
-ODDMU_ADDRESS=/run/oddmu/oddmu.sock  # Unix-domain (AKA AF_LOCAL) socket.
 ODDMU_ADDRESS=127.0.0.1 # The loopback IPv4 address.
 ODDMU_ADDRESS=2001:db8::3:1 # An IPv6 address.
 
@@ -73,6 +70,16 @@ codes, e.g. "en" or "en,de,fr,pt".
 
 You can enable webfinger to link fediverse accounts to their correct profile
 pages by setting ODDMU_WEBFINGER to "1". See _oddmu_(5).
+
+# Socket Activation
+
+Instead of specifying ODDMU_ADDRESS or ODDMU_PORT, you can start the
+service through socket activation.  The advantage of this method is
+that you can use a Unix-domain socket instead of a TCP socket, and the
+permissions and ownership of the socket are set before the program
+starts.  See _oddmu.service_(5) and _oddmu-apache_(5) for an example
+of how to use socket activation with a Unix-domain socket under
+systemd and Apache.
 
 # SECURITY
 

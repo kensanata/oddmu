@@ -1,0 +1,14 @@
+[Unit]
+Description=Oddmu server socket
+
+[Socket]
+ListenStream=/run/oddmu/oddmu.sock
+SocketGroup=www-data
+# Systemd manages the socket, so may as well let it be owned by root.
+SocketUser=root
+# But it needs to be readable and writable by the web server.
+SocketMode=0660
+Accept=no
+
+[Install]
+WantedBy=sockets.target
