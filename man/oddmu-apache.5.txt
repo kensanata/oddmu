@@ -68,19 +68,19 @@ and "RewriteRule".
 
 ## Using a Unix-domain Socket
 
-Instead of having oddmu listen on a TCP port, you can have it listen on
-a  Unix-domain socket.  This requires socket activation.  An example of
-configuring the service is given in _oddmu.service(5)_.
+Instead of having Oddmu listen on a TCP port, you can have it listen on a
+Unix-domain socket. This requires socket activation. An example of configuring
+the service is given in _oddmu.service(5)_.
 
-On the Apache side, you only need to change ProxyMatch directives.
-For instance:
+On the Apache side, you only need to change ProxyMatch directives. For instance:
 
 ```
-    ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search)/(.*))?$" "unix:/run/oddmu/oddmu.sock|http://localhost/$1"
+ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search)/(.*))?$" \
+               "unix:/run/oddmu/oddmu.sock|http://localhost/$1"
 ```
 
-Now, all traffic between the web server and the wiki goes over the socket
-at /run/oddmu/oddmu.sock.
+Now, all traffic between the web server and the wiki goes over the socket at
+"/run/oddmu/oddmu.sock".
 
 ## Access
 
