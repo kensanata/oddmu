@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-APACHE" "5" "2024-01-17"
+.TH "ODDMU-APACHE" "5" "2024-01-27"
 .PP
 .SH NAME
 .PP
@@ -40,13 +40,14 @@ MDCertificateAgreement accepted
 <VirtualHost *:80>
     ServerName transjovian\&.org
     RewriteEngine on
-    RewriteRule ^/(\&.*) https://%{HTTP_HOST}/$1 [redirect]
+    RewriteRule    "^/(\&.*)" "https://%{HTTP_HOST}/$1" [redirect]
 </VirtualHost>
 <VirtualHost *:443>
     ServerAdmin alex@alexschroeder\&.ch
     ServerName transjovian\&.org
     SSLEngine on
-    ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search)/(\&.*))?$" "http://localhost:8080/$1"
+    ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search)/(\&.*))?$" 
+                   "http://localhost:8080/$1"
 </VirtualHost>
 .fi
 .RE
@@ -83,13 +84,72 @@ second – instead just proxy to the wiki like you did for the second virtual
 host: use a copy of the "ProxyPassMatch" directive instead of "RewriteEngine on"
 and "RewriteRule".\&
 .PP
+.SS Allow HTTP for viewing
+.PP
+When looking at pages, you might want to allow HTTP since no password is
+required.\&
+.PP
+.nf
+.RS 4
+MDomain transjovian\&.org
+MDCertificateAgreement accepted
+
+<VirtualHost *:80>
+    ServerName transjovian\&.org
+    RewriteEngine on
+    ProxyPassMatch "^/((view|diff|search)/(\&.*))?$" 
+                   "http://localhost:8080/$1"
+    RewriteRule    "^/((edit|save|add|append|upload|drop)/(\&.*))?$" 
+                   "https://%{HTTP_HOST}/$1" [redirect]
+</VirtualHost>
+<VirtualHost *:443>
+    ServerAdmin alex@alexschroeder\&.ch
+    ServerName transjovian\&.org
+    SSLEngine on
+    ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search)/(\&.*))?$" 
+                   "http://localhost:8080/$1"
+</VirtualHost>
+.fi
+.RE
+.PP
 .SS Using a Unix-domain Socket
 .PP
 Instead of having Oddmu listen on a TCP port, you can have it listen on a
 Unix-domain socket.\& This requires socket activation.\& An example of configuring
 the service is given in \fIoddmu.\&service(5)\fR.\&
 .PP
-On the Apache side, you only need to change ProxyMatch directives.\& For instance:
+To test just the unix domain socket, use \fIncat(1)\fR:
+.PP
+.nf
+.RS 4
+echo -e "GET /view/index HTTP/1\&.1rnHost: localhostrnrn" 
+  | ncat --unixsock /run/oddmu/oddmu\&.sock
+.fi
+.RE
+.PP
+On the Apache side, you can proxy to the socket directly.\& This sends all
+requests to the socket:
+.PP
+.nf
+.RS 4
+ProxyPass "/" "unix:/run/oddmu/oddmu\&.sock|http://localhost/"
+.fi
+.RE
+.PP
+Now, all traffic between the web server and the wiki goes over the socket at
+"/run/oddmu/oddmu.\&sock".\&
+.PP
+To test it on the command-line, use a tool like \fIcurl(1)\fR.\& Make sure to provide
+the correct servername!\&
+.PP
+.nf
+.RS 4
+curl http://transjovian\&.org/view/index
+.fi
+.RE
+.PP
+You probably want to serve some static files as well (see \fBServe static files\fR).\&
+In that case, you need to use the ProxyPassMatch directive.\&
 .PP
 .nf
 .RS 4
@@ -98,8 +158,24 @@ ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search)/(\&.*))?$
 .fi
 .RE
 .PP
-Now, all traffic between the web server and the wiki goes over the socket at
-"/run/oddmu/oddmu.\&sock".\&
+There'\&s a curious problem with this expression, however.\& If you use \fIcurl(1)\fR to
+get the root path, Apache hangs:
+.PP
+.nf
+.RS 4
+curl http://transjovian\&.org/
+.fi
+.RE
+.PP
+A workaround is to add the redirect manually and drop the question-mark:
+.PP
+.nf
+.RS 4
+RedirectMatch "^/$" "/view/index"
+ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search)/(\&.*))$" 
+               "unix:/run/oddmu/oddmu\&.sock|http://localhost/$1"
+.fi
+.RE
 .PP
 .SS Access
 .PP
