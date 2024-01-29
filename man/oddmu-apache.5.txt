@@ -218,6 +218,26 @@ without needing a wiki page.
 Another option would be to create a CSS file and use it with a <link> element in
 all the templates instead of relying on the <style> element.
 
+The "view.html" template would start as follows:
+
+```
+<!DOCTYPE html>
+<html lang="{{.Language}}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width">
+    <title>{{.Title}}</title>
+    <link href="/css/oddmu-2023.css" rel="stylesheet" />
+    <link rel="alternate" type="application/rss+xml" title="Alex Schroeder: {{.Title}}" href="/view/{{.Name}}.rss" />
+  </head>
+…
+```
+
+In this case, "/css/oddmu-2023.css" would be the name of your stylesheet. If
+your document root is "/home/oddmu", then the filename of your stylesheet would
+have to be "/home/oddmu/css/oddmu-2023.css" for this to work.
+
 ## Different logins for different access rights
 
 What if you have a site with various subdirectories and each subdirectory is for
