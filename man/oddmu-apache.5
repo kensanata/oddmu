@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-APACHE" "5" "2024-01-27"
+.TH "ODDMU-APACHE" "5" "2024-01-29"
 .PP
 .SH NAME
 .PP
@@ -28,26 +28,28 @@ HTTPS is not part of Oddmu.\& You probably want to configure this in your
 webserver.\& I guess you could use stunnel, too.\& If you'\&re using Apache, you can
 use "mod_md" to manage your domain.\&
 .PP
-In the example below, the site is configured in a file called
-"/etc/apache2/sites-available/500-transjovian.\&conf" and a link poins there from
+The examples below use the domain "transjovian.\&org" and the Apache installation
+is the one that comes with Debian.\&
+.PP
+The site itself is configured in a file called
+"/etc/apache2/sites-available/transjovian.\&conf" and a link points there from
 "/etc/apache2/sites-enabled".\& Create this link using \fIa2ensite\fR(1).\&
 .PP
 .nf
 .RS 4
 MDomain transjovian\&.org
 MDCertificateAgreement accepted
+ServerAdmin alex@alexschroeder\&.ch
 
 <VirtualHost *:80>
-    ServerName transjovian\&.org
-    RewriteEngine on
-    RewriteRule    "^/(\&.*)" "https://%{HTTP_HOST}/$1" [redirect]
+  ServerName transjovian\&.org
+  Redirect "/" "https://transjovian\&.org/"
 </VirtualHost>
 <VirtualHost *:443>
-    ServerAdmin alex@alexschroeder\&.ch
-    ServerName transjovian\&.org
-    SSLEngine on
-    ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search)/(\&.*))?$" 
-                   "http://localhost:8080/$1"
+  ServerName transjovian\&.org
+  SSLEngine on
+  ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search)/(\&.*))?$" 
+                 "http://localhost:8080/$1"
 </VirtualHost>
 .fi
 .RE
@@ -56,7 +58,7 @@ First, it manages the domain, getting the necessary certificates.\& It redirects
 regular HTTP traffic from port 80 to port 443.\& It turns on the SSL engine for
 port 443.\& It proxies the requests for Oddmu to port 8080.\& Importantly, it
 doesn'\&t send \fIall\fR the requests to Oddmu.\& This allows us to still host static
-files using the web server.\&
+files using the web server (see \fBServe static files\fR).\&
 .PP
 This is what happens:
 .PP
@@ -79,35 +81,30 @@ apachectl graceful
 .fi
 .RE
 .PP
-To serve both HTTP and HTTPS, don'\&t redirect from the first virtual host to the
-second – instead just proxy to the wiki like you did for the second virtual
-host: use a copy of the "ProxyPassMatch" directive instead of "RewriteEngine on"
-and "RewriteRule".\&
-.PP
 .SS Allow HTTP for viewing
 .PP
 When looking at pages, you might want to allow HTTP since no password is
-required.\&
+required.\& Therefore, proxy the read-only requests from the virtual host on port
+80 to the wiki instead of redirecting them to port 443.\&
 .PP
 .nf
 .RS 4
 MDomain transjovian\&.org
 MDCertificateAgreement accepted
+ServerAdmin alex@alexschroeder\&.ch
 
 <VirtualHost *:80>
-    ServerName transjovian\&.org
-    RewriteEngine on
-    ProxyPassMatch "^/((view|diff|search)/(\&.*))?$" 
-                   "http://localhost:8080/$1"
-    RewriteRule    "^/((edit|save|add|append|upload|drop)/(\&.*))?$" 
-                   "https://%{HTTP_HOST}/$1" [redirect]
+  ServerName transjovian\&.org
+  ProxyPassMatch "^/((view|diff|search)/(\&.*))?$" 
+                 "http://localhost:8080/$1"
+  RedirectMatch  "^/((edit|save|add|append|upload|drop)/(\&.*))?$" 
+                 "https://transjovian\&.org/$1"
 </VirtualHost>
 <VirtualHost *:443>
-    ServerAdmin alex@alexschroeder\&.ch
-    ServerName transjovian\&.org
-    SSLEngine on
-    ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search)/(\&.*))?$" 
-                   "http://localhost:8080/$1"
+  ServerName transjovian\&.org
+  SSLEngine on
+  ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search)/(\&.*))?$" 
+                 "http://localhost:8080/$1"
 </VirtualHost>
 .fi
 .RE
@@ -177,11 +174,13 @@ ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search)/(\&.*))$"
 .fi
 .RE
 .PP
+If you know why this is happening, let me know.\&
+.PP
 .SS Access
 .PP
 Access control is not part of Oddmu.\& By default, the wiki is editable by all.\&
 This is most likely not what you want unless you'\&re running it stand-alone,
-unconnected to the Internet – a person memex on your laptop, for example.\&
+unconnected to the Internet – a personal memex on your laptop, for example.\&
 .PP
 The following instructions create user accounts with passwords just for Oddmu.\&
 These users are not real users on the web server and don'\&t have access to a
@@ -239,7 +238,7 @@ data files are.\& Apache does not serve files such as ".\&htpasswd".\&
 .RS 4
 DocumentRoot /home/oddmu
 <Directory /home/oddmu>
-    Require all granted
+  Require all granted
 </Directory>
 .fi
 .RE
@@ -256,8 +255,8 @@ Disallow: /
 .fi
 .RE
 .PP
-You site now serves "/robots.\&txt" without interfering with the wiki, and without
-needing a wiki page.\&
+Your site now serves "/robots.\&txt" without interfering with the wiki, and
+without needing a wiki page.\&
 .PP
 Another option would be to create a CSS file and use it with a <link> element in
 all the templates instead of relying on the <style> element.\&

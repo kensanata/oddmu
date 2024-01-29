@@ -149,7 +149,7 @@ If you know why this is happening, let me know.
 
 Access control is not part of Oddmu. By default, the wiki is editable by all.
 This is most likely not what you want unless you're running it stand-alone,
-unconnected to the Internet – a person memex on your laptop, for example.
+unconnected to the Internet – a personal memex on your laptop, for example.
 
 The following instructions create user accounts with passwords just for Oddmu.
 These users are not real users on the web server and don't have access to a
