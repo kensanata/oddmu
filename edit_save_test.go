@@ -59,3 +59,16 @@ func TestEditSaveChanges(t *testing.T) {
 	// New index contains just the link
 	assert.Equal(t, string(s), "* [testdata/notification/"+today+"]("+today+")\n")
 }
+
+// Test the following view.html:
+// <form action="/edit/" method="GET">
+//   <label for="id">New page:</label>
+//   <input id="id" type="text" spellcheck="false" name="id" accesskey="g" value="{{.Dir}}/{{.Today}}" required>
+//   <button>Edit</button>
+// </form>
+func TestEditId(t *testing.T) {
+	cleanup(t, "testdata/id")
+	assert.Contains(t, assert.HTTPBody(makeHandler(editHandler, true),
+		"GET", "/edit/?id=testdata/id/alex", nil),
+		"Editing testdata/id/alex")
+}
