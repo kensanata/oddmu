@@ -25,7 +25,8 @@ func TestUpload(t *testing.T) {
 	assert.NoError(t, err)
 	file, err := writer.CreateFormFile("file", "example.txt")
 	assert.NoError(t, err)
-	file.Write([]byte("Hello!"))
+	_, err = file.Write([]byte("Hello!"))
+	assert.NoError(t, err)
 	err = writer.Close()
 	assert.NoError(t, err)
 	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/files/",
