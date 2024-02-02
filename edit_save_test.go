@@ -44,8 +44,8 @@ func TestEditSaveChanges(t *testing.T) {
 	today := time.Now().Format("2006-01-02")
 	// Posting to the save URL saves a page
 	HTTPRedirectTo(t, makeHandler(saveHandler, true),
-		"POST", "/save/testdata/notification/" + today,
-		data, "/view/testdata/notification/" + today)
+		"POST", "/save/testdata/notification/"+today,
+		data, "/view/testdata/notification/"+today)
 	// The changes.md file was created
 	s, err := os.ReadFile("testdata/notification/changes.md")
 	assert.NoError(t, err)
@@ -62,9 +62,11 @@ func TestEditSaveChanges(t *testing.T) {
 
 // Test the following view.html:
 // <form action="/edit/" method="GET">
-//   <label for="id">New page:</label>
-//   <input id="id" type="text" spellcheck="false" name="id" accesskey="g" value="{{.Dir}}/{{.Today}}" required>
-//   <button>Edit</button>
+//
+//	<label for="id">New page:</label>
+//	<input id="id" type="text" spellcheck="false" name="id" accesskey="g" value="{{.Dir}}/{{.Today}}" required>
+//	<button>Edit</button>
+//
 // </form>
 func TestEditId(t *testing.T) {
 	cleanup(t, "testdata/id")

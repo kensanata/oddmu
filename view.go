@@ -11,7 +11,7 @@ import (
 // rootHandler just redirects to /view/index. The root handler handles requests to the root path, and – implicity – all
 // unhandled request. Thus, if the URL path is not "/", return a 404 NOT FOUND response.
 func rootHandler(w http.ResponseWriter, r *http.Request) {
-	if (r.URL.Path != "/") {
+	if r.URL.Path != "/" {
 		http.NotFound(w, r)
 	} else {
 		http.Redirect(w, r, "/view/index", http.StatusFound)

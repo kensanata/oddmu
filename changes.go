@@ -151,7 +151,7 @@ func addLinkWithDate(name, link string, re *regexp.Regexp) error {
 func addLink(name string, mandatory bool, link string, re *regexp.Regexp) error {
 	c, err := loadPage(name)
 	if err != nil {
-		if (mandatory) {
+		if mandatory {
 			c = &Page{Name: name, Body: []byte(link)}
 			return c.save()
 		} else {

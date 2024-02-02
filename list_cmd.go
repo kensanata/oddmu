@@ -51,7 +51,7 @@ func listCli(w io.Writer, dir string, args []string) subcommands.ExitStatus {
 }
 
 // checkDir returns an error if the directory doesn't exist. If if exists, it returns a copy ending in a slash.
-func checkDir (dir string) (string, error) {
+func checkDir(dir string) (string, error) {
 	if dir != "" {
 		fi, err := os.Stat(dir)
 		if err != nil {
@@ -62,8 +62,8 @@ func checkDir (dir string) (string, error) {
 			fmt.Println("This is not a sub-directory:", dir)
 			return "", err
 		}
-		dir = filepath.ToSlash(dir);
-		if (!strings.HasSuffix(dir, "/")) {
+		dir = filepath.ToSlash(dir)
+		if !strings.HasSuffix(dir, "/") {
 			dir += "/"
 		}
 	}

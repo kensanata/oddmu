@@ -49,19 +49,19 @@ func staticCli(dir string, quiet bool) subcommands.ExitStatus {
 		return subcommands.ExitFailure
 	}
 	initAccounts()
-	if (!quiet) {
+	if !quiet {
 		fmt.Printf("Loaded %d languages\n", loadLanguages())
 	}
 	templates := loadTemplates()
-	n := 0;
+	n := 0
 	err = filepath.Walk(".", func(path string, info fs.FileInfo, err error) error {
 		n++
-		if (!quiet && (n < 100 || n < 1000 && n % 10 == 0 || n % 100 == 0)) {
+		if !quiet && (n < 100 || n < 1000 && n%10 == 0 || n%100 == 0) {
 			fmt.Fprintf(os.Stdout, "\r%d", n)
 		}
 		return staticFile(path, dir, info, templates, err)
 	})
-	if (!quiet) {
+	if !quiet {
 		fmt.Printf("\r%d\n", n)
 	}
 	if err != nil {
