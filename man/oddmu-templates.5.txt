@@ -17,6 +17,9 @@ extension.
 
 _{{.Dir}}_ is the page directory, percent-escaped except for the slashes.
 
+_{{.Base}}_ is the basename of the current file (without the directory and
+without the _.md_ extension), escaped for use in URLs.
+
 _{{.Today}}_ is the current date, in ISO format. This is useful for "new page"
 like links or forms (see *EXAMPLE* below).
 
@@ -92,10 +95,18 @@ curl --form body="Did you bring a towel?" \
   http://localhost:8080/save/welcome
 ```
 
-When calling the _search_ action, the query is taken from the URL parameter _q_.
+When calling the _search_ action, the query is taken from the query parameter _q_.
 
 ```
-curl http://localhost:8080/search/?q=towel
+curl 'http://localhost:8080/search/?q=towel'
+```
+
+The page name to act upon is optionally taken from the query parameter _id_. In
+this case, the directory must also be part of the query parameter and not of the
+URL path.
+
+```
+curl 'http://localhost:8080/view/?id=man/oddmu.1.txt'
 ```
 
 ## Non-English hyphenation

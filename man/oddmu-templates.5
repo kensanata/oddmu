@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-TEMPLATES" "5" "2024-01-29" "File Formats Manual"
+.TH "ODDMU-TEMPLATES" "5" "2024-02-03" "File Formats Manual"
 .PP
 .SH NAME
 .PP
@@ -23,6 +23,9 @@ percent-escaped except for the slashes.\& The page name doesn'\&t include the \f
 extension.\&
 .PP
 \fI{{.\&Dir}}\fR is the page directory, percent-escaped except for the slashes.\&
+.PP
+\fI{{.\&Base}}\fR is the basename of the current file (without the directory and
+without the \fI.\&md\fR extension), escaped for use in URLs.\&
 .PP
 \fI{{.\&Today}}\fR is the current date, in ISO format.\& This is useful for "new page"
 like links or forms (see \fBEXAMPLE\fR below).\&
@@ -101,11 +104,21 @@ curl --form body="Did you bring a towel?"
 .fi
 .RE
 .PP
-When calling the \fIsearch\fR action, the query is taken from the URL parameter \fIq\fR.\&
+When calling the \fIsearch\fR action, the query is taken from the query parameter \fIq\fR.\&
 .PP
 .nf
 .RS 4
-curl http://localhost:8080/search/?q=towel
+curl \&'http://localhost:8080/search/?q=towel\&'
+.fi
+.RE
+.PP
+The page name to act upon is optionally taken from the query parameter \fIid\fR.\& In
+this case, the directory must also be part of the query parameter and not of the
+URL path.\&
+.PP
+.nf
+.RS 4
+curl \&'http://localhost:8080/view/?id=man/oddmu\&.1\&.txt\&'
 .fi
 .RE
 .PP
