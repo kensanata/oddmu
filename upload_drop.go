@@ -41,8 +41,10 @@ func uploadHandler(w http.ResponseWriter, r *http.Request, dir string) {
 	if quality != "" {
 		data.Quality = quality
 	}
-	last := r.FormValue("last")
-	if last != "" {
+	name := r.FormValue("filename")
+	if name != "" {
+		data.Name = name
+	} else if last := r.FormValue("last"); last != "" {
 		ext := strings.ToLower(filepath.Ext(last))
 		switch ext {
 		case ".png", ".jpg", ".jpeg":

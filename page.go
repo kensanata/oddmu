@@ -154,6 +154,16 @@ func (p *Page) Dir() string {
 	return d + "/"
 }
 
+// Base returns the basename of the page name: no directory and no extension. This is used to create the upload link
+// in "view.html", for example.
+func (p *Page) Base() string {
+	n := filepath.Base(p.Name)
+	if n == "." {
+		return ""
+	}
+	return n
+}
+
 // Today returns the date, as a string, for use in templates.
 func (p *Page) Today() string {
 	return time.Now().Format(time.DateOnly)
