@@ -34,7 +34,7 @@ var templateFiles = []string{"edit.html", "add.html", "view.html",
 	"diff.html", "search.html", "static.html", "upload.html", "feed.html"}
 
 // templates are the parsed HTML templates used. See renderTemplate and loadTemplates.
-var templates *template.Template
+var templates map[string]*template.Template
 
 // loadTemplates loads the templates. These aren't always required. If the templates are required and cannot be loaded,
 // this a fatal error and the program exits. Also start a watcher for these templates so that they are reloaded when
@@ -43,12 +43,15 @@ func loadTemplates() {
 	if (templates != nil) {
 		return;
 	}
-	t, err := template.ParseFiles(templateFiles...)
-	if err != nil {
-		log.Println("Templates:", err)
-		os.Exit(1)
+	templates = make(map[string]*template.Template)
+	for _, filename := range templateFiles {
+		t, err := template.ParseFiles(filename)
+		if err != nil {
+			log.Println("Cannot parse:", filename, err)
+			os.Exit(1)
+		}
+		templates[filename] = t
 	}
-	templates = t
 	// create a watcher for the directory containing the templates (and never close it)
 	w, err := fsnotify.NewWatcher()
 	if err != nil {
@@ -108,11 +111,13 @@ func watch(w *fsnotify.Watcher) {
 					for f, t := range todo.files {
 						if (t.Add(time.Second).Before(time.Now().Add(time.Nanosecond))) {
 							delete(todo.files, f)
-							_, err := templates.ParseFiles(f);
+							t, err := template.ParseFiles(f)
 							if (err != nil) {
-								log.Println("Templates:", err)
+								log.Println("Template:", f, err)
+							} else {
+								templates[f[2:]] = t
+								log.Println("Parsed", f)
 							}
-							log.Println("Parsed", f)
 						}
 					}
 				}()
@@ -125,7 +130,7 @@ func watch(w *fsnotify.Watcher) {
 // fatal.
 func renderTemplate(w http.ResponseWriter, tmpl string, data any) {
 	loadTemplates()
-	err := templates.ExecuteTemplate(w, tmpl+".html", data)
+	err := templates[tmpl+".html"].Execute(w, data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}

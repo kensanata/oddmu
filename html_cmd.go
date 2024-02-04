@@ -42,7 +42,7 @@ func htmlCli(w io.Writer, useTemplate bool, args []string) subcommands.ExitStatu
 			p.renderHtml()
 			t := "view.html"
 			loadTemplates()
-			err := templates.ExecuteTemplate(w, t, p)
+			err := templates[t].Execute(w, p)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "Cannot execute %s template for %s: %s\n", t, arg, err)
 				return subcommands.ExitFailure
