@@ -155,7 +155,7 @@ The following form allows people to edit the suggested page name.
 
 # NOTES
 
-The template are always used as-is, irrespective of the current directory.
+The templates are always used as-is, irrespective of the current directory.
 Therefore, a link to a specific page must be _absolute_ or it'll point to a
 different page depending on the current directory.
 
@@ -165,6 +165,11 @@ instead, it takes a visitor to the "index" page of the current directory.
 
 Example: If a visitor is looking at "/view/projects/wiki" and follows a link to
 "index", they end up on "/view/projects/index", not on "/view/index".
+
+It's up to you to decide what's best for your site, of course.
+
+Note also that the templates can be changed by uploading new copies of the
+files.
 
 # SEE ALSO
 
