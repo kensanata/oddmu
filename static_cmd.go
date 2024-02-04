@@ -52,7 +52,7 @@ func staticCli(dir string, quiet bool) subcommands.ExitStatus {
 	if !quiet {
 		fmt.Printf("Loaded %d languages\n", loadLanguages())
 	}
-	templates := loadTemplates()
+	loadTemplates()
 	n := 0
 	err = filepath.Walk(".", func(path string, info fs.FileInfo, err error) error {
 		n++

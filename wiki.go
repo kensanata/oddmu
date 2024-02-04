@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"github.com/fsnotify/fsnotify"
 	"github.com/google/subcommands"
 	"html/template"
 	"io/fs"
@@ -12,7 +13,10 @@ import (
 	"net/http"
 	"os"
 	"regexp"
+	"slices"
 	"strings"
+	"sync"
+	"time"
 )
 
 // validPath is a regular expression where the second group matches a page, so when the editHandler is called, a URL
@@ -25,10 +29,93 @@ var validPath = regexp.MustCompile("^/([^/]+)/(.*)$")
 // instead.
 var titleRegexp = regexp.MustCompile("(?m)^#\\s*(.*)\n+")
 
-// renderTemplate is the helper that is used render the templates with data. If the templates cannot be found, that's
+// templateFiles are the various HTML template files used.
+var templateFiles = []string{"edit.html", "add.html", "view.html",
+	"diff.html", "search.html", "static.html", "upload.html", "feed.html"}
+
+// templates are the parsed HTML templates used. See renderTemplate and loadTemplates.
+var templates *template.Template
+
+// loadTemplates loads the templates. These aren't always required. If the templates are required and cannot be loaded,
+// this a fatal error and the program exits. Also start a watcher for these templates so that they are reloaded when
+// they are changed.
+func loadTemplates() {
+	if (templates != nil) {
+		return;
+	}
+	t, err := template.ParseFiles(templateFiles...)
+	if err != nil {
+		log.Println("Templates:", err)
+		os.Exit(1)
+	}
+	templates = t
+	// create a watcher for the directory containing the templates (and never close it)
+	w, err := fsnotify.NewWatcher()
+	if err != nil {
+		log.Println("Creating a watcher for the templates:", err)
+	}
+	go watch(w)
+	err = w.Add(".")
+	if err != nil {
+		log.Println("Add root directory to the watcher for the templates:", err)
+	}
+}
+
+type Todo struct {
+	sync.RWMutex
+	files map[string]time.Time
+}
+
+// watch reloads templates that have changed. Since there can be multiple writes to a template file, there's a 1s delay
+// before a template file is actually reloaded.
+func watch(w *fsnotify.Watcher) {
+	var todo Todo;
+	todo.files = make(map[string]time.Time)
+	for {
+		select {
+		// Read from Errors.
+		case err, ok := <-w.Errors:
+			if !ok { // Channel was closed (i.e. Watcher.Close() was called).
+				return
+			}
+			log.Println("Watcher:", err)
+		// Read from Events.
+		case e, ok := <-w.Events:
+			if !ok { // Channel was closed (i.e. Watcher.Close() was called).
+				return
+			}
+			if (strings.HasSuffix(e.Name, ".html") &&
+				strings.HasPrefix(e.Name, "./") &&
+				slices.Contains(templateFiles, e.Name[2:]) &&
+				e.Op.Has(fsnotify.Write)) {
+				todo.Lock()
+				todo.files[e.Name] = time.Now()
+				todo.Unlock()
+				timer := time.NewTimer(time.Second)
+				go func() {
+					<- timer.C
+					todo.Lock()
+					defer todo.Unlock()
+					for f, t := range todo.files {
+						if (t.Add(time.Second).Before(time.Now().Add(time.Nanosecond))) {
+							delete(todo.files, f)
+							_, err := templates.ParseFiles(f);
+							if (err != nil) {
+								log.Println("Templates:", err)
+							}
+							log.Println("Parsed", f)
+						}
+					}
+				}()
+			}
+		}
+	}
+}
+
+// renderTemplate is the helper that is used to render the templates with data. If the templates cannot be found, that's
 // fatal.
 func renderTemplate(w http.ResponseWriter, tmpl string, data any) {
-	templates := loadTemplates()
+	loadTemplates()
 	err := templates.ExecuteTemplate(w, tmpl+".html", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -118,18 +205,6 @@ func scheduleLoadLanguages() {
 	log.Print("Loading languages")
 	n := loadLanguages()
 	log.Printf("Loaded %d languages", n)
-}
-
-// loadTemplates loads the templates. These aren't always required. If the templates are required and cannot be loaded,
-// this a fatal error and the program exits.
-func loadTemplates() *template.Template {
-	templates, err := template.ParseFiles("edit.html", "add.html", "view.html",
-		"diff.html", "search.html", "static.html", "upload.html", "feed.html")
-	if err != nil {
-		log.Println("Templates:", err)
-		os.Exit(1)
-	}
-	return templates
 }
 
 func serve() {
