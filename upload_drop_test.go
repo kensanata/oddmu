@@ -79,7 +79,7 @@ But here: jasmin dreams`)}
 
 	// check location for upload
 	body := assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/testdata/multi/culture", nil)
-	assert.Contains(t, body, `href="/upload/testdata/multi/"`)
+	assert.Contains(t, body, `href="/upload/testdata/multi/?filename=culture-1.jpg"`)
 
 	// check location for drop
 	body = assert.HTTPBody(makeHandler(uploadHandler, false), "GET", "/upload/testdata/multi/", nil)
@@ -129,7 +129,7 @@ There is no answer`)}
 
 	// check location for upload
 	body := assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/test", nil)
-	assert.Contains(t, body, `href="/upload/"`)
+	assert.Contains(t, body, `href="/upload/?filename=test-1.jpg"`)
 
 	// check location for drop
 	body = assert.HTTPBody(makeHandler(uploadHandler, false), "GET", "/upload/", nil)
