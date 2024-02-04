@@ -61,13 +61,22 @@ func loadTemplates() {
 	}
 }
 
+// Todo holds a map and a mutex. The map contains the template names that have been requested and the exact time at
+// which they have been requested. Adding the same file multiple times, such as when the watch function sees multiple
+// Write events for the same template, the time keeps getting updated so that when the go routine runs to reload the
+// templates, it only reloads the templates that haven't been updated in the last second. The go routine is what forces
+// us to use the RWMutex for the map.
 type Todo struct {
 	sync.RWMutex
 	files map[string]time.Time
 }
 
 // watch reloads templates that have changed. Since there can be multiple writes to a template file, there's a 1s delay
-// before a template file is actually reloaded.
+// before a template file is actually reloaded. The reason is that writing a template can cause multiple Write events
+// and we don't want to keep reloading the template while it is being written. Instead, each Write event adds an entry
+// to the Todo struct, or updates the time, and starts a go routine. If a template gets three consecutive Write events,
+// the first two go routine invocations won't do anything, since the time kept getting updated. Only the last invocation
+// will reload the template and remove the entry.
 func watch(w *fsnotify.Watcher) {
 	var todo Todo;
 	todo.files = make(map[string]time.Time)
