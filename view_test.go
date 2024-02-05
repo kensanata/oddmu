@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"regexp"
 	"testing"
 )
 
@@ -15,8 +14,9 @@ func TestRootHandler(t *testing.T) {
 
 // relies on index.md in the current directory!
 func TestViewHandler(t *testing.T) {
-	assert.Regexp(t, regexp.MustCompile("Welcome to Oddµ"),
-		assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/index", nil))
+	assert.Contains(t,
+		assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/index", nil),
+		"Welcome to Oddµ")
 }
 
 func TestViewHandlerDir(t *testing.T) {
@@ -29,8 +29,9 @@ func TestViewHandlerDir(t *testing.T) {
 func TestViewHandlerWithId(t *testing.T) {
 	data := make(url.Values)
 	data.Set("id", "index")
-	assert.Regexp(t, regexp.MustCompile("Welcome to Oddµ"),
-		assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/", data))
+	assert.Contains(t,
+		assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/", data),
+		"Welcome to Oddµ")
 }
 
 func TestPageTitleWithAmp(t *testing.T) {
@@ -39,14 +40,16 @@ func TestPageTitleWithAmp(t *testing.T) {
 	p := &Page{Name: "testdata/amp/Rock & Roll", Body: []byte("Dancing")}
 	p.save()
 
-	assert.Regexp(t, regexp.MustCompile("Rock &amp; Roll"),
-		assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/testdata/amp/Rock%20%26%20Roll", nil))
+	assert.Contains(t,
+		assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/testdata/amp/Rock%20%26%20Roll", nil),
+		"Rock &amp; Roll")
 
 	p = &Page{Name: "testdata/amp/Rock & Roll", Body: []byte("# Sex & Drugs & Rock'n'Roll\nOh no!")}
 	p.save()
 
-	assert.Regexp(t, regexp.MustCompile("Sex &amp; Drugs"),
-		assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/testdata/amp/Rock%20%26%20Roll", nil))
+	assert.Contains(t,
+		assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/testdata/amp/Rock%20%26%20Roll", nil),
+		"Sex &amp; Drugs")
 }
 
 func TestPageTitleWithQuestionMark(t *testing.T) {
