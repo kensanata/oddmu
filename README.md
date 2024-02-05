@@ -141,6 +141,7 @@ high-level introduction to the various source files.
 - score.go implements the page scoring when showing search results
 - search.go implements the /search handler
 - snippets.go implements the page summaries for search results
+- templates.go implements template loading and reloading
 - tokenizer.go implements the various tokenizers used
 - upload_drop.go implements the /upload and /drop handlers
 - view.go implements the /view handler
