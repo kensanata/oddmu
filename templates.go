@@ -27,7 +27,7 @@ func loadTemplates() {
 	// walk the directory, load templates and add directories
 	templates = make(map[string]*template.Template)
 	filepath.Walk(".", loadTemplate)
-	log.Println(len(templates), "templates loaded");
+	log.Println(len(templates), "templates loaded")
 }
 
 // loadTemplate is used to walk the directory. It loads all the template files it finds, including the ones in
@@ -50,7 +50,7 @@ func loadTemplate(path string, info fs.FileInfo, err error) error {
 	return nil
 }
 
-// updateTemplate checks whether this is a valid template file and if so, it is reloaded.
+// updateTemplate checks whether this is a valid template file and if so, reloads it.
 func updateTemplate(path string) {
 	if strings.HasSuffix(path, ".html") &&
 		slices.Contains(templateFiles, filepath.Base(path)) {
@@ -68,7 +68,7 @@ func updateTemplate(path string) {
 // A template in the same directory is preferred, if it exists.
 func renderTemplate(w http.ResponseWriter, dir, tmpl string, data any) {
 	loadTemplates()
-	base := tmpl+".html"
+	base := tmpl + ".html"
 	t := templates[filepath.Join(dir, base)]
 	if t == nil {
 		t = templates[base]
