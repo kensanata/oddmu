@@ -156,9 +156,18 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		}
 	} else {
 		// just copy the bytes
-		if _, err := io.Copy(dst, file); err != nil {
+		n, err := io.Copy(dst, file)
+		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
+		}
+		// if zero bytes were copied, delete the file instead
+		if n == 0 {
+			err := os.Remove(path)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
 		}
 	}
 	updateTemplate(path)

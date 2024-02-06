@@ -68,6 +68,30 @@ func TestUploadJpg(t *testing.T) {
 		writer.FormDataContentType(), form, "/upload/testdata/jpg/?last=ok.jpg")
 }
 
+func TestDeleteFile(t *testing.T) {
+	cleanup(t, "testdata/delete")
+	os.MkdirAll("testdata/delete", 0755)
+	assert.NoError(t, os.WriteFile("testdata/delete/nothing.txt", []byte(`# Nothing
+
+I pause and look up
+Look at the mountains you say
+What happened just now?`), 0644))
+	// check that it worked
+	assert.FileExists(t, "testdata/delete/nothing.txt")
+	// delete it by upload a zero byte file
+	form := new(bytes.Buffer)
+	writer := multipart.NewWriter(form)
+	field, _ := writer.CreateFormField("name")
+	field.Write([]byte("nothing.txt"))
+	file, _ := writer.CreateFormFile("file", "test.txt")
+	file.Write([]byte(""))
+	writer.Close()
+	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/delete/",
+		writer.FormDataContentType(), form, "/upload/testdata/delete/?last=nothing.txt")
+	// check that it worked
+	assert.NoFileExists(t, "testdata/delete/nothing.txt")
+}
+
 func TestUploadMultiple(t *testing.T) {
 	cleanup(t, "testdata/multi")
 	p := &Page{Name: "testdata/multi/culture", Body: []byte(`# Culture
