@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"os"
 	"path"
 	"regexp"
 	"strings"
@@ -24,13 +23,6 @@ func (p *Page) notify() error {
 	link := "* [" + p.Title + "](" + esc + ")\n"
 	re := regexp.MustCompile(`(?m)^\* \[[^\]]+\]\(` + esc + `\)\n`)
 	dir := path.Dir(p.Name)
-	if dir != "." {
-		err := os.MkdirAll(dir, 0755)
-		if err != nil {
-			log.Printf("Creating directory %s failed: %s", dir, err)
-			return err
-		}
-	}
 	err := addLinkWithDate(path.Join(dir, "changes"), link, re)
 	if err != nil {
 		return err

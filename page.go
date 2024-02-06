@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"github.com/microcosm-cc/bluemonday"
 	"html/template"
-	"log"
 	"net/url"
 	"os"
 	"path"
@@ -72,13 +71,9 @@ func (p *Page) save() error {
 	}
 	p.Body = s
 	p.updateIndex()
-	d := filepath.Dir(filename)
-	if d != "." {
-		err := os.MkdirAll(d, 0755)
-		if err != nil {
-			log.Printf("Creating directory %s failed: %s", d, err)
-			return err
-		}
+	err := makeDir(filepath.Dir(filename))
+	if err != nil {
+		return err
 	}
 	backup(filename)
 	return os.WriteFile(filename, s, 0644)

@@ -24,7 +24,7 @@ Into the oven`)
 func TestAddAppend(t *testing.T) {
 	cleanup(t, "testdata/add")
 	index.load()
-
+	loadTemplates()
 	p := &Page{Name: "testdata/add/fire", Body: []byte(`# Fire
 Orange sky above
 Reflects a distant fire

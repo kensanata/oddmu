@@ -98,7 +98,9 @@ func (idx *Index) add(path string, info fs.FileInfo, err error) error {
 		return err
 	}
 	filename := path
-	if info.IsDir() || strings.HasPrefix(filename, ".") || !strings.HasSuffix(filename, ".md") {
+	if info.IsDir() ||
+		strings.HasPrefix(filepath.Base(filename), ".") ||
+		!strings.HasSuffix(filename, ".md") {
 		return nil
 	}
 	name := strings.TrimSuffix(filename, ".md")
