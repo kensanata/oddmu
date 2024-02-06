@@ -161,5 +161,6 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 			return
 		}
 	}
+	updateTemplate(path)
 	http.Redirect(w, r, "/upload/"+d+"/?"+data.Encode(), http.StatusFound)
 }
