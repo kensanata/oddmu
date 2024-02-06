@@ -16,7 +16,7 @@ func addHandler(w http.ResponseWriter, r *http.Request, name string) {
 	} else {
 		p.handleTitle(false)
 	}
-	renderTemplate(w, "add", p)
+	renderTemplate(w, p.Dir(), "add", p)
 }
 
 // appendHandler takes the "body" form parameter and appends it. The

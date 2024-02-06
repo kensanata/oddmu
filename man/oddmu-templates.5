@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-TEMPLATES" "5" "2024-02-04" "File Formats Manual"
+.TH "ODDMU-TEMPLATES" "5" "2024-02-06" "File Formats Manual"
 .PP
 .SH NAME
 .PP
@@ -178,15 +178,16 @@ different page depending on the current directory.\&
 .PP
 Consider the link to "/view/index".\& No matter what page a visitor is looking,
 this takes visitors to the top "index" page.\& If the link points to "index"
-instead, it takes a visitor to the "index" page of the current directory.\&
-.PP
-Example: If a visitor is looking at "/view/projects/wiki" and follows a link to
-"index", they end up on "/view/projects/index", not on "/view/index".\&
+instead, it takes a visitor to the "index" page of the current directory.\& In
+this case, a visitor looking at "/view/projects/wiki" following a link to
+"index" ends up on "/view/projects/index", not on "/view/index".\&
 .PP
 It'\&s up to you to decide what'\&s best for your site, of course.\&
 .PP
-Note also that the templates can be changed by uploading new copies of the
-files.\&
+Templates can be changed by uploading new copies of the template files.\&
+.PP
+Subdirectories can have their own copies of template files.\& One example use for
+this is that they can point to a different CSS file.\&
 .PP
 .SH SEE ALSO
 .PP

@@ -19,7 +19,7 @@ func diffHandler(w http.ResponseWriter, r *http.Request, name string) {
 	}
 	p.handleTitle(true)
 	p.renderHtml()
-	renderTemplate(w, "diff", p)
+	renderTemplate(w, p.Dir(), "diff", p)
 }
 
 // Diff computes the diff for a page. At this point, renderHtml has already been called so the Name is escaped.

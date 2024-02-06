@@ -19,8 +19,7 @@ var templateFiles = []string{"edit.html", "add.html", "view.html",
 // own templates which override the templates in the root directory.
 var templates map[string]*template.Template
 
-// loadTemplates loads the templates. These aren't always required. If the templates are required and cannot be loaded,
-// this a fatal error and the program exits.
+// loadTemplates loads the templates. If templates have already been loaded, return immediately.
 func loadTemplates() {
 	if templates != nil {
 		return
@@ -28,6 +27,7 @@ func loadTemplates() {
 	// walk the directory, load templates and add directories
 	templates = make(map[string]*template.Template)
 	filepath.Walk(".", loadTemplate)
+	log.Println(len(templates), "templates loaded");
 }
 
 // loadTemplate is used to walk the directory. It loads all the template files it finds, including the ones in
@@ -50,6 +50,7 @@ func loadTemplate(path string, info fs.FileInfo, err error) error {
 	return nil
 }
 
+// updateTemplate checks whether this is a valid template file and if so, it is reloaded.
 func updateTemplate(path string) {
 	if strings.HasSuffix(path, ".html") &&
 		slices.Contains(templateFiles, filepath.Base(path)) {
@@ -58,18 +59,22 @@ func updateTemplate(path string) {
 			log.Println("Template:", path, err)
 		} else {
 			templates[path] = t
-			log.Println("Parsed", path)
+			log.Println("Parse template:", path)
 		}
 	}
 }
 
-// renderTemplate is the helper that is used to render the templates with data. If the templates cannot be found, that's
-// fatal.
-func renderTemplate(w http.ResponseWriter, tmpl string, data any) {
+// renderTemplate is the helper that is used to render the templates with data.
+// A template in the same directory is preferred, if it exists.
+func renderTemplate(w http.ResponseWriter, dir, tmpl string, data any) {
 	loadTemplates()
-	t := templates[tmpl+".html"]
+	base := tmpl+".html"
+	t := templates[filepath.Join(dir, base)]
 	if t == nil {
-		log.Println("Template not found:", tmpl)
+		t = templates[base]
+	}
+	if t == nil {
+		log.Println("Template not found:", base)
 		http.Error(w, "Template not found", http.StatusInternalServerError)
 		return
 	}

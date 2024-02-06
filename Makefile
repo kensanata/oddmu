@@ -8,7 +8,7 @@ help:
 	@echo "    runs program, offline"
 	@echo
 	@echo make test
-	@echo "    runs the tests"
+	@echo "    runs the tests without log output"
 	@echo
 	@echo make docs
 	@echo "    create man pages from text files"
@@ -26,7 +26,7 @@ run:
 	go run .
 
 test:
-	go test
+	go test .
 
 upload:
 	go build

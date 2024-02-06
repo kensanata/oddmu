@@ -238,5 +238,5 @@ func searchHandler(w http.ResponseWriter, r *http.Request, dir string) {
 	items, more := search(q, dir, page, false)
 	s := &Search{Query: q, Dir: dir, Items: items, Previous: page - 1, Page: page, Next: page + 1,
 		Results: len(items) > 0, More: more}
-	renderTemplate(w, "search", s)
+	renderTemplate(w, dir, "search", s)
 }

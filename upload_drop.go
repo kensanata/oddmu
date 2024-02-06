@@ -59,7 +59,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request, dir string) {
 			}
 		}
 	}
-	renderTemplate(w, "upload", data)
+	renderTemplate(w, dir, "upload", data)
 }
 
 // dropHandler takes the "name" form field and the "file" form file and saves the file under the given name. The browser

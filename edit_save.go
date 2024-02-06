@@ -16,7 +16,7 @@ func editHandler(w http.ResponseWriter, r *http.Request, name string) {
 	} else {
 		p.handleTitle(false)
 	}
-	renderTemplate(w, "edit", p)
+	renderTemplate(w, p.Dir(), "edit", p)
 }
 
 // saveHandler takes the "body" form parameter and saves it. The
