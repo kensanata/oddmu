@@ -201,8 +201,11 @@ You cannot edit uploaded files. If you upload a file called "hello.txt" and
 attempt to edit it by using "/edit/hello.txt" you create a page with the name
 "hello.txt.md" instead.
 
-You cannot delete uploaded files via the web – but you can delete regular wiki
-pages by saving an empty page.
+In order to delete uploaded files via the web, create an empty file and upload
+it. In order to delete a wiki page, save an empty page.
+
+Note that some HTML file names are special: they act as templates. See
+_oddmu-templates_(5) for their names and their use.
 
 # SEE ALSO
 

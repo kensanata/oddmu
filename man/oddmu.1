@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU" "1" "2024-01-17"
+.TH "ODDMU" "1" "2024-02-06"
 .PP
 .SH NAME
 .PP
@@ -218,8 +218,11 @@ You cannot edit uploaded files.\& If you upload a file called "hello.\&txt" and
 attempt to edit it by using "/edit/hello.\&txt" you create a page with the name
 "hello.\&txt.\&md" instead.\&
 .PP
-You cannot delete uploaded files via the web – but you can delete regular wiki
-pages by saving an empty page.\&
+In order to delete uploaded files via the web, create an empty file and upload
+it.\& In order to delete a wiki page, save an empty page.\&
+.PP
+Note that some HTML file names are special: they act as templates.\& See
+\fIoddmu-templates\fR(5) for their names and their use.\&
 .PP
 .SH SEE ALSO
 .PP
