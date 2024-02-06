@@ -140,11 +140,8 @@ But here: jasmin dreams`)}
 }
 
 func TestUploadDir(t *testing.T) {
-	t.Cleanup(func() {
-		assert.NoError(t, os.Remove("test.md"))
-		assert.NoError(t, os.Remove("test.jpg"))
-	})
-	p := &Page{Name: "test", Body: []byte(`# Test
+	cleanup(t, "testdata/dir")
+	p := &Page{Name: "testdata/dir/test", Body: []byte(`# Test
 
 Eyes are an abyss
 We stare into each other
@@ -152,12 +149,12 @@ There is no answer`)}
 	p.save()
 
 	// check location for upload
-	body := assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/test", nil)
-	assert.Contains(t, body, `href="/upload/?filename=test-1.jpg"`)
+	body := assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/testdata/dir/test", nil)
+	assert.Contains(t, body, `href="/upload/testdata/dir/?filename=test-1.jpg"`)
 
 	// check location for drop
-	body = assert.HTTPBody(makeHandler(uploadHandler, false), "GET", "/upload/", nil)
-	assert.Contains(t, body, `action="/drop/"`)
+	body = assert.HTTPBody(makeHandler(uploadHandler, false), "GET", "/upload/testdata/dir/", nil)
+	assert.Contains(t, body, `action="/drop/testdata/dir/"`)
 
 	// actually do the upload
 	form := new(bytes.Buffer)
@@ -168,14 +165,14 @@ There is no answer`)}
 	img := image.NewRGBA(image.Rect(0, 0, 20, 20))
 	jpeg.Encode(file, img, &jpeg.Options{Quality: 90})
 	writer.Close()
-	location := HTTPUploadLocation(t, makeHandler(dropHandler, false), "/drop/",
+	location := HTTPUploadLocation(t, makeHandler(dropHandler, false), "/drop/testdata/dir/",
 		writer.FormDataContentType(), form)
 	url, _ := url.Parse(location)
-	assert.Equal(t, "/upload/", url.Path, "Redirect to upload location")
+	assert.Equal(t, "/upload/testdata/dir/", url.Path, "Redirect to upload location")
 	values := url.Query()
 	assert.Equal(t, "test.jpg", values.Get("last"))
 
 	// check the result page
 	body = assert.HTTPBody(makeHandler(uploadHandler, false), "GET", url.Path, values)
-	assert.Contains(t, body, `src="/view/test.jpg"`)
+	assert.Contains(t, body, `src="/view/testdata/dir/test.jpg"`)
 }
