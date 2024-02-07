@@ -36,7 +36,7 @@ See _oddmu_(5) for details about the page formatting.
 
 The template files are the HTML files in the working directory:
 "add.html", "diff.html", "edit.html", "search.html", "upload.html" and
-"view.html". Feel free to change the templates and restart the server.
+"view.html". Please change them!
 
 The first change you should make is to replace the name and email
 address in the footer of "view.html". Look for "Your Name" and
@@ -192,10 +192,11 @@ A hashtag consists of a number sign ('#') followed by Unicode letters, numbers
 or the underscore ('\_'). Thus, a hashtag ends with punctuation or whitespace.
 
 The page names, titles and hashtags are loaded into memory when the server
-starts. If you have a lot of pages, this takes a lot of memory. If you change
-the files while the wiki runs, changes to names (creating, renaming or deleting
-files), titles or hashtags confuse Oddmu. Restart the program in order to
-resolve this.
+starts. If you have a lot of pages, this takes a lot of memory.
+
+Oddmu watches the working directory and any subdirectories for changes made
+directly. Thus, in theory, it's not necessary to restart it after making such
+changes.
 
 You cannot edit uploaded files. If you upload a file called "hello.txt" and
 attempt to edit it by using "/edit/hello.txt" you create a page with the name

@@ -4,6 +4,7 @@ import (
  	"github.com/fsnotify/fsnotify"
 	"io/fs"
  	"log"
+	"os"
 	"path/filepath"
  	"slices"
  	"strings"
@@ -80,46 +81,74 @@ func (w *Watches) watch() {
 			if !ok { // Channel was closed (i.e. Watcher.Close() was called).
 				return
 			}
-			// log.Println(e)
-			if e.Op.Has(fsnotify.Write) &&
-				(strings.HasSuffix(e.Name, ".html") &&
-					slices.Contains(templateFiles, filepath.Base(e.Name)) ||
-					strings.HasSuffix(e.Name, ".md")) {
-				w.Lock()
-				w.files[e.Name] = time.Now()
-				w.Unlock()
-				timer := time.NewTimer(time.Second)
-				go func() {
-					<-timer.C
-					w.Lock()
-					defer w.Unlock()
-					for f, t := range w.files {
-						if t.Add(time.Second).Before(time.Now().Add(time.Nanosecond)) {
-							delete(w.files, f)
-							if strings.HasSuffix(f, ".html") {
-								updateTemplate(f)
-								log.Println("Watched updated template", f)
-							} else if strings.HasSuffix(f, ".md") {
-								p, err := loadPage(f[:len(f)-3]) // page name without ".md"
-								if err != nil {
-									log.Println("Cannot load page", f)
-								} else {
-									p.updateIndex()
-									log.Println("Watched updated index for", f)
-								}
-							}
-						}
-					}
-				}()
+			w.watchHandle(e)
+		}
+	}
+}
+
+// watchHandle is called for every fsnotify.Event. It handles template updates, page updates (both on a 1s timer), and
+// the addition of directories (immediately).
+func (w *Watches) watchHandle(e fsnotify.Event) {
+	// log.Println(e)
+	if e.Op.Has(fsnotify.Write) &&
+		(strings.HasSuffix(e.Name, ".html") &&
+			slices.Contains(templateFiles, filepath.Base(e.Name)) ||
+			strings.HasSuffix(e.Name, ".md")) {
+		w.Lock()
+		w.files[e.Name] = time.Now()
+		w.Unlock()
+		timer := time.NewTimer(time.Second)
+		go func() {
+			<-timer.C
+			w.watchTimer()
+		}()
+	} else if e.Op.Has(fsnotify.Create) {
+		w.watchAddDir(e.Name)
+	}
+}
+
+// watchTimer checks if any files in the list are templates that need reloading or pages that need reindexing.
+func (w *Watches) watchTimer() {
+	w.Lock()
+	defer w.Unlock()
+	for f, t := range w.files {
+		if t.Add(time.Second).Before(time.Now().Add(time.Nanosecond)) {
+			delete(w.files, f)
+			if strings.HasSuffix(f, ".html") {
+				updateTemplate(f)
+			} else if strings.HasSuffix(f, ".md") {
+				p, err := loadPage(f[:len(f)-3]) // page name without ".md"
+				if err != nil {
+					log.Println("Cannot load page", f)
+				} else {
+					p.updateIndex()
+					log.Println("Update index for", f)
+				}
 			}
 		}
+	}
+}
+
+func (w *Watches) watchAddDir(dir string) {
+	if slices.Contains(w.watcher.WatchList(), dir) {
+		return
+	}
+	fi, err := os.Stat(dir)
+	if err != nil {
+		log.Println("Cannot stat", dir)
+	}
+	if fi.IsDir() {
+		w.watcher.Add(dir)
+		log.Println("Add watch for", dir)
 	}
 }
 
 // ignore is called at the end of functions that triggered additions to watches.files. These functions know that they
 // handled the file so there's no need to handle the file again via watch.
 func (w *Watches) ignore(path string) {
-	w.Lock()
-	defer w.Unlock()
-	delete(watches.files, path)
+	go func() {
+		w.Lock()
+		defer w.Unlock()
+		delete(watches.files, path)
+	}()
 }
