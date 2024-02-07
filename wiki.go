@@ -113,7 +113,7 @@ func scheduleLoadLanguages() {
 // directly and skip the messages.
 func scheduleInstallWatcher() {
 	log.Print("Installing watcher")
-	err, n := watches.install()
+	n, err := watches.install()
 	if err == nil {
 		if n == 1 {
 			log.Println("Installed watchers for one directory")

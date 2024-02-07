@@ -24,20 +24,20 @@ type Watches struct {
 var watches Watches
 
 // install initializes watches and installs watchers for all directories and subdirectories.
-func (w *Watches) install() (error, int) {
+func (w *Watches) install() (int, error) {
 	// create a watcher for the root directory and never close it
 	var err error
 	w.watcher, err = fsnotify.NewWatcher()
 	if err != nil {
 		log.Println("Creating a watcher for file changes:", err)
-		return err, 0
+		return 0, err
 	}
 	go w.watch()
 	err = filepath.Walk(".", w.add)
 	if err != nil {
-		return err, 0
+		return 0, err
 	}
-	return nil, len(w.watcher.WatchList())
+	return len(w.watcher.WatchList()), nil
 }
 
 // add installs a watch for every directory that isn't hidden.
