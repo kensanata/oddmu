@@ -173,6 +173,7 @@ func (p *Page) updateIndex() {
 		p.handleTitle(false)
 		index.titles[p.Name] = p.Title
 	}
+	watches.ignore(p.Name+".md")
 }
 
 // removeFromIndex removes the page from the index. Do this when

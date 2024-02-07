@@ -62,6 +62,7 @@ func updateTemplate(path string) {
 			log.Println("Parse template:", path)
 		}
 	}
+	watches.ignore(path)
 }
 
 // renderTemplate is the helper that is used to render the templates with data.

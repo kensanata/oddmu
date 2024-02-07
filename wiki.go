@@ -109,6 +109,22 @@ func scheduleLoadLanguages() {
 	log.Printf("Loaded %d languages", n)
 }
 
+// scheduleInstallWatcher calls watches.init and prints some messages before and after. For testing, call watch.init
+// directly and skip the messages.
+func scheduleInstallWatcher() {
+	log.Print("Installing watcher")
+	err, n := watches.install()
+	if err == nil {
+		if n == 1 {
+			log.Println("Installed watchers for one directory")
+		} else {
+			log.Printf("Installed watchers for %d directories", n)
+		}
+	} else {
+		log.Printf("Installing watcher failed: %s", err)
+	}
+}
+
 func serve() {
 	http.HandleFunc("/", rootHandler)
 	http.HandleFunc("/view/", makeHandler(viewHandler, true))
@@ -122,6 +138,7 @@ func serve() {
 	http.HandleFunc("/search/", makeHandler(searchHandler, false))
 	go scheduleLoadIndex()
 	go scheduleLoadLanguages()
+	go scheduleInstallWatcher()
 	initAccounts()
 	listener, err := getListener()
 	if listener == nil {
