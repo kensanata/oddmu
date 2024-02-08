@@ -145,7 +145,16 @@ high-level introduction to the various source files.
 - tokenizer.go implements the various tokenizers used
 - upload_drop.go implements the /upload and /drop handlers
 - view.go implements the /view handler
+- watcher.go implements the filesystem notification watch
 - wiki.go implements the main function
+
+If you want to change the exact markup rules, your starting point
+should be `parser.go`. Make sure you read the documentation of [Go
+Markdown](https://github.com/gomarkdown/markdown) and note that it
+offers MathJax support (needs a change to the `view.html` template so
+that the MathJax Javascript gets loaded) and
+[MMark](https://mmark.miek.nl/post/syntax/) support, and it shows how
+extensions can be added.
 
 ## References
 
