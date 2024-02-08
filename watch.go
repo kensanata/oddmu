@@ -135,7 +135,8 @@ func (w *Watches) watchAddDir(dir string) {
 	}
 	fi, err := os.Stat(dir)
 	if err != nil {
-		log.Println("Cannot stat", dir)
+		log.Printf("Cannot stat %s: %s", dir, err)
+		return
 	}
 	if fi.IsDir() {
 		w.watcher.Add(dir)
