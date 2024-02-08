@@ -220,6 +220,8 @@ _oddmu-templates_(5) for their names and their use.
 - _oddmu-search_(1), on how to run a search from the command-line
 - _oddmu-search_(7), on how search works
 - _oddmu-static_(1), on generating a static site from the command-line
+- _oddmu-notify_(1), on updating index, changes and hashtag pages from the
+  command-line
 - _oddmu-templates_(5), on how to write the HTML templates
 
 # AUTHORS
