@@ -61,18 +61,10 @@ func (idx *Index) addDocument(text []byte) docid {
 	return id
 }
 
-// deleteDocument deletes the text as a new document. The id can no
-// longer be used. This assumes that the index is locked!
-func (idx *Index) deleteDocument(text []byte, id docid) {
-	for _, token := range hashtags(text) {
-		ids := index.token[token]
-		// Tokens can appear multiple times in a text but they
-		// can only be deleted once. deleted.
-		if ids == nil {
-			continue
-		}
-		// If the token appears only in this document, remove
-		// the whole entry.
+// deleteDocument deletes all references to the id. The id can no longer be used. This assumes that the index is locked.
+func (idx *Index) deleteDocument(id docid) {
+	for token, ids := range index.token {
+		// If the token appears only in this document, remove the whole entry.
 		if len(ids) == 1 && ids[0] == id {
 			delete(index.token, token)
 			continue
@@ -84,15 +76,30 @@ func (idx *Index) deleteDocument(text []byte, id docid) {
 			index.token[token] = ids[:len(ids)-1]
 			continue
 		}
-		// If none of the above, then our docid wasn't
-		// indexed. This shouldn't happen, either.
-		log.Printf("The index for token %s does not contain doc id %d", token, id)
 	}
 	delete(index.documents, id)
 }
 
-// add reads a file and adds it to the index. This must happen while
-// the idx is locked.
+// deletePageName determines the document id based on the page name and calls deleteDocument to delete all references.
+func (idx *Index) deletePageName(pageName string) {
+	index.Lock()
+	defer index.Unlock()
+	var id docid
+	// Reverse lookup! At least it's in memory.
+	for docId, name := range index.documents {
+		if name == pageName {
+			id = docId
+			break
+		}
+	}
+	if id == 0 {
+		log.Printf("Page %s is not indexed", pageName)
+		return
+	}
+	index.deleteDocument(id)
+}
+
+// add reads a file and adds it to the index. This must happen while the idx is locked.
 func (idx *Index) add(path string, info fs.FileInfo, err error) error {
 	if err != nil {
 		return err
@@ -116,8 +123,7 @@ func (idx *Index) add(path string, info fs.FileInfo, err error) error {
 	return nil
 }
 
-// load loads all the pages and indexes them. This takes a while.
-// It returns the number of pages indexed.
+// load loads all the pages and indexes them. This takes a while. It returns the number of pages indexed.
 func (idx *Index) load() (int, error) {
 	idx.Lock()
 	defer idx.Unlock()
@@ -133,7 +139,7 @@ func (idx *Index) load() (int, error) {
 	return n, nil
 }
 
-// dump prints the index to the log for debugging. Must already be readlocked.
+// dump prints the index to the log for debugging.
 func (idx *Index) dump() {
 	index.RLock()
 	defer index.RUnlock()
@@ -142,9 +148,7 @@ func (idx *Index) dump() {
 	}
 }
 
-// updateIndex updates the index for a single page. The old text is
-// loaded from the disk and removed from the index first, if it
-// exists.
+// updateIndex updates the index for a single page.
 func (p *Page) updateIndex() {
 	index.Lock()
 	defer index.Unlock()
@@ -161,44 +165,19 @@ func (p *Page) updateIndex() {
 		index.documents[id] = p.Name
 		index.titles[p.Name] = p.Title
 	} else {
-		if o, err := loadPage(p.Name); err == nil {
-			index.deleteDocument(o.Body, id)
-		}
-		// Do not reuse the old id. We need a new one for
-		// indexing to work.
+		index.deleteDocument(id)
+		// Do not reuse the old id. We need a new one for indexing to work.
 		id = index.addDocument(p.Body)
-		// The page name stays the same but the title may have
-		// changed.
+		// The page name stays the same but the title may have changed.
 		index.documents[id] = p.Name
 		p.handleTitle(false)
 		index.titles[p.Name] = p.Title
 	}
-	watches.ignore(p.Name+".md")
 }
 
-// removeFromIndex removes the page from the index. Do this when
-// deleting a page.
+// removeFromIndex removes the page from the index. Do this when deleting a page.
 func (p *Page) removeFromIndex() {
-	index.Lock()
-	defer index.Unlock()
-	var id docid
-	// Reverse lookup! At least it's in memory.
-	for docId, name := range index.documents {
-		if name == p.Name {
-			id = docId
-			break
-		}
-	}
-	if id == 0 {
-		log.Printf("Page %s is not indexed", p.Name)
-		return
-	}
-	o, err := loadPage(p.Name)
-	if err != nil {
-		log.Printf("Page %s cannot removed from the index: %s", p.Name, err)
-		return
-	}
-	index.deleteDocument(o.Body, id)
+	index.deletePageName(p.Name)
 }
 
 // search searches the index for a query string and returns page

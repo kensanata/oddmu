@@ -63,7 +63,7 @@ func (p *Page) save() error {
 	path := p.Name + ".md"
 	s := bytes.ReplaceAll(p.Body, []byte{'\r'}, []byte{})
 	if len(s) == 0 {
-		p.removeFromIndex()
+		index.deletePageName(p.Name)
 		return os.Rename(path, path+"~")
 	}
 	p.Body = s
