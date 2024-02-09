@@ -30,6 +30,13 @@ var titleRegexp = regexp.MustCompile("(?m)^#\\s*(.*)\n+")
 // URL like /upload/ is OK. The argument can also be provided using a form parameter, i.e. call /edit/?id=foo/bar.
 func makeHandler(fn func(http.ResponseWriter, *http.Request, string), required bool) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		// no hidden files or directories
+		for _, segment := range strings.Split(r.URL.Path, "/") {
+			if strings.HasPrefix(segment, ".") {
+				http.Error(w, "can neither confirm nor deny the existence of this resource", http.StatusForbidden)
+				return
+			}
+		}
 		m := validPath.FindStringSubmatch(r.URL.Path)
 		if m != nil && (!required || len(m[2]) > 0) {
 			fn(w, r, m[2])
@@ -41,6 +48,13 @@ func makeHandler(fn func(http.ResponseWriter, *http.Request, string), required b
 			return
 		}
 		id := r.Form.Get("id")
+		// no hidden files or directories
+		for _, segment := range strings.Split(id, "/") {
+			if strings.HasPrefix(segment, ".") {
+				http.Error(w, "can neither confirm nor deny the existence of this resource", http.StatusForbidden)
+				return
+			}
+		}
 		if m != nil {
 			fn(w, r, id)
 			return
