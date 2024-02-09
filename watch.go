@@ -24,6 +24,10 @@ type Watches struct {
 
 var watches Watches
 
+func init() {
+	watches.files = make(map[string]time.Time)
+}
+
 // install initializes watches and installs watchers for all directories and subdirectories.
 func (w *Watches) install() (int, error) {
 	// create a watcher for the root directory and never close it
@@ -67,7 +71,6 @@ func (w *Watches) add(path string, info fs.FileInfo, err error) error {
 // consecutive Write events, the first two go routine invocations won't do anything, since the time kept getting
 // updated. Only the last invocation will act upon the event.
 func (w *Watches) watch() {
-	w.files = make(map[string]time.Time)
 	for {
 		select {
 		// Read from Errors.

@@ -36,7 +36,6 @@ func htmlCli(w io.Writer, useTemplate bool, args []string) subcommands.ExitStatu
 			fmt.Fprintf(os.Stderr, "Cannot load %s: %s\n", arg, err)
 			return subcommands.ExitFailure
 		}
-		initAccounts()
 		if useTemplate {
 			p.handleTitle(true)
 			p.renderHtml()

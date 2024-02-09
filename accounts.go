@@ -34,7 +34,7 @@ var accounts Accounts
 // startup and therefore does not need to be locked. On ever restart,
 // this map starts empty and is slowly repopulated as pages are
 // visited.
-func initAccounts() {
+func init() {
 	if os.Getenv("ODDMU_WEBFINGER") == "1" {
 		accounts.uris = make(map[string]string)
 		useWebfinger = true

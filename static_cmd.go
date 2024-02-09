@@ -47,7 +47,6 @@ func staticCli(dir string, quiet bool) subcommands.ExitStatus {
 		fmt.Println(err)
 		return subcommands.ExitFailure
 	}
-	initAccounts()
 	if !quiet {
 		fmt.Printf("Loaded %d languages\n", loadLanguages())
 	}

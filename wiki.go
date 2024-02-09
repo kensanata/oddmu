@@ -139,7 +139,6 @@ func serve() {
 	go scheduleLoadIndex()
 	go scheduleLoadLanguages()
 	go scheduleInstallWatcher()
-	initAccounts()
 	listener, err := getListener()
 	if listener == nil {
 		log.Println(err)
