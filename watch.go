@@ -95,7 +95,7 @@ func (w *Watches) watch() {
 // directory"). Note the painful details: If moving a file into a watched directory, a Create event is received. If a
 // new file is created in a watched directory, a Create event and one or more Write events is received.
 func (w *Watches) watchHandle(e fsnotify.Event) {
-	path := e.Name
+	path := strings.TrimPrefix(e.Name, "./")
 	if strings.HasPrefix(filepath.Base(path), ".") {
 		return;
 	}
