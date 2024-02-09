@@ -101,7 +101,9 @@ func search(q string, dir string, page int, all bool) ([]*Page, bool) {
 	names = filterPrefix(names, dir)
 	predicates, terms := predicatesAndTokens(q)
 	names = filterNames(names, predicates)
+	index.RLock()
 	slices.SortFunc(names, sortNames(terms))
+	index.RUnlock()
 	names, keepFirst := prependQueryPage(names, dir, q)
 	from := itemsPerPage * (page - 1)
 	to := from + itemsPerPage - 1
