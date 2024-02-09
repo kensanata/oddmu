@@ -59,7 +59,16 @@ func replaceCli(w io.Writer, isConfirmed bool, isRegexp bool, args []string) sub
 		if err != nil {
 			return err
 		}
-		if info.IsDir() || strings.HasPrefix(filepath.Base(path), ".") || !strings.HasSuffix(path, ".md") {
+		// skip hidden directories and files
+		if path != "." && strings.HasPrefix(filepath.Base(path), ".") {
+			if info.IsDir() {
+				return filepath.SkipDir
+			} else {
+				return nil
+			}
+		}
+		// skipp all but page files
+		if !strings.HasSuffix(path, ".md") {
 			return nil
 		}
 		body, err := os.ReadFile(path)

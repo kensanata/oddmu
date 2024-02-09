@@ -29,6 +29,13 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 // modification time, truncated to one second. Truncation is required because the file's modtime has sub-second
 // precision and the HTTP timestamp for the Last-Modified header has not.
 func viewHandler(w http.ResponseWriter, r *http.Request, name string) {
+	// no hidden files or directories
+	for _, segment := range strings.Split(name, "/") {
+		if strings.HasPrefix(segment, ".") {
+			http.Error(w, "can neither confirm nor deny the existence of this resource", http.StatusForbidden)
+			return
+		}
+	}
 	file := true
 	rss := false
 	if name == "" {

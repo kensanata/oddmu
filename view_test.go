@@ -79,7 +79,13 @@ In the autumn chill
 	HTTPStatusCodeIfModifiedSince(t, h, "/view/testdata/file-mod/now.txt", fi.ModTime())
 }
 
-// wipes testdata
+func TestForbidden(t *testing.T) {
+	assert.HTTPStatusCode(t, makeHandler(viewHandler, true), "GET", "/view/", nil, http.StatusFound)
+	assert.HTTPStatusCode(t, makeHandler(viewHandler, true), "GET", "/view/.", nil, http.StatusForbidden)
+	assert.HTTPStatusCode(t, makeHandler(viewHandler, true), "GET", "/view/.htaccess", nil, http.StatusForbidden)
+	assert.HTTPStatusCode(t, makeHandler(viewHandler, true), "GET", "/view/.git/description", nil, http.StatusForbidden)
+}
+
 func TestPageLastModified(t *testing.T) {
 	cleanup(t, "testdata/page-mod")
 	p := &Page{Name: "testdata/page-mod/now", Body: []byte(`

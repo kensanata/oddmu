@@ -39,15 +39,19 @@ func missingCli(w io.Writer, args []string) subcommands.ExitStatus {
 		if err != nil {
 			return err
 		}
-		filename := path
-		if info.IsDir() || strings.HasPrefix(filepath.Base(filename), ".") {
-			return nil
+		// skip hidden directories and files
+		if path != "." && strings.HasPrefix(filepath.Base(path), ".") {
+			if info.IsDir() {
+				return filepath.SkipDir
+			} else {
+				return nil
+			}
 		}
-		if strings.HasSuffix(filename, ".md") {
-			name := strings.TrimSuffix(filename, ".md")
+		if strings.HasSuffix(path, ".md") {
+			name := strings.TrimSuffix(path, ".md")
 			names[name] = true
 		} else {
-			names[filename] = false
+			names[path] = false
 		}
 		return nil
 	})
@@ -62,13 +66,13 @@ func missingCli(w io.Writer, args []string) subcommands.ExitStatus {
 		}
 		p, err := loadPage(name)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Loading %s: %s\n", name, err)
+			fmt.Fprintf(os.Stderr, "Loading %s: %s\n", p.Name, err)
 			return subcommands.ExitFailure
 		}
 		for _, link := range p.links() {
 			u, err := url.Parse(link)
 			if err != nil {
-				fmt.Fprintln(os.Stderr, name, err)
+				fmt.Fprintln(os.Stderr, p.Name, err)
 				return subcommands.ExitFailure
 			}
 			if u.Scheme == "" && u.Path != "" && !strings.HasPrefix(u.Path, "/") {
@@ -90,7 +94,7 @@ func missingCli(w io.Writer, args []string) subcommands.ExitStatus {
 						fmt.Fprintln(w, "Page\tMissing")
 						found = true
 					}
-					fmt.Fprintf(w, "%s\t%s\n", name, link)
+					fmt.Fprintf(w, "%s\t%s\n", p.Name, link)
 				}
 			}
 		}

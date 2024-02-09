@@ -73,14 +73,15 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		return
 	}
 	if !fi.IsDir() {
-		http.Error(w, "file exists", http.StatusInternalServerError)
+		http.Error(w, "directory does not exist", http.StatusInternalServerError)
 		return
 	}
 	data := url.Values{}
 	name := r.FormValue("name")
 	data.Set("last", name)
 	filename := filepath.Base(name)
-	if filename == "." || filepath.Dir(name) != "." {
+	// no overwriting of hidden files or adding subdirectories
+	if strings.HasPrefix(filename, ".") || filepath.Dir(name) != "." {
 		http.Error(w, "no filename", http.StatusInternalServerError)
 		return
 	}
@@ -92,7 +93,7 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 	defer file.Close()
 	backup(filename)
 	// create the new file
-	path := d + "/" + filename
+	path := filepath.Join(d, filename)
 	watches.ignore(path)
 	dst, err := os.Create(path)
 	if err != nil {

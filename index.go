@@ -86,6 +86,7 @@ func (idx *Index) deleteDocument(id docid) {
 }
 
 // deletePageName determines the document id based on the page name and calls deleteDocument to delete all references.
+// This assumes that the index is unlocked.
 func (idx *Index) deletePageName(name string) {
 	idx.Lock()
 	defer idx.Unlock()
@@ -106,45 +107,62 @@ func (idx *Index) deletePageName(name string) {
 	idx.deleteDocument(id)
 }
 
-// remove the page from the index. Do this when deleting a page.
+// remove the page from the index. Do this when deleting a page. This assumes that the index is unlocked.
 func (idx *Index) remove(p *Page) {
 	idx.deletePageName(p.Name)
-}
-
-// add reads a file and adds it to the index. This must happen while the idx is locked.
-func (idx *Index) add(path string, info fs.FileInfo, err error) error {
-	if err != nil {
-		return err
-	}
-	filename := path
-	if info.IsDir() ||
-		strings.HasPrefix(filepath.Base(filename), ".") ||
-		!strings.HasSuffix(filename, ".md") {
-		return nil
-	}
-	name := strings.TrimSuffix(filename, ".md")
-	p, err := loadPage(name)
-	if err != nil {
-		return err
-	}
-	p.handleTitle(false)
-
-	id := idx.addDocument(p.Body)
-	idx.documents[id] = p.Name
-	idx.titles[p.Name] = p.Title
-	return nil
 }
 
 // load loads all the pages and indexes them. This takes a while. It returns the number of pages indexed.
 func (idx *Index) load() (int, error) {
 	idx.Lock()
 	defer idx.Unlock()
-	err := filepath.Walk(".", idx.add)
+	err := filepath.Walk(".", idx.walk)
 	if err != nil {
 		return 0, err
 	}
 	n := len(idx.documents)
 	return n, nil
+}
+
+// walk reads a file and adds it to the index. This assumes that the index is locked.
+func (idx *Index) walk(path string, info fs.FileInfo, err error) error {
+	if err != nil {
+		return err
+	}
+	// skip hidden directories and files
+	if path != "." && strings.HasPrefix(filepath.Base(path), ".") {
+		if info.IsDir() {
+			return filepath.SkipDir
+		} else {
+			return nil
+		}
+	}
+	// skipp all but page files
+	if !strings.HasSuffix(path, ".md") {
+		return nil
+	}
+	p, err := loadPage(strings.TrimSuffix(path, ".md"))
+	if err != nil {
+		return err
+	}
+	p.handleTitle(false)
+	idx.addPage(p)
+	return nil
+}
+
+// addPage adds a page to the index. This assumes that the index is locked.
+func (idx *Index) addPage(p *Page) {
+	id := idx.addDocument(p.Body)
+	idx.documents[id] = p.Name
+	p.handleTitle(false)
+	idx.titles[p.Name] = p.Title
+}
+
+// add a page to the index. This assumes that the index is unlocked.
+func (idx *Index) add(p *Page) {
+	idx.Lock()
+	defer idx.Unlock()
+	idx.addPage(p)
 }
 
 // dump prints the index to the log for debugging.
@@ -158,29 +176,8 @@ func (idx *Index) dump() {
 
 // updateIndex updates the index for a single page.
 func (p *Page) updateIndex() {
-	index.Lock()
-	defer index.Unlock()
-	var id docid
-	// Reverse lookup! At least it's in memory.
-	for key, value := range index.documents {
-		if value == p.Name {
-			id = key
-			break
-		}
-	}
-	if id == 0 {
-		id = index.addDocument(p.Body)
-		index.documents[id] = p.Name
-		index.titles[p.Name] = p.Title
-	} else {
-		index.deleteDocument(id)
-		// Do not reuse the old id. We need a new one for indexing to work.
-		id = index.addDocument(p.Body)
-		// The page name stays the same but the title may have changed.
-		index.documents[id] = p.Name
-		p.handleTitle(false)
-		index.titles[p.Name] = p.Title
-	}
+	index.remove(p)
+	index.add(p)
 }
 
 // search searches the index for a query string and returns page

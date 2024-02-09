@@ -97,6 +97,7 @@ func backup(path string) error {
 // to the Page.Name (and possibly changed, later). The Page.Body is set to the file content. The Page.Html remains
 // undefined (there is no caching).
 func loadPage(name string) (*Page, error) {
+	name = strings.TrimPrefix(name, "./") // result of a filepath.TreeWalk starting with "."
 	path := name + ".md"
 	body, err := os.ReadFile(path)
 	if err != nil {
