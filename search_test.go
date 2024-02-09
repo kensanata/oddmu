@@ -10,10 +10,10 @@ import (
 
 func TestSortNames(t *testing.T) {
 	index.Lock()
+	defer index.Unlock()
 	for _, s := range []string{"Alex", "Berta", "Chris", "2015-06-14", "2023-09-26"} {
 		index.titles[s] = s
 	}
-	index.Unlock()
 	terms := []string{"Z"}
 	fn := sortNames(terms)
 	assert.Equal(t, 1, fn("Berta", "Alex"), "B is after A")
@@ -56,6 +56,10 @@ func TestPrependMatches(t *testing.T) {
 }
 
 func TestSearch(t *testing.T) {
+	// working in the main directory
+	index.reset()
+	index.load()
+
 	data := url.Values{}
 	data.Set("q", "oddµ")
 
@@ -93,6 +97,10 @@ Where is lady luck?`)}
 }
 
 func TestTitleSearch(t *testing.T) {
+	// working in the main directory
+	index.reset()
+	index.load()
+
 	items, more := search("title:readme", "", 1, false)
 	assert.Equal(t, 0, len(items), "no page found")
 	assert.False(t, more)

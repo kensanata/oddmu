@@ -36,15 +36,19 @@ type Index struct {
 
 var index Index
 
-// reset resets the Index. This assumes that the index is locked!
-func (idx *Index) reset() {
-	idx.token = nil
-	idx.documents = nil
-	idx.titles = nil
+func init() {
+	index.reset()
 }
 
-// addDocument adds the text as a new document. This assumes that the
-// index is locked!
+// reset the index. This assumes that the index is locked. It's useful for tests.
+func (idx *Index) reset() {
+	idx.next_id = 0
+	idx.token = make(map[string][]docid)
+	idx.documents = make(map[docid]string)
+	idx.titles = make(map[string]string)
+}
+
+// addDocument adds the text as a new document. This assumes that the index is locked!
 func (idx *Index) addDocument(text []byte) docid {
 	id := idx.next_id
 	idx.next_id++
@@ -53,7 +57,7 @@ func (idx *Index) addDocument(text []byte) docid {
 		// Don't add same ID more than once. Checking the last
 		// position of the []docid works because the id is
 		// always a new one, i.e. the last one, if at all.
-		if ids != nil && ids[len(ids)-1] == id {
+		if len(ids) > 0 && ids[len(ids)-1] == id {
 			continue
 		}
 		idx.token[token] = append(ids, id)
@@ -63,30 +67,30 @@ func (idx *Index) addDocument(text []byte) docid {
 
 // deleteDocument deletes all references to the id. The id can no longer be used. This assumes that the index is locked.
 func (idx *Index) deleteDocument(id docid) {
-	for token, ids := range index.token {
+	for token, ids := range idx.token {
 		// If the token appears only in this document, remove the whole entry.
 		if len(ids) == 1 && ids[0] == id {
-			delete(index.token, token)
+			delete(idx.token, token)
 			continue
 		}
 		// Otherwise, remove the token from the index.
 		i := sort.Search(len(ids), func(i int) bool { return ids[i] >= id })
 		if i != -1 && i < len(ids) && ids[i] == id {
 			copy(ids[i:], ids[i+1:])
-			index.token[token] = ids[:len(ids)-1]
+			idx.token[token] = ids[:len(ids)-1]
 			continue
 		}
 	}
-	delete(index.documents, id)
+	delete(idx.documents, id)
 }
 
 // deletePageName determines the document id based on the page name and calls deleteDocument to delete all references.
 func (idx *Index) deletePageName(pageName string) {
-	index.Lock()
-	defer index.Unlock()
+	idx.Lock()
+	defer idx.Unlock()
 	var id docid
 	// Reverse lookup! At least it's in memory.
-	for docId, name := range index.documents {
+	for docId, name := range idx.documents {
 		if name == pageName {
 			id = docId
 			break
@@ -96,7 +100,7 @@ func (idx *Index) deletePageName(pageName string) {
 		log.Printf("Page %s is not indexed", pageName)
 		return
 	}
-	index.deleteDocument(id)
+	idx.deleteDocument(id)
 }
 
 // add reads a file and adds it to the index. This must happen while the idx is locked.
@@ -127,12 +131,8 @@ func (idx *Index) add(path string, info fs.FileInfo, err error) error {
 func (idx *Index) load() (int, error) {
 	idx.Lock()
 	defer idx.Unlock()
-	idx.token = make(map[string][]docid)
-	idx.documents = make(map[docid]string)
-	idx.titles = make(map[string]string)
 	err := filepath.Walk(".", idx.add)
 	if err != nil {
-		idx.reset()
 		return 0, err
 	}
 	n := len(idx.documents)
@@ -141,8 +141,8 @@ func (idx *Index) load() (int, error) {
 
 // dump prints the index to the log for debugging.
 func (idx *Index) dump() {
-	index.RLock()
-	defer index.RUnlock()
+	idx.RLock()
+	defer idx.RUnlock()
 	for token, ids := range idx.token {
 		log.Printf("%s: %v", token, ids)
 	}
@@ -183,8 +183,8 @@ func (p *Page) removeFromIndex() {
 // search searches the index for a query string and returns page
 // names.
 func (idx *Index) search(q string) []string {
-	index.RLock()
-	defer index.RUnlock()
+	idx.RLock()
+	defer idx.RUnlock()
 	names := make([]string, 0)
 	hashtags := hashtags([]byte(q))
 	if len(hashtags) > 0 {

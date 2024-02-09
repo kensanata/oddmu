@@ -6,6 +6,18 @@ import (
 	"testing"
 )
 
+func TestIndexAdd(t *testing.T) {
+	idx := &Index{}
+	idx.reset()
+	idx.Lock()
+	defer idx.Unlock()
+	tag := "#hello"
+	id := idx.addDocument([]byte("oh hi " + tag))
+	assert.Contains(t, idx.token, tag)
+	idx.deleteDocument(id)
+	assert.NotContains(t, idx.token, tag)
+}
+
 // TestIndex relies on README.md being indexed
 func TestIndex(t *testing.T) {
 	index.load()

@@ -48,6 +48,7 @@ func searchCli(w io.Writer, dir string, n int, all, extract bool, quiet bool, ar
 	if err != nil {
 		return subcommands.ExitFailure
 	}
+	index.reset()
 	index.load()
 	q := strings.Join(args, " ")
 	items, more := search(q, dir, n, true)

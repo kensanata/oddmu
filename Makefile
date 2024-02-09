@@ -26,7 +26,7 @@ run:
 	go run .
 
 test:
-	go test .
+	go test -shuffle on .
 
 upload:
 	go build
