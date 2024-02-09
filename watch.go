@@ -45,7 +45,7 @@ func (w *Watches) install() (int, error) {
 	return len(w.watcher.WatchList()), nil
 }
 
-// add installs a watch for every directory that isn't hidden.
+// add installs a watch for every directory that isn't hidden. Note that the root directory (".") is not skipped.
 func (w *Watches) add(path string, info fs.FileInfo, err error) error {
 	if err != nil {
 		return err
@@ -73,15 +73,13 @@ func (w *Watches) add(path string, info fs.FileInfo, err error) error {
 func (w *Watches) watch() {
 	for {
 		select {
-		// Read from Errors.
 		case err, ok := <-w.watcher.Errors:
-			if !ok { // Channel was closed (i.e. Watcher.Close() was called).
+			if !ok {
 				return
 			}
 			log.Println("Watcher:", err)
-		// Read from Events.
 		case e, ok := <-w.watcher.Events:
-			if !ok { // Channel was closed (i.e. Watcher.Close() was called).
+			if !ok {
 				return
 			}
 			w.watchHandle(e)
