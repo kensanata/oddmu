@@ -90,8 +90,13 @@ func (w *Watches) watch() {
 }
 
 // watchHandle is called for every fsnotify.Event. It handles template updates, page updates (both on a 1s timer), and
-// the addition of directories (immediately).
+// the creation of pages and directories (immediately). Files and directories starting with a dot are skipped.
+// Incidentally, this also prevents rsync updates from generating activity ("stat ./.index.md.tTfPFg: no such file or
+// directory").
 func (w *Watches) watchHandle(e fsnotify.Event) {
+	if strings.HasPrefix(filepath.Base(e.Name), ".") {
+		return;
+	}
 	// log.Println(e)
 	w.Lock()
 	defer w.Unlock()
