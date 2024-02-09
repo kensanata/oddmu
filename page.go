@@ -16,7 +16,7 @@ import (
 
 // Page is a struct containing information about a single page. Title
 // is the title extracted from the page content using titleRegexp.
-// Name is the filename without extension (so a filename of "foo.md"
+// Name is the path without extension (so a path of "foo.md"
 // results in the Name "foo"). Body is the Markdown content of the
 // page and Html is the rendered HTML for that Markdown. Score is a
 // number indicating how well the page matched for a search query.
@@ -47,8 +47,7 @@ func unsafeBytes(bytes []byte) template.HTML {
 	return template.HTML(bytes)
 }
 
-// nameEscape returns the page name safe for use in URLs. That is,
-// percent escaping is used except for the slashes.
+// nameEscape returns the page name safe for use in URLs. That is, percent escaping is used except for the slashes.
 func nameEscape(s string) string {
 	parts := strings.Split(s, "/")
 	for i, part := range parts {
@@ -57,22 +56,19 @@ func nameEscape(s string) string {
 	return strings.Join(parts, "/")
 }
 
-// save saves a Page. The filename is based on the Page.Name and gets
-// the ".md" extension. Page.Body is saved, without any carriage
-// return characters ("\r"). Page.Title and Page.Html are not saved.
-// There is no caching. Before removing or writing a file, the old
-// copy is renamed to a backup, appending "~". There is no error
-// checking for this.
+// save saves a Page. The path is based on the Page.Name and gets the ".md" extension. Page.Body is saved, without any
+// carriage return characters ("\r"). Page.Title and Page.Html are not saved. There is no caching. Before removing or
+// writing a file, the old copy is renamed to a backup, appending "~". There is no error checking for this.
 func (p *Page) save() error {
-	filename := p.Name + ".md"
+	path := p.Name + ".md"
 	s := bytes.ReplaceAll(p.Body, []byte{'\r'}, []byte{})
 	if len(s) == 0 {
 		p.removeFromIndex()
-		return os.Rename(filename, filename+"~")
+		return os.Rename(path, path+"~")
 	}
 	p.Body = s
 	p.updateIndex()
-	d := filepath.Dir(filename)
+	d := filepath.Dir(path)
 	if d != "." {
 		err := os.MkdirAll(d, 0755)
 		if err != nil {
@@ -80,30 +76,28 @@ func (p *Page) save() error {
 			return err
 		}
 	}
-	backup(filename)
-	return os.WriteFile(filename, s, 0644)
+	backup(path)
+	return os.WriteFile(path, s, 0644)
 }
 
 // backup a file by renaming (!) it unless the existing backup is less than an hour old. A backup gets a tilde appended
 // to it ("~"). This is true even if the file refers to a binary file like "image.png" and most applications don't know
 // what to do with a file called "image.png~".
-func backup(filename string) error {
-	backup := filename + "~"
+func backup(path string) error {
+	backup := path + "~"
 	fi, err := os.Stat(backup)
 	if err != nil || time.Since(fi.ModTime()).Minutes() >= 60 {
-		return os.Rename(filename, backup)
+		return os.Rename(path, backup)
 	}
 	return nil
 }
 
-// loadPage loads a Page given a name. The filename loaded is that
-// Page.Name with the ".md" extension. The Page.Title is set to the
-// Page.Name (and possibly changed, later). The Page.Body is set to
-// the file content. The Page.Html remains undefined (there is no
-// caching).
+// loadPage loads a Page given a name. The path loaded is that Page.Name with the ".md" extension. The Page.Title is set
+// to the Page.Name (and possibly changed, later). The Page.Body is set to the file content. The Page.Html remains
+// undefined (there is no caching).
 func loadPage(name string) (*Page, error) {
-	filename := name + ".md"
-	body, err := os.ReadFile(filename)
+	path := name + ".md"
+	body, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
