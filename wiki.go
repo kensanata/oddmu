@@ -109,7 +109,7 @@ func scheduleLoadLanguages() {
 	log.Printf("Loaded %d languages", n)
 }
 
-// scheduleInstallWatcher calls watches.init and prints some messages before and after. For testing, call watch.init
+// scheduleInstallWatcher calls watches.install and prints some messages before and after. For testing, call watch.init
 // directly and skip the messages.
 func scheduleInstallWatcher() {
 	log.Print("Installing watcher")
