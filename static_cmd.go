@@ -151,7 +151,7 @@ func (p *Page) write(destination string) error {
 		fmt.Fprintf(os.Stderr, "Cannot create %s.html: %s\n", destination, err)
 		return err
 	}
-	err = templates[t].Execute(f, p)
+	err = templates.template[t].Execute(f, p)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Cannot execute %s template for %s: %s\n", t, destination, err)
 		return err

@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"slices"
 	"strings"
+	"sync"
 )
 
 // templateFiles are the various HTML template files used. These files must exist in the root directory for Oddmu to be
@@ -17,21 +18,28 @@ var templateFiles = []string{"edit.html", "add.html", "view.html",
 
 // templates are the parsed HTML templates used. See renderTemplate and loadTemplates. Subdirectories may contain their
 // own templates which override the templates in the root directory.
-var templates map[string]*template.Template
+type Template struct {
+	sync.RWMutex
+	template map[string]*template.Template
+}
+
+var templates Template
 
 // loadTemplates loads the templates. If templates have already been loaded, return immediately.
 func loadTemplates() {
-	if templates != nil {
+	if templates.template != nil {
 		return
 	}
+	templates.Lock()
+	defer templates.Unlock()
 	// walk the directory, load templates and add directories
-	templates = make(map[string]*template.Template)
+	templates.template = make(map[string]*template.Template)
 	filepath.Walk(".", loadTemplate)
-	log.Println(len(templates), "templates loaded")
+	log.Println(len(templates.template), "templates loaded")
 }
 
 // loadTemplate is used to walk the directory. It loads all the template files it finds, including the ones in
-// subdirectories.
+// subdirectories. This is called with templates already locked.
 func loadTemplate(path string, info fs.FileInfo, err error) error {
 	if err != nil {
 		return err
@@ -44,7 +52,7 @@ func loadTemplate(path string, info fs.FileInfo, err error) error {
 			// ignore error
 		} else {
 			// log.Println("Parse template:", path)
-			templates[path] = t
+			templates.template[path] = t
 		}
 	}
 	return nil
@@ -58,7 +66,9 @@ func updateTemplate(path string) {
 		if err != nil {
 			log.Println("Template:", path, err)
 		} else {
-			templates[path] = t
+			templates.Lock()
+			defer templates.Unlock()
+			templates.template[path] = t
 			log.Println("Parse template:", path)
 		}
 	}
@@ -70,9 +80,11 @@ func updateTemplate(path string) {
 func renderTemplate(w http.ResponseWriter, dir, tmpl string, data any) {
 	loadTemplates()
 	base := tmpl + ".html"
-	t := templates[filepath.Join(dir, base)]
+	templates.RLock()
+	defer templates.RUnlock()
+	t := templates.template[filepath.Join(dir, base)]
 	if t == nil {
-		t = templates[base]
+		t = templates.template[base]
 	}
 	if t == nil {
 		log.Println("Template not found:", base)
