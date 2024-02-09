@@ -17,7 +17,7 @@ func TestWatchedPageUpdate(t *testing.T) {
 	time.Sleep(time.Millisecond)
 	assert.Contains(t, watches.watcher.WatchList(), dir)
 
-	haiku := []byte(`Pine cones
+	haiku := []byte(`# Pine cones
 
 Soft steps on the trail
 Up and up in single file
