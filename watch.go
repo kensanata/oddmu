@@ -149,7 +149,7 @@ func (w *Watches) watchDoUpdate(path string) {
 	} else if !slices.Contains(w.watcher.WatchList(), path) {
 		fi, err := os.Stat(path)
 		if err != nil {
-			log.Printf("Cannot stat %s: %s", path, err)
+			log.Println(err)
 			return
 		}
 		if fi.IsDir() {
