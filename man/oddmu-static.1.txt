@@ -29,10 +29,15 @@ all those images, most of the time.
 Note, however: Hard links cannot span filesystems. A hard link is just an extra
 name for the same file. This is why the destination directory for the static
 site has to be on same filesystem as the current directory, if it contains any
-other place.
+other files besides Markdown files.
 
 Furthermore, in-place editing changes the file for all names. Avoid editing the
-image files in the destination directory, just to be on the safe side.
+hard-linked files (anything that's not a HTML file) in the destination
+directory, just to be on the safe side. Usually you should be fine, as an editor
+moves the file that's being edited to a backup file and creates a new file. But
+then again, who knows. A SQLite file, for example, would change in-place, and
+therefore making changes to it in the destination directory would change the
+original, too.
 
 # EXAMPLE
 

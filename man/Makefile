@@ -3,9 +3,6 @@ MAN=$(patsubst %.txt,%,${TEXT})
 HTML=$(patsubst %.txt,%.html,${TEXT})
 MD=$(patsubst %.txt,%.md,${TEXT})
 
-clean:
-	rm --force ${HTML} ${MD}
-
 man: ${MAN}
 
 %: %.txt
@@ -29,3 +26,6 @@ md: ${MD}
 
 upload: ${MD}
 	rsync --itemize-changes --archive *.md sibirocobombus:alexschroeder.ch/wiki/oddmu/
+
+clean:
+	rm --force ${HTML} ${MD}
