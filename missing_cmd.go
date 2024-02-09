@@ -40,7 +40,7 @@ func missingCli(w io.Writer, args []string) subcommands.ExitStatus {
 			return err
 		}
 		filename := path
-		if info.IsDir() || strings.HasPrefix(filename, ".") {
+		if info.IsDir() || strings.HasPrefix(filepath.Base(filename), ".") {
 			return nil
 		}
 		if strings.HasSuffix(filename, ".md") {

@@ -42,17 +42,10 @@ func (cmd *staticCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface
 // staticCli generates a static site in the designated directory. The quiet flag is used to suppress output when running
 // tests.
 func staticCli(dir string, quiet bool) subcommands.ExitStatus {
-	err := os.Mkdir(dir, 0755)
-	if err != nil {
-		fmt.Println(err)
-		return subcommands.ExitFailure
-	}
-	if !quiet {
-		fmt.Printf("Loaded %d languages\n", loadLanguages())
-	}
+	loadLanguages()
 	loadTemplates()
 	n := 0
-	err = filepath.Walk(".", func(path string, info fs.FileInfo, err error) error {
+	err := filepath.Walk(".", func(path string, info fs.FileInfo, err error) error {
 		n++
 		if !quiet && (n < 100 || n < 1000 && n%10 == 0 || n%100 == 0) {
 			fmt.Fprintf(os.Stdout, "\r%d", n)
@@ -75,28 +68,33 @@ func staticFile(path, dir string, info fs.FileInfo, err error) error {
 	if err != nil {
 		return err
 	}
-	filename := path
-	// skip "hidden" files and backup files, avoid recursion
-	if strings.HasPrefix(filename, ".") ||
-		strings.HasSuffix(filename, "~") ||
-		strings.HasPrefix(filename, dir) {
+	// skip hidden directories and files
+	if path != "." && strings.HasPrefix(filepath.Base(path), ".") {
+		if info.IsDir() {
+			return filepath.SkipDir
+		} else {
+			return nil
+		}
+	}
+	// skip backup files, avoid recursion
+	if strings.HasSuffix(path, "~") || strings.HasPrefix(path, dir) {
 		return nil
 	}
 	// recreate subdirectories
 	if info.IsDir() {
-		return os.Mkdir(filepath.Join(dir, filename), 0755)
+		return os.Mkdir(filepath.Join(dir, path), 0755)
 	}
 	// render pages
-	if strings.HasSuffix(filename, ".md") {
-		return staticPage(filename, dir)
+	if strings.HasSuffix(path, ".md") {
+		return staticPage(path, dir)
 	}
 	// remaining files are linked
-	return os.Link(filename, filepath.Join(dir, filename))
+	return os.Link(path, filepath.Join(dir, path))
 }
 
 // staticPage takes the filename of a page (ending in ".md") and generates a static HTML page.
-func staticPage(filename, dir string) error {
-	name := strings.TrimSuffix(filename, ".md")
+func staticPage(path, dir string) error {
+	name := strings.TrimSuffix(path, ".md")
 	p, err := loadPage(name)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Cannot load %s: %s\n", name, err)
