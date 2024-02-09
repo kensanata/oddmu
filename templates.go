@@ -74,6 +74,17 @@ func updateTemplate(path string) {
 	}
 }
 
+// removeTemplate removes a template unless it's a root template because that would result in the site being unusable.
+func removeTemplate(path string) {
+	if slices.Contains(templateFiles, filepath.Base(path)) &&
+		filepath.Dir(path) != "." {
+		templates.Lock()
+		defer templates.Unlock()
+		delete(templates.template, path)
+		log.Println("Discard template:", path)
+	}
+}
+
 // renderTemplate is the helper that is used to render the templates with data.
 // A template in the same directory is preferred, if it exists.
 func renderTemplate(w http.ResponseWriter, dir, tmpl string, data any) {
