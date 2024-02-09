@@ -93,5 +93,5 @@ func TestIndexUpdates(t *testing.T) {
 	// Make sure the title was updated
 	index.RLock()
 	defer index.RUnlock()
-	assert.Equal(t, index.titles[name], "New page")
+	assert.Equal(t, "New page", index.titles[name])
 }
