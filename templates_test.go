@@ -24,12 +24,18 @@ Memories of cold
 	html := "<body><h1>{{.Title}}</h1>{{.Html}}"
 	form := new(bytes.Buffer)
 	writer := multipart.NewWriter(form)
-	field, _ := writer.CreateFormField("name")
+	field, err := writer.CreateFormField("name")
+	assert.NoError(t, err)
 	field.Write([]byte("view.html"))
-	file, _ := writer.CreateFormFile("file", "test.html")
-	file.Write([]byte(html))
+	file, err := writer.CreateFormFile("file", "test.html")
+	assert.NoError(t, err)
+	n, err := file.Write([]byte(html))
+	assert.NoError(t, err)
+	assert.Equal(t, len(html), n)
 	writer.Close()
 	HTTPUploadLocation(t, makeHandler(dropHandler, false), "/drop/testdata/templates/", writer.FormDataContentType(), form)
+	assert.FileExists(t, "view.html")
+	assert.FileExists(t, "testdata/templates/view.html")
 	assert.Contains(t,
 		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/templates/view.html", nil),
 		html)
