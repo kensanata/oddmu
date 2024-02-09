@@ -7,8 +7,7 @@ import (
 	"strings"
 )
 
-// getLangauges returns the environment variable ODDMU_LANGUAGES or
-// all languages.
+// getLanguages returns the environment variable ODDMU_LANGUAGES or all languages.
 func getLanguages() ([]lingua.Language, error) {
 	v := os.Getenv("ODDMU_LANGUAGES")
 	if v == "" {
@@ -29,8 +28,9 @@ func getLanguages() ([]lingua.Language, error) {
 // detector is the LanguageDetector initialized at startup by loadLanguages.
 var detector lingua.LanguageDetector
 
-// loadLanguages initializes the detector using the languages returned
-// by getLanguages and returns the number of languages loaded.
+// loadLanguages initializes the detector using the languages returned by getLanguages and returns the number of
+// languages loaded. If this is skipped, no language detection happens and the templates cannot use {{.Language}} to use
+// this. Usually this is used for correct hyphenation by the browser.
 func loadLanguages() int {
 	langs, err := getLanguages()
 	if err == nil {
