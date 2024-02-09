@@ -103,7 +103,7 @@ func (w *Watches) watchHandle(e fsnotify.Event) {
 			w.watchTimer()
 		}()
 	} else if e.Op.Has(fsnotify.Create) {
-		w.watchAddDir(e.Name)
+		w.watchDo(e.Name)
 	}
 }
 
@@ -111,43 +111,48 @@ func (w *Watches) watchHandle(e fsnotify.Event) {
 func (w *Watches) watchTimer() {
 	w.Lock()
 	defer w.Unlock()
-	for f, t := range w.files {
+	for path, t := range w.files {
 		if t.Add(time.Second).Before(time.Now().Add(time.Nanosecond)) {
-			delete(w.files, f)
-			if strings.HasSuffix(f, ".html") {
-				updateTemplate(f)
-			} else if strings.HasSuffix(f, ".md") {
-				p, err := loadPage(f[:len(f)-3]) // page name without ".md"
-				if err != nil {
-					log.Println("Cannot load page", f)
-				} else {
-					p.updateIndex()
-					log.Println("Update index for", f)
-				}
-			}
+			delete(w.files, path)
+			w.watchDo(path)
 		}
 	}
 }
 
-func (w *Watches) watchAddDir(dir string) {
-	if slices.Contains(w.watcher.WatchList(), dir) {
-		return
-	}
-	fi, err := os.Stat(dir)
-	if err != nil {
-		log.Printf("Cannot stat %s: %s", dir, err)
-		return
-	}
-	if fi.IsDir() {
-		w.watcher.Add(dir)
-		log.Println("Add watch for", dir)
+// Do the right thing right now. For Create events such as directories being created or files being moved into a watched
+// directory, this is the right thing to do. When a file is being written to, watchHandle will have started timers and
+// all that.
+func (w *Watches) watchDo(path string) {
+	if strings.HasSuffix(path, ".html") {
+		updateTemplate(path)
+	} else if strings.HasSuffix(path, ".md") {
+		p, err := loadPage(path[:len(path)-3]) // page name without ".md"
+		if err != nil {
+			log.Println("Cannot load page", path)
+		} else {
+			log.Println("Update index for", path)
+			p.updateIndex()
+		}
+	} else if !slices.Contains(w.watcher.WatchList(), path) {
+		fi, err := os.Stat(path)
+		if err != nil {
+			log.Printf("Cannot stat %s: %s", path, err)
+			return
+		}
+		if fi.IsDir() {
+			log.Println("Add watch for", path)
+			w.watcher.Add(path)
+		}
 	}
 }
 
 // ignore is called at the end of functions that triggered additions to watches.files. These functions know that they
-// handled the file so there's no need to handle the file again via watch.
+// handled the file so there's no need to handle the file again via watch. We have 1s before watchTimer is going to get
+// called. Therefore, after 10ms, remove the file from the todo list.
 func (w *Watches) ignore(path string) {
+	timer := time.NewTimer(10*time.Millisecond)
 	go func() {
+		<-timer.C
 		w.Lock()
 		defer w.Unlock()
 		delete(watches.files, path)
