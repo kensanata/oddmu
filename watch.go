@@ -92,30 +92,39 @@ func (w *Watches) watch() {
 // watchHandle is called for every fsnotify.Event. It handles template updates, page updates (both on a 1s timer), and
 // the creation of pages and directories (immediately). Files and directories starting with a dot are skipped.
 // Incidentally, this also prevents rsync updates from generating activity ("stat ./.index.md.tTfPFg: no such file or
-// directory").
+// directory"). Note the painful details: If moving a file into a watched directory, a Create event is received. If a
+// new file is created in a watched directory, a Create event and one or more Write events is received.
 func (w *Watches) watchHandle(e fsnotify.Event) {
-	if strings.HasPrefix(filepath.Base(e.Name), ".") {
+	path := e.Name
+	if strings.HasPrefix(filepath.Base(path), ".") {
 		return;
 	}
 	// log.Println(e)
 	w.Lock()
 	defer w.Unlock()
-	if e.Op.Has(fsnotify.Write) &&
-		(strings.HasSuffix(e.Name, ".html") &&
-			slices.Contains(templateFiles, filepath.Base(e.Name)) ||
-			strings.HasSuffix(e.Name, ".md")) {
-		w.files[e.Name] = time.Now()
+	if e.Op.Has(fsnotify.Create | fsnotify.Write) &&
+		(strings.HasSuffix(path, ".html") &&
+			slices.Contains(templateFiles, filepath.Base(path)) ||
+			strings.HasSuffix(path, ".md")) {
+		w.files[path] = time.Now()
 		timer := time.NewTimer(time.Second)
 		go func() {
 			<-timer.C
 			w.Lock()
 			defer w.Unlock()
-			w.watchTimer(e.Name)
+			w.watchTimer(path)
 		}()
-	} else if e.Op.Has(fsnotify.Create) {
-		w.watchDoUpdate(e.Name)
 	} else if e.Op.Has(fsnotify.Rename | fsnotify.Remove) {
-		w.watchDoRemove(e.Name)
+		w.watchDoRemove(path)
+	} else if e.Op.Has(fsnotify.Create) &&
+		!slices.Contains(w.watcher.WatchList(), path) {
+		fi, err := os.Stat(path)
+		if err != nil {
+			log.Println(err)
+		} else if fi.IsDir() {
+			log.Println("Add watch for", path)
+			w.watcher.Add(path)
+		}
 	}
 }
 

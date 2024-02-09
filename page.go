@@ -64,7 +64,7 @@ func (p *Page) save() error {
 	watches.ignore(path)
 	s := bytes.ReplaceAll(p.Body, []byte{'\r'}, []byte{})
 	if len(s) == 0 {
-		index.deletePageName(p.Name)
+		index.remove(p)
 		return os.Rename(path, path+"~")
 	}
 	p.Body = s

@@ -145,7 +145,7 @@ high-level introduction to the various source files.
 - tokenizer.go implements the various tokenizers used
 - upload_drop.go implements the /upload and /drop handlers
 - view.go implements the /view handler
-- watcher.go implements the filesystem notification watch
+- watch.go implements the filesystem notification watch
 - wiki.go implements the main function
 
 If you want to change the exact markup rules, your starting point

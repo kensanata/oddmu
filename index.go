@@ -67,6 +67,8 @@ func (idx *Index) addDocument(text []byte) docid {
 
 // deleteDocument deletes all references to the id. The id can no longer be used. This assumes that the index is locked.
 func (idx *Index) deleteDocument(id docid) {
+	// Looping through all tokens makes sense if there are few tokens (like hashtags). It doesn't make sense if the
+	// number of tokens is large (like for full-text search or a trigram index).
 	for token, ids := range idx.token {
 		// If the token appears only in this document, remove the whole entry.
 		if len(ids) == 1 && ids[0] == id {
@@ -81,26 +83,32 @@ func (idx *Index) deleteDocument(id docid) {
 			continue
 		}
 	}
-	delete(idx.documents, id)
 }
 
 // deletePageName determines the document id based on the page name and calls deleteDocument to delete all references.
-func (idx *Index) deletePageName(pageName string) {
+func (idx *Index) deletePageName(name string) {
 	idx.Lock()
 	defer idx.Unlock()
 	var id docid
 	// Reverse lookup! At least it's in memory.
-	for docId, name := range idx.documents {
-		if name == pageName {
-			id = docId
+	for key, value := range idx.documents {
+		if value == name {
+			id = key
 			break
 		}
 	}
 	if id == 0 {
-		log.Printf("Page %s is not indexed", pageName)
+		log.Printf("Page %s is not indexed", name)
 		return
 	}
+	delete(idx.documents, id)
+	delete(idx.titles, name)
 	idx.deleteDocument(id)
+}
+
+// remove the page from the index. Do this when deleting a page.
+func (idx *Index) remove(p *Page) {
+	idx.deletePageName(p.Name)
 }
 
 // add reads a file and adds it to the index. This must happen while the idx is locked.
@@ -154,9 +162,9 @@ func (p *Page) updateIndex() {
 	defer index.Unlock()
 	var id docid
 	// Reverse lookup! At least it's in memory.
-	for docId, name := range index.documents {
-		if name == p.Name {
-			id = docId
+	for key, value := range index.documents {
+		if value == p.Name {
+			id = key
 			break
 		}
 	}
@@ -173,11 +181,6 @@ func (p *Page) updateIndex() {
 		p.handleTitle(false)
 		index.titles[p.Name] = p.Title
 	}
-}
-
-// removeFromIndex removes the page from the index. Do this when deleting a page.
-func (p *Page) removeFromIndex() {
-	index.deletePageName(p.Name)
 }
 
 // search searches the index for a query string and returns page
