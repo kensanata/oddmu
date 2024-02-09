@@ -11,18 +11,15 @@ import (
 	"sync"
 )
 
-// useWebfinger indicates whether Oddmu looks up the profile pages of
-// fediverse accounts. To enable this, set the environment variable
-// ODDMU_WEBFINGER to "1".
+// useWebfinger indicates whether Oddmu looks up the profile pages of fediverse accounts. To enable this, set the
+// environment variable ODDMU_WEBFINGER to "1".
 var useWebfinger = false
 
-// Accounts contains the map used to set the usernames. Make sure to
-// lock and unlock as appropriate.
+// Accounts contains the map used to set the usernames. Make sure to lock and unlock as appropriate.
 type Accounts struct {
 	sync.RWMutex
 
-	// uris is a map, mapping account names likes
-	// "@alex@alexschroeder.ch" to URIs like
+	// uris is a map, mapping account names likes "@alex@alexschroeder.ch" to URIs like
 	// "https://social.alexschroeder.ch/@alex".
 	uris map[string]string
 }
@@ -30,10 +27,8 @@ type Accounts struct {
 // accounts holds the global mapping of accounts to profile URIs.
 var accounts Accounts
 
-// initAccounts sets up the accounts map. This is called once at
-// startup and therefore does not need to be locked. On ever restart,
-// this map starts empty and is slowly repopulated as pages are
-// visited.
+// This is called once at startup and therefore does not need to be locked. On every restart, this map starts empty and
+// is slowly repopulated as pages are visited.
 func init() {
 	if os.Getenv("ODDMU_WEBFINGER") == "1" {
 		accounts.uris = make(map[string]string)
@@ -41,12 +36,10 @@ func init() {
 	}
 }
 
-// account links a social media account like @account@domain to a
-// profile page like https://domain/user/account. Any account seen for
-// the first time uses a best guess profile URI. It is also looked up
-// using webfinger, in parallel. See lookUpAccountUri. If the lookup
-// succeeds, the best guess is replaced with the new URI so on
-// subsequent requests, the URI is correct.
+// account links a social media account like @account@domain to a profile page like https://domain/user/account. Any
+// account seen for the first time uses a best guess profile URI. It is also looked up using webfinger, in parallel. See
+// lookUpAccountUri. If the lookup succeeds, the best guess is replaced with the new URI so on subsequent requests, the
+// URI is correct.
 func account(p *parser.Parser, data []byte, offset int) (int, ast.Node) {
 	data = data[offset:]
 	i := 1 // skip @ of username
@@ -97,10 +90,8 @@ func account(p *parser.Parser, data []byte, offset int) (int, ast.Node) {
 	return i, link
 }
 
-// lookUpAccountUri is called for accounts that haven't been seen
-// before. It calls webfinger and parses the JSON. If possible, it
-// extracts the link to the profile page and replaces the entry in
-// accounts.
+// lookUpAccountUri is called for accounts that haven't been seen before. It calls webfinger and parses the JSON. If
+// possible, it extracts the link to the profile page and replaces the entry in accounts.
 func lookUpAccountUri(account, domain string) {
 	uri := "https://" + domain + "/.well-known/webfinger"
 	resp, err := http.Get(uri + "?resource=acct:" + account)
@@ -144,9 +135,8 @@ type WebFinger struct {
 	Links   []Link   `json:"links"`
 }
 
-// parseWebFinger parses the web finger JSON and returns the profile
-// page URI. For unmarshalling the JSON, it uses the Link and
-// WebFinger structs.
+// parseWebFinger parses the web finger JSON and returns the profile page URI. For unmarshalling the JSON, it uses the
+// Link and WebFinger structs.
 func parseWebFinger(body []byte) (string, error) {
 	var wf WebFinger
 	err := json.Unmarshal(body, &wf)
