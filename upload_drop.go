@@ -93,6 +93,7 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 	backup(filename)
 	// create the new file
 	path := d + "/" + filename
+	watches.ignore(path)
 	dst, err := os.Create(path)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

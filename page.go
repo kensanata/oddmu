@@ -61,6 +61,7 @@ func nameEscape(s string) string {
 // writing a file, the old copy is renamed to a backup, appending "~". There is no error checking for this.
 func (p *Page) save() error {
 	path := p.Name + ".md"
+	watches.ignore(path)
 	s := bytes.ReplaceAll(p.Body, []byte{'\r'}, []byte{})
 	if len(s) == 0 {
 		index.deletePageName(p.Name)

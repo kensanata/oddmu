@@ -18,6 +18,7 @@ import (
 // files that haven't been updated in the last second. The go routine is what forces us to use the RWMutex for the map.
 type Watches struct {
  	sync.RWMutex
+	ignores map[string]time.Time
 	files map[string]time.Time
 	watcher *fsnotify.Watcher
 }
@@ -25,6 +26,7 @@ type Watches struct {
 var watches Watches
 
 func init() {
+	watches.ignores = make(map[string]time.Time)
 	watches.files = make(map[string]time.Time)
 }
 
@@ -91,40 +93,45 @@ func (w *Watches) watch() {
 // the addition of directories (immediately).
 func (w *Watches) watchHandle(e fsnotify.Event) {
 	// log.Println(e)
+	w.Lock()
+	defer w.Unlock()
 	if e.Op.Has(fsnotify.Write) &&
 		(strings.HasSuffix(e.Name, ".html") &&
 			slices.Contains(templateFiles, filepath.Base(e.Name)) ||
 			strings.HasSuffix(e.Name, ".md")) {
-		w.Lock()
 		w.files[e.Name] = time.Now()
-		w.Unlock()
 		timer := time.NewTimer(time.Second)
 		go func() {
 			<-timer.C
-			w.watchTimer()
+			w.Lock()
+			defer w.Unlock()
+			w.watchTimer(e.Name)
 		}()
 	} else if e.Op.Has(fsnotify.Create) {
-		w.watchDo(e.Name)
+		w.watchDoUpdate(e.Name)
+	} else if e.Op.Has(fsnotify.Rename | fsnotify.Remove) {
+		w.watchDoRemove(e.Name)
 	}
 }
 
-// watchTimer checks if any files in the list are templates that need reloading or pages that need reindexing.
-func (w *Watches) watchTimer() {
-	w.Lock()
-	defer w.Unlock()
-	for path, t := range w.files {
-		if t.Add(time.Second).Before(time.Now().Add(time.Nanosecond)) {
-			delete(w.files, path)
-			w.watchDo(path)
-		}
+// watchTimer checks if the file hasn't been updated in 1s and if so, it calls watchDoUpdate. If another write has
+// updated the file, do nothing because another watchTimer will run at the appropriate time and check again.
+func (w *Watches) watchTimer(path string) {
+	t, ok := w.files[path]
+	if ok && t.Add(time.Second).Before(time.Now().Add(time.Nanosecond)) {
+		delete(w.files, path)
+		w.watchDoUpdate(path)
 	}
 }
 
 // Do the right thing right now. For Create events such as directories being created or files being moved into a watched
-// directory, this is the right thing to do. When a file is being written to, watchHandle will have started timers and
-// all that.
-func (w *Watches) watchDo(path string) {
-	if strings.HasSuffix(path, ".html") {
+// directory, this is the right thing to do. When a file is being written to, watchHandle will have started a timer and
+// will call this function after 1s of no more writes. If, however, the path is in the ignores map, do nothing.
+func (w *Watches) watchDoUpdate(path string) {
+	_, ignored := w.ignores[path]
+	if ignored {
+		return
+	} else if strings.HasSuffix(path, ".html") {
 		updateTemplate(path)
 	} else if strings.HasSuffix(path, ".md") {
 		p, err := loadPage(path[:len(path)-3]) // page name without ".md"
@@ -147,15 +154,39 @@ func (w *Watches) watchDo(path string) {
 	}
 }
 
-// ignore is called at the end of functions that triggered additions to watches.files. These functions know that they
-// handled the file so there's no need to handle the file again via watch. We have 1s before watchTimer is going to get
-// called. Therefore, after 10ms, remove the file from the todo list.
+// watchDoRemove removes files from the index or discards templates. If the path in question is in the ignores map, do
+// nothing.
+func (w *Watches) watchDoRemove(path string) {
+	_, ignored := w.ignores[path]
+	if ignored {
+		return
+	} else if strings.HasSuffix(path, ".html") {
+		removeTemplate(path)
+	} else if strings.HasSuffix(path, ".md") {
+		_, err := os.Stat(path)
+		if err == nil {
+			log.Println("Cannot remove existing page from the index", path)
+		} else {
+			log.Println("Deindex", path)
+			index.deletePageName(path[:len(path)-3]) // page name without ".md"
+		}
+	}
+}
+
+// ignore is before code that is known suspected save files and trigger watchHandle eventhough the code already handles
+// this. This is achieved by adding the path to the ignores map for 1s.
 func (w *Watches) ignore(path string) {
-	timer := time.NewTimer(10*time.Millisecond)
+	w.Lock()
+	defer w.Unlock()
+	w.ignores[path] = time.Now()
+	timer := time.NewTimer(time.Second)
 	go func() {
 		<-timer.C
 		w.Lock()
 		defer w.Unlock()
-		delete(watches.files, path)
+		t := w.ignores[path]
+		if t.Add(time.Second).Before(time.Now().Add(time.Nanosecond)) {
+			delete(w.ignores, path)
+		}
 	}()
 }

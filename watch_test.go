@@ -8,48 +8,53 @@ import (
 )
 
 func TestWatchedPageUpdate(t *testing.T) {
-	cleanup(t, "testdata/watched-page")
+	dir := "testdata/watched-page"
+	path := dir + "/haiku.md"
+	cleanup(t, dir)
 	index.load()
 	watches.install()
-	assert.NoError(t, os.MkdirAll("testdata/watched-page", 0755))
+	assert.NoError(t, os.MkdirAll(dir, 0755))
 	time.Sleep(time.Millisecond)
-	assert.Contains(t, watches.watcher.WatchList(), "testdata/watched-page")
+	assert.Contains(t, watches.watcher.WatchList(), dir)
 
 	haiku := []byte(`Pine cones
 
 Soft steps on the trail
 Up and up in single file
 Who ate half a cone?`)
-	assert.NoError(t, os.WriteFile("testdata/watched-page/haiku.md", haiku, 0644))
+	assert.NoError(t, os.WriteFile(path, haiku, 0644))
 
 	time.Sleep(time.Millisecond)
 
 	watches.RLock()
-	assert.Contains(t, watches.files, "testdata/watched-page/haiku.md")
+	assert.Contains(t, watches.files, path)
 	watches.RUnlock()
 
 	watches.Lock()
-	watches.files["testdata/watched-page/haiku.md"] = watches.files["testdata/watched-page/haiku.md"].Add(-2 * time.Second)
+	watches.files[path] = watches.files[path].Add(-2 * time.Second)
 	watches.Unlock()
 
-	watches.watchTimer()
+	watches.watchTimer(path)
 
 	index.RLock()
-	assert.Contains(t, index.titles, "testdata/watched-page/haiku")
+	assert.Contains(t, index.titles, path[:len(path)-3])
 	index.RUnlock()
 }
 
 func TestWatchedTemplateUpdate(t *testing.T) {
-	cleanup(t, "testdata/watched-template")
+	dir := "testdata/watched-template"
+	name := dir + "/raclette"
+	path := dir + "/view.html"
+	cleanup(t, dir)
 	index.load()
 	watches.install()
-	assert.NoError(t, os.MkdirAll("testdata/watched-template", 0755))
+	assert.NoError(t, os.MkdirAll(dir, 0755))
 
 	time.Sleep(time.Millisecond)
 
-	assert.Contains(t, watches.watcher.WatchList(), "testdata/watched-template")
+	assert.Contains(t, watches.watcher.WatchList(), dir)
 
-	p := &Page{Name: "testdata/watched-template/raclette", Body: []byte(`# Raclette
+	p := &Page{Name: name, Body: []byte(`# Raclette
 
 The heat element
 glows red and the cheese bubbles
@@ -62,23 +67,23 @@ the smell is everywhere
 	
 	// save a new view handler directly
 	assert.NoError(t,
-		os.WriteFile("testdata/watched-template/view.html",
+		os.WriteFile(path,
 			[]byte("<body><h1>{{.Title}}</h1>{{.Html}}"),
 			0644))
 
 	time.Sleep(time.Millisecond)
 
 	watches.RLock()
-	assert.Contains(t, watches.files, "testdata/watched-template/view.html")
+	assert.Contains(t, watches.files, path)
 	watches.RUnlock()
 
 	watches.Lock()
-	watches.files["testdata/watched-template/view.html"] = watches.files["testdata/watched-template/view.html"].Add(-2 * time.Second)
+	watches.files[path] = watches.files[path].Add(-2 * time.Second)
 	watches.Unlock()
 
-	watches.watchTimer()
+	watches.watchTimer(path)
 	
-	body := assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/testdata/watched-template/raclette", nil)
+	body := assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/" + name, nil)
 	assert.Contains(t, body, "<h1>Raclette</h1>") // page text is still there
 	assert.NotContains(t, body, "Skip") // but the header is not
 }
