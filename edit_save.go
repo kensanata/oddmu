@@ -5,10 +5,8 @@ import (
 	"net/http"
 )
 
-// editHandler uses the "edit.html" template to present an edit page.
-// When editing, the page title is not overriden by a title in the
-// text. Instead, the page name is used. The edit is saved using the
-// saveHandler.
+// editHandler uses the "edit.html" template to present an edit page. When editing, the page title is not overriden by a
+// title in the text. Instead, the page name is used. The edit is saved using the saveHandler.
 func editHandler(w http.ResponseWriter, r *http.Request, name string) {
 	p, err := loadPage(name)
 	if err != nil {
@@ -19,20 +17,21 @@ func editHandler(w http.ResponseWriter, r *http.Request, name string) {
 	renderTemplate(w, p.Dir(), "edit", p)
 }
 
-// saveHandler takes the "body" form parameter and saves it. The
-// browser is redirected to the page view.
+// saveHandler takes the "body" form parameter and saves it. The browser is redirected to the page view.
 func saveHandler(w http.ResponseWriter, r *http.Request, name string) {
 	body := r.FormValue("body")
 	p := &Page{Name: name, Body: []byte(body)}
 	err := p.save()
 	if err != nil {
+		log.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	if r.FormValue("notify") == "on" {
-		err = p.notify()
+		err = p.notify() // errors have already been logged, so no logging here
 		if err != nil {
-			log.Println("notify:", err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 	}
 	http.Redirect(w, r, "/view/"+name, http.StatusFound)

@@ -58,7 +58,7 @@ func nameEscape(s string) string {
 
 // save saves a Page. The path is based on the Page.Name and gets the ".md" extension. Page.Body is saved, without any
 // carriage return characters ("\r"). Page.Title and Page.Html are not saved. There is no caching. Before removing or
-// writing a file, the old copy is renamed to a backup, appending "~". There is no error checking for this.
+// writing a file, the old copy is renamed to a backup, appending "~". Errors are not logged but returned.
 func (p *Page) save() error {
 	path := p.Name + ".md"
 	watches.ignore(path)
@@ -74,12 +74,14 @@ func (p *Page) save() error {
 	if d != "." {
 		err := os.MkdirAll(d, 0755)
 		if err != nil {
-			log.Println(err)
 			return err
 		}
 	}
 	log.Println("Save", path)
-	backup(path)
+	err := backup(path)
+	if err != nil {
+		return err
+	}
 	return os.WriteFile(path, s, 0644)
 }
 

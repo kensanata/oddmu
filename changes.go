@@ -13,7 +13,8 @@ import (
 // hashtag pages is only added for blog pages. If the "changes" page does not exist, it is created. If the hashtag page
 // does not exist, it is not. Hashtag pages are considered optional. If the page that's being edited is in a
 // subdirectory, then the "changes", "index" and hashtag pages of that particular subdirectory are affected. Every
-// subdirectory is treated like a potentially independent wiki.
+// subdirectory is treated like a potentially independent wiki. Errors are logged before being returned because the
+// error messages are confusing from the point of view of the saveHandler.
 func (p *Page) notify() error {
 	p.handleTitle(false)
 	if p.Title == "" {
@@ -25,6 +26,7 @@ func (p *Page) notify() error {
 	dir := path.Dir(p.Name)
 	err := addLinkWithDate(path.Join(dir, "changes"), link, re)
 	if err != nil {
+		log.Printf("Updating changes in %s failed: %s", dir, err)
 		return err
 	}
 	if p.isBlog() {
@@ -54,40 +56,40 @@ func (p *Page) notify() error {
 func addLinkWithDate(name, link string, re *regexp.Regexp) error {
 	date := time.Now().Format(time.DateOnly)
 	org := ""
-	c, err := loadPage(name)
+	p, err := loadPage(name)
 	if err != nil {
 		// create a new page
-		c = &Page{Name: name, Body: []byte("# Changes\n\n## " + date + "\n" + link)}
+		p = &Page{Name: name, Body: []byte("# Changes\n\n## " + date + "\n" + link)}
 	} else {
-		org = string(c.Body)
+		org = string(p.Body)
 		// remove the old match, if one exists
-		loc := re.FindIndex(c.Body)
+		loc := re.FindIndex(p.Body)
 		if loc != nil {
-			r := c.Body[:loc[0]]
-			if loc[1] < len(c.Body) {
-				r = append(r, c.Body[loc[1]:]...)
+			r := p.Body[:loc[0]]
+			if loc[1] < len(p.Body) {
+				r = append(r, p.Body[loc[1]:]...)
 			}
-			c.Body = r
-			if loc[0] >= 14 && len(c.Body) >= loc[0]+15 {
+			p.Body = r
+			if loc[0] >= 14 && len(p.Body) >= loc[0]+15 {
 				// remove the preceding date if there are now two dates following each other
 				re := regexp.MustCompile(`(?m)^## (\d\d\d\d-\d\d-\d\d)\n\n## (\d\d\d\d-\d\d-\d\d)\n`)
-				if re.Match(c.Body[loc[0]-14 : loc[0]+15]) {
-					c.Body = append(c.Body[0:loc[0]-14], c.Body[loc[0]+1:]...)
+				if re.Match(p.Body[loc[0]-14 : loc[0]+15]) {
+					p.Body = append(p.Body[0:loc[0]-14], p.Body[loc[0]+1:]...)
 				}
-			} else if len(c.Body) == loc[0] {
+			} else if len(p.Body) == loc[0] {
 				// remove a trailing date
 				re := regexp.MustCompile(`## (\d\d\d\d-\d\d-\d\d)\n`)
-				if re.Match(c.Body[loc[0]-14 : loc[0]]) {
-					c.Body = c.Body[0 : loc[0]-14]
+				if re.Match(p.Body[loc[0]-14 : loc[0]]) {
+					p.Body = p.Body[0 : loc[0]-14]
 				}
 			}
 		}
 		// locate the beginning of the list to insert the line
 		re := regexp.MustCompile(`(?m)^\* \[[^\]]+\]\([^\)]+\)\n`)
-		loc = re.FindIndex(c.Body)
+		loc = re.FindIndex(p.Body)
 		if loc == nil {
 			// if no list was found, use the end of the page
-			loc = []int{len(c.Body)}
+			loc = []int{len(p.Body)}
 		}
 		// start with new page content
 		r := []byte("")
@@ -95,10 +97,10 @@ func addLinkWithDate(name, link string, re *regexp.Regexp) error {
 		addDate := true
 		if loc[0] >= 14 {
 			re := regexp.MustCompile(`(?m)^## (\d\d\d\d-\d\d-\d\d)\n`)
-			m := re.Find(c.Body[loc[0]-14 : loc[0]])
+			m := re.Find(p.Body[loc[0]-14 : loc[0]])
 			if m == nil {
 				// not a date: insert date, don't move insertion point
-			} else if string(c.Body[loc[0]-11:loc[0]-1]) == date {
+			} else if string(p.Body[loc[0]-11:loc[0]-1]) == date {
 				// if the date is our date, don't add it, don't move insertion point
 				addDate = false
 			} else {
@@ -107,7 +109,7 @@ func addLinkWithDate(name, link string, re *regexp.Regexp) error {
 			}
 		}
 		// append up to the insertion point
-		r = append(r, c.Body[:loc[0]]...)
+		r = append(r, p.Body[:loc[0]]...)
 		// append date, if necessary
 		if addDate {
 			// ensure paragraph break
@@ -124,16 +126,16 @@ func addLinkWithDate(name, link string, re *regexp.Regexp) error {
 		// append link
 		r = append(r, []byte(link)...)
 		// if we just added a date, add an empty line after the single-element list
-		if len(c.Body) > loc[0] && c.Body[loc[0]] != '*' {
+		if len(p.Body) > loc[0] && p.Body[loc[0]] != '*' {
 			r = append(r, '\n')
 		}
 		// append the rest
-		r = append(r, c.Body[loc[0]:]...)
-		c.Body = r
+		r = append(r, p.Body[loc[0]:]...)
+		p.Body = r
 	}
 	// only save if something changed
-	if string(c.Body) != org {
-		return c.save()
+	if string(p.Body) != org {
+		return p.save()
 	}
 	return nil
 }
@@ -141,27 +143,27 @@ func addLinkWithDate(name, link string, re *regexp.Regexp) error {
 // addLink adds a link to a named page, if the page exists and doesn't contain the link. If the link exists but with a
 // different title, the title is fixed.
 func addLink(name string, mandatory bool, link string, re *regexp.Regexp) error {
-	c, err := loadPage(name)
+	p, err := loadPage(name)
 	if err != nil {
 		if mandatory {
-			c = &Page{Name: name, Body: []byte(link)}
-			return c.save()
+			p = &Page{Name: name, Body: []byte(link)}
+			return p.save()
 		} else {
 			// Skip non-existing files: no error
 			return nil
 		}
 	}
-	org := string(c.Body)
+	org := string(p.Body)
 	// if a link exists, that's the place to insert the new link (in which case loc[0] and loc[1] differ)
-	loc := re.FindIndex(c.Body)
+	loc := re.FindIndex(p.Body)
 	// if no link exists, find a good place to insert it
 	if loc == nil {
 		// locate the beginning of the list to insert the line
 		re = regexp.MustCompile(`(?m)^\* \[[^\]]+\]\([^\)]+\)\n`)
-		loc = re.FindIndex(c.Body)
+		loc = re.FindIndex(p.Body)
 		if loc == nil {
 			// if no list was found, use the end of the page
-			m := len(c.Body)
+			m := len(p.Body)
 			loc = []int{m, m}
 		} else {
 			// if a list item was found, use just the beginning as insertion point
@@ -171,15 +173,15 @@ func addLink(name string, mandatory bool, link string, re *regexp.Regexp) error 
 	// start with new page content
 	r := []byte("")
 	// append up to the insertion point
-	r = append(r, c.Body[:loc[0]]...)
+	r = append(r, p.Body[:loc[0]]...)
 	// append link
 	r = append(r, []byte(link)...)
 	// append the rest
-	r = append(r, c.Body[loc[1]:]...)
-	c.Body = r
+	r = append(r, p.Body[loc[1]:]...)
+	p.Body = r
 	// only save if something changed
-	if string(c.Body) != org {
-		return c.save()
+	if string(p.Body) != org {
+		return p.save()
 	}
 	return nil
 }
