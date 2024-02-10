@@ -153,7 +153,7 @@ func (w *Watches) watchDoUpdate(path string) {
 			log.Println("Cannot load page", path)
 		} else {
 			log.Println("Update index for", path)
-			p.updateIndex()
+			index.update(p)
 		}
 	} else if !slices.Contains(w.watcher.WatchList(), path) {
 		fi, err := os.Stat(path)

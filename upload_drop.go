@@ -7,6 +7,7 @@ import (
 	"image/jpeg"
 	"image/png"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -63,17 +64,18 @@ func uploadHandler(w http.ResponseWriter, r *http.Request, dir string) {
 }
 
 // dropHandler takes the "name" form field and the "file" form file and saves the file under the given name. The browser
-// is redirected to the view of that file.
+// is redirected to the view of that file. Some errors are for the users and some are for users and the admins. Those
+// later errors are printed, too.
 func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 	d := path.Dir(dir)
 	// ensure the directory exists
 	fi, err := os.Stat(d)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	if !fi.IsDir() {
-		http.Error(w, "directory does not exist", http.StatusInternalServerError)
+		http.Error(w, "directory does not exist", http.StatusBadRequest)
 		return
 	}
 	data := url.Values{}
@@ -82,21 +84,26 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 	filename := filepath.Base(name)
 	// no overwriting of hidden files or adding subdirectories
 	if strings.HasPrefix(filename, ".") || filepath.Dir(name) != "." {
-		http.Error(w, "no filename", http.StatusInternalServerError)
+		http.Error(w, "no filename", http.StatusForbidden)
 		return
 	}
 	file, _, err := r.FormFile("file")
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	defer file.Close()
-	backup(filename)
-	// create the new file
 	path := filepath.Join(d, filename)
 	watches.ignore(path)
+	err = backup(path)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	dst, err := os.Create(path)
 	if err != nil {
+		log.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -106,7 +113,7 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 	if len(maxwidth) > 0 {
 		mw, err := strconv.Atoi(maxwidth)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 		data.Add("maxwidth", maxwidth)
@@ -122,14 +129,14 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 			if len(quality) > 0 {
 				q, err = strconv.Atoi(quality)
 				if err != nil {
-					http.Error(w, err.Error(), http.StatusInternalServerError)
+					http.Error(w, err.Error(), http.StatusBadRequest)
 					return
 				}
 				data.Add("quality", quality)
 			}
 			encoder = imgio.JPEGEncoder(q)
 		default:
-			http.Error(w, "Resizing images requires a .png, .jpg or .jpeg extension for the filename", http.StatusInternalServerError)
+			http.Error(w, "Resizing images requires a .png, .jpg or .jpeg extension for the filename", http.StatusBadRequest)
 			return
 		}
 		// try and decode the data in various formats
@@ -141,7 +148,8 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 			img, err = goheif.Decode(file)
 		}
 		if err != nil {
-			http.Error(w, "The image could not be decoded (only PNG, JPG and HEIC formats are supported for resizing)", http.StatusInternalServerError)
+			http.Error(w, "The image could not be decoded (only PNG, JPG and HEIC formats are supported for resizing)", http.StatusBadRequest)
+			return
 		}
 		rect := img.Bounds()
 		width := rect.Max.X - rect.Min.X
@@ -149,17 +157,19 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 			height := (rect.Max.Y - rect.Min.Y) * mw / width
 			img = transform.Resize(img, mw, height, transform.Linear)
 			if err := imgio.Save(path, img, encoder); err != nil {
+				log.Println(err)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
 		} else {
-			http.Error(w, "The file is too small for this", http.StatusInternalServerError)
+			http.Error(w, "The file is too small for this", http.StatusBadRequest)
 			return
 		}
 	} else {
 		// just copy the bytes
 		n, err := io.Copy(dst, file)
 		if err != nil {
+			log.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -167,11 +177,14 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		if n == 0 {
 			err := os.Remove(path)
 			if err != nil {
+				log.Println(err)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
+			log.Println("Delete", path)
 		}
 	}
+	log.Println("Save", path)
 	updateTemplate(path)
 	http.Redirect(w, r, "/upload/"+d+"/?"+data.Encode(), http.StatusFound)
 }

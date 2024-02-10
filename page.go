@@ -64,19 +64,21 @@ func (p *Page) save() error {
 	watches.ignore(path)
 	s := bytes.ReplaceAll(p.Body, []byte{'\r'}, []byte{})
 	if len(s) == 0 {
+		log.Println("Delete", path)
 		index.remove(p)
 		return os.Rename(path, path+"~")
 	}
 	p.Body = s
-	p.updateIndex()
+	index.update(p)
 	d := filepath.Dir(path)
 	if d != "." {
 		err := os.MkdirAll(d, 0755)
 		if err != nil {
-			log.Printf("Creating directory %s failed: %s", d, err)
+			log.Println(err)
 			return err
 		}
 	}
+	log.Println("Save", path)
 	backup(path)
 	return os.WriteFile(path, s, 0644)
 }
@@ -85,6 +87,10 @@ func (p *Page) save() error {
 // to it ("~"). This is true even if the file refers to a binary file like "image.png" and most applications don't know
 // what to do with a file called "image.png~".
 func backup(path string) error {
+	_, err := os.Stat(path)
+	if err != nil {
+		return nil
+	}
 	backup := path + "~"
 	fi, err := os.Stat(backup)
 	if err != nil || time.Since(fi.ModTime()).Minutes() >= 60 {

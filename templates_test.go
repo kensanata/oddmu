@@ -34,8 +34,8 @@ Memories of cold
 	assert.Equal(t, len(html), n)
 	writer.Close()
 	HTTPUploadLocation(t, makeHandler(dropHandler, false), "/drop/testdata/templates/", writer.FormDataContentType(), form)
-	assert.FileExists(t, "view.html")
-	assert.FileExists(t, "testdata/templates/view.html")
+	assert.FileExists(t, "view.html", "original view.html still exists")
+	assert.FileExists(t, "testdata/templates/view.html", "new view.html also exists")
 	assert.Contains(t,
 		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/templates/view.html", nil),
 		html)

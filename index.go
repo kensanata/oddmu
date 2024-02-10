@@ -175,9 +175,9 @@ func (idx *Index) dump() {
 }
 
 // updateIndex updates the index for a single page.
-func (p *Page) updateIndex() {
-	index.remove(p)
-	index.add(p)
+func (idx *Index) update(p *Page) {
+	idx.remove(p)
+	idx.add(p)
 }
 
 // search searches the index for a query string and returns page
