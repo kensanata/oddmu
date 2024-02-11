@@ -17,7 +17,8 @@ func editHandler(w http.ResponseWriter, r *http.Request, name string) {
 	renderTemplate(w, p.Dir(), "edit", p)
 }
 
-// saveHandler takes the "body" form parameter and saves it. The browser is redirected to the page view.
+// saveHandler takes the "body" form parameter and saves it. The browser is redirected to the page view. This is similar
+// to the appendHandler.
 func saveHandler(w http.ResponseWriter, r *http.Request, name string) {
 	body := r.FormValue("body")
 	p := &Page{Name: name, Body: []byte(body)}
@@ -26,6 +27,12 @@ func saveHandler(w http.ResponseWriter, r *http.Request, name string) {
 		log.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
+	}
+	username, _, ok := r.BasicAuth()
+	if ok {
+		log.Println("Save", name, "by", username)
+	} else {
+		log.Println("Save", name)
 	}
 	if r.FormValue("notify") == "on" {
 		err = p.notify() // errors have already been logged, so no logging here

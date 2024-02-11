@@ -184,7 +184,12 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 			log.Println("Delete", path)
 		}
 	}
-	log.Println("Save", path)
+	username, _, ok := r.BasicAuth()
+	if ok {
+		log.Println("Save", path, "by", username)
+	} else {
+		log.Println("Save", path)
+	}
 	updateTemplate(path)
 	http.Redirect(w, r, "/upload/"+d+"/?"+data.Encode(), http.StatusFound)
 }

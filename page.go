@@ -77,7 +77,6 @@ func (p *Page) save() error {
 			return err
 		}
 	}
-	log.Println("Save", path)
 	err := backup(path)
 	if err != nil {
 		return err
