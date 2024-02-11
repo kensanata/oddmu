@@ -98,13 +98,11 @@ func (idx *Index) deletePageName(name string) {
 			break
 		}
 	}
-	if id == 0 {
-		log.Printf("Page %s is not indexed", name)
-		return
+	if id != 0 {
+		idx.deleteDocument(id)
+		delete(idx.documents, id)
 	}
-	delete(idx.documents, id)
 	delete(idx.titles, name)
-	idx.deleteDocument(id)
 }
 
 // remove the page from the index. Do this when deleting a page. This assumes that the index is unlocked.
