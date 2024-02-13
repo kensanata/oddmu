@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-APACHE" "5" "2024-01-29"
+.TH "ODDMU-APACHE" "5" "2024-02-13"
 .PP
 .SH NAME
 .PP
@@ -220,6 +220,41 @@ to your "<VirtualHost *:443>" section:
 .nf
 .RS 4
 <LocationMatch "^/(edit|save|add|append|upload|drop)/">
+  AuthType Basic
+  AuthName "Password Required"
+  AuthUserFile /home/oddmu/\&.htpasswd
+  Require valid-user
+</LocationMatch>
+.fi
+.RE
+.PP
+The way Oddmu handles subdirectories is that all files and directories are
+visible, except for "hidden" files and directories (whose name starts with a
+period).\& Specifically, do not rely on Apache to hide locations in subdirectories
+from public view.\& Search reveals the existence of these pages and produces an
+extract, even if users cannot follow the links.\& Archive links pack all the
+subdirectories, including locations you may have hidden from view using Apache.\&
+.PP
+If you want private subdirectories, you need to set the environment variable
+ODDMU_FILTER to a regular expression matching the private directories.\& If search
+starts in a directory matching the regular expression, the directory and its
+subdirectories are searched.\& If search starts in a directory that doesn'\&t match
+the regular expression, all directories matching the regular expression are
+excluded.\&
+.PP
+In the following example, ODDMU_FILTER is set to "^secret/".\&
+.PP
+http://transjovian.\&org/search/index?\&q=something does not search the "secret"
+directory and its subdirectories are excluded.\&
+.PP
+http://transjovian.\&org/search/secret/index?\&q=something searches just the
+"secret" directory and its subdirectories.\&
+.PP
+Now you need to ensure that the "secret" directory are not public.\&
+.PP
+.nf
+.RS 4
+<LocationMatch "^/(edit|save|add|append|upload|drop|view/secret|search/secret)/">
   AuthType Basic
   AuthName "Password Required"
   AuthUserFile /home/oddmu/\&.htpasswd

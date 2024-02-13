@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 	"path"
 	"regexp"
 	"slices"
@@ -93,12 +94,12 @@ const itemsPerPage = 20
 // size is 20. Specify either the page number to return, or that all the results should be returned. Only ask for all
 // results if runtime is not an issue, like on the command line. The boolean return value indicates whether there are
 // more results.
-func search(q string, dir string, page int, all bool) ([]*Page, bool) {
+func search(q, dir, filter string, page int, all bool) ([]*Page, bool) {
 	if len(q) == 0 {
 		return make([]*Page, 0), false
 	}
 	names := index.search(q) // hashtags or all names
-	names = filterPrefix(names, dir)
+	names = filterPath(names, dir, filter)
 	predicates, terms := predicatesAndTokens(q)
 	names = filterNames(names, predicates)
 	index.RLock()
@@ -115,16 +116,28 @@ func search(q string, dir string, page int, all bool) ([]*Page, bool) {
 	return items, more
 }
 
-// filterPrefix filters the names by prefix. A prefix of "." means
-// that all the names are returned, since this is what path.Dir
-// returns for "no directory".
-func filterPrefix(names []string, prefix string) []string {
-	if prefix == "." {
-		return names
+// filterPath filters the names by prefix and by a regular expression. A prefix of "." means that all the names are
+// returned, since this is what path.Dir returns for "no directory".
+//
+// The regular expression can be used to ensure that search does not descend into subdirectories unless the search
+// already starts there. Given the pages a, public/b and secret/c and ODDMU_FILTER=^secret/ then if search starts in the
+// root directory /, search does not enter secret/, but if search starts in secret/, search does search the pages in
+// secret/ – it us up to the web server to ensure access to secret/ is limited. More specifically: If the current
+// directory matches the regular expression, the page names must match; if the regular expression does not match the
+// current directory, the page name must not match the filter either. If the filter is empty, all prefixes and all page
+// names match, so no problem.
+func filterPath(names []string, prefix, filter string) []string {
+	re, err := regexp.Compile(filter)
+	if err != nil {
+		log.Println("ODDMU_FILTER does not compile:", filter, err)
+		return []string{}
 	}
+	mustMatch := re.MatchString(prefix)
 	r := make([]string, 0)
 	for _, name := range names {
-		if strings.HasPrefix(name, prefix) {
+		if strings.HasPrefix(name, prefix) &&
+			(mustMatch && re.MatchString(name) ||
+				!mustMatch && !re.MatchString(name)) {
 			r = append(r, name)
 		}
 	}
@@ -227,17 +240,19 @@ func prependQueryPage(names []string, dir, q string) ([]string, bool) {
 	return names, false
 }
 
-// searchHandler presents a search result. It uses the query string in
-// the form parameter "q" and the template "search.html". For each
-// page found, the HTML is just an extract of the actual body.
-// Search is limited to a directory and its subdirectories.
+// searchHandler presents a search result. It uses the query string in the form parameter "q" and the template
+// "search.html". For each page found, the HTML is just an extract of the actual body. Search is limited to a directory
+// and its subdirectories.
+//
+// A filter can be defined using the environment variable ODDMU_FILTER. It is passed on to search.
 func searchHandler(w http.ResponseWriter, r *http.Request, dir string) {
 	q := r.FormValue("q")
 	page, err := strconv.Atoi(r.FormValue("page"))
 	if err != nil {
 		page = 1
 	}
-	items, more := search(q, dir, page, false)
+	filter := os.Getenv("ODDMU_FILTER")
+	items, more := search(q, dir, filter, page, false)
 	s := &Search{Query: q, Dir: dir, Items: items, Previous: page - 1, Page: page, Next: page + 1,
 		Results: len(items) > 0, More: more}
 	renderTemplate(w, dir, "search", s)

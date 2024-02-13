@@ -51,7 +51,7 @@ func searchCli(w io.Writer, dir string, n int, all, extract bool, quiet bool, ar
 	index.reset()
 	index.load()
 	q := strings.Join(args, " ")
-	items, more := search(q, dir, n, true)
+	items, more := search(q, dir, "", n, true)
 	if !quiet {
 		fmt.Fprint(os.Stderr, "Search for ", q)
 		if !all {

@@ -71,12 +71,83 @@ func TestSearch(t *testing.T) {
 	assert.NotContains(t, body, "Welcome")
 }
 
+func TestSearchFilter(t *testing.T) {
+	names := []string{"a", "public/b", "secret/c"}
+
+	f := filterPath(names, "", "")
+	assert.Equal(t, names, f)
+
+	f = filterPath(names, "public/", "")
+	assert.Equal(t, []string{"public/b"}, f)
+
+	f = filterPath(names, "secret/", "")
+	assert.Equal(t, []string{"secret/c"}, f)
+
+	// critically, this no longer returns c
+	f = filterPath(names, "", "^secret/")
+	assert.Equal(t, []string{"a", "public/b"}, f)
+
+	// unchanged
+	f = filterPath(names, "public/", "^secret/")
+	assert.Equal(t, []string{"public/b"}, f)
+
+	// unchanged
+	f = filterPath(names, "secret/", "^secret/")
+	assert.Equal(t, []string{"secret/c"}, f)
+
+}
+
+func TestSearchFilterLong(t *testing.T) {
+	cleanup(t, "testdata/filter")
+	p := &Page{Name: "testdata/filter/one", Body: []byte(`# One
+
+One day, I heard you say
+Just one more day and I'd know
+But that was last spring`)}
+	p.save()
+	p = &Page{Name: "testdata/filter/public/two", Body: []byte(`# Two
+Oh, the two of us
+Have often seen this forest
+But this bird is new`)}
+	p.save()
+	p = &Page{Name: "testdata/filter/secret/three", Body: []byte(`# Three
+Three years have gone by
+And we're good, we live, we breathe
+But we don't say it`)}
+	p.save()
+
+	// normal search works
+	items, _ := search("spring", "testdata/", "", 1, false)
+	assert.Equal(t, len(items), 1)
+	assert.Equal(t, "One", items[0].Title)
+
+	// not found because it's in /secret and we start at /
+	items, _ = search("year", "testdata/", "^testdata/filter/secret/", 1, false)
+	assert.Equal(t, 0, len(items))
+
+	// only found two because the third one is in /secret and we start at /
+	items, _ = search("but", "testdata/", "^testdata/filter/secret/", 1, false)
+	assert.Equal(t, 2, len(items))
+	assert.Equal(t, "One", items[0].Title)
+	assert.Equal(t, "Two", items[1].Title)
+
+	// starting in the public/ directory, we find only one page
+	items, _ = search("but", "testdata/filter/public/", "^testdata/filter/secret/", 1, false)
+	assert.Equal(t, 1, len(items))
+	assert.Equal(t, "Two", items[0].Title)
+
+	// starting in the secret/ directory, we find only one page
+	items, _ = search("but", "testdata/filter/secret/", "^testdata/filter/secret/", 1, false)
+	assert.Equal(t, 1, len(items))
+	assert.Contains(t, "Three", items[0].Title)
+}
+
 func TestSearchDir(t *testing.T) {
 	cleanup(t, "testdata/dir")
 	p := &Page{Name: "testdata/dir/dice", Body: []byte(`# Dice
 
 A tiny drum roll
-Dice rolling bouncing stopping 
+Dice rolling bouncing stopping
 Where is lady luck?`)}
 	p.save()
 
@@ -101,17 +172,17 @@ func TestTitleSearch(t *testing.T) {
 	index.reset()
 	index.load()
 
-	items, more := search("title:readme", "", 1, false)
+	items, more := search("title:readme", "", "", 1, false)
 	assert.Equal(t, 0, len(items), "no page found")
 	assert.False(t, more)
 
-	items, more = search("title:wel", "", 1, false) // README also contains "wel"
+	items, more = search("title:wel", "", "", 1, false) // README also contains "wel"
 	assert.Equal(t, 1, len(items), "one page found")
 	assert.Equal(t, "index", items[0].Name, "Welcome to Oddµ")
 	assert.Greater(t, items[0].Score, 0, "matches result in a score")
 	assert.False(t, more)
 
-	items, more = search("wel", "", 1, false)
+	items, more = search("wel", "", "", 1, false)
 	assert.Greater(t, len(items), 1, "two pages found")
 	assert.False(t, more)
 }
@@ -125,12 +196,12 @@ Was it 2015
 We met in the park?`)}
 	p.save()
 
-	items, _ := search("blog:false", "", 1, false)
+	items, _ := search("blog:false", "", "", 1, false)
 	for _, item := range items {
 		assert.NotEqual(t, "Back then", item.Title, item.Name)
 	}
 
-	items, _ = search("blog:true", "", 1, false)
+	items, _ = search("blog:true", "", "", 1, false)
 	assert.Equal(t, 1, len(items), "one blog page found")
 	assert.Equal(t, "Back then", items[0].Title, items[0].Name)
 }
@@ -150,7 +221,7 @@ A quick sip too quick
 #Haiku`)}
 	p.save()
 
-	items, _ := search("#Haiku", "testdata/hashtag", 1, false)
+	items, _ := search("#Haiku", "testdata/hashtag", "", 1, false)
 	assert.Equal(t, 2, len(items), "two pages found")
 	assert.Equal(t, "Haikus", items[0].Title, items[0].Name)
 	assert.Equal(t, "Tea", items[1].Title, items[1].Name)
@@ -182,18 +253,18 @@ func TestSearchPagination(t *testing.T) {
 		p.save()
 	}
 
-	items, more := search("secretA", "", 1, false)
+	items, more := search("secretA", "", "", 1, false)
 	assert.Equal(t, 1, len(items), "one page found, %v", items)
 	assert.Equal(t, "testdata/pagination/A", items[0].Name)
 	assert.False(t, more)
 
-	items, more = search("secretX", "", 1, false)
+	items, more = search("secretX", "", "", 1, false)
 	assert.Equal(t, itemsPerPage, len(items))
 	assert.Equal(t, "testdata/pagination/A", items[0].Name)
 	assert.Equal(t, "testdata/pagination/T", items[itemsPerPage-1].Name)
 	assert.True(t, more)
 
-	items, more = search("secretX", "", 2, false)
+	items, more = search("secretX", "", "", 2, false)
 	assert.Equal(t, 6, len(items))
 	assert.Equal(t, "testdata/pagination/U", items[0].Name)
 	assert.Equal(t, "testdata/pagination/Z", items[5].Name)

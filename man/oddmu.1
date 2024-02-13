@@ -78,6 +78,11 @@ codes, e.\&g.\& "en" or "en,de,fr,pt".\&
 You can enable webfinger to link fediverse accounts to their correct profile
 pages by setting ODDMU_WEBFINGER to "1".\& See \fIoddmu\fR(5).\&
 .PP
+If you use secret subdirectories, you cannot rely on the web server to hide
+those pages because search includes subdirectories.\& In order to protect those
+pages from search, you need to use the ODDMU_FILTER to a regular exression such
+as "^secret/".\& See \fIoddmu-apache\fR(5).\&
+.PP
 .SH Socket Activation
 .PP
 Instead of specifying ODDMU_ADDRESS or ODDMU_PORT, you can start the service
