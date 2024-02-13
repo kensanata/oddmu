@@ -1,0 +1,29 @@
+ODDMU-VERSION(1)
+
+# NAME
+
+oddmu-version - print build info on the command-line
+
+# SYNOPSIS
+
+*oddmu version*
+
+# DESCRIPTION
+
+The "version" subcommand prints a lot of stuff used to build the binary,
+including the git revision, git repository, versions of dependencies used and
+more.
+
+It's the equivalent of running this:
+
+```
+go version -m oddmu
+```
+
+# SEE ALSO
+
+_oddmu_(1)
+
+# AUTHORS
+
+Maintained by Alex Schroeder <alex@gnu.org>.
