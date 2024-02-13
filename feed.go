@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"os"
 	"path"
+	"path/filepath"
 	"time"
 )
 
@@ -46,7 +47,7 @@ func feed(p *Page, ti time.Time) *Feed {
 			return ast.GoToNext
 		}
 		name := path.Join(path.Dir(p.Name), string(link.Destination))
-		fi, err := os.Stat(name + ".md")
+		fi, err := os.Stat(filepath.FromSlash(name) + ".md")
 		if err != nil {
 			return ast.GoToNext
 		}

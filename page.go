@@ -60,42 +60,42 @@ func nameEscape(s string) string {
 // carriage return characters ("\r"). Page.Title and Page.Html are not saved. There is no caching. Before removing or
 // writing a file, the old copy is renamed to a backup, appending "~". Errors are not logged but returned.
 func (p *Page) save() error {
-	path := p.Name + ".md"
-	watches.ignore(path)
+	fp := filepath.FromSlash(p.Name + ".md")
+	watches.ignore(fp)
 	s := bytes.ReplaceAll(p.Body, []byte{'\r'}, []byte{})
 	if len(s) == 0 {
-		log.Println("Delete", path)
+		log.Println("Delete", p.Name)
 		index.remove(p)
-		return os.Rename(path, path+"~")
+		return os.Rename(fp, fp+"~")
 	}
 	p.Body = s
 	index.update(p)
-	d := filepath.Dir(path)
+	d := filepath.Dir(fp)
 	if d != "." {
 		err := os.MkdirAll(d, 0755)
 		if err != nil {
 			return err
 		}
 	}
-	err := backup(path)
+	err := backup(fp)
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(path, s, 0644)
+	return os.WriteFile(fp, s, 0644)
 }
 
 // backup a file by renaming (!) it unless the existing backup is less than an hour old. A backup gets a tilde appended
 // to it ("~"). This is true even if the file refers to a binary file like "image.png" and most applications don't know
-// what to do with a file called "image.png~".
-func backup(path string) error {
-	_, err := os.Stat(path)
+// what to do with a file called "image.png~". This expects a file path. Use filepath.FromSlash(path) if necessary.
+func backup(fp string) error {
+	_, err := os.Stat(fp)		
 	if err != nil {
 		return nil
 	}
-	backup := path + "~"
-	fi, err := os.Stat(backup)
+	bp := fp + "~"
+	fi, err := os.Stat(bp)
 	if err != nil || time.Since(fi.ModTime()).Minutes() >= 60 {
-		return os.Rename(path, backup)
+		return os.Rename(fp, bp)
 	}
 	return nil
 }
@@ -103,14 +103,13 @@ func backup(path string) error {
 // loadPage loads a Page given a name. The path loaded is that Page.Name with the ".md" extension. The Page.Title is set
 // to the Page.Name (and possibly changed, later). The Page.Body is set to the file content. The Page.Html remains
 // undefined (there is no caching).
-func loadPage(name string) (*Page, error) {
-	name = strings.TrimPrefix(name, "./") // result of a filepath.TreeWalk starting with "."
-	path := name + ".md"
-	body, err := os.ReadFile(path)
+func loadPage(path string) (*Page, error) {
+	path = strings.TrimPrefix(path, "./") // result of a filepath.TreeWalk starting with "."
+	body, err := os.ReadFile(filepath.FromSlash(path+".md"))
 	if err != nil {
 		return nil, err
 	}
-	return &Page{Title: name, Name: name, Body: body, Language: ""}, nil
+	return &Page{Title: path, Name: path, Body: body, Language: ""}, nil
 }
 
 // handleTitle extracts the title from a Page and sets Page.Title, if any. If replace is true, the page title is also

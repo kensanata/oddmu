@@ -95,7 +95,7 @@ func staticFile(path, dir string, info fs.FileInfo, err error) error {
 // staticPage takes the filename of a page (ending in ".md") and generates a static HTML page.
 func staticPage(path, dir string) error {
 	name := strings.TrimSuffix(path, ".md")
-	p, err := loadPage(name)
+	p, err := loadPage(filepath.ToSlash(name))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Cannot load %s: %s\n", name, err)
 		return err

@@ -48,7 +48,7 @@ func missingCli(w io.Writer, args []string) subcommands.ExitStatus {
 			}
 		}
 		if strings.HasSuffix(path, ".md") {
-			name := strings.TrimSuffix(path, ".md")
+			name := filepath.ToSlash(strings.TrimSuffix(path, ".md"))
 			names[name] = true
 		} else {
 			names[path] = false

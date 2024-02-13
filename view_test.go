@@ -20,9 +20,27 @@ func TestViewHandler(t *testing.T) {
 }
 
 func TestViewHandlerDir(t *testing.T) {
+	cleanup(t, "testdata/dir")
 	HTTPRedirectTo(t, makeHandler(viewHandler, true), "GET", "/view/", nil, "/view/index")
-	HTTPRedirectTo(t, makeHandler(viewHandler, true), "GET", "/view/man", nil, "/view/man/index")
-	HTTPRedirectTo(t, makeHandler(viewHandler, true), "GET", "/view/man/", nil, "/view/man/index")
+	HTTPRedirectTo(t, makeHandler(viewHandler, true), "GET", "/view/testdata", nil, "/view/testdata/index")
+	HTTPRedirectTo(t, makeHandler(viewHandler, true), "GET", "/view/testdata/", nil, "/view/testdata/index")
+	assert.NoError(t, os.Mkdir("testdata/dir", 0755))
+	HTTPRedirectTo(t, makeHandler(viewHandler, true), "GET", "/view/testdata/dir", nil, "/view/testdata/dir/index")
+	HTTPRedirectTo(t, makeHandler(viewHandler, true), "GET", "/view/testdata/dir/", nil, "/view/testdata/dir/index")
+	assert.NoError(t, os.Mkdir("testdata/dir/dir", 0755))
+	HTTPRedirectTo(t, makeHandler(viewHandler, true), "GET", "/view/testdata/dir", nil, "/view/testdata/dir/index")
+	HTTPRedirectTo(t, makeHandler(viewHandler, true), "GET", "/view/testdata/dir/", nil, "/view/testdata/dir/index")
+	HTTPRedirectTo(t, makeHandler(viewHandler, true), "GET", "/view/testdata/dir/dir", nil, "/view/testdata/dir/dir/index")
+	HTTPRedirectTo(t, makeHandler(viewHandler, true), "GET", "/view/testdata/dir/dir/", nil, "/view/testdata/dir/dir/index")
+	assert.NoError(t, os.WriteFile("testdata/dir/dir.md", []byte(`# Blackbird
+
+The oven hums and
+the music plays, coffee smells
+blackbirds sing outside
+`), 0644))
+	assert.Contains(t, assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/testdata/dir/dir", nil), "<h1>Blackbird</h1>")
+	assert.Contains(t, assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/testdata/dir/dir.md", nil), "# Blackbird")
+	HTTPRedirectTo(t, makeHandler(viewHandler, true), "GET", "/view/testdata/dir/dir/", nil, "/view/testdata/dir/dir/index")
 }
 
 // relies on index.md in the current directory!

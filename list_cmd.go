@@ -50,10 +50,11 @@ func listCli(w io.Writer, dir string, args []string) subcommands.ExitStatus {
 	return subcommands.ExitSuccess
 }
 
-// checkDir returns an error if the directory doesn't exist. If if exists, it returns a copy ending in a slash.
+// checkDir returns an error if the directory doesn't exist. If if exists, it returns a copy ending in a slash suiteable
+// for substring matching of page names.
 func checkDir(dir string) (string, error) {
 	if dir != "" {
-		fi, err := os.Stat(dir)
+		fi, err := os.Stat(filepath.FromSlash(dir))
 		if err != nil {
 			fmt.Println(err)
 			return "", err
@@ -62,7 +63,6 @@ func checkDir(dir string) (string, error) {
 			fmt.Println("This is not a sub-directory:", dir)
 			return "", err
 		}
-		dir = filepath.ToSlash(dir)
 		if !strings.HasSuffix(dir, "/") {
 			dir += "/"
 		}

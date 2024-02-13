@@ -67,7 +67,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request, dir string) {
 // is redirected to the view of that file. Some errors are for the users and some are for users and the admins. Those
 // later errors are printed, too.
 func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
-	d := path.Dir(dir)
+	d := filepath.Dir(filepath.FromSlash(dir))
 	// ensure the directory exists
 	fi, err := os.Stat(d)
 	if err != nil {
@@ -191,5 +191,5 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		log.Println("Save", path)
 	}
 	updateTemplate(path)
-	http.Redirect(w, r, "/upload/"+d+"/?"+data.Encode(), http.StatusFound)
+	http.Redirect(w, r, "/upload/"+dir+"?"+data.Encode(), http.StatusFound)
 }

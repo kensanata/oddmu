@@ -156,6 +156,19 @@ that the MathJax Javascript gets loaded) and
 [MMark](https://mmark.miek.nl/post/syntax/) support, and it shows how
 extensions can be added.
 
+One of the sad parts of the code is the distinction between path and
+filepath. On a Linux system, this doesn't matter. I suspect that it
+also doesn't matter on MacOS and Windows because the file systems
+handle forward slashes just fine. The code still tries to do the right
+thing. A path that is derived from a URL is a path, with slashes.
+Before accessing a file, it has to turned into a filepath using
+filepath.FromSlashes and in the rare case where the inverse happens,
+use filepath.ToSlashes.
+
+In the rare cases where you need to access the page name in code that
+is used from a template, you have to decode the path. See the code in
+diff.go for an example.
+
 ## References
 
 [Writing Web Applications](https://golang.org/doc/articles/wiki/)

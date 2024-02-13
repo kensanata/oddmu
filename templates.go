@@ -5,6 +5,7 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+	"path"
 	"path/filepath"
 	"slices"
 	"strings"
@@ -17,7 +18,8 @@ var templateFiles = []string{"edit.html", "add.html", "view.html",
 	"diff.html", "search.html", "static.html", "upload.html", "feed.html"}
 
 // templates are the parsed HTML templates used. See renderTemplate and loadTemplates. Subdirectories may contain their
-// own templates which override the templates in the root directory.
+// own templates which override the templates in the root directory. If so, they are not filepaths. Use
+// filepath.ToSlash() if necessary.
 type Template struct {
 	sync.RWMutex
 	template map[string]*template.Template
@@ -40,48 +42,48 @@ func loadTemplates() {
 
 // loadTemplate is used to walk the directory. It loads all the template files it finds, including the ones in
 // subdirectories. This is called with templates already locked.
-func loadTemplate(path string, info fs.FileInfo, err error) error {
+func loadTemplate(fp string, info fs.FileInfo, err error) error {
 	if err != nil {
 		return err
 	}
-	if strings.HasSuffix(path, ".html") &&
-		slices.Contains(templateFiles, filepath.Base(path)) {
-		t, err := template.ParseFiles(path)
+	if strings.HasSuffix(fp, ".html") &&
+		slices.Contains(templateFiles, filepath.Base(fp)) {
+		t, err := template.ParseFiles(fp)
 		if err != nil {
-			log.Println("Cannot parse template:", path, err)
+			log.Println("Cannot parse template:", fp, err)
 			// ignore error
 		} else {
 			// log.Println("Parse template:", path)
-			templates.template[path] = t
+			templates.template[filepath.ToSlash(fp)] = t
 		}
 	}
 	return nil
 }
 
 // updateTemplate checks whether this is a valid template file and if so, reloads it.
-func updateTemplate(path string) {
-	if strings.HasSuffix(path, ".html") &&
-		slices.Contains(templateFiles, filepath.Base(path)) {
-		t, err := template.ParseFiles(path)
+func updateTemplate(fp string) {
+	if strings.HasSuffix(fp, ".html") &&
+		slices.Contains(templateFiles, filepath.Base(fp)) {
+		t, err := template.ParseFiles(fp)
 		if err != nil {
-			log.Println("Template:", path, err)
+			log.Println("Template:", fp, err)
 		} else {
 			templates.Lock()
 			defer templates.Unlock()
-			templates.template[path] = t
-			log.Println("Parse template:", path)
+			templates.template[filepath.ToSlash(fp)] = t
+			log.Println("Parse template:", fp)
 		}
 	}
 }
 
 // removeTemplate removes a template unless it's a root template because that would result in the site being unusable.
-func removeTemplate(path string) {
-	if slices.Contains(templateFiles, filepath.Base(path)) &&
-		filepath.Dir(path) != "." {
+func removeTemplate(fp string) {
+	if slices.Contains(templateFiles, filepath.Base(fp)) &&
+		filepath.Dir(fp) != "." {
 		templates.Lock()
 		defer templates.Unlock()
-		delete(templates.template, path)
-		log.Println("Discard template:", path)
+		delete(templates.template, filepath.ToSlash(fp))
+		log.Println("Discard template:", fp)
 	}
 }
 
@@ -92,7 +94,7 @@ func renderTemplate(w http.ResponseWriter, dir, tmpl string, data any) {
 	base := tmpl + ".html"
 	templates.RLock()
 	defer templates.RUnlock()
-	t := templates.template[filepath.Join(dir, base)]
+	t := templates.template[path.Join(dir, base)]
 	if t == nil {
 		t = templates.template[base]
 	}
