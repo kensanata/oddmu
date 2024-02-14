@@ -92,6 +92,22 @@ _{{.Date}}_, the date of the last update to this page, in RFC 822 format.
 
 The _upload.html_ template cannot refer to anything.
 
+The wiki knows the following actions for a given page name and (optional)
+directory:
+
+* /view/dir/name to view a page
+* /view/dir/name.md to view the source file of a page
+* /view/dir/name.rss to view the RSS feed for the pages linked
+* /diff/dir/name to show the last change to a page
+* /edit/dir/name to show a form to edit a page
+* /save/dir/name to save an edit
+* /add/dir/name to show a form to add to a page
+* /append/dir/name to append an addition
+* /upload/dir/name to show a form to upload a file
+* /drop/dir/name to save an upload
+* /search/dir/?q=term to search for a term
+* /archive/dir/name.zip to download a zip file of a directory
+
 When calling the _save_ and _append_ action, the page name is taken from the URL
 path and the page content is taken from the _body_ form parameter. To
 illustrate, here's how to edit the "welcome" page using _curl_:
@@ -101,7 +117,8 @@ curl --form body="Did you bring a towel?" \
   http://localhost:8080/save/welcome
 ```
 
-When calling the _search_ action, the query is taken from the query parameter _q_.
+When calling the _search_ action, the query is taken from the query parameter
+_q_.
 
 ```
 curl 'http://localhost:8080/search/?q=towel'
@@ -113,6 +130,14 @@ URL path.
 
 ```
 curl 'http://localhost:8080/view/?id=man/oddmu.1.txt'
+```
+
+The base name for the _archive_ action is used by the browser to save the
+downloaded file. For Oddmu, only the directory is important. The following zips
+the _man_ directory and saves it as _man.zip_.
+
+```
+curl --remote-name 'http://localhost:8080/archive/man/man.zip
 ```
 
 ## Non-English hyphenation

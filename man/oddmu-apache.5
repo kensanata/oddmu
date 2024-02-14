@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-APACHE" "5" "2024-02-13"
+.TH "ODDMU-APACHE" "5" "2024-02-14"
 .PP
 .SH NAME
 .PP
@@ -48,7 +48,7 @@ ServerAdmin alex@alexschroeder\&.ch
 <VirtualHost *:443>
   ServerName transjovian\&.org
   SSLEngine on
-  ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search)/(\&.*))?$" 
+  ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search|archive)/(\&.*))?$" 
                  "http://localhost:8080/$1"
 </VirtualHost>
 .fi
@@ -95,7 +95,7 @@ ServerAdmin alex@alexschroeder\&.ch
 
 <VirtualHost *:80>
   ServerName transjovian\&.org
-  ProxyPassMatch "^/((view|diff|search)/(\&.*))?$" 
+  ProxyPassMatch "^/((view|diff|search|archive)/(\&.*))?$" 
                  "http://localhost:8080/$1"
   RedirectMatch  "^/((edit|save|add|append|upload|drop)/(\&.*))?$" 
                  "https://transjovian\&.org/$1"
@@ -103,7 +103,7 @@ ServerAdmin alex@alexschroeder\&.ch
 <VirtualHost *:443>
   ServerName transjovian\&.org
   SSLEngine on
-  ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search)/(\&.*))?$" 
+  ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search|archive)/(\&.*))?$" 
                  "http://localhost:8080/$1"
 </VirtualHost>
 .fi
@@ -150,7 +150,7 @@ In that case, you need to use the ProxyPassMatch directive.\&
 .PP
 .nf
 .RS 4
-ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search)/(\&.*))?$" 
+ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search|archive)/(\&.*))?$" 
                "unix:/run/oddmu/oddmu\&.sock|http://localhost/$1"
 .fi
 .RE
@@ -169,7 +169,7 @@ A workaround is to add the redirect manually and drop the question-mark:
 .nf
 .RS 4
 RedirectMatch "^/$" "/view/index"
-ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search)/(\&.*))$" 
+ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search|archive)/(\&.*))$" 
                "unix:/run/oddmu/oddmu\&.sock|http://localhost/$1"
 .fi
 .RE
@@ -279,9 +279,9 @@ DocumentRoot /home/oddmu
 .RE
 .PP
 Make sure that none of the subdirectories look like the wiki paths "/view/",
-"/diff/", "/edit/", "/save/", "/add/", "/append/", "/upload/", "/drop/" or
-"/search/".\& For example, create a file called "robots.\&txt" containing the
-following, telling all robots that they'\&re not welcome.\&
+"/diff/", "/edit/", "/save/", "/add/", "/append/", "/upload/", "/drop/",
+"/search/" or "/archive/".\& For example, create a file called "robots.\&txt"
+containing the following, telling all robots that they'\&re not welcome.\&
 .PP
 .nf
 .RS 4

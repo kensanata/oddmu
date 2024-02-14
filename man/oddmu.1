@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU" "1" "2024-02-13"
+.TH "ODDMU" "1" "2024-02-14"
 .PP
 .SH NAME
 .PP
@@ -19,14 +19,19 @@ Oddmu is sometimes written Oddµ because µ is the letter mu.\&
 .PP
 .SH DESCRIPTION
 .PP
-The oddmu program serves the current working directory as a wiki on port 8080.\&
-Point your browser to http://localhost:8080/ to get started.\& This is equivalent
-to http://localhost:8080/view/index – the first page you'\&ll create, most likely.\&
+Oddmu can be used as a static site generator, turning Markdown files into HTML
+files, or it can be used as a public or a private wiki server.\& If it runs as a
+public wiki server, a regular webserver should be used as reverse proxy.\&
 .PP
-If you request a page that doesn'\&t exist, oddmu tries to find a matching
+Run Oddmu without any arguments to serve the current working directory as a wiki
+on port 8080.\& Point your browser to http://localhost:8080/ to use it.\& This
+redirects you to http://localhost:8080/view/index – the first page you'\&ll
+create, most likely.\&
+.PP
+If you request a page that doesn'\&t exist, Oddmu tries to find a matching
 Markdown file by appending the extension ".\&md" to the page name.\& In the example
-above, the page name requested is "index" and the file name oddmu tries to read
-is "index.\&md".\& If no such file exists, oddmu offers you to create the page.\&
+above, the page name requested is "index" and the file name Oddmu tries to read
+is "index.\&md".\& If no such file exists, Oddmu offers you to create the page.\&
 .PP
 If your files don'\&t provide their own title ("# title"), the file name (without
 ".\&md") is used for the page title.\&
@@ -108,7 +113,7 @@ For an extra dose of security, consider using a Unix-domain socket.\&
 .PP
 .SH OPTIONS
 .PP
-The oddmu program can be run on the command-line using various subcommands.\&
+Oddmu can be run on the command-line using various subcommands.\&
 .PP
 .PD 0
 .IP \(bu 4
@@ -159,7 +164,7 @@ on your point of view.\& See \fIoddmu-apache\fR(5).\&
 .SH NOTES
 .PP
 Page names are filenames with ".\&md" appended.\& If your filesystem cannot handle
-it, it can'\&t be a page name.\& Filenames can contain slashes and oddmu creates
+it, it can'\&t be a page name.\& Filenames can contain slashes and Oddmu creates
 subdirectories as necessary.\&
 .PP
 Files may not end with a tilde ('\&~'\&) – these are backup files.\& When saving pages
