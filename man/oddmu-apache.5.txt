@@ -40,7 +40,7 @@ ServerAdmin alex@alexschroeder.ch
 <VirtualHost *:443>
   ServerName transjovian.org
   SSLEngine on
-  ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search)/(.*))?$" \
+  ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search|archive)/(.*))?$" \
                  "http://localhost:8080/$1"
 </VirtualHost>
 ```
@@ -77,7 +77,7 @@ ServerAdmin alex@alexschroeder.ch
 
 <VirtualHost *:80>
   ServerName transjovian.org
-  ProxyPassMatch "^/((view|diff|search)/(.*))?$" \
+  ProxyPassMatch "^/((view|diff|search|archive)/(.*))?$" \
                  "http://localhost:8080/$1"
   RedirectMatch  "^/((edit|save|add|append|upload|drop)/(.*))?$" \
                  "https://transjovian.org/$1"
@@ -85,7 +85,7 @@ ServerAdmin alex@alexschroeder.ch
 <VirtualHost *:443>
   ServerName transjovian.org
   SSLEngine on
-  ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search)/(.*))?$" \
+  ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search|archive)/(.*))?$" \
                  "http://localhost:8080/$1"
 </VirtualHost>
 ```
@@ -124,7 +124,7 @@ You probably want to serve some static files as well (see *Serve static files*).
 In that case, you need to use the ProxyPassMatch directive.
 
 ```
-ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search)/(.*))?$" \
+ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search|archive)/(.*))?$" \
                "unix:/run/oddmu/oddmu.sock|http://localhost/$1"
 ```
 
@@ -139,7 +139,7 @@ A workaround is to add the redirect manually and drop the question-mark:
 
 ```
 RedirectMatch "^/$" "/view/index"
-ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search)/(.*))$" \
+ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search|archive)/(.*))$" \
                "unix:/run/oddmu/oddmu.sock|http://localhost/$1"
 ```
 
@@ -236,9 +236,9 @@ DocumentRoot /home/oddmu
 ```
 
 Make sure that none of the subdirectories look like the wiki paths "/view/",
-"/diff/", "/edit/", "/save/", "/add/", "/append/", "/upload/", "/drop/" or
-"/search/". For example, create a file called "robots.txt" containing the
-following, telling all robots that they're not welcome.
+"/diff/", "/edit/", "/save/", "/add/", "/append/", "/upload/", "/drop/",
+"/search/" or "/archive/". For example, create a file called "robots.txt"
+containing the following, telling all robots that they're not welcome.
 
 ```
 User-agent: *
