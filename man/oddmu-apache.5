@@ -81,6 +81,35 @@ apachectl graceful
 .fi
 .RE
 .PP
+In a situation where Apache acts as a reverse proxy, you can prevent some
+actions from being proxied.\& If you don'\&t want to allow strangers to make
+changes, search or archive the site, use a limited setup like the following:
+.PP
+.nf
+.RS 4
+MDomain transjovian\&.org
+MDCertificateAgreement accepted
+ServerAdmin alex@alexschroeder\&.ch
+
+<VirtualHost *:80>
+  ServerName transjovian\&.org
+  Redirect "/" "https://transjovian\&.org/"
+</VirtualHost>
+<VirtualHost *:443>
+  ServerName transjovian\&.org
+  SSLEngine on
+  ProxyPassMatch "^/(view/\&.*)?$" "http://localhost:8080/$1"
+</VirtualHost>
+.fi
+.RE
+.PP
+You'\&ll need to edit the source pages some other way.\& Edit them locally and
+upload them using rsync; edit them remotely using an editor that can do this;
+use SSHFS to mount the remote directory locally for editing; use \fIstunnel\fR(8) to
+access the remote wiki on the local port 8080 for editing.\& There are probably a
+lot more such options available.\& All of them have the drawback that they'\&re
+probably not easy to use when on a mobile phone.\&
+.PP
 .SS Allow HTTP for viewing
 .PP
 When looking at pages, you might want to allow HTTP since no password is
