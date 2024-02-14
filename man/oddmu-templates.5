@@ -99,62 +99,6 @@ For items in the feed:
 .PP
 The \fIupload.\&html\fR template cannot refer to anything.\&
 .PP
-The wiki knows the following actions for a given page name and (optional)
-directory:
-.PP
-\fB /view/dir/name to view a page
-\fR /view/dir/name.\&md to view the source file of a page
-\fB /view/dir/name.\&rss to view the RSS feed for the pages linked
-\fR /diff/dir/name to show the last change to a page
-\fB /edit/dir/name to show a form to edit a page
-\fR /save/dir/name to save an edit
-\fB /add/dir/name to show a form to add to a page
-\fR /append/dir/name to append an addition
-\fB /upload/dir/name to show a form to upload a file
-\fR /drop/dir/name to save an upload
-\fB /search/dir/?\&q=term to search for a term
-\fR /archive/dir/name.\&zip to download a zip file of a directory
-.PP
-When calling the \fIsave\fR and \fIappend\fR action, the page name is taken from the URL
-path and the page content is taken from the \fIbody\fR form parameter.\& To
-illustrate, here'\&s how to edit the "welcome" page using \fIcurl\fR:
-.PP
-.nf
-.RS 4
-curl --form body="Did you bring a towel?" 
-  http://localhost:8080/save/welcome
-.fi
-.RE
-.PP
-When calling the \fIsearch\fR action, the query is taken from the query parameter
-\fIq\fR.\&
-.PP
-.nf
-.RS 4
-curl \&'http://localhost:8080/search/?q=towel\&'
-.fi
-.RE
-.PP
-The page name to act upon is optionally taken from the query parameter \fIid\fR.\& In
-this case, the directory must also be part of the query parameter and not of the
-URL path.\&
-.PP
-.nf
-.RS 4
-curl \&'http://localhost:8080/view/?id=man/oddmu\&.1\&.txt\&'
-.fi
-.RE
-.PP
-The base name for the \fIarchive\fR action is used by the browser to save the
-downloaded file.\& For Oddmu, only the directory is important.\& The following zips
-the \fIman\fR directory and saves it as \fIman.\&zip\fR.\&
-.PP
-.nf
-.RS 4
-curl --remote-name \&'http://localhost:8080/archive/man/man\&.zip
-.fi
-.RE
-.PP
 .SS Non-English hyphenation
 .PP
 Automatic hyphenation by the browser requires two things: The style sheet must
