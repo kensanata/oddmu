@@ -141,6 +141,7 @@ func scheduleInstallWatcher() {
 
 func serve() {
 	http.HandleFunc("/", rootHandler)
+	http.HandleFunc("/archive/", makeHandler(archiveHandler, true))
 	http.HandleFunc("/view/", makeHandler(viewHandler, true))
 	http.HandleFunc("/diff/", makeHandler(diffHandler, true))
 	http.HandleFunc("/edit/", makeHandler(editHandler, true))
