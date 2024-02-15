@@ -26,6 +26,7 @@ md: ${MD}
 
 upload: ${MD}
 	rsync --itemize-changes --archive *.md sibirocobombus:alexschroeder.ch/wiki/oddmu/
+	make clean
 
 clean:
 	rm --force ${HTML} ${MD}
