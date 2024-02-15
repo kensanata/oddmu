@@ -133,8 +133,10 @@ variable to either an IPv4 address or an IPv6 address. If ODDMU_ADDRESS is
 unset, then the program listens on all available unicast addresses, both IPv4
 and IPv6. Here are a few example addresses:
 
-ODDMU_ADDRESS=127.0.0.1 # The loopback IPv4 address.
-ODDMU_ADDRESS=2001:db8::3:1 # An IPv6 address.
+```
+ODDMU_ADDRESS=127.0.0.1      # The loopback IPv4 address.
+ODDMU_ADDRESS=2001:db8::3:1  # An IPv6 address.
+```
 
 See the Socket Activation section for an alternative method of listening which
 supports Unix-domain sockets.
