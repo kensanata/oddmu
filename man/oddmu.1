@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU" "1" "2024-02-14"
+.TH "ODDMU" "1" "2024-02-15"
 .PP
 .SH NAME
 .PP
@@ -47,20 +47,36 @@ Subdirectories are created as necessary.\&
 The wiki knows the following actions for a given page name and (optional)
 directory:
 .PP
-\fB / redirects to /view/index
-\fR /view/dir/ redirects to /view/dir/index
-\fB /view/dir/name shows a page
-\fR /view/dir/name.\&md to view the source of a page
-\fB /view/dir/name.\&rss to view the RSS feed for the pages linked
-\fR /diff/dir/name to show the last change to a page
-\fB /edit/dir/name to show a form to edit a page
-\fR /save/dir/name to save an edit
-\fB /add/dir/name to show a form to add to a page
-\fR /append/dir/name to append an addition
-\fB /upload/dir/name to show a form to upload a file
-\fR /drop/dir/name to save an upload
-\fB /search/dir/?\&q=term to search for a term
-\fR /archive/dir/name.\&zip to download a zip file of a directory
+.PD 0
+.IP \(bu 4
+/ redirects to /view/index
+.IP \(bu 4
+/view/dir/ redirects to /view/dir/index
+.IP \(bu 4
+/view/dir/name shows a page
+.IP \(bu 4
+/view/dir/name.\&md shows the source text of a page
+.IP \(bu 4
+/view/dir/name.\&rss shows  the RSS feed for the pages linked
+.IP \(bu 4
+/diff/dir/name shows the last change to a page
+.IP \(bu 4
+/edit/dir/name shows a form to edit a page
+.IP \(bu 4
+/save/dir/name saves an edit
+.IP \(bu 4
+/add/dir/name shows a form to add to a page
+.IP \(bu 4
+/append/dir/name appends an addition to a page
+.IP \(bu 4
+/upload/dir/name shows a form to upload a file
+.IP \(bu 4
+/drop/dir/name saves an upload
+.IP \(bu 4
+/search/dir/?\&q=term to search for a term
+.IP \(bu 4
+/archive/dir/name.\&zip to download a zip file of a directory
+.PD
 .PP
 When calling the \fIsave\fR and \fIappend\fR action, the page name is taken from the URL
 path and the page content is taken from the \fIbody\fR form parameter.\& To
@@ -73,8 +89,24 @@ curl --form body="Did you bring a towel?"
 .fi
 .RE
 .PP
-When calling the \fIsearch\fR action, the query is taken from the query parameter
-\fIq\fR.\&
+When calling the \fIdrop\fR action, the query parameters used are \fIname\fR for the
+target filename, \fIfile\fR for the file to upload.\& If the query parameter
+\fImaxwidth\fR is set, an attempt is made to decode and resize the image.\& JPG, PNG
+and HEIC files can be decoded.\& Only JPG and PNG files can be encoded, however.\&
+If the target name ends in \fI.\&jpg\fR, the \fIquality\fR query parameter is also taken
+into account.\& To upload some thumbnails:
+.PP
+.nf
+.RS 4
+for f in *\&.jpg; do
+  curl --form name="$f" --form file=@"$f" --form maxwidth=100 
+    http://localhost:8080/drop/
+done
+.fi
+.RE
+.PP
+When calling the \fIsearch\fR action, the search terms are taken from the query
+parameter \fIq\fR.\&
 .PP
 .nf
 .RS 4
@@ -105,17 +137,33 @@ curl --remote-name \&'http://localhost:8080/archive/man/man\&.zip
 .SH CONFIGURATION
 .PP
 The template files are the HTML files in the working directory:
-"add.\&html", "diff.\&html", "edit.\&html", "search.\&html", "upload.\&html" and
-"view.\&html".\& Please change them!\&
 .PP
-The first change you should make is to replace the name and email
-address in the footer of "view.\&html".\& Look for "Your Name" and
-"example.\&org".\&
+.PD 0
+.IP \(bu 4
+\fIview.\&html\fR shows a page
+.IP \(bu 4
+\fIdiff.\&html\fR shows the last change to a page
+.IP \(bu 4
+\fIedit.\&html\fR shows a form to edit a page
+.IP \(bu 4
+\fIadd.\&html\fR shows a form to add to a page
+.IP \(bu 4
+\fIupload.\&html\fR shows a form to upload a file
+.IP \(bu 4
+\fIsearch.\&html\fR shows the search results
+.IP \(bu 4
+\fIstatic.\&html\fR is used to generate a static site
+.IP \(bu 4
+\fIfeed.\&html\fR is used to generate a RSS feed
+.PD
 .PP
-The second change you should make is to replace the name, email
-address and domain name in "feed.\&html".\& Look for "Your Name" and
-"example.\&org".\& This second template is used to generate the RSS feeds
-(despite its ".\&html" extension).\&
+Please change the templates!\&
+.PP
+The first change you should make is to replace the name and email address in the
+footer of \fIview.\&html\fR.\& Look for "Your Name" and "example.\&org".\&
+.PP
+The second change you should make is to replace the name, email address and
+domain name in "feed.\&html".\& Look for "Your Name" and "example.\&org".\&
 .PP
 See \fIoddmu-templates\fR(5) for more.\&
 .PP
@@ -143,7 +191,7 @@ pages by setting ODDMU_WEBFINGER to "1".\& See \fIoddmu\fR(5).\&
 .PP
 If you use secret subdirectories, you cannot rely on the web server to hide
 those pages because search includes subdirectories.\& In order to protect those
-pages from search, you need to use the ODDMU_FILTER to a regular exression such
+pages from search, you need to set the ODDMU_FILTER to a regular exression such
 as "^secret/".\& See \fIoddmu-apache\fR(5).\&
 .PP
 .SH Socket Activation
