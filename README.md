@@ -122,34 +122,35 @@ If you spot any, [contact](https://alexschroeder.ch/wiki/Contact) me.
 If you're interested in making changes to the code, here's a
 high-level introduction to the various source files.
 
-- *_test.go are the test files; a few library functions are defined in
-  wiki_test.go.
-- *_cmd.go are the files implementing the various subcommands with
+- `*_test.go` are the test files; a few library functions are defined
+  in `wiki_test.go`.
+- `*_cmd.go` are the files implementing the various subcommands with
   matching names
-- accounts.go implements the webfinger code to fetch fediverse account
-  link destinations with the URI provided by webfinger
-- add_append.go implements the /add and /append handlers
-- diff.go implements the /diff handler
-- edit_save.go implements the /edit and /save handlers
-- feed.go implements the feed for a page based on the links it lists
-- highlight.go implements the bold tags for matches when showing
+- `accounts.go` implements the webfinger code to fetch fediverse
+  account link destinations with the URI provided by webfinger
+- `add_append.go` implements the `/add` and `/append` handlers
+- `archive.go` implements the `/archive` handler
+- `diff.go` implements the `/diff` handler
+- `edit_save.go` implements the `/edit` and `/save` handlers
+- `feed.go` implements the feed for a page based on the links it lists
+- `highlight.go` implements the bold tags for matches when showing
   search results
-- index.go implements the index of all the hashtags
-- languages.go implements the language detection
-- page.go implements the page loading and saving
-- parser.go implements the Markdown parsing
-- score.go implements the page scoring when showing search results
-- search.go implements the /search handler
-- snippets.go implements the page summaries for search results
-- templates.go implements template loading and reloading
-- tokenizer.go implements the various tokenizers used
-- upload_drop.go implements the /upload and /drop handlers
-- view.go implements the /view handler
-- watch.go implements the filesystem notification watch
-- wiki.go implements the main function
+- `index.go` implements the index of all the hashtags
+- `languages.go` implements the language detection
+- `page.go` implements the page loading and saving
+- `parser.go` implements the Markdown parsing
+- `score.go` implements the page scoring when showing search results
+- `search.go` implements the `/search` handler
+- `snippets.go` implements the page summaries for search results
+- `templates.go` implements template loading and reloading
+- `tokenizer.go` implements the various tokenizers used
+- `upload_drop.go` implements the `/upload` and `/drop` handlers
+- `view.go` implements the `/view` handler
+- `watch.go` implements the filesystem notification watch
+- `wiki.go` implements the main function
 
-If you want to change the exact markup rules, your starting point
-should be `parser.go`. Make sure you read the documentation of [Go
+If you want to change the markup rules, your starting point should be
+`parser.go`. Make sure you read the documentation of [Go
 Markdown](https://github.com/gomarkdown/markdown) and note that it
 offers MathJax support (needs a change to the `view.html` template so
 that the MathJax Javascript gets loaded) and
@@ -160,14 +161,14 @@ One of the sad parts of the code is the distinction between path and
 filepath. On a Linux system, this doesn't matter. I suspect that it
 also doesn't matter on MacOS and Windows because the file systems
 handle forward slashes just fine. The code still tries to do the right
-thing. A path that is derived from a URL is a path, with slashes.
-Before accessing a file, it has to turned into a filepath using
-filepath.FromSlashes and in the rare case where the inverse happens,
-use filepath.ToSlashes.
+thing. A path that is derived from a URL is a path with slashes.
+Before accessing a file, it has to be turned into a filepath using
+`filepath.FromSlashes` and in the rare case where the inverse happens,
+use `filepath.ToSlashes`.
 
-In the rare cases where you need to access the page name in code that
-is used from a template, you have to decode the path. See the code in
-diff.go for an example.
+If you need to access the page name in code that is used from a
+template, you have to decode the path. See the code in `diff.go` for
+an example.
 
 ## References
 
