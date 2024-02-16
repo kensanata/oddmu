@@ -37,8 +37,8 @@ It's value is a regular expression matching separate sites.
 In other words, http://localhost:8080/search/?q=oddmu skips any pages in
 "project/".
 
-At the same time, http://localhost:8080/search/project/?q=oddmu works it always
-does: search is limited to "project/" and its subdirectories.
+At the same time, http://localhost:8080/search/project/?q=oddmu works like it
+always does: search is limited to "project/" and its subdirectories.
 
 # SECURITY
 

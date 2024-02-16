@@ -122,22 +122,21 @@ func search(q, dir, filter string, page int, all bool) ([]*Page, bool) {
 // The regular expression can be used to ensure that search does not descend into subdirectories unless the search
 // already starts there. Given the pages a, public/b and secret/c and ODDMU_FILTER=^secret/ then if search starts in the
 // root directory /, search does not enter secret/, but if search starts in secret/, search does search the pages in
-// secret/ – it us up to the web server to ensure access to secret/ is limited. More specifically: If the current
-// directory matches the regular expression, the page names must match; if the regular expression does not match the
-// current directory, the page name must not match the filter either. If the filter is empty, all prefixes and all page
-// names match, so no problem.
+// secret/ – it us up to the web server to ensure access to secret/ is limited. More specifically: the page names must
+// match the prefix, always; if prefix also matches the filter, this means the page names are all part of a "separate
+// site"; if the prefix does not match the filter, then the page names must also not match the filter since only the
+// "main site" is shown. If the filter is empty, all prefixes and all page names match, so no problem.
 func filterPath(names []string, prefix, filter string) []string {
 	re, err := regexp.Compile(filter)
 	if err != nil {
 		log.Println("ODDMU_FILTER does not compile:", filter, err)
 		return []string{}
 	}
-	mustMatch := re.MatchString(prefix)
+	matches := re.MatchString(prefix)
 	r := make([]string, 0)
 	for _, name := range names {
 		if strings.HasPrefix(name, prefix) &&
-			(mustMatch && re.MatchString(name) ||
-				!mustMatch && !re.MatchString(name)) {
+			(matches || !re.MatchString(name)) {
 			r = append(r, name)
 		}
 	}
