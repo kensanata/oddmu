@@ -5,15 +5,11 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-SEARCH" "7" "2023-10-28"
+.TH "ODDMU-SEARCH" "7" "2024-02-16"
 .PP
 .SH NAME
 .PP
 oddmu-search - understanding the Oddmu search engine
-.PP
-.SH SYNOPSIS
-.PP
-\fBoddmu search\fR \fIterms\fR.\&.\&.\&
 .PP
 .SH DESCRIPTION
 .PP
@@ -89,9 +85,22 @@ A document with content "This is a test" when searched with the phrase "this
 test" therefore gets a score of 8: the entire phrase does not match but each
 word gets four points.\&
 .PP
+.SH ENVIRONMENT
+.PP
+To exclude subdirectories from searches, use the ODDMU_FILTER environment
+variable.\& Set it to a regular expression matching sub-directories such as
+"^projects/".\& If search starts in a directory matching the regular expression,
+it is limited to the directory tree, as always.\& However, if search starts in a
+directory that doesn'\&t match, subdirectories that do match are skipped.\& See
+\fIoddmu-filter\fR(7).\&
+.PP
+To prevent access to a private directory tree, you must configure the web server
+in addition to setting the ODDMU_FILTER environment variable.\& See
+\fIoddmu-apache\fR(5) for more.\&
+.PP
 .SH SEE ALSO
 .PP
-\fIoddmu\fR(1), \fIoddmu-search\fR(1)
+\fIoddmu\fR(1), \fIoddmu-search\fR(1), \fIoddmu-filter\fR(7), \fIoddmu-apache\fR(5)
 .PP
 .SH AUTHORS
 .PP

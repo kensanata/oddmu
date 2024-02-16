@@ -1,0 +1,56 @@
+ODDMU-FILTER(7)
+
+# NAME
+
+oddmu-filter - keeping subdirectories separate
+
+# DESCRIPTION
+
+There are actions such as searching and archiving that act on multiple pages,
+not just a single page. These actions walk the directory tree, including all
+subdirectories. In some cases, this is not desirable.
+
+Sometimes, subdirectories are separate sites, like the sites of other projects
+or different people. Essentially, the subdirectory acts as a different site.
+Depending on how you think about it, you might not want to include those "sites"
+in searches or archives of the whole site.
+
+What's important in this situation is whether the visitor is looking at the
+"main site" (a page further up in the directory tree) or at a particular page in
+a "separate site".
+
+Since directory tree actions always start in the directory the visitor is
+currenly looking at, directory tree actions starting in a "separate site"
+automatically act as expected. The action is limited to that subdirectory tree.
+
+When visitors look at a page in the "main site", however, directory tree actions
+must skip any sub directories that are part of a "separate site".
+
+The way to identify separate sates is via the environment variable ODDMU_FILTER.
+It's value is a regular expression matching separate sites.
+
+# EXAMPLES
+
+"ODDMU_FILTER=^project/" means that a directory tree action outside the
+"project/" directory does not include pages in the "project/" directory.
+
+In other words, http://localhost:8080/search/?q=oddmu skips any pages in
+"project/".
+
+At the same time, http://localhost:8080/search/project/?q=oddmu works it always
+does: search is limited to "project/" and its subdirectories.
+
+# SECURITY
+
+If the subdirectory is a private site, then you need to use ODDMU_FILTER to
+exclude it from directory tree actions in the main site, and you need to
+configure your web server such that it doesn't allow visitors access to the
+directory tree without authentication. See _oddmu-apache_(5).
+
+# SEE ALSO
+
+_oddmu_(1), _oddmu-search_(7), _oddmu-apache_(5)
+
+# AUTHORS
+
+Maintained by Alex Schroeder <alex@gnu.org>.

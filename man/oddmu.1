@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU" "1" "2024-02-15"
+.TH "ODDMU" "1" "2024-02-16"
 .PP
 .SH NAME
 .PP
@@ -49,33 +49,33 @@ directory:
 .PP
 .PD 0
 .IP \(bu 4
-/ redirects to /view/index
+\fI/\fR redirects to /view/index
 .IP \(bu 4
-/view/dir/ redirects to /view/dir/index
+\fI/view/dir/\fR redirects to /view/dir/index
 .IP \(bu 4
-/view/dir/name shows a page
+\fI/view/dir/name\fR shows a page
 .IP \(bu 4
-/view/dir/name.\&md shows the source text of a page
+\fI/view/dir/name.\&md\fR shows the source text of a page
 .IP \(bu 4
-/view/dir/name.\&rss shows  the RSS feed for the pages linked
+\fI/view/dir/name.\&rss\fR shows  the RSS feed for the pages linked
 .IP \(bu 4
-/diff/dir/name shows the last change to a page
+\fI/diff/dir/name\fR shows the last change to a page
 .IP \(bu 4
-/edit/dir/name shows a form to edit a page
+\fI/edit/dir/name\fR shows a form to edit a page
 .IP \(bu 4
-/save/dir/name saves an edit
+\fI/save/dir/name\fR saves an edit
 .IP \(bu 4
-/add/dir/name shows a form to add to a page
+\fI/add/dir/name\fR shows a form to add to a page
 .IP \(bu 4
-/append/dir/name appends an addition to a page
+\fI/append/dir/name\fR appends an addition to a page
 .IP \(bu 4
-/upload/dir/name shows a form to upload a file
+\fI/upload/dir/name\fR shows a form to upload a file
 .IP \(bu 4
-/drop/dir/name saves an upload
+\fI/drop/dir/name\fR saves an upload
 .IP \(bu 4
-/search/dir/?\&q=term to search for a term
+\fI/search/dir/?\&q=term\fR to search for a term
 .IP \(bu 4
-/archive/dir/name.\&zip to download a zip file of a directory
+\fI/archive/dir/name.\&zip\fR to download a zip file of a directory
 .PD
 .PP
 When calling the \fIsave\fR and \fIappend\fR action, the page name is taken from the URL
@@ -194,9 +194,10 @@ You can enable webfinger to link fediverse accounts to their correct profile
 pages by setting ODDMU_WEBFINGER to "1".\& See \fIoddmu\fR(5).\&
 .PP
 If you use secret subdirectories, you cannot rely on the web server to hide
-those pages because search includes subdirectories.\& In order to protect those
-pages from search, you need to set the ODDMU_FILTER to a regular exression such
-as "^secret/".\& See \fIoddmu-apache\fR(5).\&
+those pages because some actions such as searching and archiving include
+subdirectories.\& They act upon a whole tree of pages, not just a single page.\& The
+ODDMU_FILTER can be used to exclude subdirectories from such tree actions.\& See
+\fIoddmu-filter\fR(7) and \fIoddmu-apache\fR(5).\&
 .PP
 .SH Socket Activation
 .PP
@@ -354,6 +355,8 @@ Note that some HTML file names are special: they act as templates.\& See
 \fIoddmu.\&service\fR(5), on how to run the service under systemd
 .IP \(bu 4
 \fIoddmu-apache\fR(5), on how to set up a web server such as Apache
+.IP \(bu 4
+\fIoddmu-filter\fR(7), on how to treat subdirectories as separate sites
 .IP \(bu 4
 \fIoddmu-html\fR(1), on how to render a page from the command-line
 .IP \(bu 4

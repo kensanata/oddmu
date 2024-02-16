@@ -40,20 +40,20 @@ Subdirectories are created as necessary.
 The wiki knows the following actions for a given page name and (optional)
 directory:
 
-- / redirects to /view/index
-- /view/dir/ redirects to /view/dir/index
-- /view/dir/name shows a page
-- /view/dir/name.md shows the source text of a page
-- /view/dir/name.rss shows  the RSS feed for the pages linked
-- /diff/dir/name shows the last change to a page
-- /edit/dir/name shows a form to edit a page
-- /save/dir/name saves an edit
-- /add/dir/name shows a form to add to a page
-- /append/dir/name appends an addition to a page
-- /upload/dir/name shows a form to upload a file
-- /drop/dir/name saves an upload
-- /search/dir/?q=term to search for a term
-- /archive/dir/name.zip to download a zip file of a directory
+- _/_ redirects to /view/index
+- _/view/dir/_ redirects to /view/dir/index
+- _/view/dir/name_ shows a page
+- _/view/dir/name.md_ shows the source text of a page
+- _/view/dir/name.rss_ shows  the RSS feed for the pages linked
+- _/diff/dir/name_ shows the last change to a page
+- _/edit/dir/name_ shows a form to edit a page
+- _/save/dir/name_ saves an edit
+- _/add/dir/name_ shows a form to add to a page
+- _/append/dir/name_ appends an addition to a page
+- _/upload/dir/name_ shows a form to upload a file
+- _/drop/dir/name_ saves an upload
+- _/search/dir/?q=term_ to search for a term
+- _/archive/dir/name.zip_ to download a zip file of a directory
 
 When calling the _save_ and _append_ action, the page name is taken from the URL
 path and the page content is taken from the _body_ form parameter. To
@@ -149,9 +149,10 @@ You can enable webfinger to link fediverse accounts to their correct profile
 pages by setting ODDMU_WEBFINGER to "1". See _oddmu_(5).
 
 If you use secret subdirectories, you cannot rely on the web server to hide
-those pages because search includes subdirectories. In order to protect those
-pages from search, you need to set the ODDMU_FILTER to a regular exression such
-as "^secret/". See _oddmu-apache_(5).
+those pages because some actions such as searching and archiving include
+subdirectories. They act upon a whole tree of pages, not just a single page. The
+ODDMU_FILTER can be used to exclude subdirectories from such tree actions. See
+_oddmu-filter_(7) and _oddmu-apache_(5).
 
 # Socket Activation
 
@@ -295,6 +296,7 @@ _oddmu-templates_(5) for their names and their use.
 - _oddmu_(5), about the markup syntax and how feeds are generated based on link lists
 - _oddmu.service_(5), on how to run the service under systemd
 - _oddmu-apache_(5), on how to set up a web server such as Apache
+- _oddmu-filter_(7), on how to treat subdirectories as separate sites
 - _oddmu-html_(1), on how to render a page from the command-line
 - _oddmu-list_(1), on how to list pages and titles from the command-line
 - _oddmu-missing_(1), on how to find broken local links from the command-line

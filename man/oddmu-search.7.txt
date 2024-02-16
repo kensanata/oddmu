@@ -4,10 +4,6 @@ ODDMU-SEARCH(7)
 
 oddmu-search - understanding the Oddmu search engine
 
-# SYNOPSIS
-
-*oddmu search* _terms_...
-
 # DESCRIPTION
 
 The wiki keeps an index of all the hash tags and page titles in memory. Using
@@ -69,9 +65,22 @@ A document with content "This is a test" when searched with the phrase "this
 test" therefore gets a score of 8: the entire phrase does not match but each
 word gets four points.
 
+# ENVIRONMENT
+
+To exclude subdirectories from searches, use the ODDMU_FILTER environment
+variable. Set it to a regular expression matching sub-directories such as
+"^projects/". If search starts in a directory matching the regular expression,
+it is limited to the directory tree, as always. However, if search starts in a
+directory that doesn't match, subdirectories that do match are skipped. See
+_oddmu-filter_(7).
+
+To prevent access to a private directory tree, you must configure the web server
+in addition to setting the ODDMU_FILTER environment variable. See
+_oddmu-apache_(5) for more.
+
 # SEE ALSO
 
-_oddmu_(1), _oddmu-search_(1)
+_oddmu_(1), _oddmu-search_(1), _oddmu-filter_(7), _oddmu-apache_(5)
 
 # AUTHORS
 

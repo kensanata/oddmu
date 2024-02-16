@@ -59,6 +59,10 @@ indexes – lists of page links. These are important for feeds.
 [oddmu-search(7)](/oddmu.git/blob/main/man/oddmu-search.7.txt): This
 man page documents how search and scoring work.
 
+[oddmu-filter(7)](/oddmu.git/blob/main/man/oddmu-filter.7.txt): This
+man page documents how to exclude subdirectories from search and
+archiving.
+
 [oddmu-replace(1)](/oddmu.git/blob/main/man/oddmu-replace.1.txt): This
 man page documents the "replace" subcommand to make mass changes to
 the files much like find(1), grep(1) and sed(1) or perl(1).

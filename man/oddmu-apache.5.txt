@@ -223,25 +223,25 @@ from public view. Search reveals the existence of these pages and produces an
 extract, even if users cannot follow the links. Archive links pack all the
 subdirectories, including locations you may have hidden from view using Apache.
 
-If you want private subdirectories, you need to set the environment variable
-ODDMU_FILTER to a regular expression matching the private directories. If search
-starts in a directory matching the regular expression, the directory and its
-subdirectories are searched. If search starts in a directory that doesn't match
-the regular expression, all directories matching the regular expression are
-excluded.
+If you to treat subdirectories as separate sites, you need to set the
+environment variable ODDMU_FILTER to a regular expression matching the those
+directories. If search starts in a directory that doesn't match the regular
+expression, all directories matching the regular expression are excluded. See
+_oddmu-filter_(7).
 
 In the following example, ODDMU_FILTER is set to "^secret/".
 
-http://transjovian.org/search/index?q=something does not search the "secret"
+http://transjovian.org/search/index?q=something does not search the "secret/"
 directory and its subdirectories are excluded.
 
 http://transjovian.org/search/secret/index?q=something searches just the
 "secret" directory and its subdirectories.
 
-Now you need to ensure that the "secret" directory are not public.
+You need to configure the web server to prevent access to the "secret/"
+directory:
 
 ```
-<LocationMatch "^/(edit|save|add|append|upload|drop|view/secret|search/secret)/">
+<LocationMatch "^/(edit|save|add|append|upload|drop|(view|search|archive)/secret)/">
   AuthType Basic
   AuthName "Password Required"
   AuthUserFile /home/oddmu/.htpasswd
@@ -315,8 +315,8 @@ This requires a valid login by the user "alex" or "berta":
 
 ## Private wikis
 
-Based on the above, you can prevent people from _reading_ the wiki. The
-"LocationMatch" must cover all the URLs in order to protect everything.
+Based on the above, you can prevent people from _reading_ the wiki. The location
+must cover all the URLs in order to protect everything.
 
 ```
 <Location />
@@ -337,7 +337,7 @@ such that ever domain acts as a reverse proxy to a different Oddmu instance.
 
 # SEE ALSO
 
-_oddmu_(1)
+_oddmu_(1), _oddmu-filter_(7)
 
 "Apache Core Features".
 https://httpd.apache.org/docs/current/mod/core.html
