@@ -1,0 +1,12 @@
+When preparing a new release
+----------------------------
+
+1. Run tests
+
+2. Make docs
+
+3. Make sure all files are checked in
+
+4. Update man/oddmu-releases.7.txt
+
+5. Tag the release and push the tag to all remotes
