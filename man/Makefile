@@ -30,3 +30,6 @@ upload: ${MD}
 
 clean:
 	rm --force ${HTML} ${MD}
+
+realclean: clean
+	rm --force ${MAN}
