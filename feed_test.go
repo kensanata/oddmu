@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/stretchr/testify/assert"
+	"net/http"
 	"testing"
 )
 
@@ -9,6 +10,11 @@ func TestFeed(t *testing.T) {
 	assert.Contains(t,
 		assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/index.rss", nil),
 		"Welcome to Oddµ")
+}
+
+func TestNoFeed(t *testing.T) {
+	assert.HTTPStatusCode(t,
+		makeHandler(viewHandler, true), "GET", "/view/no-feed.rss", nil, http.StatusNotFound)
 }
 
 func TestFeedItems(t *testing.T) {

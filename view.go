@@ -55,6 +55,10 @@ func viewHandler(w http.ResponseWriter, r *http.Request, path string) {
 		}
 		// otherwise t == rss
 	} else {
+		if t == rss {
+			http.Error(w, err.Error(), http.StatusNotFound)
+			return
+		}
 		if fp == "" {
 			fp = "." // make sure Stat works
 		}
@@ -107,10 +111,6 @@ func viewHandler(w http.ResponseWriter, r *http.Request, path string) {
 	}
 	p, err := loadPage(path)
 	if err != nil {
-		if t == rss {
-			http.Error(w, err.Error(), http.StatusNotFound)
-			return
-		}
 		http.Redirect(w, r, "/edit/"+path, http.StatusFound)
 		return
 	}
