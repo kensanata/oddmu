@@ -1,0 +1,76 @@
+ODDMU-NGINX(5)
+
+# NAME
+
+oddmu-nginx - how to setup Nginx as a reverse proxy for Oddmu
+
+## DESCRIPTION
+
+The oddmu program serves the current working directory as a wiki on port 8080.
+This is an unpriviledged port so an ordinary user account can do this.
+
+This page explains how to setup NGINX on Debian to act as a reverse proxy for
+Oddmu. Once this is done, you can use NGINX to provide HTTPS, request users to
+authenticate themselves, and so on.
+
+## CONFIGURATION
+
+The site is defined in "/etc/nginx/sites-available/default", in the _server_
+section. Add a new _location_ section after the existing _location_ section:
+
+```
+location ~ ^/(view|diff|edit|save|add|append|upload|drop|search|archive)/ {
+        proxy_pass http://localhost:8080;
+}
+```
+
+If you remove an action from the regular expression, those requests no longer
+get passed on to Oddmu. They are essentially disabled. Somebody on the same
+machine pointing their browser at http://localhost:8080/ directly would still
+have access to all the actions, of course.
+
+To restrict access to some actions, use two different _location_ sections:
+
+```
+# public
+location ~ ^/(view|diff|search)/ {
+        proxy_pass http://localhost:8080;
+}
+# password required
+location ~ ^/(edit|save|add|append|upload|drop|archive)/ {
+        auth_basic            "Oddmu author";
+        auth_basic_user_file  /etc/nginx/conf.d/htpasswd;
+        proxy_pass            http://localhost:8080;
+}
+```
+
+The passwords in "/etc/nginx/conf.d/htpasswd" are generated using _openssl_(1).
+Assuming the password is "CPTk&qO[Y@?M~L>qKOkd", this is how you encrypt it:
+
+```
+openssl passwd 'CPTk&qO[Y@?M~L>qKOkd'
+```
+
+The output gets used in "/etc/nginx/conf.d/htpasswd". Here's the user "alex"
+using this password:
+
+```
+alex:$1$DOwphABk$W4VmR9p8t2.htxF6ctXHX.
+```
+
+# SEE ALSO
+
+_oddmu_(1), _oddmu-apache_(5)
+
+"freenginx"
+http://freenginx.org/
+
+"freenginx ngx_http_proxy_module", proxy_pass
+http://freenginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass
+
+"freenginx ngx_http_auth_basic_module"
+http://freenginx.org/en/docs/http/ngx_http_auth_basic_module.html
+
+# AUTHORS
+
+Maintained by Alex Schroeder <alex@gnu.org>.

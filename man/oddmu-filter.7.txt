@@ -45,11 +45,11 @@ always does: search is limited to "project/" and its subdirectories.
 If the subdirectory is a private site, then you need to use ODDMU_FILTER to
 exclude it from directory tree actions in the main site, and you need to
 configure your web server such that it doesn't allow visitors access to the
-directory tree without authentication. See _oddmu-apache_(5).
+directory tree without authentication.
 
 # SEE ALSO
 
-_oddmu_(1), _oddmu-search_(7), _oddmu-apache_(5)
+_oddmu_(1), _oddmu-search_(7), _oddmu-apache_(5), _oddmu-nginx_(5)
 
 # AUTHORS
 

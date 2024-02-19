@@ -293,13 +293,15 @@ _oddmu-templates_(5) for their names and their use.
 
 # SEE ALSO
 
-- _oddmu_(5), about the markup syntax and how feeds are generated based on link lists
+- _oddmu_(5), about the markup syntax and how feeds are generated based on link
+  lists
 - _oddmu.service_(5), on how to run the service under systemd
-- _oddmu-apache_(5), on how to set up a web server such as Apache
+- _oddmu-apache_(5), on how to set up Apache as a reverse proxy
 - _oddmu-filter_(7), on how to treat subdirectories as separate sites
 - _oddmu-html_(1), on how to render a page from the command-line
 - _oddmu-list_(1), on how to list pages and titles from the command-line
 - _oddmu-missing_(1), on how to find broken local links from the command-line
+- _oddmu-nginx_(5), on how to set up freenginx as a reverse proxy
 - _oddmu-releases_(7), on what features are part of the latest release
 - _oddmu-replace_(1), on how to search and replace text from the command-line
 - _oddmu-search_(1), on how to run a search from the command-line

@@ -75,12 +75,12 @@ directory that doesn't match, subdirectories that do match are skipped. See
 _oddmu-filter_(7).
 
 To prevent access to a private directory tree, you must configure the web server
-in addition to setting the ODDMU_FILTER environment variable. See
-_oddmu-apache_(5) for more.
+in addition to setting the ODDMU_FILTER environment variable.
 
 # SEE ALSO
 
-_oddmu_(1), _oddmu-search_(1), _oddmu-filter_(7), _oddmu-apache_(5)
+_oddmu_(1), _oddmu-search_(1), _oddmu-filter_(7), _oddmu-apache_(5),
+_oddmu-nginx_(5)
 
 # AUTHORS
 

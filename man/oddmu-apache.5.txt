@@ -337,7 +337,7 @@ such that ever domain acts as a reverse proxy to a different Oddmu instance.
 
 # SEE ALSO
 
-_oddmu_(1), _oddmu-filter_(7)
+_oddmu_(1), _oddmu-filter_(7), _oddmu-nginx_(5)
 
 "Apache Core Features".
 https://httpd.apache.org/docs/current/mod/core.html
