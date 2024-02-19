@@ -176,3 +176,52 @@ There is no answer`)}
 	body = assert.HTTPBody(makeHandler(uploadHandler, false), "GET", url.Path, values)
 	assert.Contains(t, body, `src="/view/testdata/dir/test.jpg"`)
 }
+
+func TestUploadTwoInOne(t *testing.T) {
+	cleanup(t, "testdata/two")
+	os.MkdirAll("testdata/two", 0755)
+	form := new(bytes.Buffer)
+	writer := multipart.NewWriter(form)
+	field, _ := writer.CreateFormField("name")
+	field.Write([]byte("2024-02-19-hike-1.jpg"))
+	file1, _ := writer.CreateFormFile("file", "one.jpg")
+	img1 := image.NewRGBA(image.Rect(0, 0, 10, 10))
+	jpeg.Encode(file1, img1, &jpeg.Options{Quality: 90})
+	file2, _ := writer.CreateFormFile("file", "two.jpg")
+	img2 := image.NewRGBA(image.Rect(0, 0, 20, 20))
+	jpeg.Encode(file2, img2, &jpeg.Options{Quality: 90})
+	writer.Close()
+	location := HTTPUploadLocation(t, makeHandler(dropHandler, false), "/drop/testdata/two/",
+		writer.FormDataContentType(), form)
+	url, _ := url.Parse(location)
+	assert.Equal(t, "/upload/testdata/two/", url.Path, "Redirect to upload location")
+	values := url.Query()
+	assert.Equal(t, "2024-02-19-hike-2.jpg", values.Get("last"))
+	// check the files
+	assert.FileExists(t, "testdata/two/2024-02-19-hike-1.jpg");
+	assert.FileExists(t, "testdata/two/2024-02-19-hike-2.jpg");
+}
+func TestUploadTwoInOneAgain(t *testing.T) {
+	cleanup(t, "testdata/zwei")
+	os.MkdirAll("testdata/zwei", 0755)
+	form := new(bytes.Buffer)
+	writer := multipart.NewWriter(form)
+	field, _ := writer.CreateFormField("name")
+	field.Write([]byte("image.jpg")) // cannot be incremented!
+	file1, _ := writer.CreateFormFile("file", "one.jpg")
+	img1 := image.NewRGBA(image.Rect(0, 0, 10, 10))
+	jpeg.Encode(file1, img1, &jpeg.Options{Quality: 90})
+	file2, _ := writer.CreateFormFile("file", "two.jpg")
+	img2 := image.NewRGBA(image.Rect(0, 0, 20, 20))
+	jpeg.Encode(file2, img2, &jpeg.Options{Quality: 90})
+	writer.Close()
+	location := HTTPUploadLocation(t, makeHandler(dropHandler, false), "/drop/testdata/zwei/",
+		writer.FormDataContentType(), form)
+	url, _ := url.Parse(location)
+	assert.Equal(t, "/upload/testdata/zwei/", url.Path, "Redirect to upload location")
+	values := url.Query()
+	assert.Equal(t, "image-1.jpg", values.Get("last"))
+	// check the files
+	assert.FileExists(t, "testdata/zwei/image.jpg");
+	assert.FileExists(t, "testdata/zwei/image-1.jpg");
+}

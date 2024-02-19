@@ -6,11 +6,13 @@ oddmu-releases - what's new in this releases?
 
 # DESCRIPTION
 
-This page lists user-visible features.
+This page lists user-visible features and template changes to consider.
 
 ## Next
 
-
+Allow upload of multiple files. This requires an update to the upload.html
+template: Add the _multiple_ attribute to the file input element and change the
+label from "file" to "files".
 
 ## 1.6 (2024)
 

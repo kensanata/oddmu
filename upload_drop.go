@@ -52,15 +52,22 @@ func uploadHandler(w http.ResponseWriter, r *http.Request, dir string) {
 			data.Image = true
 		}
 		data.Last = path.Join(dir, last)
-		m := lastRe.FindStringSubmatch(last)
-		if m != nil {
-			n, err := strconv.Atoi(m[2])
-			if err == nil {
-				data.Name = m[1] + strconv.Itoa(n+1) + m[3]
-			}
-		}
+		data.Name, _ = next(last)
 	}
 	renderTemplate(w, dir, "upload", data)
+}
+
+// next returns the next name for a string matching lastRe. The last number in the given string is incremented by one
+// ("a2b" → "a3b"). The second return value indicates whether such a replacement was made or not.
+func next(s string) (string, bool) {
+	m := lastRe.FindStringSubmatch(s)
+	if m != nil {
+		n, err := strconv.Atoi(m[2])
+		if err == nil {
+			return m[1] + strconv.Itoa(n+1) + m[3], true
+		}
+	}
+	return s, false
 }
 
 // dropHandler takes the "name" form field and the "file" form file and saves the file under the given name. The browser
@@ -80,46 +87,25 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 	}
 	data := url.Values{}
 	name := r.FormValue("name")
-	data.Set("last", name)
 	filename := filepath.Base(name)
 	// no overwriting of hidden files or adding subdirectories
 	if strings.HasPrefix(filename, ".") || filepath.Dir(name) != "." {
 		http.Error(w, "no filename", http.StatusForbidden)
 		return
 	}
-	file, _, err := r.FormFile("file")
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	defer file.Close()
-	path := filepath.Join(d, filename)
-	watches.ignore(path)
-	err = backup(path)
-	if err != nil {
-		log.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	dst, err := os.Create(path)
-	if err != nil {
-		log.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	defer dst.Close()
-	// if a resize was requested
+	// prepare for image encoding (saving) with the encoder based on the desired file name extensions
+	var encoder imgio.Encoder
 	maxwidth := r.FormValue("maxwidth")
+	mw := 0
 	if len(maxwidth) > 0 {
-		mw, err := strconv.Atoi(maxwidth)
+		mw, err = strconv.Atoi(maxwidth)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 		data.Add("maxwidth", maxwidth)
 		// determine how the file will be written
-		ext := strings.ToLower(filepath.Ext(path))
-		var encoder imgio.Encoder
+		ext := strings.ToLower(filepath.Ext(filename))
 		switch ext {
 		case ".png":
 			encoder = imgio.PNGEncoder()
@@ -139,57 +125,94 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 			http.Error(w, "Resizing images requires a .png, .jpg or .jpeg extension for the filename", http.StatusBadRequest)
 			return
 		}
-		// try and decode the data in various formats
-		img, err := jpeg.Decode(file)
+	}
+	first := true
+	for _, fhs := range r.MultipartForm.File["file"] {
+		file, err := fhs.Open()
 		if err != nil {
-			img, err = png.Decode(file)
-		}
-		if err != nil {
-			img, err = goheif.Decode(file)
-		}
-		if err != nil {
-			http.Error(w, "The image could not be decoded (only PNG, JPG and HEIC formats are supported for resizing)", http.StatusBadRequest)
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		rect := img.Bounds()
-		width := rect.Max.X - rect.Min.X
-		if width > mw {
-			height := (rect.Max.Y - rect.Min.Y) * mw / width
-			img = transform.Resize(img, mw, height, transform.Linear)
-			if err := imgio.Save(path, img, encoder); err != nil {
-				log.Println(err)
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
+		defer file.Close()
+		if !first {
+			s, ok := next(filename)
+			if ok {
+				filename = s
+			} else {
+				ext := filepath.Ext(s)
+				filename = s[:len(s)-len(ext)] + "-1" + ext
 			}
-		} else {
-			http.Error(w, "The file is too small for this", http.StatusBadRequest)
-			return
 		}
-	} else {
-		// just copy the bytes
-		n, err := io.Copy(dst, file)
+		first = false
+		path := filepath.Join(d, filename)
+		watches.ignore(path)
+		err = backup(path)
 		if err != nil {
 			log.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		// if zero bytes were copied, delete the file instead
-		if n == 0 {
-			err := os.Remove(path)
+		dst, err := os.Create(path)
+		if err != nil {
+			log.Println(err)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer dst.Close()
+		if encoder != nil {
+			// try and decode the data in various formats
+			img, err := jpeg.Decode(file)
+			if err != nil {
+				img, err = png.Decode(file)
+			}
+			if err != nil {
+				img, err = goheif.Decode(file)
+			}
+			if err != nil {
+				http.Error(w, "The image could not be decoded (only PNG, JPG and HEIC formats are supported for resizing)", http.StatusBadRequest)
+				return
+			}
+			rect := img.Bounds()
+			width := rect.Max.X - rect.Min.X
+			if width > mw {
+				height := (rect.Max.Y - rect.Min.Y) * mw / width
+				img = transform.Resize(img, mw, height, transform.Linear)
+				if err := imgio.Save(path, img, encoder); err != nil {
+					log.Println(err)
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
+			} else {
+				http.Error(w, "The file is too small for this", http.StatusBadRequest)
+				return
+			}
+		} else {
+			// just copy the bytes
+			n, err := io.Copy(dst, file)
 			if err != nil {
 				log.Println(err)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
-			log.Println("Delete", path)
+			// if zero bytes were copied, delete the file instead
+			if n == 0 {
+				err := os.Remove(path)
+				if err != nil {
+					log.Println(err)
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
+				log.Println("Delete", path)
+			}
 		}
+		username, _, ok := r.BasicAuth()
+		if ok {
+			log.Println("Save", path, "by", username)
+		} else {
+			log.Println("Save", path)
+		}
+		updateTemplate(path)
 	}
-	username, _, ok := r.BasicAuth()
-	if ok {
-		log.Println("Save", path, "by", username)
-	} else {
-		log.Println("Save", path)
-	}
-	updateTemplate(path)
+	data.Set("last", filename) // has no slashes
 	http.Redirect(w, r, "/upload/"+dir+"?"+data.Encode(), http.StatusFound)
 }
