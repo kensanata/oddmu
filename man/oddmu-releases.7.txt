@@ -8,11 +8,18 @@ oddmu-releases - what's new in this releases?
 
 This page lists user-visible features and template changes to consider.
 
-## Next
+## 1.7 (2024)
 
 Allow upload of multiple files. This requires an update to the upload.html
 template: Add the _multiple_ attribute to the file input element and change the
 label from "file" to "files".
+
+Fix orientation of uploaded images. JPG and HEIC images have EXIF data telling a
+viewer how to orient the image. Oddmu now uses this information to rotate the
+image correctly before stripping it.
+
+The version command now displays much less information unless given the -full
+argument.
 
 ## 1.6 (2024)
 

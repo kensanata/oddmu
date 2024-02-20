@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-RELEASES" "7" "2024-02-19"
+.TH "ODDMU-RELEASES" "7" "2024-02-20"
 .PP
 .SH NAME
 .PP
@@ -15,11 +15,18 @@ oddmu-releases - what'\&s new in this releases?\&
 .PP
 This page lists user-visible features and template changes to consider.\&
 .PP
-.SS Next
+.SS 1.7 (2024)
 .PP
 Allow upload of multiple files.\& This requires an update to the upload.\&html
 template: Add the \fImultiple\fR attribute to the file input element and change the
 label from "file" to "files".\&
+.PP
+Fix orientation of uploaded images.\& JPG and HEIC images have EXIF data telling a
+viewer how to orient the image.\& Oddmu now uses this information to rotate the
+image correctly before stripping it.\&
+.PP
+The version command now displays much less information unless given the -full
+argument.\&
 .PP
 .SS 1.6 (2024)
 .PP
