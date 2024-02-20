@@ -6,6 +6,7 @@ package main
 import (
 	_ "github.com/bashdrew/goheif"
 	"github.com/disintegration/imaging"
+	"github.com/edwvee/exiffix"
 	"io"
 	"log"
 	"net/http"
@@ -160,22 +161,23 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		}
 		defer dst.Close()
 		if mw > 0 {
-			img, err := imaging.Decode(file)
+			// do not use imaging.Decode(file, imaging.AutoOrientation(true)) because that only works for JPEG files
+			img, fmt, err := exiffix.Decode(file)
 			if err != nil {
 				http.Error(w, "The image could not be decoded (only PNG, JPG and HEIC formats are supported for resizing)", http.StatusBadRequest)
 				return
 			}
-			rect := img.Bounds()
-			if rect.Max.X - rect.Min.X > mw {
-				img = imaging.Resize(img, mw, 0, imaging.Lanczos) // preserve aspect ratio
-				imaging.Encode(dst, img, format, imaging.JPEGQuality(quality))
-				if err != nil {
-					log.Println(err)
-					http.Error(w, err.Error(), http.StatusInternalServerError)
-					return
-				}
-			} else {
-				http.Error(w, "The file is too small for this", http.StatusBadRequest)
+			log.Println("Decoded", fmt, "file")
+			res := imaging.Resize(img, mw, 0, imaging.Lanczos) // preserve aspect ratio
+			// imaging functions don't return errors but empty images…
+			if !res.Rect.Empty() {
+				img = res
+			}
+			// images are always reencoded, so image quality goes down
+			err = imaging.Encode(dst, img, format, imaging.JPEGQuality(quality))
+			if err != nil {
+				log.Println(err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
 		} else {

@@ -6,6 +6,7 @@ require (
 	github.com/bashdrew/goheif v0.0.0-20230406184952-7a08ca9c9bdd
 	github.com/charmbracelet/lipgloss v0.9.1
 	github.com/disintegration/imaging v1.6.2
+	github.com/edwvee/exiffix v0.0.0-20210922235313-0f6cbda5e58f
 	github.com/fsnotify/fsnotify v1.7.0
 	github.com/gomarkdown/markdown v0.0.0-20231222211730-1d6d20845b47
 	github.com/google/subcommands v1.2.0
