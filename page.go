@@ -88,7 +88,7 @@ func (p *Page) save() error {
 // to it ("~"). This is true even if the file refers to a binary file like "image.png" and most applications don't know
 // what to do with a file called "image.png~". This expects a file path. Use filepath.FromSlash(path) if necessary.
 func backup(fp string) error {
-	_, err := os.Stat(fp)		
+	_, err := os.Stat(fp)
 	if err != nil {
 		return nil
 	}
@@ -105,7 +105,7 @@ func backup(fp string) error {
 // undefined (there is no caching).
 func loadPage(path string) (*Page, error) {
 	path = strings.TrimPrefix(path, "./") // result of a filepath.TreeWalk starting with "."
-	body, err := os.ReadFile(filepath.FromSlash(path+".md"))
+	body, err := os.ReadFile(filepath.FromSlash(path + ".md"))
 	if err != nil {
 		return nil, err
 	}

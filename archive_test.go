@@ -4,8 +4,8 @@ import (
 	"archive/zip"
 	"github.com/stretchr/testify/assert"
 	"os"
-	"testing"
 	"strings"
+	"testing"
 )
 
 func TestArchive(t *testing.T) {

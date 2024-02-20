@@ -3,17 +3,17 @@ package main
 import (
 	"github.com/stretchr/testify/assert"
 	"io/fs"
-	"path/filepath"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
 
 func TestManPages(t *testing.T) {
-	b, err := os.ReadFile("man/oddmu.1.txt");
+	b, err := os.ReadFile("man/oddmu.1.txt")
 	main := string(b)
 	assert.NoError(t, err)
-	filepath.Walk("man", func (path string, info fs.FileInfo, err error) error {
+	filepath.Walk("man", func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -28,4 +28,3 @@ func TestManPages(t *testing.T) {
 		return nil
 	})
 }
-

@@ -46,7 +46,7 @@ func viewHandler(w http.ResponseWriter, r *http.Request, path string) {
 		t = rss
 	}
 	fp := filepath.FromSlash(path)
-	fi, err := os.Stat(fp+".md")
+	fi, err := os.Stat(fp + ".md")
 	if err == nil {
 		if fi.IsDir() {
 			t = dir // directory ending in ".md"

@@ -1,15 +1,15 @@
 package main
 
 import (
- 	"github.com/fsnotify/fsnotify"
+	"github.com/fsnotify/fsnotify"
 	"io/fs"
- 	"log"
+	"log"
 	"os"
 	"path/filepath"
- 	"slices"
- 	"strings"
- 	"sync"
- 	"time"
+	"slices"
+	"strings"
+	"sync"
+	"time"
 )
 
 // Watches holds a map and a mutex. The map contains the template names that have been requested and the exact time at
@@ -17,9 +17,9 @@ import (
 // Write events for the same file, the time keeps getting updated so that when the go routine runs, it only acts on
 // files that haven't been updated in the last second. The go routine is what forces us to use the RWMutex for the map.
 type Watches struct {
- 	sync.RWMutex
+	sync.RWMutex
 	ignores map[string]time.Time
-	files map[string]time.Time
+	files   map[string]time.Time
 	watcher *fsnotify.Watcher
 }
 
@@ -97,12 +97,12 @@ func (w *Watches) watch() {
 func (w *Watches) watchHandle(e fsnotify.Event) {
 	path := strings.TrimPrefix(e.Name, "./")
 	if strings.HasPrefix(filepath.Base(path), ".") {
-		return;
+		return
 	}
 	// log.Println(e)
 	w.Lock()
 	defer w.Unlock()
-	if e.Op.Has(fsnotify.Create | fsnotify.Write) &&
+	if e.Op.Has(fsnotify.Create|fsnotify.Write) &&
 		(strings.HasSuffix(path, ".html") &&
 			slices.Contains(templateFiles, filepath.Base(path)) ||
 			strings.HasSuffix(path, ".md")) {

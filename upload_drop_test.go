@@ -76,7 +76,7 @@ func TestUploadHeic(t *testing.T) {
 	form := new(bytes.Buffer)
 	writer := multipart.NewWriter(form)
 	field, _ := writer.CreateFormField("name")
-	field.Write([]byte("ok.jpg")) // target
+	field.Write([]byte("ok.jpg"))                       // target
 	file, _ := writer.CreateFormFile("file", "ok.heic") // source
 	// convert -size 1x1 canvas: heic:- | base64
 	imgBase64 := `
@@ -227,8 +227,8 @@ func TestUploadTwoInOne(t *testing.T) {
 	values := url.Query()
 	assert.Equal(t, "2024-02-19-hike-2.jpg", values.Get("last"))
 	// check the files
-	assert.FileExists(t, "testdata/two/2024-02-19-hike-1.jpg");
-	assert.FileExists(t, "testdata/two/2024-02-19-hike-2.jpg");
+	assert.FileExists(t, "testdata/two/2024-02-19-hike-1.jpg")
+	assert.FileExists(t, "testdata/two/2024-02-19-hike-2.jpg")
 }
 func TestUploadTwoInOneAgain(t *testing.T) {
 	cleanup(t, "testdata/zwei")
@@ -251,6 +251,6 @@ func TestUploadTwoInOneAgain(t *testing.T) {
 	values := url.Query()
 	assert.Equal(t, "image-1.jpg", values.Get("last"))
 	// check the files
-	assert.FileExists(t, "testdata/zwei/image.jpg");
-	assert.FileExists(t, "testdata/zwei/image-1.jpg");
+	assert.FileExists(t, "testdata/zwei/image.jpg")
+	assert.FileExists(t, "testdata/zwei/image-1.jpg")
 }

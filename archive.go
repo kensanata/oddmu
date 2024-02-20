@@ -27,34 +27,34 @@ func archiveHandler(w http.ResponseWriter, r *http.Request, path string) {
 	matches := re.MatchString(path)
 	dir := filepath.Dir(filepath.FromSlash(path))
 	z := zip.NewWriter(w)
-	err = filepath.Walk(dir, func (path string, info fs.FileInfo, err error) error {
+	err = filepath.Walk(dir, func(path string, info fs.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			if path != "." && strings.HasPrefix(filepath.Base(path), ".") {
+				return filepath.SkipDir
+			}
+		} else if !strings.HasPrefix(filepath.Base(path), ".") &&
+			(matches || !re.MatchString(path)) {
+			zf, err := z.Create(path)
 			if err != nil {
+				log.Println(err)
 				return err
 			}
-			if info.IsDir() {
-				if path != "." && strings.HasPrefix(filepath.Base(path), ".") {
-					return filepath.SkipDir
-				}
-			} else if !strings.HasPrefix(filepath.Base(path), ".") &&
-				(matches || !re.MatchString(path)) {
-				zf, err := z.Create(path)
-				if err != nil {
-					log.Println(err)
-					return err
-				}
-				file, err := os.Open(path)
-				if err != nil {
-					log.Println(err)
-					return err
-				}
-				_, err = io.Copy(zf, file)
-				if err != nil {
-					log.Println(err)
-					return err
-				}
+			file, err := os.Open(path)
+			if err != nil {
+				log.Println(err)
+				return err
 			}
-			return nil
-		})
+			_, err = io.Copy(zf, file)
+			if err != nil {
+				log.Println(err)
+				return err
+			}
+		}
+		return nil
+	})
 	if err != nil {
 		log.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
