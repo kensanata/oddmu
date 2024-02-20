@@ -3,9 +3,10 @@ package main
 import (
 	"github.com/anthonynsimon/bild/imgio"
 	"github.com/anthonynsimon/bild/transform"
-	"github.com/bashdrew/goheif"
+	_ "github.com/bashdrew/goheif"
+	"image"
 	"image/jpeg"
-	"image/png"
+	_ "image/png"
 	"io"
 	"log"
 	"net/http"
@@ -160,14 +161,7 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		}
 		defer dst.Close()
 		if encoder != nil {
-			// try and decode the data in various formats
-			img, err := jpeg.Decode(file)
-			if err != nil {
-				img, err = png.Decode(file)
-			}
-			if err != nil {
-				img, err = goheif.Decode(file)
-			}
+			img, _, err := image.Decode(file)
 			if err != nil {
 				http.Error(w, "The image could not be decoded (only PNG, JPG and HEIC formats are supported for resizing)", http.StatusBadRequest)
 				return

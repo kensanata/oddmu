@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/base64"
 	"github.com/stretchr/testify/assert"
 	"image"
 	"image/jpeg"
@@ -66,6 +67,34 @@ func TestUploadJpg(t *testing.T) {
 	writer.Close()
 	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/jpg/",
 		writer.FormDataContentType(), form, "/upload/testdata/jpg/?last=ok.jpg")
+}
+
+func TestUploadHeic(t *testing.T) {
+	cleanup(t, "testdata/heic")
+	// for uploads, the directory is not created automatically
+	os.MkdirAll("testdata/heic", 0755)
+	form := new(bytes.Buffer)
+	writer := multipart.NewWriter(form)
+	field, _ := writer.CreateFormField("name")
+	field.Write([]byte("ok.jpg")) // target
+	file, _ := writer.CreateFormFile("file", "ok.heic") // source
+	// convert -size 1x1 canvas: heic:- | base64
+	imgBase64 := `
+AAAAGGZ0eXBoZWljAAAAAG1pZjFoZWljAAABqm1ldGEAAAAAAAAAIWhkbHIAAAAAAAAAAHBpY3QA
+AAAAAAAAAAAAAAAAAAAADnBpdG0AAAAAAAIAAAAQaWRhdAAAAAAAAQABAAAAOGlsb2MBAAAAREAA
+AgABAAAAAAAAAcoAAQAAAAAAAAAtAAIAAQAAAAAAAAABAAAAAAAAAAgAAAA4aWluZgAAAAAAAgAA
+ABVpbmZlAgAAAQABAABodmMxAAAAABVpbmZlAgAAAAACAABncmlkAAAAANVpcHJwAAAAs2lwY28A
+AABzaHZjQwEDcAAAAAAAAAAAAB7wAPz9+PgAAA8DIAABABhAAQwB//8DcAAAAwCQAAADAAADAB66
+AkAhAAEAJ0IBAQNwAAADAJAAAAMAAAMAHqAggQWW6q6a5sCAAAADAIAAAAMAhCIAAQAGRAHBc8GJ
+AAAAFGlzcGUAAAAAAAAAQAAAAEAAAAAUaXNwZQAAAAAAAAABAAAAAQAAABBwaXhpAAAAAAMICAgA
+AAAaaXBtYQAAAAAAAAACAAECgQIAAgIDhAAAABppcmVmAAAAAAAAAA5kaW1nAAIAAQABAAAANW1k
+YXQAAAApKAGvEyE1mvXho5qH3STtzcWnOxedwNIXAKNDaJNqz3uONoCHeUhi/HA=`
+	img, err := base64.StdEncoding.DecodeString(imgBase64)
+	assert.NoError(t, err)
+	file.Write(img)
+	writer.Close()
+	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/heic/",
+		writer.FormDataContentType(), form, "/upload/testdata/heic/?last=ok.jpg")
 }
 
 func TestDeleteFile(t *testing.T) {
