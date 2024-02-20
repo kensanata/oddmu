@@ -1,12 +1,11 @@
 package main
 
+// The imaging library uses image.Decode internally. This function can use all image decoders available at that time.
+// This is why we import goheif for side effects: HEIC files are read correctly.
+
 import (
-	"github.com/anthonynsimon/bild/imgio"
-	"github.com/anthonynsimon/bild/transform"
 	_ "github.com/bashdrew/goheif"
-	"image"
-	"image/jpeg"
-	_ "image/png"
+	"github.com/disintegration/imaging"
 	"io"
 	"log"
 	"net/http"
@@ -95,7 +94,8 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		return
 	}
 	// prepare for image encoding (saving) with the encoder based on the desired file name extensions
-	var encoder imgio.Encoder
+	var format imaging.Format
+	quality := 75
 	maxwidth := r.FormValue("maxwidth")
 	mw := 0
 	if len(maxwidth) > 0 {
@@ -109,19 +109,18 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		ext := strings.ToLower(filepath.Ext(filename))
 		switch ext {
 		case ".png":
-			encoder = imgio.PNGEncoder()
+			format = imaging.PNG
 		case ".jpg", ".jpeg":
-			q := jpeg.DefaultQuality
-			quality := r.FormValue("quality")
-			if len(quality) > 0 {
-				q, err = strconv.Atoi(quality)
+			q := r.FormValue("quality")
+			if len(q) > 0 {
+				quality, err = strconv.Atoi(q)
 				if err != nil {
 					http.Error(w, err.Error(), http.StatusBadRequest)
 					return
 				}
-				data.Add("quality", quality)
+				data.Add("quality", q)
 			}
-			encoder = imgio.JPEGEncoder(q)
+			format = imaging.JPEG
 		default:
 			http.Error(w, "Resizing images requires a .png, .jpg or .jpeg extension for the filename", http.StatusBadRequest)
 			return
@@ -160,18 +159,17 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 			return
 		}
 		defer dst.Close()
-		if encoder != nil {
-			img, _, err := image.Decode(file)
+		if mw > 0 {
+			img, err := imaging.Decode(file)
 			if err != nil {
 				http.Error(w, "The image could not be decoded (only PNG, JPG and HEIC formats are supported for resizing)", http.StatusBadRequest)
 				return
 			}
 			rect := img.Bounds()
-			width := rect.Max.X - rect.Min.X
-			if width > mw {
-				height := (rect.Max.Y - rect.Min.Y) * mw / width
-				img = transform.Resize(img, mw, height, transform.Linear)
-				if err := imgio.Save(path, img, encoder); err != nil {
+			if rect.Max.X - rect.Min.X > mw {
+				img = imaging.Resize(img, mw, 0, imaging.Lanczos) // preserve aspect ratio
+				imaging.Encode(dst, img, format, imaging.JPEGQuality(quality))
+				if err != nil {
 					log.Println(err)
 					http.Error(w, err.Error(), http.StatusInternalServerError)
 					return

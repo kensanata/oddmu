@@ -3,9 +3,10 @@ module alexschroeder.ch/cgit/oddmu
 go 1.21.0
 
 require (
-	github.com/anthonynsimon/bild v0.13.0
 	github.com/bashdrew/goheif v0.0.0-20230406184952-7a08ca9c9bdd
 	github.com/charmbracelet/lipgloss v0.9.1
+	github.com/disintegration/imaging v1.6.2
+	github.com/fsnotify/fsnotify v1.7.0
 	github.com/gomarkdown/markdown v0.0.0-20231222211730-1d6d20845b47
 	github.com/google/subcommands v1.2.0
 	github.com/hexops/gotextdiff v1.0.3
@@ -20,7 +21,6 @@ require (
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/gorilla/css v1.0.1 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
