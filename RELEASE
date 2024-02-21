@@ -3,10 +3,12 @@ When preparing a new release
 
 1. Run tests
 
-2. Make docs
+2. Update man/oddmu-releases.7.txt
 
-3. Make sure all files are checked in
+3. make docs
 
-4. Update man/oddmu-releases.7.txt
+4. Make sure all files are checked in
 
 5. Tag the release and push the tag to all remotes
+
+6. cd man && make upload
