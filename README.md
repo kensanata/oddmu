@@ -150,6 +150,8 @@ high-level introduction to the various source files.
   account link destinations with the URI provided by webfinger
 - `add_append.go` implements the `/add` and `/append` handlers
 - `archive.go` implements the `/archive` handler
+- `changes.go` implements the "notifications": the automatic addition
+  of links to index, changes and hashtag files when pages are edited
 - `diff.go` implements the `/diff` handler
 - `edit_save.go` implements the `/edit` and `/save` handlers
 - `feed.go` implements the feed for a page based on the links it lists

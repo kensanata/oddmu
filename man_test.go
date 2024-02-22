@@ -46,4 +46,17 @@ func TestReadme(t *testing.T) {
 		}
 		return nil
 	})
+	filepath.Walk(".", func(path string, info fs.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if strings.HasSuffix(path, ".go") &&
+			!strings.HasSuffix(path, "_test.go") &&
+			!strings.HasSuffix(path, "_cmd.go") {
+			s := strings.TrimPrefix(path, "./")
+			ref := "`" + s + "`"
+			assert.Contains(t, main, ref, ref)
+		}
+		return nil
+	})
 }
