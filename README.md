@@ -48,6 +48,18 @@ links. Local links must use percent encoding for page names so there
 is a section about percent encoding. The man page also explains how
 feeds are generated.
 
+[oddmu-releases(7)](/oddmu.git/blob/main/man/oddmu-releases.7.txt):
+This man page lists all the Oddmu versions and their user-visible
+changes.
+
+[oddmu-releases(7)](/oddmu.git/blob/main/man/oddmu-releases.7.txt):
+This man page lists all the Oddmu versions and their user-visible
+changes.
+
+[oddmu-version(1)](/oddmu.git/blob/main/man/oddmu-version.1.txt): This
+man page documents the "version" subcommand which you can use to get
+installed Oddmu version.
+
 [oddmu-list(1)](/oddmu.git/blob/main/man/oddmu-list.1.txt): This man
 page documents the "list" subcommand which you can use to get page
 names and page titles.
@@ -91,8 +103,12 @@ This man page documents how the templates can be changed (how they
 templates.
 
 [oddmu-apache(5)](/oddmu.git/blob/main/man/oddmu-apache.5.txt): This
-man page documents how to set up the web server for various common
-tasks such as using logins to limit what visitors can edit.
+man page documents how to set up the Apache web server for various
+common tasks such as using logins to limit what visitors can edit.
+
+[oddmu-nginx(5)](/oddmu.git/blob/main/man/oddmu-nginx.5.txt): This man
+page documents how to set up the freenginx web server for various
+common tasks such as using logins to limit what visitors can edit.
 
 [oddmu.service(5)](/oddmu.git/blob/main/man/oddmu.service.5.txt): This
 man page documents how to setup a systemd unit and have it manage
