@@ -1,3 +1,4 @@
+// Oddmu is a wiki web server and a static site generator.
 package main
 
 import (
@@ -139,6 +140,24 @@ func scheduleInstallWatcher() {
 	}
 }
 
+// serve starts the web server using [http.Serve]. The listener is determined via [getListener]. The various handlers
+// are created using [makeHandler] if their path starts with an action segment. For example, the URL path "/view/index"
+// is understood to contain the "view" action and so [viewHandler] is called with the argument "index". The one handler
+// that doesn't need this is [rootHandler].
+//
+// The handlers often come in pairs. One handler to show the user interface and one handler to make the change:
+//   - [editHandler] shows the edit form and [saveHandler] saves changes to a page
+//   - [addHandler] shows the add form and [appendHandler] appends the addition to a page
+//   - [uploadHandler] shows the upload form and [dropHandler] saves the uploaded files
+//
+// Some handlers only do something and the links or forms to call them is expected to be part of the view template:
+//   - [archiveHandler] zips up the current directory
+//   - [diffHandler] shows the changes made in the last 60min to a page
+//   - [searchHandler] shows search results
+//
+// At the same time as the server starts up, pages are indexed via [scheduleLoadIndex], languages are loaded via
+// [scheduleLoadLanguages] and the current directory and its subdirectories is watched for changes using watchers
+// installed via [scheduleInstallWatcher].
 func serve() {
 	http.HandleFunc("/", rootHandler)
 	http.HandleFunc("/archive/", makeHandler(archiveHandler, true))
@@ -185,6 +204,8 @@ func commands() {
 	os.Exit(int(subcommands.Execute(ctx)))
 }
 
+// main runs [serve] if called without arguments and it runs [commands] if called with arguments.
+// The first argument is the subcommand.
 func main() {
 	if len(os.Args) == 1 {
 		serve()
