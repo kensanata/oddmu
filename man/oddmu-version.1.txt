@@ -6,19 +6,19 @@ oddmu-version - print build info on the command-line
 
 # SYNOPSIS
 
-*oddmu version*
+*oddmu version* [-full]
 
 # DESCRIPTION
 
-The "version" subcommand prints a lot of stuff used to build the binary,
-including the git revision, git repository, versions of dependencies used and
-more.
+The "version" subcommand prints information related to the version control
+system state when it was built: what remote was used, what commit was checked
+out, whether there were any local changes were made.
 
-It's the equivalent of running this:
+# OPTIONS
 
-```
-go version -m oddmu
-```
+*-full*
+	Print a lot more information, including the versions of dependencies
+	used. It's the equivalent of running "go version -m oddmu".
 
 # SEE ALSO
 

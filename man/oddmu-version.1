@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-VERSION" "1" "2024-02-17"
+.TH "ODDMU-VERSION" "1" "2024-02-23"
 .PP
 .SH NAME
 .PP
@@ -13,22 +13,22 @@ oddmu-version - print build info on the command-line
 .PP
 .SH SYNOPSIS
 .PP
-\fBoddmu version\fR
+\fBoddmu version\fR [-full]
 .PP
 .SH DESCRIPTION
 .PP
-The "version" subcommand prints a lot of stuff used to build the binary,
-including the git revision, git repository, versions of dependencies used and
-more.\&
+The "version" subcommand prints information related to the version control
+system state when it was built: what remote was used, what commit was checked
+out, whether there were any local changes were made.\&
 .PP
-It'\&s the equivalent of running this:
+.SH OPTIONS
 .PP
-.nf
+\fB-full\fR
 .RS 4
-go version -m oddmu
-.fi
-.RE
+Print a lot more information, including the versions of dependencies
+used.\& It'\&s the equivalent of running "go version -m oddmu".\&
 .PP
+.RE
 .SH SEE ALSO
 .PP
 \fIoddmu\fR(1)
