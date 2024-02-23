@@ -10,7 +10,7 @@ This page lists user-visible features and template changes to consider.
 
 ## 1.7 (2024)
 
-Allow upload of multiple files. This requires an update to the upload.html
+Allow upload of multiple files. This requires an update to the _upload.html_
 template: Add the _multiple_ attribute to the file input element and change the
 label from "file" to "files".
 
