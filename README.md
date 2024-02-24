@@ -116,15 +116,28 @@ Oddmu. “Great configurability brings great burdens.”
 
 ## Building
 
+To build the binary:
+
 ```sh
 go build
 ```
+
+The man pages are already built. If you want to rebuild them, you need
+to have [scdoc](https://git.sr.ht/~sircmpwn/scdoc) installed.
+
+```sh
+make docs
+```
+
+The `Makefile` in the `man` directory has targets to create Markdown
+and HTML files.
 
 ## Running
 
 The working directory is where pages are saved and where templates are
 loaded from. You need a copy of the template files in this directory.
-Here's how to start it in the source directory:
+
+Here's how to build and run straight from the source directory:
 
 ```sh
 go run .
@@ -132,6 +145,38 @@ go run .
 
 The program serves the local directory as a wiki on port 8080. Point
 your browser to http://localhost:8080/ to use it.
+
+Once the `oddmu` binary is built, you can run it instead:
+
+```sh
+./oddmu
+```
+
+To read the main man page witihout installing Oddmu:
+
+```sh
+man -l man/oddmu.1
+```
+
+## Installing
+
+This installs `oddmu` into `$HOME/.local/bin` and the manual pages
+into `$HOME/.local/share/man/`.
+
+```sh
+make install
+```
+
+To install it elsewhere, here's an example using [GNU
+Stow](https://www.gnu.org/software/stow/) to install it into
+`/usr/local/stow` in a way that allows you to uninstall it later:
+
+```sh
+sudo mkdir /usr/local/stow/oddmu
+sudo make install PREFIX=/usr/local/stow/oddmu/
+cd /usr/local/stow
+sudo stow oddmu
+```
 
 ## Bugs
 

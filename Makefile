@@ -1,4 +1,7 @@
 SHELL=/bin/bash
+PREFIX=${HOME}/.local
+
+.PHONY: help build test run upload docs install missing
 
 help:
 	@echo Help for Oddmu
@@ -13,7 +16,7 @@ help:
 	@echo make docs
 	@echo "    create man pages from text files"
 	@echo
-	@echo go build
+	@echo make build
 	@echo "    just build it"
 	@echo
 	@echo make install
@@ -22,14 +25,18 @@ help:
 	@echo make upload
 	@echo "    this is how I upgrade my server"
 
-run:
-	go run .
+build: oddmu
+
+oddmu: *.go
+	go build
 
 test:
 	go test -shuffle on .
 
-upload:
-	go build
+run:
+	go run .
+
+upload: build
 	rsync --itemize-changes --archive oddmu sibirocobombus.root:/home/oddmu/
 	ssh sibirocobombus.root "systemctl restart oddmu; systemctl restart alex; systemctl restart claudia; systemctl restart campaignwiki"
 	@echo Changes to the template files need careful consideration
@@ -37,11 +44,6 @@ upload:
 docs:
 	cd man; make
 
-install:
-	make docs
-	for n in 1 5 7; do install -D -t $$HOME/.local/share/man/man$$n man/*.$$n; done
-	go build
-	install -D -t $$HOME/.local/bin oddmu
-
-missing:
-	for f in man/*.txt; do grep --quiet "$$f" README.md || echo $$f is not in the README; done
+install: build docs
+	for n in 1 5 7; do install -D -t ${PREFIX}/share/man/man$$n man/*.$$n; done
+	install -D -t ${PREFIX}/.local/bin oddmu
