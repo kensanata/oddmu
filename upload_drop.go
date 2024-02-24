@@ -19,7 +19,7 @@ import (
 	"strings"
 )
 
-type Upload struct {
+type upload struct {
 	Dir      string
 	Name     string
 	Last     string
@@ -34,7 +34,7 @@ var lastRe = regexp.MustCompile(`^(.*)([0-9]+)(.*)$`)
 // parameters are used to copy name, maxwidth and quality from the previous upload. If the previous name contains a
 // number, this is incremented by one.
 func uploadHandler(w http.ResponseWriter, r *http.Request, dir string) {
-	data := &Upload{Dir: dir}
+	data := &upload{Dir: dir}
 	maxwidth := r.FormValue("maxwidth")
 	if maxwidth != "" {
 		data.MaxWidth = maxwidth

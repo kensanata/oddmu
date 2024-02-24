@@ -16,9 +16,8 @@ import (
 
 type docid uint
 
-// Index contains the two maps used for search. Make sure to lock and
-// unlock as appropriate.
-type Index struct {
+// indexStore controls access to the maps used for search. Make sure to lock and unlock as appropriate.
+type indexStore struct {
 	sync.RWMutex
 
 	// next_id is the number of the next document added to the index
@@ -34,14 +33,14 @@ type Index struct {
 	titles map[string]string
 }
 
-var index Index
+var index indexStore
 
 func init() {
 	index.reset()
 }
 
 // reset the index. This assumes that the index is locked. It's useful for tests.
-func (idx *Index) reset() {
+func (idx *indexStore) reset() {
 	idx.next_id = 0
 	idx.token = make(map[string][]docid)
 	idx.documents = make(map[docid]string)
@@ -49,7 +48,7 @@ func (idx *Index) reset() {
 }
 
 // addDocument adds the text as a new document. This assumes that the index is locked!
-func (idx *Index) addDocument(text []byte) docid {
+func (idx *indexStore) addDocument(text []byte) docid {
 	id := idx.next_id
 	idx.next_id++
 	for _, token := range hashtags(text) {
@@ -66,7 +65,7 @@ func (idx *Index) addDocument(text []byte) docid {
 }
 
 // deleteDocument deletes all references to the id. The id can no longer be used. This assumes that the index is locked.
-func (idx *Index) deleteDocument(id docid) {
+func (idx *indexStore) deleteDocument(id docid) {
 	// Looping through all tokens makes sense if there are few tokens (like hashtags). It doesn't make sense if the
 	// number of tokens is large (like for full-text search or a trigram index).
 	for token, ids := range idx.token {
@@ -87,7 +86,7 @@ func (idx *Index) deleteDocument(id docid) {
 
 // deletePageName determines the document id based on the page name and calls deleteDocument to delete all references.
 // This assumes that the index is unlocked.
-func (idx *Index) deletePageName(name string) {
+func (idx *indexStore) deletePageName(name string) {
 	idx.Lock()
 	defer idx.Unlock()
 	var id docid
@@ -106,12 +105,12 @@ func (idx *Index) deletePageName(name string) {
 }
 
 // remove the page from the index. Do this when deleting a page. This assumes that the index is unlocked.
-func (idx *Index) remove(p *Page) {
+func (idx *indexStore) remove(p *Page) {
 	idx.deletePageName(p.Name)
 }
 
 // load loads all the pages and indexes them. This takes a while. It returns the number of pages indexed.
-func (idx *Index) load() (int, error) {
+func (idx *indexStore) load() (int, error) {
 	idx.Lock()
 	defer idx.Unlock()
 	err := filepath.Walk(".", idx.walk)
@@ -123,7 +122,7 @@ func (idx *Index) load() (int, error) {
 }
 
 // walk reads a file and adds it to the index. This assumes that the index is locked.
-func (idx *Index) walk(path string, info fs.FileInfo, err error) error {
+func (idx *indexStore) walk(path string, info fs.FileInfo, err error) error {
 	if err != nil {
 		return err
 	}
@@ -149,7 +148,7 @@ func (idx *Index) walk(path string, info fs.FileInfo, err error) error {
 }
 
 // addPage adds a page to the index. This assumes that the index is locked.
-func (idx *Index) addPage(p *Page) {
+func (idx *indexStore) addPage(p *Page) {
 	id := idx.addDocument(p.Body)
 	idx.documents[id] = p.Name
 	p.handleTitle(false)
@@ -157,14 +156,14 @@ func (idx *Index) addPage(p *Page) {
 }
 
 // add a page to the index. This assumes that the index is unlocked.
-func (idx *Index) add(p *Page) {
+func (idx *indexStore) add(p *Page) {
 	idx.Lock()
 	defer idx.Unlock()
 	idx.addPage(p)
 }
 
 // dump prints the index to the log for debugging.
-func (idx *Index) dump() {
+func (idx *indexStore) dump() {
 	idx.RLock()
 	defer idx.RUnlock()
 	for token, ids := range idx.token {
@@ -173,14 +172,14 @@ func (idx *Index) dump() {
 }
 
 // updateIndex updates the index for a single page.
-func (idx *Index) update(p *Page) {
+func (idx *indexStore) update(p *Page) {
 	idx.remove(p)
 	idx.add(p)
 }
 
 // search searches the index for a query string and returns page
 // names.
-func (idx *Index) search(q string) []string {
+func (idx *indexStore) search(q string) []string {
 	idx.RLock()
 	defer idx.RUnlock()
 	names := make([]string, 0)

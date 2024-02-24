@@ -7,7 +7,7 @@ import (
 )
 
 func TestIndexAdd(t *testing.T) {
-	idx := &Index{}
+	idx := &indexStore{}
 	idx.reset()
 	idx.Lock()
 	defer idx.Unlock()

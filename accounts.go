@@ -15,8 +15,8 @@ import (
 // environment variable ODDMU_WEBFINGER to "1".
 var useWebfinger = false
 
-// Accounts contains the map used to set the usernames. Make sure to lock and unlock as appropriate.
-type Accounts struct {
+// accountStore controlls access to the usernames. Make sure to lock and unlock as appropriate.
+type accountStore struct {
 	sync.RWMutex
 
 	// uris is a map, mapping account names likes "@alex@alexschroeder.ch" to URIs like
@@ -25,7 +25,7 @@ type Accounts struct {
 }
 
 // accounts holds the global mapping of accounts to profile URIs.
-var accounts Accounts
+var accounts accountStore
 
 // This is called once at startup and therefore does not need to be locked. On every restart, this map starts empty and
 // is slowly repopulated as pages are visited.
@@ -36,11 +36,11 @@ func init() {
 	}
 }
 
-// account links a social media account like @account@domain to a profile page like https://domain/user/account. Any
-// account seen for the first time uses a best guess profile URI. It is also looked up using webfinger, in parallel. See
+// accountLink links a social media accountLink like @accountLink@domain to a profile page like https://domain/user/accountLink. Any
+// accountLink seen for the first time uses a best guess profile URI. It is also looked up using webfinger, in parallel. See
 // lookUpAccountUri. If the lookup succeeds, the best guess is replaced with the new URI so on subsequent requests, the
 // URI is correct.
-func account(p *parser.Parser, data []byte, offset int) (int, ast.Node) {
+func accountLink(p *parser.Parser, data []byte, offset int) (int, ast.Node) {
 	data = data[offset:]
 	i := 1 // skip @ of username
 	n := len(data)
@@ -105,7 +105,7 @@ func lookUpAccountUri(account, domain string) {
 		log.Printf("Failed to read from %s: %s", account, err)
 		return
 	}
-	var wf WebFinger
+	var wf webFinger
 	err = json.Unmarshal([]byte(body), &wf)
 	if err != nil {
 		log.Printf("Failed to parse the JSON from %s: %s", account, err)
@@ -121,24 +121,24 @@ func lookUpAccountUri(account, domain string) {
 	accounts.uris[account] = uri
 }
 
-// Link a link in the WebFinger JSON.
-type Link struct {
+// link a link in the WebFinger JSON.
+type link struct {
 	Rel  string `json:"rel"`
 	Type string `json:"type"`
 	Href string `json:"href"`
 }
 
-// WebFinger is a structure used to unmarshall JSON.
-type WebFinger struct {
+// webFinger is a structure used to unmarshall JSON.
+type webFinger struct {
 	Subject string   `json:"subject"`
 	Aliases []string `json:"aliases"`
-	Links   []Link   `json:"links"`
+	Links   []link   `json:"links"`
 }
 
 // parseWebFinger parses the web finger JSON and returns the profile page URI. For unmarshalling the JSON, it uses the
 // Link and WebFinger structs.
 func parseWebFinger(body []byte) (string, error) {
-	var wf WebFinger
+	var wf webFinger
 	err := json.Unmarshal(body, &wf)
 	if err != nil {
 		return "", err

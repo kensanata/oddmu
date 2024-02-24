@@ -17,15 +17,19 @@ import (
 var templateFiles = []string{"edit.html", "add.html", "view.html",
 	"diff.html", "search.html", "static.html", "upload.html", "feed.html"}
 
-// templates are the parsed HTML templates used. See renderTemplate and loadTemplates. Subdirectories may contain their
-// own templates which override the templates in the root directory. If so, they are not filepaths. Use
-// filepath.ToSlash() if necessary.
-type Template struct {
+// templateStore controls access to map of parsed HTML templates. Make sure to lock and unlock as appropriate. See
+// renderTemplate and loadTemplates.
+type templateStore struct {
 	sync.RWMutex
+
+	// template is a map of parsed HTML templates. The key is their path name. By default, the map only contains
+	// top-level templates like "view.html". Subdirectories may contain their own templates which override the
+	// templates in the root directory. If so, they are paths like "dir/view.html", not filepaths. Use
+	// filepath.ToSlash() if necessary.
 	template map[string]*template.Template
 }
 
-var templates Template
+var templates templateStore
 
 // loadTemplates loads the templates. If templates have already been loaded, return immediately.
 func loadTemplates() {

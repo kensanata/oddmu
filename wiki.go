@@ -1,4 +1,6 @@
 // Oddmu is a wiki web server and a static site generator.
+//
+// The types exported are the ones needed to write the templates.
 package main
 
 import (

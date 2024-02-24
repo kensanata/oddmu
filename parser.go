@@ -68,7 +68,7 @@ func wikiParser() (*parser.Parser, *[]string) {
 	fn, hashtags := hashtag()
 	parser.RegisterInline('#', fn)
 	if useWebfinger {
-		parser.RegisterInline('@', account)
+		parser.RegisterInline('@', accountLink)
 	}
 	return parser, hashtags
 }

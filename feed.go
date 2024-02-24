@@ -11,16 +11,33 @@ import (
 	"time"
 )
 
+// Item is a Page plus a Date.
 type Item struct {
+	
+	// Page is the page being used as the feed item.
 	Page
+	
+	// Date is the last modification date of the file storing the page. As the pages used by Oddmu are plain
+	// Markdown files, they don't contain any metadata. Instead, the last modification date of the file is used.
+	// This makes it work well with changes made to the files outside of Oddmu.
 	Date string
 }
 
+// Feed is an Item used for the feed itself, plus an array of items based on the linked pages.
 type Feed struct {
+
+	// Item is the page containing the list of links. It's title is used for the feed and it's last modified time is
+	// used for the publication date. Thus, if linked pages change but the page with the links doesn't change, the
+	// publication date remains unchanged.
 	Item
+
+	// Items are based on the pages linked in list items starting with an asterisk ("*"). Links in
+	// list items starting with a minus ("-") are ignored!
 	Items []Item
 }
 
+// feed returns a RSS 2.0 feed for any page. The feed items it contains are the pages linked from in list items starting
+// with an asterisk ("*").
 func feed(p *Page, ti time.Time) *Feed {
 	feed := new(Feed)
 	feed.Name = p.Name

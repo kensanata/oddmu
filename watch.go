@@ -12,18 +12,33 @@ import (
 	"time"
 )
 
-// Watches holds a map and a mutex. The map contains the template names that have been requested and the exact time at
-// which they have been requested. Adding the same file multiple times, such as when the watch function sees multiple
-// Write events for the same file, the time keeps getting updated so that when the go routine runs, it only acts on
-// files that haven't been updated in the last second. The go routine is what forces us to use the RWMutex for the map.
-type Watches struct {
+// watchStore controls access to the maps used by the filesystem watches. Make sure to lock and unlock as appropriate.
+// The maps are used to control a sort of queue for files that need reloading (if a template) or reindexing (if a page).
+// File system notifications add files to the queue in order to handle changes made without Oddmu, while Oddmu is
+// running.
+type watchStore struct {
 	sync.RWMutex
-	ignores map[string]time.Time
+
+	// files contains the filenames that have been queued for reloading (if a template) or reindexing (if a page)
+	// and the exact time at which they have been added. When the same file is added multiple times, such as when
+	// the watchStore function sees multiple Write events for the same file, the time keeps getting updated so that
+	// when the watchTimer runs, it only acts on files that haven't been updated in the last second.
 	files   map[string]time.Time
+
+	// ignores contains the files that some code intends to change, knowing that subsequent writes events would
+	// result in file system notifications that would end up adding the filenames to the queue for reloading (if a
+	// template) or reindexing (if a page). When Oddmu is making the changes, it can ignore the corresponding
+	// notifications by the file system. Those notifications are consequences of Oddmu doing its job. In other
+	// words, Oddmu does not rely on file system notification even it is Oddmu doing the changes. This avoids a 1s
+	// when changing templates, for example.
+	ignores map[string]time.Time
+
+	// watcher is the pointer to the actual watcher doing the file system watching. It watches a set of paths.
+	// Whenever Oddmu creates a new subdirectory, it adds the path for this subdirectory to the watcher.
 	watcher *fsnotify.Watcher
 }
 
-var watches Watches
+var watches watchStore
 
 func init() {
 	watches.ignores = make(map[string]time.Time)
@@ -31,7 +46,7 @@ func init() {
 }
 
 // install initializes watches and installs watchers for all directories and subdirectories.
-func (w *Watches) install() (int, error) {
+func (w *watchStore) install() (int, error) {
 	// create a watcher for the root directory and never close it
 	var err error
 	w.watcher, err = fsnotify.NewWatcher()
@@ -48,7 +63,7 @@ func (w *Watches) install() (int, error) {
 }
 
 // add installs a watch for every directory that isn't hidden. Note that the root directory (".") is not skipped.
-func (w *Watches) add(path string, info fs.FileInfo, err error) error {
+func (w *watchStore) add(path string, info fs.FileInfo, err error) error {
 	if err != nil {
 		return err
 	}
@@ -72,7 +87,7 @@ func (w *Watches) add(path string, info fs.FileInfo, err error) error {
 // adds an entry to the files map, or updates the file's time, and starts a go routine. Example: If a file gets three
 // consecutive Write events, the first two go routine invocations won't do anything, since the time kept getting
 // updated. Only the last invocation will act upon the event.
-func (w *Watches) watch() {
+func (w *watchStore) watch() {
 	for {
 		select {
 		case err, ok := <-w.watcher.Errors:
@@ -94,7 +109,7 @@ func (w *Watches) watch() {
 // Incidentally, this also prevents rsync updates from generating activity ("stat ./.index.md.tTfPFg: no such file or
 // directory"). Note the painful details: If moving a file into a watched directory, a Create event is received. If a
 // new file is created in a watched directory, a Create event and one or more Write events is received.
-func (w *Watches) watchHandle(e fsnotify.Event) {
+func (w *watchStore) watchHandle(e fsnotify.Event) {
 	path := strings.TrimPrefix(e.Name, "./")
 	if strings.HasPrefix(filepath.Base(path), ".") {
 		return
@@ -130,7 +145,7 @@ func (w *Watches) watchHandle(e fsnotify.Event) {
 
 // watchTimer checks if the file hasn't been updated in 1s and if so, it calls watchDoUpdate. If another write has
 // updated the file, do nothing because another watchTimer will run at the appropriate time and check again.
-func (w *Watches) watchTimer(path string) {
+func (w *watchStore) watchTimer(path string) {
 	t, ok := w.files[path]
 	if ok && t.Add(time.Second).Before(time.Now().Add(time.Nanosecond)) {
 		delete(w.files, path)
@@ -141,7 +156,7 @@ func (w *Watches) watchTimer(path string) {
 // Do the right thing right now. For Create events such as directories being created or files being moved into a watched
 // directory, this is the right thing to do. When a file is being written to, watchHandle will have started a timer and
 // will call this function after 1s of no more writes. If, however, the path is in the ignores map, do nothing.
-func (w *Watches) watchDoUpdate(path string) {
+func (w *watchStore) watchDoUpdate(path string) {
 	_, ignored := w.ignores[path]
 	if ignored {
 		return
@@ -170,7 +185,7 @@ func (w *Watches) watchDoUpdate(path string) {
 
 // watchDoRemove removes files from the index or discards templates. If the path in question is in the ignores map, do
 // nothing.
-func (w *Watches) watchDoRemove(path string) {
+func (w *watchStore) watchDoRemove(path string) {
 	_, ignored := w.ignores[path]
 	if ignored {
 		return
@@ -189,7 +204,7 @@ func (w *Watches) watchDoRemove(path string) {
 
 // ignore is before code that is known suspected save files and trigger watchHandle eventhough the code already handles
 // this. This is achieved by adding the path to the ignores map for 1s.
-func (w *Watches) ignore(path string) {
+func (w *watchStore) ignore(path string) {
 	w.Lock()
 	defer w.Unlock()
 	w.ignores[path] = time.Now()
