@@ -182,7 +182,7 @@ sudo stow oddmu
 
 If you spot any, [contact](https://alexschroeder.ch/wiki/Contact) me.
 
-## Source
+## Hacking
 
 If you're interested in making changes to the code, here's a
 high-level introduction to the various source files.
@@ -216,6 +216,8 @@ high-level introduction to the various source files.
 - `watch.go` implements the filesystem notification watch
 - `wiki.go` implements the main function
 
+### Changing the markup rules
+
 If you want to change the markup rules, your starting point should be
 `parser.go`. Make sure you read the documentation of [Go
 Markdown](https://github.com/gomarkdown/markdown) and note that it
@@ -223,6 +225,8 @@ offers MathJax support (needs a change to the `view.html` template so
 that the MathJax Javascript gets loaded) and
 [MMark](https://mmark.miek.nl/post/syntax/) support, and it shows how
 extensions can be added.
+
+### Filenames and URL path
 
 One of the sad parts of the code is the distinction between path and
 filepath. On a Linux system, this doesn't matter. I suspect that it
@@ -240,6 +244,21 @@ HTML output.
 If you need to access the page name in code that is used from a
 template, you have to decode the path. See the code in `diff.go` for
 an example.
+
+### HTTP handlers
+
+The URL paths all have the form `/action/directory/pagename` (with
+directory being optional and pagename sometimes being optional). If
+you need to limit access in Apache or nginx or some other web server
+acting as a [reverse
+proxy](https://en.wikipedia.org/wiki/Reverse_proxy), you can do that.
+See `man oddmu-apache` and `man oddmu-nginx` for some configuration
+examples.
+
+This is how you can prevent some actions by simply not passing them on
+to Oddmu, or you can require authentication for certain actions.
+Furthermore, you can do the same for directories, allowing you to use
+subdirectories as separate sites, each with their own editors.
 
 ## References
 
