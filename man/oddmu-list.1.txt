@@ -6,7 +6,7 @@ oddmu-list - list page names and titles from the command-line
 
 # SYNOPSIS
 
-*oddmu list* [-dir string]
+*oddmu list* [-dir _string_]
 
 # DESCRIPTION
 
