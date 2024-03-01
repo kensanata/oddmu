@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width">
+    <title>Add to {{.Title}}</title>
+    <style>
+html { max-width: 70ch; padding: 2ch; margin: auto; color: #111; background-color: #eee; }
+form, textarea { width: 100%; }
+    </style>
+  </head>
+  <body>
+    <h1>Adding to {{.Title}}</h1>
+    <form action="/append/{{.Name}}" method="POST">
+      <textarea name="body" rows="20" cols="80" placeholder="Text" lang="" autofocus required></textarea>
+      <p><label><input type="checkbox" name="notify" checked> Add link to <a href="/view/changes">the list of changes</a>.</label></p>
+      <p><input type="submit" value="Add">
+        <a href="/view/{{.Name}}"><button type="button">Cancel</button></a></p>
+    </form>
+  </body>
+</html>

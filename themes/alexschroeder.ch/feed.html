@@ -1,0 +1,28 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+    <title>{{.Title}}</title>
+    <link>https://alexschroeder.ch/</link>
+    <managingEditor>alex@alexschroeder.ch (Alex Schroeder)</managingEditor>
+    <webMaster>alex@alexschroeder.ch (Alex Schroeder)</webMaster>
+    <atom:link href="https://alexschroeder.ch/view/{{.Name}}.rss" rel="self" type="application/rss+xml"/>
+    <description>This is the digital garden of Alex Schroeder.</description>
+    <image>
+      <url>https://alexschroeder.ch/view/logo.jpg</url>
+      <title>{{.Title}}</title>
+      <link>https://alexschroeder.ch/</link>
+    </image>
+    {{range .Items}}
+    <item>
+      <title>{{.Title}}</title>
+      <link>https://alexschroeder.ch/view/{{.Name}}</link>
+      <guid>https://alexschroeder.ch/view/{{.Name}}</guid>
+      <description>{{.Html}}</description>
+      <pubDate>{{.Date}}</pubDate>
+      {{range .Hashtags}}
+      <category>{{.}}</category>
+      {{end}}
+    </item>
+    {{end}}
+  </channel>
+</rss>

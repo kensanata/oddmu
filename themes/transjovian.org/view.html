@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width">
     <title>{{.Title}}</title>
     <style>
-html { max-width: 70ch; padding: 1ch; margin: auto; color: #111; background-color: #ffe; }
+html { max-width: 70ch; padding: 1ch; margin: auto; color: #ddd; background-color: #222; }
+a { color: #8cf } a:visited { color: #dbf } a:hover { color: #fff }
+input, button { color: #222; background-color: #ddd; border: 1px solid #eee; }
 body { hyphens: auto; }
 header a { margin-right: 1ch; }
 form { display: inline-block; }
@@ -18,17 +20,17 @@ img { max-width: 100%; }
   </head>
   <body>
     <header>
-      <a href="#main">Skip navigation</a>
+      <a href="#main">Skip</a>
       <a href="/view/index">Home</a>
       <a href="/edit/{{.Name}}" accesskey="e">Edit</a>
       <a href="/add/{{.Name}}" accesskey="a">Add</a>
       <a href="/diff/{{.Name}}" accesskey="d">Diff</a>
-      <a href="/archive/{{.Dir}}data.zip" accesskey="z">Zip</a>
-      <a href="/upload/{{.Dir}}?filename={{.Base}}-1.jpg" accesskey="u">Upload</a>
+      <a href="/view/{{.Name}}.md" accesskey="r">Raw</a>
+      <a href="/upload/{{.Dir}}" accesskey="u">Upload</a>
       <form role="search" action="/search/{{.Dir}}" method="GET">
         <label for="search">Search:</label>
         <input id="search" type="text" spellcheck="false" name="q" accesskey="f" placeholder="term #tag title:term blog:true" required>
-        <button>Go</button>
+        <input type="submit" value="Go"/>
       </form>
     </header>
     <main id="main">
@@ -37,7 +39,7 @@ img { max-width: 100%; }
     </main>
     <footer>
       <address>
-        Comments? Send mail to Your Name <<a href="mailto:you@example.org">you@example.org</a>>
+        Send text via long-range comms to Mr. Bandaralum &lt;<a href="mailto:jupiter@transjovian.org">jupiter@transjovian.org</a>&gt;
       </address>
     </footer>
   </body>

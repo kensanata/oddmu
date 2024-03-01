@@ -15,10 +15,10 @@ func TestHtmlCmd(t *testing.T) {
 
 <p>Hello! 🙃</p>
 
-<p>Check out the <a href="README">README</a>.</p>
+<p>Check out the <a href="README">README</a> and <a href="themes">themes</a>.</p>
 
 <p>Or <a href="test">create a new page</a>.</p>
 
 `
-	assert.Equal(t, r, b.String())
+	assert.Equal(t, b.String(), r)
 }

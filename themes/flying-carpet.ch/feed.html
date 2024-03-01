@@ -1,0 +1,21 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+    <title>{{.Title}}</title>
+    <link>https://flying-carpet.ch/</link>
+    <atom:link href="https://flying-carpet.ch/view/{{.Name}}.rss" rel="self" type="application/rss+xml"/>
+    <description>This is the digital garden of Claudia.</description>
+    {{range .Items}}
+    <item>
+      <title>{{.Title}}</title>
+      <link>https://flying-carpet.ch/view/{{.Name}}</link>
+      <guid>https://flying-carpet.ch/view/{{.Name}}</guid>
+      <description>{{.Html}}</description>
+      <pubDate>{{.Date}}</pubDate>
+      {{range .Hashtags}}
+      <category>{{.}}</category>
+      {{end}}
+    </item>
+    {{end}}
+  </channel>
+</rss>

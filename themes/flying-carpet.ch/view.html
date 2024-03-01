@@ -6,11 +6,11 @@
     <meta name="viewport" content="width=device-width">
     <title>{{.Title}}</title>
     <style>
-html { max-width: 70ch; padding: 1ch; margin: auto; color: #111; background-color: #ffe; }
+html { max-width: 65ch; padding: 1ch; margin: auto; color: #111; background-color: #eee; }
 body { hyphens: auto; }
 header a { margin-right: 1ch; }
-form { display: inline-block; }
-input#search { width: 12ch; }
+label { width: 7ch; display: inline-block; }
+input { width: 30ch; }
 button { background-color: #eee; color: inherit; border-radius: 4px; border-width: 1px; }
 footer { border-top: 1px solid #888 }
 img { max-width: 100%; }
@@ -18,27 +18,23 @@ img { max-width: 100%; }
   </head>
   <body>
     <header>
-      <a href="#main">Skip navigation</a>
-      <a href="/view/index">Home</a>
-      <a href="/edit/{{.Name}}" accesskey="e">Edit</a>
-      <a href="/add/{{.Name}}" accesskey="a">Add</a>
-      <a href="/diff/{{.Name}}" accesskey="d">Diff</a>
-      <a href="/archive/{{.Dir}}data.zip" accesskey="z">Zip</a>
-      <a href="/upload/{{.Dir}}?filename={{.Base}}-1.jpg" accesskey="u">Upload</a>
+      <a href="/view/index">Willkommen</a>
+      <a href="/edit/{{.Name}}" accesskey="e">Bearbeiten</a>
+      <a href="/upload/{{.Dir}}" accesskey="u">Upload</a>
       <form role="search" action="/search/{{.Dir}}" method="GET">
-        <label for="search">Search:</label>
+        <label for="search">Suchen:</label>
         <input id="search" type="text" spellcheck="false" name="q" accesskey="f" placeholder="term #tag title:term blog:true" required>
-        <button>Go</button>
+        <button>Los</button>
+      </form>
+      <form action="/edit/{{.Dir}}" method="GET">
+        <label for="id">Neu:</label>
+        <input id="id" type="text" spellcheck="false" name="id" accesskey="g" value="{{.Today}}" required>
+        <button>Los</button>
       </form>
     </header>
     <main id="main">
       <h1>{{.Title}}</h1>
       {{.Html}}
     </main>
-    <footer>
-      <address>
-        Comments? Send mail to Your Name <<a href="mailto:you@example.org">you@example.org</a>>
-      </address>
-    </footer>
   </body>
 </html>

@@ -1,0 +1,44 @@
+html { max-width: 80ch; padding: 1ch; margin: auto; color: #111; background-color: #ffe }
+body { hyphens: auto }
+header a { margin-right: 1ch }
+footer { border-top: 1px solid #888 }
+form, textarea { width: 97%; font-size: inherit }
+pre { background-color: #fff; padding: 1ex 2ex; overflow-x: scroll }
+.diff { font-size: inherit; white-space: normal; overflow-wrap: break-word; background-color: white; border: 1px solid #333; padding: 1ch }
+img { max-width: 100%; max-height: 90vh }
+.right img { float: right; margin-left: 2em; margin-bottom: 1em; border: 1px solid #111 }
+.left img { float: left; margin-right: 2em; margin-bottom: 1em; border: 1px solid #111 }
+button { background-color: #eee; color: inherit; border-radius: 4px; border-width: 1px }
+del  { background-color: #fab }
+ins  { background-color: #af8 }
+#search, #id { width: 30ch }
+.result { font-size: larger }
+.score { font-size: smaller; opacity: 0.8 }
+#view   form  { margin-top: 2px }
+#view  button { width: 6ch }
+#view   label { display: inline-block; width: 10ch }
+#upload label { display: inline-block; width: 20ch }
+img.last { max-width: 20% }
+hr { border-bottom: 1px }
+th { font-weight: normal }
+th + th, td + td { padding-left: 1em }
+
+@media (prefers-color-scheme: dark) {
+    html { color: #eeeee8; background-color: #333 }
+    footer { border-top: 1px solid #666 }
+    .diff { background-color: inherit; border: 1px solid #666 }
+    .right img { border: 1px solid #111 }
+    .left img { border: 1px solid #111 }
+    pre { background-color: #000; }
+    button { background-color: #eee; color: inherit }
+    del  { background-color: #f40 }
+    ins  { background-color: #070 }
+    a:link { color: #1e90ff }
+    a:hover { color: #63b8ff }
+    a:visited { color: #7a67ee }
+    img { opacity: .75; transition: opacity .5s ease-in-out; }
+    img:hover { opacity: 1; }
+    input, input[type="text"], textarea, button, .diff {
+	color: #eeeee8; background-color: #555
+    }
+}

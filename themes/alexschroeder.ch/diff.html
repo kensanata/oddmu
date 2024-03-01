@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="{{.Language}}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width">
+    <title>{{.Title}}</title>
+    <link href="oddmu.css" rel="stylesheet" />
+  </head>
+  <body>
+    <header>
+      <a href="/view/{{.Name}}">Back</a>
+    </header>
+    <main id="main">
+      <h1>{{.Title}}</h1>
+      <p>This is the diff between <a href="/view/{{.Name}}.md~">the backup</a> and <a href="/view/{{.Name}}.md">the current copy</a>.</p>
+      <pre class="diff">
+{{.Diff}}
+      </pre>
+    </main>
+  </body>
+</html>

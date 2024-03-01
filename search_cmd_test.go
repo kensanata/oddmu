@@ -12,6 +12,7 @@ func TestSearchCmd(t *testing.T) {
 	s := searchCli(b, "", 1, false, false, true, []string{"oddµ"})
 	assert.Equal(t, subcommands.ExitSuccess, s)
 	r := `* [Oddµ: A minimal wiki](README)
+* [Themes](themes/index)
 * [Welcome to Oddµ](index)
 `
 	assert.Equal(t, r, b.String())
