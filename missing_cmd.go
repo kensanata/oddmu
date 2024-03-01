@@ -30,31 +30,11 @@ func (cmd *missingCmd) SetFlags(f *flag.FlagSet) {
 }
 
 func (cmd *missingCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
-	return missingCli(os.Stdout, f.Args())
+	return missingCli(os.Stdout)
 }
 
-func missingCli(w io.Writer, args []string) subcommands.ExitStatus {
-	names := make(map[string]bool)
-	err := filepath.Walk(".", func(path string, info fs.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		// skip hidden directories and files
-		if path != "." && strings.HasPrefix(filepath.Base(path), ".") {
-			if info.IsDir() {
-				return filepath.SkipDir
-			} else {
-				return nil
-			}
-		}
-		if strings.HasSuffix(path, ".md") {
-			name := filepath.ToSlash(strings.TrimSuffix(path, ".md"))
-			names[name] = true
-		} else {
-			names[path] = false
-		}
-		return nil
-	})
+func missingCli(w io.Writer) subcommands.ExitStatus {
+	names, err := existingPages()
 	if err != nil {
 		fmt.Fprintln(w, err)
 		return subcommands.ExitFailure
@@ -103,6 +83,31 @@ func missingCli(w io.Writer, args []string) subcommands.ExitStatus {
 		fmt.Fprintln(w, "No missing pages found.")
 	}
 	return subcommands.ExitSuccess
+}
+
+func existingPages() (map[string]bool, error) {
+	names := make(map[string]bool)
+	err := filepath.Walk(".", func(path string, info fs.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		// skip hidden directories and files
+		if path != "." && strings.HasPrefix(filepath.Base(path), ".") {
+			if info.IsDir() {
+				return filepath.SkipDir
+			} else {
+				return nil
+			}
+		}
+		if strings.HasSuffix(path, ".md") {
+			name := filepath.ToSlash(strings.TrimSuffix(path, ".md"))
+			names[name] = true
+		} else {
+			names[path] = false
+		}
+		return nil
+	})
+	return names, err
 }
 
 // links parses the page content and returns an array of link destinations.

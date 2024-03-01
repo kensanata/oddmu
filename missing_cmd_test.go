@@ -9,7 +9,7 @@ import (
 
 func TestMissingCmd(t *testing.T) {
 	b := new(bytes.Buffer)
-	s := missingCli(b, nil)
+	s := missingCli(b)
 	assert.Equal(t, subcommands.ExitSuccess, s)
 	r := `Page	Missing
 index	test
