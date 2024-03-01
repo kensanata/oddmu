@@ -11,6 +11,7 @@ import (
 	"io/fs"
 	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 )
@@ -22,7 +23,10 @@ func (*missingCmd) Name() string     { return "missing" }
 func (*missingCmd) Synopsis() string { return "list missing pages" }
 func (*missingCmd) Usage() string {
 	return `missing:
-  Listing pages with links to missing pages.
+  Listing pages with links to missing pages. This command does not
+  understand links to directories being redirected to index pages.
+  A link such as [up](..) is reported as a link to a missing page.
+  Rewrite it as [up](../index) for it to work as intended.
 `
 }
 
@@ -119,7 +123,9 @@ func (p *Page) links() []string {
 		if entering {
 			switch v := node.(type) {
 			case *ast.Link:
-				links = append(links, string(v.Destination))
+				link := string(v.Destination)
+				dir := p.Dir()
+				links = append(links, path.Join(dir, link))
 			}
 		}
 		return ast.GoToNext
