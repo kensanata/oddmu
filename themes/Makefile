@@ -7,5 +7,5 @@ download:
 	rsync --archive --delete --itemize-changes sibirocobombus.root:/home/oddmu/'*.html' transjovian.org/
 
 upload:
-	rsync --archive --delete --itemize-changes --exclude='*~' . sibirocobombus:alexschroeder.ch/wiki/oddmu/themes/
+	rsync --archive --delete --itemize-changes --exclude=Makefile --exclude='*~' . sibirocobombus:alexschroeder.ch/wiki/oddmu/themes/
 
