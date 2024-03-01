@@ -140,3 +140,8 @@ Just me and the birds.
 	assert.Equal(t, "",
 		assert.HTTPBody(h, "HEAD", "/view/testdata/head/peace", nil))
 }
+
+func TestMimeType(t *testing.T) {
+	assert.Equal(t, []string{"text/markdown; charset=utf-8"},
+		HTTPHeaders(makeHandler(viewHandler, true), "GET", "/view/index.md", nil, "Content-Type"))
+}

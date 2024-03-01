@@ -1,7 +1,9 @@
 package main
 
 import (
+	"github.com/gabriel-vasile/mimetype"
 	"io"
+	"mime"
 	"net/http"
 	"os"
 	urlpath "path"
@@ -96,12 +98,26 @@ func viewHandler(w http.ResponseWriter, r *http.Request, path string) {
 		w.WriteHeader(http.StatusOK)
 		return
 	}
+	// if the file exists, serve it
 	if t == file {
 		file, err := os.Open(fp)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		// set MIME type by extension or by sniffing
+		mimeType := mime.TypeByExtension(filepath.Ext(fp))
+		if mimeType == "" {
+			mtype, err := mimetype.DetectReader(file)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			mimeType = mtype.String()
+		}
+		w.Header().Set("Content-Type", mimeType)
+		file.Seek(0, io.SeekStart)
+		// copy file
 		_, err = io.Copy(w, file)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
