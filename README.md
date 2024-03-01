@@ -132,6 +132,13 @@ make docs
 The `Makefile` in the `man` directory has targets to create Markdown
 and HTML files.
 
+The HEIC library uses C code and prevents cross-compilation.
+
+As the repository changed URLs a few times (from GitHub, to
+self-hosted using `cgit` to self-hosted using `legit`), there is no
+way to install it using `go install`. You need to `git clone` the
+repository and build it locally.
+
 ## Running
 
 The working directory is where pages are saved and where templates are
