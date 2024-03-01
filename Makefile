@@ -44,6 +44,16 @@ upload: build
 docs:
 	cd man; make
 
-install: build docs
+install:
 	for n in 1 5 7; do install -D -t ${PREFIX}/share/man/man$$n man/*.$$n; done
 	install -D -t ${PREFIX}/.local/bin oddmu
+
+# More could be added, of course!
+dist: oddmu-linux-amd64.tar.gz
+
+oddmu-linux-amd64: *.go
+	GOOS=linux GOARCH=amd64 go build -o $@
+
+%.tar.gz: %
+	tar czf $@ --transform='s/^$</oddmu/' --transform='s/^/oddmu\//' --exclude='*~' \
+	  $< Makefile *.socket *.service *.md man/Makefile man/*.1 man/*.5 man/*.7 themes/
