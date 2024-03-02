@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-RELEASES" "7" "2024-02-26"
+.TH "ODDMU-RELEASES" "7" "2024-03-02"
 .PP
 .SH NAME
 .PP
@@ -14,6 +14,37 @@ oddmu-releases - what'\&s new in this releases?\&
 .SH DESCRIPTION
 .PP
 This page lists user-visible features and template changes to consider.\&
+.PP
+.SS 1.9 (2024)
+.PP
+There is a change to make to copies of \fIupload.\&html\fR if subdirectories are being
+used.\& The \fILast\fR property no longer contains the directory.\& It has to be added
+to the template as follows:
+.PP
+.nf
+.RS 4
+{{if ne \&.Last ""}}
+<p>Previous upload: <a href="/view/{{\&.Dir}}{{\&.Last}}">{{\&.Last}}</a></p>
+{{if \&.Image}}
+<p><img class="last" src="/view/{{\&.Dir}}{{\&.Last}}"></p>
+{{end}}
+{{end}}
+.fi
+.RE
+.PP
+You can use the \fILast\fR property without a directory to suggest the markup to
+use, for example:
+.PP
+.nf
+.RS 4
+<p>Use the following for <a href="/view/{{\&.Dir}}{{\&.Today}}">{{\&.Today}}</a>:
+<pre>![]({{\&.Last}})</a></pre>
+.fi
+.RE
+.PP
+The upload template can use the \fIToday\fR property.\&
+.PP
+The source repository now comes with example templates.\&
 .PP
 .SS 1.8 (2024)
 .PP

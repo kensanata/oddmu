@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="{{.Language}}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width">
+    <title>{{.Title}}</title>
+    <style>
+html { max-width: 50ch; padding: 1ch; margin: auto; color: #111; background-color: #f9f9f9; }
+body { hyphens: auto; font-size: large; }
+header a { margin-right: 1ch; }
+label { width: 7ch; display: inline-block; }
+#search { width: 30ch; }
+button { background-color: #eee; color: inherit; border-radius: 4px; border-width: 1px; }
+textarea { width: 100%; margin-top: 1ch; }
+#send { float: right; width: 6ch }
+img { max-width: 100%; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <a href="/view/{{.Dir}}index">Home</a>
+      <a href="/view/{{.Dir}}{{.Today}}" accesskey="t">Today</a>
+      <form role="search" action="/search/{{.Dir}}" method="GET">
+        <label for="search">Suchen:</label>
+        <input id="search" type="text" spellcheck="false" name="q" accesskey="f" placeholder="term #tag title:term blog:true" required>
+        <button>Los</button>
+      </form>
+    </header>
+    <main>
+      <h1>{{.Title}}</h1>
+      <form action="/save/{{.Name}}" method="POST">
+        <textarea name="body" rows="20" cols="30" lang="" autofocus>{{printf "# %s" .Today | or .Body | printf "%s"}}</textarea>
+        <input type="hidden" name="notify" value="on">
+        <p><input id="send" type="submit" value="Save">
+      </form>
+    </footer>
+  </body>
+</html>

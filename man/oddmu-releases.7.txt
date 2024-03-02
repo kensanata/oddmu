@@ -8,6 +8,33 @@ oddmu-releases - what's new in this releases?
 
 This page lists user-visible features and template changes to consider.
 
+## 1.9 (2024)
+
+There is a change to make to copies of _upload.html_ if subdirectories are being
+used. The _Last_ property no longer contains the directory. It has to be added
+to the template as follows:
+
+```
+{{if ne .Last ""}}
+<p>Previous upload: <a href="/view/{{.Dir}}{{.Last}}">{{.Last}}</a></p>
+{{if .Image}}
+<p><img class="last" src="/view/{{.Dir}}{{.Last}}"></p>
+{{end}}
+{{end}}
+```
+
+You can use the _Last_ property without a directory to suggest the markup to
+use, for example:
+
+```
+<p>Use the following for <a href="/view/{{.Dir}}{{.Today}}">{{.Today}}</a>:
+<pre>![]({{.Last}})</a></pre>
+```
+
+The upload template can use the _Today_ property.
+
+The source repository now comes with example templates.
+
 ## 1.8 (2024)
 
 No user-visible changes. Documentation and code comments got better.

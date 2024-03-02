@@ -12,11 +12,11 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"path"
 	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type upload struct {
@@ -52,7 +52,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		case ".png", ".jpg", ".jpeg":
 			data.Image = true
 		}
-		data.Last = path.Join(dir, last)
+		data.Last = last
 		data.Name, _ = next(last)
 	}
 	renderTemplate(w, dir, "upload", data)
@@ -209,4 +209,9 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 	}
 	data.Set("last", filename) // has no slashes
 	http.Redirect(w, r, "/upload/"+dir+"?"+data.Encode(), http.StatusFound)
+}
+
+// Today returns the date, as a string, for use in templates.
+func (u *upload) Today() string {
+	return time.Now().Format(time.DateOnly)
 }

@@ -18,9 +18,9 @@ label { display: inline-block; width: 20ch }
   <body lang="en">
     <h1>Upload Files</h1>
     {{if ne .Last ""}}
-    <p>Previous upload: <a href="/view/{{.Last}}">{{.Last}}</a></p>
+    <p>Previous upload: <a href="/view/{{.Dir}}{{.Last}}">{{.Last}}</a></p>
     {{if .Image}}
-    <p><img class="last" src="/view/{{.Last}}"></p>
+    <p><img class="last" src="/view/{{.Dir}}{{.Last}}"></p>
     {{end}}
     {{end}}
     <form action="/drop/{{.Dir}}" method="POST" enctype="multipart/form-data">

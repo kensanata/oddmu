@@ -90,7 +90,27 @@ _{{.Hashtags}}_ is an array of strings.
 
 _{{.Date}}_, the date of the last update to this page, in RFC 822 format.
 
-The _upload.html_ template cannot refer to anything.
+The _upload.html_ template cannot refer to the properties of a page such as its
+name. Nevertheless, the following properties are available:
+
+_{{.Dir}}_ is the directory, based on the URL path, percent-escaped except for
+the slashes.
+
+_{{.Image}}_ is a boolean to indicate whether the file is an image or not, i.e.
+if the previous image uploaded had a filename that ended in _.png_, _.jpg_ or
+_.jpeg_.
+
+_{{.Last}}_ is the filename of the last image uploaded.
+
+_{{.MaxWidth}}_ is the _maxwidth_ query parameter, i.e. the value used for the
+previous image uploaded.
+
+_{{.Name}}_ is the _filename_ query parameter.
+
+_{{.Quality}}_ is the _quality_ query parameter, i.e. the value used for the
+previous image uploaded.
+
+_{{.Today}}_ is the current date, in ISO format.
 
 ## Non-English hyphenation
 
@@ -149,6 +169,10 @@ this case, a visitor looking at "/view/projects/wiki" following a link to
 "index" ends up on "/view/projects/index", not on "/view/index".
 
 It's up to you to decide what's best for your site, of course.
+
+If you want a link on _upload.html_ to point to the current directory's "index"
+page, you need to use "/view/{{.Dir}}index" because if you link to "index" the
+result points to "/upload/{{.Dir}}index".
 
 Templates can be changed by uploading new copies of the template files.
 

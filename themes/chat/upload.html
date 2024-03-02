@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width">
+    <title>Upload</title>
+    <style>
+html { max-width: 50ch; padding: 2ch; margin: auto; color: #000; background-color: #f9f9f9; }
+body { hyphens: auto; }
+form, textarea { width: 100%; }
+label { display: inline-block; width: 7ch }
+.last { max-width: 100%; }
+#name { width: 25ch; }
+    </style>
+  </head>
+  <body lang="en">
+    <header>
+      <a href="/view/{{.Dir}}index">Home</a>
+      <a href="/view/{{.Dir}}{{.Today}}" accesskey="t">Today</a>
+    </header>
+    <main>
+      <h1>Upload</h1>
+      {{if ne .Last ""}}
+      <p>Use the following for <a href="/view/{{.Dir}}{{.Today}}">{{.Today}}</a>:
+      <pre>![]({{.Last}})</a></pre>
+      {{if .Image}}
+      <p><img class="last" src="/view/{{.Dir}}{{.Last}}">
+      {{end}}
+      {{end}}
+      <form id="upload" action="/drop/{{.Dir}}" method="POST" enctype="multipart/form-data">
+        <p>What name to use for the uploads.
+          Make sure to increase the number at the end if you already uploaded images!
+          If you don’t, your upload overwrites the existing images.
+        <p><label for="text">Name:</label>
+          <input id="name" name="name" value="{{.Name}}" type="text" autofocus required>
+          <input name="maxwidth" value="1200" type="hidden">
+          <input name="quality" value="75" type="hidden">
+        <p><label for="file">Photos:</label>
+          <input type="file" name="file" required multiple>
+        <p><input type="submit" value="Upload">
+      </form>
+    <main>
+  </body>
+</html>

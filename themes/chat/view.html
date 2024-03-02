@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="{{.Language}}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width">
+    <title>{{.Title}}</title>
+    <style>
+html { max-width: 50ch; padding: 1ch; margin: auto; color: #111; background-color: #f9f9f9; }
+body { hyphens: auto; font-size: large; }
+header a { margin-right: 1ch; }
+label { width: 7ch; display: inline-block; }
+#search { width: 30ch; }
+button { background-color: #eee; color: inherit; border-radius: 4px; border-width: 1px; }
+main > * { clear: both; }
+main p {
+  float: right; text-align: right;
+  color: #000; background: #8fd;
+  padding: 3px 1ch; margin: 1pt 0; border-radius: 4px; border: 1px outset #eee; }
+
+textarea { width: 100%; margin-top: 1ch; }
+#send { float: right; width: 6ch }
+img { max-width: 100%; margin-top: 5px; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <a href="index">Home</a>
+      <a href="{{.Today}}" accesskey="t">Today</a>
+      <a href="/edit/{{.Name}}" accesskey="e">Edit</a>
+      <a href="/upload/{{.Dir}}?filename={{.Today}}-pic-1.jpg" accesskey="u">Upload</a>
+      <form role="search" action="/search/{{.Dir}}" method="GET">
+        <label for="search">Suchen:</label>
+        <input id="search" type="text" spellcheck="false" name="q" accesskey="f" placeholder="term #tag title:term blog:true" required>
+        <button>Los</button>
+      </form>
+      <h1>{{.Title}}</h1>
+    </header>
+    <main>
+      {{.Html}}
+    </main>
+    <footer>
+      <form action="/append/{{.Name}}" method="POST">
+        <textarea name="body" rows="4" cols="30" placeholder="Text" lang="" autofocus required></textarea>
+        <input type="hidden" name="notify" value="on">
+        <p><input id="send" type="submit" value="Send">
+      </form>
+    </footer>
+  </body>
+</html>

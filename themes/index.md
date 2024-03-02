@@ -9,4 +9,8 @@ your own sites.
 - [themes/flying-carpet.ch](flying-carpet.ch/README)
 - [themes/transjovian.org](transjovian.org/README)
 
+Theoretical themes:
+
+- [themes/chat](chat/README)
+
 (Up to the [Welcome](../index) page.)

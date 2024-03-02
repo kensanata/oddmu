@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-TEMPLATES" "5" "2024-02-17" "File Formats Manual"
+.TH "ODDMU-TEMPLATES" "5" "2024-03-02" "File Formats Manual"
 .PP
 .SH NAME
 .PP
@@ -97,7 +97,27 @@ For items in the feed:
 .PP
 \fI{{.\&Date}}\fR, the date of the last update to this page, in RFC 822 format.\&
 .PP
-The \fIupload.\&html\fR template cannot refer to anything.\&
+The \fIupload.\&html\fR template cannot refer to the properties of a page such as its
+name.\& Nevertheless, the following properties are available:
+.PP
+\fI{{.\&Dir}}\fR is the directory, based on the URL path, percent-escaped except for
+the slashes.\&
+.PP
+\fI{{.\&Image}}\fR is a boolean to indicate whether the file is an image or not, i.\&e.\&
+if the previous image uploaded had a filename that ended in \fI.\&png\fR, \fI.\&jpg\fR or
+\fI.\&jpeg\fR.\&
+.PP
+\fI{{.\&Last}}\fR is the filename of the last image uploaded.\&
+.PP
+\fI{{.\&MaxWidth}}\fR is the \fImaxwidth\fR query parameter, i.\&e.\& the value used for the
+previous image uploaded.\&
+.PP
+\fI{{.\&Name}}\fR is the \fIfilename\fR query parameter.\&
+.PP
+\fI{{.\&Quality}}\fR is the \fIquality\fR query parameter, i.\&e.\& the value used for the
+previous image uploaded.\&
+.PP
+\fI{{.\&Today}}\fR is the current date, in ISO format.\&
 .PP
 .SS Non-English hyphenation
 .PP
@@ -160,6 +180,10 @@ this case, a visitor looking at "/view/projects/wiki" following a link to
 "index" ends up on "/view/projects/index", not on "/view/index".\&
 .PP
 It'\&s up to you to decide what'\&s best for your site, of course.\&
+.PP
+If you want a link on \fIupload.\&html\fR to point to the current directory'\&s "index"
+page, you need to use "/view/{{.\&Dir}}index" because if you link to "index" the
+result points to "/upload/{{.\&Dir}}index".\&
 .PP
 Templates can be changed by uploading new copies of the template files.\&
 .PP
