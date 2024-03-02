@@ -1,13 +1,19 @@
 # Oddµ: A minimal wiki
 
-This program helps you run a minimal wiki. There is no version
-history. It's well suited as a *secondary* medium: collaboration and
+This program helps you run a minimal wiki, blog, digital garden, memex
+or Zettelkasten. There is no version history.
+
+It's well suited as a self-hosted, single-user web application: the is
+no need for collaboration on the site. Links and email connect you to
+the rest of the net. The wiki can be public or private. Perhaps it
+just runs on your local machine, unreachable from the Internet.
+
+It's well suited as a secondary medium for a group: collaboration and
 conversation happens elsewhere, in chat, on social media. The wiki
 serves as the text repository that results from these discussions.
 
-If you're the only user and it just runs on your laptop, then you can
-think of it as a [memex](https://en.wikipedia.org/wiki/Memex), a
-memory extender.
+It's well suited as a simple static site generator. There are no
+plugins.
 
 Oddµ can be used as a web server behind a reverse proxy such as Apache
 or it can be used as a static site generator.
@@ -15,20 +21,16 @@ or it can be used as a static site generator.
 When Oddµ runs as a web server, it serves all the Markdown files
 (ending in `.md`) as web pages and allows you to edit them.
 
+Oddmu adds the following extensions to Markdown: local links `[[like
+this]]`, hashtags `#Like_This` and fediverse account links like
+`@alex@alexschroeder.ch`.
+
 If your files don't provide their own title (`# title`), the file name
 (without `.md`) is used for the title. Subdirectories are created as
 necessary.
 
-Oddµ uses a [Markdown library](https://github.com/gomarkdown/markdown)
-to generate the web pages from Markdown. Oddmu adds the following
-extensions: local links `[[like this]]`, hashtags `#Like_This` and
-fediverse account links like `@alex@alexschroeder.ch`.
-
-The [lingua](https://github.com/pemistahl/lingua-go) library detects
-languages in order to get hyphenation right.
-
-The standard [html/template](https://pkg.go.dev/html/template) library
-is used to generate HTML.
+Other files can be uploaded and images can be resized when they are
+uploaded.
 
 ## Documentation
 
@@ -185,10 +187,6 @@ cd /usr/local/stow
 sudo stow oddmu
 ```
 
-## Bugs
-
-If you spot any, [contact](https://alexschroeder.ch/wiki/Contact) me.
-
 ## Hacking
 
 If you're interested in making changes to the code, here's a
@@ -266,6 +264,64 @@ This is how you can prevent some actions by simply not passing them on
 to Oddmu, or you can require authentication for certain actions.
 Furthermore, you can do the same for directories, allowing you to use
 subdirectories as separate sites, each with their own editors.
+
+## Dependencies
+
+This section lists the non-standard libraries Oddmu uses.
+
+[github.com/gomarkdown/markdown](https://github.com/gomarkdown/markdown)
+is used to generate the web pages from Markdown.
+
+[github.com/microcosm-cc/bluemonday](https://github.com/microcosm-cc/bluemonday)
+is used to strip rendered search results of all HTML except for the
+bold tag. Regular HTML generated from pages is *not* sanitized. Don't
+give people you don't trust access to your wiki.
+
+[github.com/pemistahl/lingua-go](https://github.com/pemistahl/lingua-go)
+detects languages in order to set the language tag in templates. This
+in turn can be used by browsers to get hyphenation right.
+
+[github.com/gabriel-vasile/mimetype](https://github.com/gabriel-vasile/mimetype)
+is used to sniff the MIME type of files with unknown filename
+extensions.
+
+[github.com/bashdrew/goheif](https://github.com/bashdrew/goheif) is
+used to decode HEIC files (the new default file format for photos on
+iPhones).
+
+[github.com/disintegration/imaging](https://github.com/disintegration/imaging)
+is used to resize images.
+
+[github.com/edwvee/exiffix](https://github.com/edwvee/exiffix) is used
+to rotate images before resizing them if the EXIF data says the image
+wasn't taken with the default orientation of the camera. This is
+necessary because after resizing, the EXIF data is gone.
+
+[github.com/google/subcommands](https://github.com/google/subcommands)
+is used for the parsing and documenting of subcommands.
+
+[github.com/charmbracelet/lipgloss](https://github.com/charmbracelet/lipgloss)
+is used to add colours to the search subcommand output.
+
+[github.com/hexops/gotextdiff](https://github.com/hexops/gotextdiff)
+is used to show a compact unified diff on the command line before
+doing any replacements.
+
+[github.com/sergi/go-diff/diffmatchpatch](https://github.com/sergi/go-diff/diffmatchpatch)
+is used to show the page diffs on the web.
+
+[github.com/fsnotify/fsnotify](https://github.com/fsnotify/fsnotify)
+is used to watch the filesystem for changes.
+
+[golang.org/x/exp/constraints](https://golang.org/x/exp/constraints)
+for the computation of the intersection between two sets of pages.
+
+[github.com/stretchr/testify/assert](https://github.com/stretchr/testify/assert)
+is used for testing.
+
+## Bugs
+
+If you spot any, [contact](https://alexschroeder.ch/wiki/Contact) me.
 
 ## References
 
