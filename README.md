@@ -267,57 +267,59 @@ subdirectories as separate sites, each with their own editors.
 
 ## Dependencies
 
-This section lists the non-standard libraries Oddmu uses.
+This section lists the non-standard libraries Oddmu uses and their
+respective licenses.
 
 [github.com/gomarkdown/markdown](https://github.com/gomarkdown/markdown)
-is used to generate the web pages from Markdown.
+is used to generate the web pages from Markdown. BSD-2-Clause.
 
 [github.com/microcosm-cc/bluemonday](https://github.com/microcosm-cc/bluemonday)
 is used to strip rendered search results of all HTML except for the
 bold tag. Regular HTML generated from pages is *not* sanitized. Don't
-give people you don't trust access to your wiki.
+give people you don't trust access to your wiki. BSD-3-Clause.
 
 [github.com/pemistahl/lingua-go](https://github.com/pemistahl/lingua-go)
 detects languages in order to set the language tag in templates. This
-in turn can be used by browsers to get hyphenation right.
+in turn can be used by browsers to get hyphenation right. Apache-2.0.
 
 [github.com/gabriel-vasile/mimetype](https://github.com/gabriel-vasile/mimetype)
 is used to sniff the MIME type of files with unknown filename
-extensions.
+extensions. MIT.
 
 [github.com/bashdrew/goheif](https://github.com/bashdrew/goheif) is
 used to decode HEIC files (the new default file format for photos on
-iPhones).
+iPhones). LGPL-3.0-only.
 
 [github.com/disintegration/imaging](https://github.com/disintegration/imaging)
-is used to resize images.
+is used to resize images. MIT.
 
 [github.com/edwvee/exiffix](https://github.com/edwvee/exiffix) is used
 to rotate images before resizing them if the EXIF data says the image
 wasn't taken with the default orientation of the camera. This is
-necessary because after resizing, the EXIF data is gone.
+necessary because after resizing, the EXIF data is gone. MIT.
 
 [github.com/google/subcommands](https://github.com/google/subcommands)
-is used for the parsing and documenting of subcommands.
+is used for the parsing and documenting of subcommands. Apache-2.0.
 
 [github.com/charmbracelet/lipgloss](https://github.com/charmbracelet/lipgloss)
-is used to add colours to the search subcommand output.
+is used to add colours to the search subcommand output. MIT.
 
 [github.com/hexops/gotextdiff](https://github.com/hexops/gotextdiff)
 is used to show a compact unified diff on the command line before
-doing any replacements.
+doing any replacements. BSD-3-Clause.
 
 [github.com/sergi/go-diff/diffmatchpatch](https://github.com/sergi/go-diff/diffmatchpatch)
-is used to show the page diffs on the web.
+is used to show the page diffs on the web. MIT.
 
 [github.com/fsnotify/fsnotify](https://github.com/fsnotify/fsnotify)
-is used to watch the filesystem for changes.
+is used to watch the filesystem for changes. BSD-3-Clause.
 
 [golang.org/x/exp/constraints](https://golang.org/x/exp/constraints)
 for the computation of the intersection between two sets of pages.
+BSD-3-Clause.
 
 [github.com/stretchr/testify/assert](https://github.com/stretchr/testify/assert)
-is used for testing.
+is used for testing. MIT.
 
 ## Bugs
 
