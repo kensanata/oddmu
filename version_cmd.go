@@ -29,20 +29,24 @@ func (*versionCmd) Usage() string {
 }
 
 func (cmd *versionCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
-	return versionCli(os.Stdout, cmd.full, f.Args())
+	return versionCli(os.Stdout, cmd.full)
 }
 
-func versionCli(w io.Writer, full bool, args []string) subcommands.ExitStatus {
+func versionCli(w io.Writer, full bool) subcommands.ExitStatus {
 	info, ok := debug.ReadBuildInfo()
 	if !ok {
-		fmt.Println("This binary contains no debug info.")
+		w.Write([]byte("This binary contains no debug info.\n"))
 	} else if full {
-		fmt.Println(info)
+		w.Write([]byte(info.String()))
 	} else {
-		fmt.Println(info.Path)
+		w.Write([]byte(info.Path + "\n"))
 		for _, setting := range info.Settings {
 			if strings.HasPrefix(setting.Key, "vcs") {
-				fmt.Printf("%s=%s\n", setting.Key, setting.Value)
+				_, err := fmt.Fprintf(w, "%s=%s\n", setting.Key, setting.Value)
+				if err != nil {
+					fmt.Fprintln(os.Stderr, err.Error())
+					return subcommands.ExitFailure
+				}
 			}
 		}
 	}

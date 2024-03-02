@@ -9,7 +9,7 @@ import (
 
 func TestVersionCmd(t *testing.T) {
 	b := new(bytes.Buffer)
-	s := versionCli(b, false, nil)
+	s := versionCli(b, false)
 	assert.Equal(t, subcommands.ExitSuccess, s)
-	assert.Contains(t, "vcs.revision", b.String())
+	assert.Contains(t, b.String(), "oddmu")
 }
