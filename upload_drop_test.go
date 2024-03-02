@@ -230,6 +230,7 @@ func TestUploadTwoInOne(t *testing.T) {
 	assert.FileExists(t, "testdata/two/2024-02-19-hike-1.jpg")
 	assert.FileExists(t, "testdata/two/2024-02-19-hike-2.jpg")
 }
+
 func TestUploadTwoInOneAgain(t *testing.T) {
 	cleanup(t, "testdata/zwei")
 	os.MkdirAll("testdata/zwei", 0755)
