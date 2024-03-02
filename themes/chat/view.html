@@ -3,23 +3,25 @@
   <head>
     <meta charset="utf-8">
     <meta name="format-detection" content="telephone=no">
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <title>{{.Title}}</title>
     <style>
-html { max-width: 50ch; padding: 1ch; margin: auto; color: #111; background-color: #f9f9f9; }
-body { hyphens: auto; font-size: large; }
+html { font-family: sans-serif; font-size: large; max-width: 40ch; padding: 1ch; margin: auto; color: #111; background-color: #f9f9f9; }
+body { hyphens: auto; }
 header a { margin-right: 1ch; }
 label { width: 7ch; display: inline-block; }
 #search { width: 30ch; }
-button { background-color: #eee; color: inherit; border-radius: 4px; border-width: 1px; }
-main > * { clear: both; }
+button { font-size: large; background-color: #eee; color: inherit; border-radius: 6px; border-width: 1px; }
+main > *, footer { clear: both; }
 main p {
-  float: right; text-align: right;
-  color: #000; background: #8fd;
-  padding: 3px 1ch; margin: 1pt 0; border-radius: 4px; border: 1px outset #eee; }
-
-textarea { width: 100%; margin-top: 1ch; }
-#send { float: right; width: 6ch }
+    float: right; text-align: right;
+    color: #000; background: #8fd;
+    padding: 3px 1ch; margin: 1pt 0; border-radius: 6px; border: 1px outset #eee; }
+footer p { margin: 0.5ch 0 0 0; }
+textarea {
+    width: 97%; margin: 1ch 0 0 0; padding: 0 0.5ch; font: inherit;
+    border-radius: 6px; border: 1px outset #eee; }
+#send { float: right; font-size: large; }
 img { max-width: 100%; margin-top: 5px; }
     </style>
   </head>

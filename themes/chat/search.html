@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width">
+    <title>Search for {{.Query}}</title>
+    <style>
+html { font-family: sans-serif; font-size: large; max-width: 40ch; padding: 1ch; margin: auto; color: #111; background-color: #f9f9f9; }
+body { hyphens: auto; }
+header a { margin-right: 1ch; }
+label { width: 7ch; display: inline-block; }
+#search { width: 30ch; }
+button { font-size: large; background-color: #eee; color: inherit; border-radius: 6px; border-width: 1px; }
+.result { font-size: larger }
+.score { font-size: smaller; opacity: 0.8; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <a href="/view/{{.Dir}}index">Home</a>
+      <form role="search" action="/search/{{.Dir}}" method="GET">
+        <label for="search">Search:</label>
+        <input id="search" type="text" value="{{.Query}}" spellcheck="false" name="q" accesskey="f" placeholder="term #tag title:term blog:true" required>
+        <button>Go</button>
+      </form>
+    </header>
+    <main id="main">
+      <h1>Search for {{.Query}}</h1>
+      {{if .Results}}
+      <p>
+        {{if gt .Page 2}}<a href="/search/{{.Dir}}?q={{.Query}}&page=1">First</a>{{end}}
+        {{if gt .Page 1}}<a href="/search/{{.Dir}}?q={{.Query}}&page={{.Previous}}">Previous</a>{{end}}
+        Page {{.Page}}
+        {{if .More}}<a href="/search/{{.Dir}}?q={{.Query}}&page={{.Next}}">Next</a>{{end}}
+      {{range .Items}}
+      <article lang="{{.Language}}">
+        <p><a class="result" href="/view/{{.Name}}">{{.Title}}</a>
+          <span class="score">{{.Score}}</span></p>
+        <blockquote>{{.Html}}</blockquote>
+      </article>
+      {{end}}
+      <p>
+        {{if gt .Page 2}}<a href="/search/{{.Dir}}?q={{.Query}}&page=1">First</a>{{end}}
+        {{if gt .Page 1}}<a href="/search/{{.Dir}}?q={{.Query}}&page={{.Previous}}">Previous</a>{{end}}
+        Page {{.Page}}
+        {{if .More}}<a href="/search/{{.Dir}}?q={{.Query}}&page={{.Next}}">Next</a>{{end}}
+      {{else}}
+      <p>No results.</p>
+      {{end}}
+    </main>
+  </body>
+</html>
