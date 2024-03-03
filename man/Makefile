@@ -24,7 +24,12 @@ md: ${MD}
 	  -e 's/^([A-Z.-]*\([1-9]\))( ".*")?$$/# \1/' \
 	  < $< > $@
 
-upload: ${MD}
+README.md: ../README.md
+	sed --regexp-extended \
+	  -e 's/\]\(.*\/(.*)\.txt\)/](\1)/' \
+	  < $< > $@
+
+upload: ${MD} README.md
 	rsync --itemize-changes --archive *.md sibirocobombus:alexschroeder.ch/wiki/oddmu/
 	make clean
 
