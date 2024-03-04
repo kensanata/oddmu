@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU" "1" "2024-02-23"
+.TH "ODDMU" "1" "2024-03-04"
 .PP
 .SH NAME
 .PP
@@ -256,6 +256,14 @@ using \fIcurl\fR(1):
 .RS 4
 curl --form body="Did you bring a towel?" 
   http://localhost:8080/save/welcome
+.fi
+.RE
+.PP
+To compute the space used by your setup, use regular tools:
+.PP
+.nf
+.RS 4
+du --exclude=\&'*/.*\&' --exclude \&'*~\&' --block-size=M
 .fi
 .RE
 .PP
