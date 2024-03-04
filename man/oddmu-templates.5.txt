@@ -6,13 +6,27 @@ oddmu-templates - how to write the templates
 
 # SYNOPSIS
 
-These files act as HTML templates: add.html, diff.html, edit.html, feed.html,
-search.html, static.html, upload.html and view.html. They contain special
-placeholders in double bracers {{like this}}.
+These files act as HTML templates: _add.html_, _diff.html_, _edit.html_,
+_feed.html_, _search.html_, _static.html_, _upload.html_ and _view.html_. They
+contain special placeholders in double bracers {{like this}}.
 
-# SYNTAX
+# DESCRIPTION
 
-The templates can refer to the following properties of a page:
+Each template receives an object and uses the object's properties to replace the
+placeholders.
+
+- _add.html_ uses a _page_
+- _diff.html_ uses a _page_
+- _edit.html_ uses a _page_
+- _feed.html_ uses a _feed_
+- _search.html_ uses a _search_
+- _static.html_ uses a _page_
+- _upload.html_ uses an _upload_
+- _view.html_ uses a _page_
+
+## Page
+
+A page has the following properties:
 
 _{{.Title}}_ is the page title. If the page doesn't provide its own title, the
 page name is used.
@@ -26,86 +40,79 @@ _{{.Dir}}_ is the page directory, percent-escaped except for the slashes.
 _{{.Base}}_ is the basename of the current file (without the directory and
 without the _.md_ extension), escaped for use in URLs.
 
-_{{.Today}}_ is the current date, in ISO format. This is useful for "new page"
-like links or forms (see *EXAMPLE* below).
+_{{.Language}}_ is the suspected language of the page. This is used to set the
+language on the _view.html_ template. See "Non-English hyphenation" below.
 
-For the _view.html_ and _static.html_ template:
-
-_{{.Html}}_ is the rendered Markdown, as HTML.
+_{{.Body}}_ is the raw byte content of the page. Use _{{printf "%s" .Body}}_ to
+get the Markdown, as a string. This is used for the text area of the _edit.html_
+template.
 
 _{{.Hashtags}}_ is an array of strings.
 
-For the _diff.html_ template:
+_{{.Html}}_ contains some sort of HTML that depends on the template used.
 
-_{{.Diff}}_ is the diff for this page. This is only computed on demand so it can
-be used in other templates, too. It probably doesn't make much sense to do so,
-however.
+- For _view.html_, it is the rendered Markdown, as HTML.
+- For _search.html_, it is a page summary, with bold matches, as HTML.
+- For _feed.html_, it is the escaped (!) HTML of the feed item.
 
-For the _edit.html_ template:
+_{{.Score}}_ is a numerical score. It is onlly computed for _search.html_.
 
-_{{printf "%s" .Body}}_ is the Markdown, as a string (the data itself is a byte
-array and that's why we need to call _printf_).
+_{{.Today}}_ is the current date, in ISO format. This is useful for "new page"
+like links or forms (see *EXAMPLE* below).
 
-For the _search.html_ template only:
+_{{.Diff}}_ is the page diff for _diff.html_. It is only computed on demand so
+it can be used in other templates, too. It probably doesn't make much sense to
+do so, however.
+
+## Feed
+
+The feed contains an item for the head of the feed and an array of items.
+
+_{{.Items}}_ is the array of feed items. To refer to them, you need to use a
+_{{range .Items}}_ … _{{end}}_ construct.
+
+If page A links to pages B and C, the head of the feed is based on page A and
+the list of items contains B and C.
+
+An item is a page plus a date. All the properties of a page can be used (see
+*Page* above).
+
+_{{.Date}}_ is the date of the last update to the page, in RFC 822 format.
+
+## Search
+
+_{{.Query}}_ is the query string.
+
+_{{.Dir}}_ is the directory in which the search starts, percent-escaped except
+for the slashes.
+
+_{{.Items}}_ is an array of pages (see *Page* above). To refer to them, you need
+to use a _{{range .Items}}_ … _{{end}}_ construct.
 
 _{{.Previous}}_, _{{.Page}}_ and _{{.Next}}_ are the previous, current and next
 page number in the results since doing arithmetics in templates is hard. The
-first page number is 1. The last page is expensive to dermine and so that isn't
-done.
+first page number is 1. The last page is expensive to dermine and so that is not
+available.
 
 _{{.More}}_ indicates if there are any more search results.
 
 _{{.Results}}_ indicates if there were any search results at all.
 
-_{{.Items}}_ is an array of pages, each containing a search result. A search
-result is a page (with the properties seen above). Thus, to refer to them, you
-need to use a _{{range .Items}}_ … _{{end}}_ construct.
+## Upload
 
-For items in the search result:
+_{{.Dir}}_ is the directory where the uploaded file ends up, based on the URL
+path, percent-escaped except for the slashes.
 
-_{{.Html}}_ is the rendered Markdown of a page summary, as HTML.
+_{{.Name}}_ is the _filename_ query parameter.
 
-_{{.Score}}_ is a numerical score for search results.
-
-For the _feed.html_ template:
-
-_{{.Name}}_ is the page name, escaped for use in URLs.
-
-_{{.Title}}_ is the title of the underlying main page.
-
-_{{.Date}}_ is the date of the last update to the underlying main page, in RFC
-822 format.
-
-_{{.Items}}_ is an array of feed items.
-
-For items in the feed:
-
-_{{.Name}}_ is the page name, escaped for use in URLs.
-
-_{{.Title}}_ is the title of the page.
-
-_{{.Html}}_ is the rendered Markdown, as escaped (!) HTML.
-
-_{{.Hashtags}}_ is an array of strings.
-
-_{{.Date}}_, the date of the last update to this page, in RFC 822 format.
-
-The _upload.html_ template cannot refer to the properties of a page such as its
-name. Nevertheless, the following properties are available:
-
-_{{.Dir}}_ is the directory, based on the URL path, percent-escaped except for
-the slashes.
+_{{.Last}}_ is the filename of the last image uploaded.
 
 _{{.Image}}_ is a boolean to indicate whether the file is an image or not, i.e.
 if the previous image uploaded had a filename that ended in _.png_, _.jpg_ or
 _.jpeg_.
 
-_{{.Last}}_ is the filename of the last image uploaded.
-
 _{{.MaxWidth}}_ is the _maxwidth_ query parameter, i.e. the value used for the
 previous image uploaded.
-
-_{{.Name}}_ is the _filename_ query parameter.
 
 _{{.Quality}}_ is the _quality_ query parameter, i.e. the value used for the
 previous image uploaded.

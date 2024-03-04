@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-TEMPLATES" "5" "2024-03-02" "File Formats Manual"
+.TH "ODDMU-TEMPLATES" "5" "2024-03-04" "File Formats Manual"
 .PP
 .SH NAME
 .PP
@@ -13,13 +13,37 @@ oddmu-templates - how to write the templates
 .PP
 .SH SYNOPSIS
 .PP
-These files act as HTML templates: add.\&html, diff.\&html, edit.\&html, feed.\&html,
-search.\&html, static.\&html, upload.\&html and view.\&html.\& They contain special
-placeholders in double bracers {{like this}}.\&
+These files act as HTML templates: \fIadd.\&html\fR, \fIdiff.\&html\fR, \fIedit.\&html\fR,
+\fIfeed.\&html\fR, \fIsearch.\&html\fR, \fIstatic.\&html\fR, \fIupload.\&html\fR and \fIview.\&html\fR.\& They
+contain special placeholders in double bracers {{like this}}.\&
 .PP
-.SH SYNTAX
+.SH DESCRIPTION
 .PP
-The templates can refer to the following properties of a page:
+Each template receives an object and uses the object'\&s properties to replace the
+placeholders.\&
+.PP
+.PD 0
+.IP \(bu 4
+\fIadd.\&html\fR uses a \fIpage\fR
+.IP \(bu 4
+\fIdiff.\&html\fR uses a \fIpage\fR
+.IP \(bu 4
+\fIedit.\&html\fR uses a \fIpage\fR
+.IP \(bu 4
+\fIfeed.\&html\fR uses a \fIfeed\fR
+.IP \(bu 4
+\fIsearch.\&html\fR uses a \fIsearch\fR
+.IP \(bu 4
+\fIstatic.\&html\fR uses a \fIpage\fR
+.IP \(bu 4
+\fIupload.\&html\fR uses an \fIupload\fR
+.IP \(bu 4
+\fIview.\&html\fR uses a \fIpage\fR
+.PD
+.PP
+.SS Page
+.PP
+A page has the following properties:
 .PP
 \fI{{.\&Title}}\fR is the page title.\& If the page doesn'\&t provide its own title, the
 page name is used.\&
@@ -33,86 +57,84 @@ extension.\&
 \fI{{.\&Base}}\fR is the basename of the current file (without the directory and
 without the \fI.\&md\fR extension), escaped for use in URLs.\&
 .PP
-\fI{{.\&Today}}\fR is the current date, in ISO format.\& This is useful for "new page"
-like links or forms (see \fBEXAMPLE\fR below).\&
+\fI{{.\&Language}}\fR is the suspected language of the page.\& This is used to set the
+language on the \fIview.\&html\fR template.\& See "Non-English hyphenation" below.\&
 .PP
-For the \fIview.\&html\fR and \fIstatic.\&html\fR template:
-.PP
-\fI{{.\&Html}}\fR is the rendered Markdown, as HTML.\&
+\fI{{.\&Body}}\fR is the raw byte content of the page.\& Use \fI{{printf "%s" .\&Body}}\fR to
+get the Markdown, as a string.\& This is used for the text area of the \fIedit.\&html\fR
+template.\&
 .PP
 \fI{{.\&Hashtags}}\fR is an array of strings.\&
 .PP
-For the \fIdiff.\&html\fR template:
+\fI{{.\&Html}}\fR contains some sort of HTML that depends on the template used.\&
 .PP
-\fI{{.\&Diff}}\fR is the diff for this page.\& This is only computed on demand so it can
-be used in other templates, too.\& It probably doesn'\&t make much sense to do so,
-however.\&
+.PD 0
+.IP \(bu 4
+For \fIview.\&html\fR, it is the rendered Markdown, as HTML.\&
+.IP \(bu 4
+For \fIsearch.\&html\fR, it is a page summary, with bold matches, as HTML.\&
+.IP \(bu 4
+For \fIfeed.\&html\fR, it is the escaped (!\&) HTML of the feed item.\&
+.PD
 .PP
-For the \fIedit.\&html\fR template:
+\fI{{.\&Score}}\fR is a numerical score.\& It is onlly computed for \fIsearch.\&html\fR.\&
 .PP
-\fI{{printf "%s" .\&Body}}\fR is the Markdown, as a string (the data itself is a byte
-array and that'\&s why we need to call \fIprintf\fR).\&
+\fI{{.\&Today}}\fR is the current date, in ISO format.\& This is useful for "new page"
+like links or forms (see \fBEXAMPLE\fR below).\&
 .PP
-For the \fIsearch.\&html\fR template only:
+\fI{{.\&Diff}}\fR is the page diff for \fIdiff.\&html\fR.\& It is only computed on demand so
+it can be used in other templates, too.\& It probably doesn'\&t make much sense to
+do so, however.\&
+.PP
+.SS Feed
+.PP
+The feed contains an item for the head of the feed and an array of items.\&
+.PP
+\fI{{.\&Items}}\fR is the array of feed items.\& To refer to them, you need to use a
+\fI{{range .\&Items}}\fR … \fI{{end}}\fR construct.\&
+.PP
+If page A links to pages B and C, the head of the feed is based on page A and
+the list of items contains B and C.\&
+.PP
+An item is a page plus a date.\& All the properties of a page can be used (see
+\fBPage\fR above).\&
+.PP
+\fI{{.\&Date}}\fR is the date of the last update to the page, in RFC 822 format.\&
+.PP
+.SS Search
+.PP
+\fI{{.\&Query}}\fR is the query string.\&
+.PP
+\fI{{.\&Dir}}\fR is the directory in which the search starts, percent-escaped except
+for the slashes.\&
+.PP
+\fI{{.\&Items}}\fR is an array of pages (see \fBPage\fR above).\& To refer to them, you need
+to use a \fI{{range .\&Items}}\fR … \fI{{end}}\fR construct.\&
 .PP
 \fI{{.\&Previous}}\fR, \fI{{.\&Page}}\fR and \fI{{.\&Next}}\fR are the previous, current and next
 page number in the results since doing arithmetics in templates is hard.\& The
-first page number is 1.\& The last page is expensive to dermine and so that isn'\&t
-done.\&
+first page number is 1.\& The last page is expensive to dermine and so that is not
+available.\&
 .PP
 \fI{{.\&More}}\fR indicates if there are any more search results.\&
 .PP
 \fI{{.\&Results}}\fR indicates if there were any search results at all.\&
 .PP
-\fI{{.\&Items}}\fR is an array of pages, each containing a search result.\& A search
-result is a page (with the properties seen above).\& Thus, to refer to them, you
-need to use a \fI{{range .\&Items}}\fR … \fI{{end}}\fR construct.\&
+.SS Upload
 .PP
-For items in the search result:
+\fI{{.\&Dir}}\fR is the directory where the uploaded file ends up, based on the URL
+path, percent-escaped except for the slashes.\&
 .PP
-\fI{{.\&Html}}\fR is the rendered Markdown of a page summary, as HTML.\&
+\fI{{.\&Name}}\fR is the \fIfilename\fR query parameter.\&
 .PP
-\fI{{.\&Score}}\fR is a numerical score for search results.\&
-.PP
-For the \fIfeed.\&html\fR template:
-.PP
-\fI{{.\&Name}}\fR is the page name, escaped for use in URLs.\&
-.PP
-\fI{{.\&Title}}\fR is the title of the underlying main page.\&
-.PP
-\fI{{.\&Date}}\fR is the date of the last update to the underlying main page, in RFC
-822 format.\&
-.PP
-\fI{{.\&Items}}\fR is an array of feed items.\&
-.PP
-For items in the feed:
-.PP
-\fI{{.\&Name}}\fR is the page name, escaped for use in URLs.\&
-.PP
-\fI{{.\&Title}}\fR is the title of the page.\&
-.PP
-\fI{{.\&Html}}\fR is the rendered Markdown, as escaped (!\&) HTML.\&
-.PP
-\fI{{.\&Hashtags}}\fR is an array of strings.\&
-.PP
-\fI{{.\&Date}}\fR, the date of the last update to this page, in RFC 822 format.\&
-.PP
-The \fIupload.\&html\fR template cannot refer to the properties of a page such as its
-name.\& Nevertheless, the following properties are available:
-.PP
-\fI{{.\&Dir}}\fR is the directory, based on the URL path, percent-escaped except for
-the slashes.\&
+\fI{{.\&Last}}\fR is the filename of the last image uploaded.\&
 .PP
 \fI{{.\&Image}}\fR is a boolean to indicate whether the file is an image or not, i.\&e.\&
 if the previous image uploaded had a filename that ended in \fI.\&png\fR, \fI.\&jpg\fR or
 \fI.\&jpeg\fR.\&
 .PP
-\fI{{.\&Last}}\fR is the filename of the last image uploaded.\&
-.PP
 \fI{{.\&MaxWidth}}\fR is the \fImaxwidth\fR query parameter, i.\&e.\& the value used for the
 previous image uploaded.\&
-.PP
-\fI{{.\&Name}}\fR is the \fIfilename\fR query parameter.\&
 .PP
 \fI{{.\&Quality}}\fR is the \fIquality\fR query parameter, i.\&e.\& the value used for the
 previous image uploaded.\&
