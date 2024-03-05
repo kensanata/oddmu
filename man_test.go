@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/stretchr/testify/assert"
 	"go/parser"
 	"go/token"
@@ -85,7 +84,6 @@ func TestDocumentDependencies(t *testing.T) {
 		}
 	}
 	sort.Slice(imports, func(i, j int) bool { return len(imports[i]) < len(imports[j]) })
-	fmt.Println(imports)
 IMPORT:
 	for _, name := range imports {
 		for _, other := range imports {
