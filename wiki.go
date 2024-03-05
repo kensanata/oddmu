@@ -41,25 +41,30 @@ func makeHandler(fn func(http.ResponseWriter, *http.Request, string), required b
 			}
 		}
 		m := validPath.FindStringSubmatch(r.URL.Path)
-		if m != nil && (!required || len(m[2]) > 0) {
-			fn(w, r, m[2])
+		// handle / and /action 
+		if m == nil {
+			http.NotFound(w, r)
 			return
 		}
-		err := r.ParseForm()
-		if err != nil {
-			http.Error(w, "Cannot parse form", 400)
-			return
-		}
-		id := r.Form.Get("id")
-		// no hidden files or directories
-		for _, segment := range strings.Split(id, "/") {
-			if strings.HasPrefix(segment, ".") {
-				http.Error(w, "can neither confirm nor deny the existence of this resource", http.StatusForbidden)
-				return
+		path := m[2]
+		if r.Method == "GET" && (path == "" || strings.HasSuffix(path, "/")) {
+			err := r.ParseForm()
+			if err == nil {
+				id := r.Form.Get("id")
+				if strings.HasPrefix(id, ".") {
+					http.Error(w, "can neither confirm nor deny the existence of this resource", http.StatusForbidden)
+					return
+				}
+				if strings.Contains(id, "/") {
+					http.Error(w, "id may not contain slashes", http.StatusBadRequest)
+					return
+				}
+				path += id
 			}
 		}
-		if m != nil {
-			fn(w, r, id)
+		// handle /action/ or /action/page
+		if !required || len(path) > 0 {
+			fn(w, r, path)
 			return
 		}
 		http.NotFound(w, r)
@@ -163,7 +168,7 @@ func scheduleInstallWatcher() {
 func serve() {
 	http.HandleFunc("/", rootHandler)
 	http.HandleFunc("/archive/", makeHandler(archiveHandler, true))
-	http.HandleFunc("/view/", makeHandler(viewHandler, true))
+	http.HandleFunc("/view/", makeHandler(viewHandler, false))
 	http.HandleFunc("/diff/", makeHandler(diffHandler, true))
 	http.HandleFunc("/edit/", makeHandler(editHandler, true))
 	http.HandleFunc("/save/", makeHandler(saveHandler, true))

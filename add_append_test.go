@@ -34,7 +34,7 @@ It's not `)}
 	data.Set("body", "barbecue")
 
 	assert.Regexp(t, regexp.MustCompile("a distant fire"),
-		assert.HTTPBody(makeHandler(viewHandler, true),
+		assert.HTTPBody(makeHandler(viewHandler, false),
 			"GET", "/view/testdata/add/fire", nil))
 	assert.NotRegexp(t, regexp.MustCompile("a distant fire"),
 		assert.HTTPBody(makeHandler(addHandler, true),
@@ -42,7 +42,7 @@ It's not `)}
 	HTTPRedirectTo(t, makeHandler(appendHandler, true),
 		"POST", "/append/testdata/add/fire", data, "/view/testdata/add/fire")
 	assert.Regexp(t, regexp.MustCompile(`not</p>\s*<p>barbecue`),
-		assert.HTTPBody(makeHandler(viewHandler, true),
+		assert.HTTPBody(makeHandler(viewHandler, false),
 			"GET", "/view/testdata/add/fire", nil))
 }
 

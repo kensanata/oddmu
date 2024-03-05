@@ -63,6 +63,9 @@ func HTTPUploadLocation(t *testing.T, handler http.HandlerFunc, url, contentType
 	assert.True(t, isRedirectCode, "Expected HTTP redirect status code for %q but received %d", url, code)
 	headers := w.Result().Header["Location"]
 	assert.True(t, len(headers) == 1, "Expected a single redirect header but got %d locations", len(headers))
+	if len(headers) == 0 {
+		return ""
+	}
 	return headers[0]
 }
 

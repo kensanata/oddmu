@@ -18,7 +18,7 @@ Memories of cold
 `)}
 	p.save()
 	assert.Contains(t,
-		assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/testdata/templates/snow", nil),
+		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/templates/snow", nil),
 		"Skip navigation")
 	// save a new view handler
 	html := "<body><h1>{{.Title}}</h1>{{.Html}}"
@@ -40,11 +40,11 @@ Memories of cold
 		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/templates/view.html", nil),
 		html)
 	// verify that it works
-	body := assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/testdata/templates/snow", nil)
+	body := assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/templates/snow", nil)
 	assert.Contains(t, body, "<h1>Snow</h1>")
 	assert.NotContains(t, body, "Skip")
 	// verify that the top level still uses the old template
 	assert.Contains(t,
-		assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/index", nil),
+		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/index", nil),
 		"Skip navigation")
 }

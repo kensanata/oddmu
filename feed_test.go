@@ -8,13 +8,13 @@ import (
 
 func TestFeed(t *testing.T) {
 	assert.Contains(t,
-		assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/index.rss", nil),
+		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/index.rss", nil),
 		"Welcome to Oddµ")
 }
 
 func TestNoFeed(t *testing.T) {
 	assert.HTTPStatusCode(t,
-		makeHandler(viewHandler, true), "GET", "/view/no-feed.rss", nil, http.StatusNotFound)
+		makeHandler(viewHandler, false), "GET", "/view/no-feed.rss", nil, http.StatusNotFound)
 }
 
 func TestFeedItems(t *testing.T) {
@@ -44,7 +44,7 @@ Writing poems about plants.
 * [My Dragon Tree](dragon)`)}
 	p3.save()
 
-	body := assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/testdata/feed/plants.rss", nil)
+	body := assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/feed/plants.rss", nil)
 	assert.Contains(t, body, "<title>Plants</title>")
 	assert.Contains(t, body, "<title>Cactus</title>")
 	assert.Contains(t, body, "<title>Dragon</title>")

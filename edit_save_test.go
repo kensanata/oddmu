@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/stretchr/testify/assert"
+	"net/http"
 	"net/url"
 	"os"
 	"testing"
@@ -15,7 +16,7 @@ func TestEditSave(t *testing.T) {
 	data.Set("body", "Hallo!")
 
 	// View of the non-existing page redirects to the edit page
-	HTTPRedirectTo(t, makeHandler(viewHandler, true),
+	HTTPRedirectTo(t, makeHandler(viewHandler, false),
 		"GET", "/view/testdata/save/alex", nil, "/edit/testdata/save/alex")
 	// Edit page can be fetched
 	assert.HTTPStatusCode(t, makeHandler(editHandler, true),
@@ -24,7 +25,7 @@ func TestEditSave(t *testing.T) {
 	HTTPRedirectTo(t, makeHandler(saveHandler, true),
 		"POST", "/save/testdata/save/alex", data, "/view/testdata/save/alex")
 	// Page now contains the text
-	assert.Contains(t, assert.HTTPBody(makeHandler(viewHandler, true),
+	assert.Contains(t, assert.HTTPBody(makeHandler(viewHandler, false),
 		"GET", "/view/testdata/save/alex", nil),
 		"Hallo!")
 	// Delete the page and you're sent to the empty page
@@ -32,7 +33,7 @@ func TestEditSave(t *testing.T) {
 	HTTPRedirectTo(t, makeHandler(saveHandler, true),
 		"POST", "/save/testdata/save/alex", data, "/view/testdata/save/alex")
 	// Viewing the non-existing page redirects to the edit page (like in the beginning)
-	HTTPRedirectTo(t, makeHandler(viewHandler, true),
+	HTTPRedirectTo(t, makeHandler(viewHandler, false),
 		"GET", "/view/testdata/save/alex", nil, "/edit/testdata/save/alex")
 }
 
@@ -70,7 +71,17 @@ func TestEditSaveChanges(t *testing.T) {
 // </form>
 func TestEditId(t *testing.T) {
 	cleanup(t, "testdata/id")
+	data := url.Values{}
+	data.Set("id", "testdata/id/alex")
+	assert.HTTPStatusCode(t, makeHandler(editHandler, true),
+		"GET", "/edit/", data, http.StatusBadRequest,
+		"No slashes in id")
+	data.Set("id", ".alex")
+	assert.HTTPStatusCode(t, makeHandler(editHandler, true),
+		"GET", "/edit/", data, http.StatusForbidden,
+		"No hidden files")
+	data.Set("id", "alex")
 	assert.Contains(t, assert.HTTPBody(makeHandler(editHandler, true),
-		"GET", "/edit/?id=testdata/id/alex", nil),
+		"GET", "/edit/testdata/id/", data),
 		"Editing testdata/id/alex")
 }

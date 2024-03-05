@@ -33,7 +33,7 @@ func TestUpload(t *testing.T) {
 	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/files/",
 		writer.FormDataContentType(), form, "/upload/testdata/files/?last=ok.txt")
 	assert.Contains(t,
-		assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/testdata/files/ok.txt", nil),
+		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/files/ok.txt", nil),
 		"Hello!")
 }
 
@@ -131,7 +131,7 @@ But here: jasmin dreams`)}
 	p.save()
 
 	// check location for upload
-	body := assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/testdata/multi/culture", nil)
+	body := assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/multi/culture", nil)
 	assert.Contains(t, body, `href="/upload/testdata/multi/?filename=culture-1.jpg"`)
 
 	// check location for drop
@@ -178,7 +178,7 @@ There is no answer`)}
 	p.save()
 
 	// check location for upload
-	body := assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/testdata/dir/test", nil)
+	body := assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/dir/test", nil)
 	assert.Contains(t, body, `href="/upload/testdata/dir/?filename=test-1.jpg"`)
 
 	// check location for drop

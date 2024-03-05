@@ -15,32 +15,32 @@ func TestRootHandler(t *testing.T) {
 // relies on index.md in the current directory!
 func TestViewHandler(t *testing.T) {
 	assert.Contains(t,
-		assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/index", nil),
+		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/index", nil),
 		"Welcome to Oddµ")
 }
 
 func TestViewHandlerDir(t *testing.T) {
 	cleanup(t, "testdata/dir")
-	HTTPRedirectTo(t, makeHandler(viewHandler, true), "GET", "/view/", nil, "/view/index")
-	HTTPRedirectTo(t, makeHandler(viewHandler, true), "GET", "/view/testdata", nil, "/view/testdata/index")
-	HTTPRedirectTo(t, makeHandler(viewHandler, true), "GET", "/view/testdata/", nil, "/view/testdata/index")
+	HTTPRedirectTo(t, makeHandler(viewHandler, false), "GET", "/view/", nil, "/view/index")
+	HTTPRedirectTo(t, makeHandler(viewHandler, false), "GET", "/view/testdata", nil, "/view/testdata/index")
+	HTTPRedirectTo(t, makeHandler(viewHandler, false), "GET", "/view/testdata/", nil, "/view/testdata/index")
 	assert.NoError(t, os.Mkdir("testdata/dir", 0755))
-	HTTPRedirectTo(t, makeHandler(viewHandler, true), "GET", "/view/testdata/dir", nil, "/view/testdata/dir/index")
-	HTTPRedirectTo(t, makeHandler(viewHandler, true), "GET", "/view/testdata/dir/", nil, "/view/testdata/dir/index")
+	HTTPRedirectTo(t, makeHandler(viewHandler, false), "GET", "/view/testdata/dir", nil, "/view/testdata/dir/index")
+	HTTPRedirectTo(t, makeHandler(viewHandler, false), "GET", "/view/testdata/dir/", nil, "/view/testdata/dir/index")
 	assert.NoError(t, os.Mkdir("testdata/dir/dir", 0755))
-	HTTPRedirectTo(t, makeHandler(viewHandler, true), "GET", "/view/testdata/dir", nil, "/view/testdata/dir/index")
-	HTTPRedirectTo(t, makeHandler(viewHandler, true), "GET", "/view/testdata/dir/", nil, "/view/testdata/dir/index")
-	HTTPRedirectTo(t, makeHandler(viewHandler, true), "GET", "/view/testdata/dir/dir", nil, "/view/testdata/dir/dir/index")
-	HTTPRedirectTo(t, makeHandler(viewHandler, true), "GET", "/view/testdata/dir/dir/", nil, "/view/testdata/dir/dir/index")
+	HTTPRedirectTo(t, makeHandler(viewHandler, false), "GET", "/view/testdata/dir", nil, "/view/testdata/dir/index")
+	HTTPRedirectTo(t, makeHandler(viewHandler, false), "GET", "/view/testdata/dir/", nil, "/view/testdata/dir/index")
+	HTTPRedirectTo(t, makeHandler(viewHandler, false), "GET", "/view/testdata/dir/dir", nil, "/view/testdata/dir/dir/index")
+	HTTPRedirectTo(t, makeHandler(viewHandler, false), "GET", "/view/testdata/dir/dir/", nil, "/view/testdata/dir/dir/index")
 	assert.NoError(t, os.WriteFile("testdata/dir/dir.md", []byte(`# Blackbird
 
 The oven hums and
 the music plays, coffee smells
 blackbirds sing outside
 `), 0644))
-	assert.Contains(t, assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/testdata/dir/dir", nil), "<h1>Blackbird</h1>")
-	assert.Contains(t, assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/testdata/dir/dir.md", nil), "# Blackbird")
-	HTTPRedirectTo(t, makeHandler(viewHandler, true), "GET", "/view/testdata/dir/dir/", nil, "/view/testdata/dir/dir/index")
+	assert.Contains(t, assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/dir/dir", nil), "<h1>Blackbird</h1>")
+	assert.Contains(t, assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/dir/dir.md", nil), "# Blackbird")
+	HTTPRedirectTo(t, makeHandler(viewHandler, false), "GET", "/view/testdata/dir/dir/", nil, "/view/testdata/dir/dir/index")
 }
 
 // relies on index.md in the current directory!
@@ -48,7 +48,7 @@ func TestViewHandlerWithId(t *testing.T) {
 	data := make(url.Values)
 	data.Set("id", "index")
 	assert.Contains(t,
-		assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/", data),
+		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/", data),
 		"Welcome to Oddµ")
 }
 
@@ -59,14 +59,14 @@ func TestPageTitleWithAmp(t *testing.T) {
 	p.save()
 
 	assert.Contains(t,
-		assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/testdata/amp/Rock%20%26%20Roll", nil),
+		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/amp/Rock%20%26%20Roll", nil),
 		"Rock &amp; Roll")
 
 	p = &Page{Name: "testdata/amp/Rock & Roll", Body: []byte("# Sex & Drugs & Rock'n'Roll\nOh no!")}
 	p.save()
 
 	assert.Contains(t,
-		assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/testdata/amp/Rock%20%26%20Roll", nil),
+		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/amp/Rock%20%26%20Roll", nil),
 		"Sex &amp; Drugs")
 }
 
@@ -76,7 +76,7 @@ func TestPageTitleWithQuestionMark(t *testing.T) {
 	p := &Page{Name: "testdata/q/How about no?", Body: []byte("No means no")}
 	p.save()
 
-	body := assert.HTTPBody(makeHandler(viewHandler, true), "GET", "/view/testdata/q/How%20about%20no%3F", nil)
+	body := assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/q/How%20about%20no%3F", nil)
 	assert.Contains(t, body, "No means no")
 	assert.Contains(t, body, "<a href=\"/edit/testdata/q/How%20about%20no%3F\" accesskey=\"e\">Edit</a>")
 }
@@ -91,17 +91,17 @@ In the autumn chill
 `), 0644))
 	fi, err := os.Stat("testdata/file-mod/now.txt")
 	assert.NoError(t, err)
-	h := makeHandler(viewHandler, true)
+	h := makeHandler(viewHandler, false)
 	assert.Equal(t, []string{fi.ModTime().UTC().Format(http.TimeFormat)},
 		HTTPHeaders(h, "GET", "/view/testdata/file-mod/now.txt", nil, "Last-Modified"))
 	HTTPStatusCodeIfModifiedSince(t, h, "/view/testdata/file-mod/now.txt", fi.ModTime())
 }
 
 func TestForbidden(t *testing.T) {
-	assert.HTTPStatusCode(t, makeHandler(viewHandler, true), "GET", "/view/", nil, http.StatusFound)
-	assert.HTTPStatusCode(t, makeHandler(viewHandler, true), "GET", "/view/.", nil, http.StatusForbidden)
-	assert.HTTPStatusCode(t, makeHandler(viewHandler, true), "GET", "/view/.htaccess", nil, http.StatusForbidden)
-	assert.HTTPStatusCode(t, makeHandler(viewHandler, true), "GET", "/view/.git/description", nil, http.StatusForbidden)
+	assert.HTTPStatusCode(t, makeHandler(viewHandler, false), "GET", "/view/", nil, http.StatusFound)
+	assert.HTTPStatusCode(t, makeHandler(viewHandler, false), "GET", "/view/.", nil, http.StatusForbidden)
+	assert.HTTPStatusCode(t, makeHandler(viewHandler, false), "GET", "/view/.htaccess", nil, http.StatusForbidden)
+	assert.HTTPStatusCode(t, makeHandler(viewHandler, false), "GET", "/view/.git/description", nil, http.StatusForbidden)
 }
 
 func TestPageLastModified(t *testing.T) {
@@ -114,7 +114,7 @@ I like spring better
 	p.save()
 	fi, err := os.Stat("testdata/page-mod/now.md")
 	assert.NoError(t, err)
-	h := makeHandler(viewHandler, true)
+	h := makeHandler(viewHandler, false)
 	assert.Equal(t, []string{fi.ModTime().UTC().Format(http.TimeFormat)},
 		HTTPHeaders(h, "GET", "/view/testdata/page-mod/now", nil, "Last-Modified"))
 	HTTPStatusCodeIfModifiedSince(t, h, "/view/testdata/page-mod/now", fi.ModTime())
@@ -130,7 +130,7 @@ Just me and the birds.
 	p.save()
 	fi, err := os.Stat("testdata/head/peace.md")
 	assert.NoError(t, err)
-	h := makeHandler(viewHandler, true)
+	h := makeHandler(viewHandler, false)
 	assert.Equal(t, []string(nil),
 		HTTPHeaders(h, "HEAD", "/view/testdata/head/war", nil, "Last-Modified"))
 	assert.Equal(t, []string(nil),
@@ -143,7 +143,7 @@ Just me and the birds.
 
 func TestMimeType(t *testing.T) {
 	assert.Equal(t, []string{"text/markdown; charset=utf-8"},
-		HTTPHeaders(makeHandler(viewHandler, true), "GET", "/view/index.md", nil, "Content-Type"))
+		HTTPHeaders(makeHandler(viewHandler, false), "GET", "/view/index.md", nil, "Content-Type"))
 	assert.Equal(t, []string{"text/css; charset=utf-8"},
-		HTTPHeaders(makeHandler(viewHandler, true), "GET", "/view/themes/alexschroeder.ch/oddmu.css", nil, "Content-Type"))
+		HTTPHeaders(makeHandler(viewHandler, false), "GET", "/view/themes/alexschroeder.ch/oddmu.css", nil, "Content-Type"))
 }
