@@ -13,10 +13,10 @@ import (
 
 // Item is a Page plus a Date.
 type Item struct {
-	
+
 	// Page is the page being used as the feed item.
 	Page
-	
+
 	// Date is the last modification date of the file storing the page. As the pages used by Oddmu are plain
 	// Markdown files, they don't contain any metadata. Instead, the last modification date of the file is used.
 	// This makes it work well with changes made to the files outside of Oddmu.

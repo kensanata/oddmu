@@ -23,7 +23,7 @@ type watchStore struct {
 	// and the exact time at which they have been added. When the same file is added multiple times, such as when
 	// the watchStore function sees multiple Write events for the same file, the time keeps getting updated so that
 	// when the watchTimer runs, it only acts on files that haven't been updated in the last second.
-	files   map[string]time.Time
+	files map[string]time.Time
 
 	// ignores contains the files that some code intends to change, knowing that subsequent writes events would
 	// result in file system notifications that would end up adding the filenames to the queue for reloading (if a

@@ -76,7 +76,7 @@ func TestDocumentDependencies(t *testing.T) {
 	for _, pkg := range pkgs {
 		for _, file := range pkg.Files {
 			for _, imp := range file.Imports {
-				name := imp.Path.Value[1:len(imp.Path.Value)-1]
+				name := imp.Path.Value[1 : len(imp.Path.Value)-1]
 				if strings.Contains(name, ".") && !slices.Contains(imports, name) {
 					imports = append(imports, name)
 				}

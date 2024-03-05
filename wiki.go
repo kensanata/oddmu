@@ -41,7 +41,7 @@ func makeHandler(fn func(http.ResponseWriter, *http.Request, string), required b
 			}
 		}
 		m := validPath.FindStringSubmatch(r.URL.Path)
-		// handle / and /action 
+		// handle / and /action
 		if m == nil {
 			http.NotFound(w, r)
 			return
