@@ -34,7 +34,7 @@ upload: ${MD} README.md
 	make clean
 
 clean:
-	rm --force ${HTML} ${MD}
+	rm --force ${HTML} ${MD} README.md
 
 realclean: clean
 	rm --force ${MAN}
