@@ -30,7 +30,9 @@ var titleRegexp = regexp.MustCompile("(?m)^#\\s*(.*)\n+")
 // makeHandler returns a handler that uses the URL path without the first path element as its argument, e.g. if the URL
 // path is /edit/foo/bar, the editHandler is called with "foo/bar" as its argument. This uses the second group from the
 // validPath regular expression. The boolean argument indicates whether the following path is required. When false, a
-// URL like /upload/ is OK. The argument can also be provided using a form parameter, i.e. call /edit/?id=foo/bar.
+// URL like /upload/ is OK. The argument can also be provided using a form parameter, i.e. call /edit/?id=foo/bar. The
+// handle itself is called with the remaining URL path fragment. To turn it into a filepath:
+// filepath.Clean(filepath.FromSlash(url.PathUnescape(dir))).
 func makeHandler(fn func(http.ResponseWriter, *http.Request, string), required bool) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// no hidden files or directories
