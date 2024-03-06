@@ -34,12 +34,12 @@ func notifyCli(w io.Writer, args []string) subcommands.ExitStatus {
 	for _, name := range args {
 		p, err := loadPage(name)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Loading %s: %s\n", name, err)
+			fmt.Fprintf(w, "Loading %s: %s\n", name, err)
 			return subcommands.ExitFailure
 		}
 		err = p.notify()
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "%s: %s\n", name, err)
+			fmt.Fprintf(w, "%s: %s\n", name, err)
 			return subcommands.ExitFailure
 		}
 	}
