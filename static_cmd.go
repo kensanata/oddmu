@@ -14,6 +14,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 type staticCmd struct {
@@ -42,6 +43,9 @@ func (cmd *staticCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface
 // staticCli generates a static site in the designated directory. The quiet flag is used to suppress output when running
 // tests.
 func staticCli(dir string, quiet bool) subcommands.ExitStatus {
+	index.load()
+	index.RLock()
+	defer index.RUnlock()
 	loadLanguages()
 	loadTemplates()
 	n := 0
@@ -86,19 +90,23 @@ func staticFile(path, dir string, info fs.FileInfo, err error) error {
 	}
 	// render pages
 	if strings.HasSuffix(path, ".md") {
-		return staticPage(path, dir)
+		p, err := staticPage(path, dir)
+		if err != nil {
+			return err
+		}
+		return staticFeed(p, info.ModTime(), dir)
 	}
 	// remaining files are linked
 	return os.Link(path, filepath.Join(dir, path))
 }
 
 // staticPage takes the filename of a page (ending in ".md") and generates a static HTML page.
-func staticPage(path, dir string) error {
+func staticPage(path, dir string) (*Page, error) {
 	name := strings.TrimSuffix(path, ".md")
 	p, err := loadPage(filepath.ToSlash(name))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Cannot load %s: %s\n", name, err)
-		return err
+		return nil, err
 	}
 	p.handleTitle(true)
 	// instead of p.renderHtml() we do it all ourselves, appending ".html" to all the local links
@@ -114,7 +122,30 @@ func staticPage(path, dir string) error {
 	p.Html = unsafeBytes(maybeUnsafeHTML)
 	p.Language = language(p.plainText())
 	p.Hashtags = *hashtags
-	return p.write(filepath.Join(dir, name+".html"))
+	return p, p.write(filepath.Join(dir, name+".html"))
+}
+
+// staticFeed writes a .rss file for a page, but only if it's an index page or a page that might be used as a hashtag
+func staticFeed(p *Page, ti time.Time, dir string) error {
+	// render feed, maybe
+	base := p.Base()
+	_, ok := index.token["#"+strings.ToLower(base)]
+	if base == "index" || ok {
+		f := feed(p, ti)
+		dst, err := os.Create(filepath.Join(dir, p.Name + ".rss"))
+		if err != nil {
+			return err
+		}
+		_, err = dst.Write([]byte(`<?xml version="1.0" encoding="UTF-8"?>`))
+		if err != nil {
+			return err
+		}
+		templates.RLock()
+		defer templates.RUnlock()
+		t := templates.template["feed.html"]
+		return t.Execute(dst, f)
+	}
+	return nil
 }
 
 // staticLinks checks a node and if it is a link to a local page, it appends ".html" to the link destination.
