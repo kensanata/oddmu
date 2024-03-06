@@ -25,8 +25,8 @@ func TestFeedStatusCmd(t *testing.T) {
 	p := &Page{Name: "testdata/static-feed/Haiku",
 		Body: []byte(`# Haiku
 This is a list.
-#Haiku
 
+#Haiku
 `)}
 	p.save()
 	h := &Page{Name: "testdata/static-feed/poem",

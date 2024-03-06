@@ -126,13 +126,14 @@ func staticPage(path, dir string) (*Page, error) {
 }
 
 // staticFeed writes a .rss file for a page, but only if it's an index page or a page that might be used as a hashtag
-func staticFeed(dir, path string, p *Page, ti time.Time) error {
+func staticFeed(path, dir string, p *Page, ti time.Time) error {
 	// render feed, maybe
-	base := filepath.Base(path)
+	name := strings.TrimSuffix(path, ".md")
+	base := filepath.Base(name)
 	_, ok := index.token["#"+strings.ToLower(base)]
 	if base == "index" || ok {
 		f := feed(p, ti)
-		fp := filepath.Join(dir, path + ".rss")
+		fp := filepath.Join(dir, name + ".rss")
 		dst, err := os.Create(fp)
 		if err != nil {
 			return err
