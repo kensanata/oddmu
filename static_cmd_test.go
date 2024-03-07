@@ -47,5 +47,7 @@ And the cars so loud
 	assert.NoError(t, os.Chdir(wd))
 	assert.FileExists(t, "testdata/static-feed-out/poem.html")
 	assert.FileExists(t, "testdata/static-feed-out/Haiku.html")
-	assert.FileExists(t, "testdata/static-feed-out/Haiku.rss")
+	b, err := os.ReadFile("testdata/static-feed-out/Haiku.rss")
+	assert.NoError(t, err)
+	assert.Contains(t, string(b), "<channel>")
 }

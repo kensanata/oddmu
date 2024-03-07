@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-STATIC" "1" "2024-02-26"
+.TH "ODDMU-STATIC" "1" "2024-03-07"
 .PP
 .SH NAME
 .PP
@@ -24,6 +24,11 @@ directory must not exist.\&
 All pages (files with the ".\&md" extension) are turned into HTML files (with the
 ".\&html" extension) using the "static.\&html" template.\& Links pointing to existing
 pages get ".\&html" appended.\&
+.PP
+If a page has a name case-insensitively matching a hashtag, a feed file is
+generated (ending with ".\&rss") if any suitable links are found.\& A suitable link
+for a feed item must appear in a bullet list item using an asterisk ("*").\& If
+no feed items are found, no feed is written.\&
 .PP
 Hidden files and directories (starting with a ".\&") and backup files (ending with
 a "~") are skipped.\&
@@ -55,6 +60,20 @@ Generate a static copy of the site:
 oddmu static \&.\&./archive
 .fi
 .RE
+.PP
+.SH BUGS
+.PP
+There can be nameclashes with generated HTML and RSS files and existing files
+ending with ".\&html" and ".\&rss", including the template files (since they end
+with ".\&html").\& This can interact with hard-linking files.\&
+.PP
+If your site has a page called "feed", for example, this is a problem.\& It means
+you have a file called "feed.\&md" and a template called "feed.\&html".\& When you
+generate a static site, the "feed.\&html" file is hard linked to the target
+directory and then "feed.\&md" is converted to HTML and saved as "feed.\&html",
+\fIoverwriting the template file in the source directory\fR.\&
+.PP
+So there are rough edges, for sure.\&
 .PP
 .SH LIMITATIONS
 .PP

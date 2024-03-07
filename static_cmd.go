@@ -122,7 +122,7 @@ func staticPage(path, dir string) (*Page, error) {
 	p.Html = unsafeBytes(maybeUnsafeHTML)
 	p.Language = language(p.plainText())
 	p.Hashtags = *hashtags
-	return p, p.write(filepath.Join(dir, name+".html"))
+	return p, write(p, filepath.Join(dir, name+".html"), "", "static.html")
 }
 
 // staticFeed writes a .rss file for a page, but only if it's an index page or a page that might be used as a hashtag
@@ -133,19 +133,9 @@ func staticFeed(path, dir string, p *Page, ti time.Time) error {
 	_, ok := index.token["#"+strings.ToLower(base)]
 	if base == "index" || ok {
 		f := feed(p, ti)
-		fp := filepath.Join(dir, name + ".rss")
-		dst, err := os.Create(fp)
-		if err != nil {
-			return err
+		if len(f.Items) > 0 {
+			return write(f, filepath.Join(dir, name + ".rss"), `<?xml version="1.0" encoding="UTF-8"?>`, "feed.html" )
 		}
-		_, err = dst.Write([]byte(`<?xml version="1.0" encoding="UTF-8"?>`))
-		if err != nil {
-			return err
-		}
-		templates.RLock()
-		defer templates.RUnlock()
-		t := templates.template["feed.html"]
-		return t.Execute(dst, f)
 	}
 	return nil
 }
@@ -175,16 +165,22 @@ func staticLinks(node ast.Node, entering bool) ast.WalkStatus {
 	return ast.GoToNext
 }
 
-func (p *Page) write(destination string) error {
-	t := "static.html"
-	f, err := os.Create(destination)
+// write a page or feed with an appropriate template to a specific destination, overwriting it.
+func write(data any, destination, prefix, templateFile string) error {
+	dst, err := os.Create(destination)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Cannot create %s.html: %s\n", destination, err)
+		fmt.Fprintf(os.Stderr, "Cannot create %s: %s\n", destination, err)
 		return err
 	}
-	err = templates.template[t].Execute(f, p)
+	_, err = dst.Write([]byte(prefix))
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Cannot execute %s template for %s: %s\n", t, destination, err)
+		return err
+	}
+	templates.RLock()
+	defer templates.RUnlock()
+	err = templates.template[templateFile].Execute(dst, data)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Cannot execute %s template for %s: %s\n", templateFile, destination, err)
 		return err
 	}
 	return nil
