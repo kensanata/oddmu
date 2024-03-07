@@ -164,7 +164,7 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 			// do not use imaging.Decode(file, imaging.AutoOrientation(true)) because that only works for JPEG files
 			img, fmt, err := exiffix.Decode(file)
 			if err != nil {
-				http.Error(w, "The image could not be decoded (only PNG, JPG and HEIC formats are supported for resizing)", http.StatusBadRequest)
+				http.Error(w, "The image could not be decoded (only PNG, JPG, WEBP and HEIC formats are supported for resizing)", http.StatusBadRequest)
 				return
 			}
 			log.Println("Decoded", fmt, "file")

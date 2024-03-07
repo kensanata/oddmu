@@ -66,10 +66,10 @@ curl --form body="Did you bring a towel?" \
 
 When calling the _drop_ action, the query parameters used are _name_ for the
 target filename, _file_ for the file to upload. If the query parameter
-_maxwidth_ is set, an attempt is made to decode and resize the image. JPG, PNG
-and HEIC files can be decoded. Only JPG and PNG files can be encoded, however.
-If the target name ends in _.jpg_, the _quality_ query parameter is also taken
-into account. To upload some thumbnails:
+_maxwidth_ is set, an attempt is made to decode and resize the image. JPG, PNG,
+WEBP and HEIC files can be decoded. Only JPG and PNG files can be encoded,
+however. If the target name ends in _.jpg_, the _quality_ query parameter is
+also taken into account. To upload some thumbnails:
 
 ```
 for f in *.jpg; do
