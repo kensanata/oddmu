@@ -22,14 +22,9 @@ func TestStatusCmd(t *testing.T) {
 func TestFeedStatusCmd(t *testing.T) {
 	cleanup(t, "testdata/static-feed")
 	cleanup(t, "testdata/static-feed-out")
-	p := &Page{Name: "testdata/static-feed/Haiku",
-		Body: []byte(`# Haiku
-This is a list.
-
-#Haiku
-`)}
+	p := &Page{Name: "testdata/static-feed/Haiku", Body: []byte("# Haiku\n")}
 	p.save()
-	h := &Page{Name: "testdata/static-feed/poem",
+	h := &Page{Name: "testdata/static-feed/2024-03-07-poem",
 		Body: []byte(`# Rain
 I cannot hear you
 The birds outside are singing
@@ -45,7 +40,7 @@ And the cars so loud
 	s := staticCli("../static-feed-out/", true)
 	assert.Equal(t, subcommands.ExitSuccess, s)
 	assert.NoError(t, os.Chdir(wd))
-	assert.FileExists(t, "testdata/static-feed-out/poem.html")
+	assert.FileExists(t, "testdata/static-feed-out/2024-03-07-poem.html")
 	assert.FileExists(t, "testdata/static-feed-out/Haiku.html")
 	b, err := os.ReadFile("testdata/static-feed-out/Haiku.rss")
 	assert.NoError(t, err)
