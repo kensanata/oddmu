@@ -13,6 +13,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"time"
 )
@@ -72,8 +73,9 @@ func staticFile(path, dir string, info fs.FileInfo, err error) error {
 	if err != nil {
 		return err
 	}
+	base := filepath.Base(path)
 	// skip hidden directories and files
-	if path != "." && strings.HasPrefix(filepath.Base(path), ".") {
+	if path != "." && strings.HasPrefix(base, ".") {
 		if info.IsDir() {
 			return filepath.SkipDir
 		} else {
@@ -96,7 +98,10 @@ func staticFile(path, dir string, info fs.FileInfo, err error) error {
 		}
 		return staticFeed(path, dir, p, info.ModTime())
 	}
-	// remaining files are linked
+	// remaining files are linked unless this is a template
+	if slices.Contains(templateFiles, base) {
+		return nil
+	}
 	return os.Link(path, filepath.Join(dir, path))
 }
 
