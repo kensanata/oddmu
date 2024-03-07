@@ -172,6 +172,11 @@ func staticLinks(node ast.Node, entering bool) ast.WalkStatus {
 
 // write a page or feed with an appropriate template to a specific destination, overwriting it.
 func write(data any, destination, prefix, templateFile string) error {
+	_, err := os.Stat(destination)
+	if err == nil {
+		fmt.Fprintf(os.Stderr, "%s already exists\n", destination)
+		return nil
+	}
 	dst, err := os.Create(destination)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Cannot create %s: %s\n", destination, err)

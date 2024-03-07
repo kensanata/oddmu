@@ -61,21 +61,11 @@ oddmu static \&.\&./archive
 .fi
 .RE
 .PP
-.SH BUGS
+.SH LIMITATIONS
 .PP
 There can be nameclashes with generated HTML and RSS files and existing files
-ending with ".\&html" and ".\&rss", including the template files (since they end
-with ".\&html").\& This can interact with hard-linking files.\&
-.PP
-If your site has a page called "feed", for example, this is a problem.\& It means
-you have a file called "feed.\&md" and a template called "feed.\&html".\& When you
-generate a static site, the "feed.\&html" file is hard linked to the target
-directory and then "feed.\&md" is converted to HTML and saved as "feed.\&html",
-\fIoverwriting the template file in the source directory\fR.\&
-.PP
-So there are rough edges, for sure.\&
-.PP
-.SH LIMITATIONS
+ending in ".\&html" and ".\&rss".\& Instead of overwriting existing files in these
+cases, a warning is printed.\&
 .PP
 Links from files to pages do not get ".\&html" appended.\& This affects existing
 HTML or XML files including SVG files.\&
