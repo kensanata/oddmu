@@ -22,9 +22,9 @@
         <input id="search" type="text" spellcheck="false" name="q" accesskey="f" placeholder="term #tag title:term blog:true" required>
         <button>Go</button>
       </form>
-      <form action="/edit/" method="GET">
+      <form action="/edit/{{.Dir}}" method="GET">
         <label for="id">New page:</label>
-        <input id="id" type="text" spellcheck="false" name="id" accesskey="g" value="{{.Dir}}{{.Today}}" required>
+        <input id="id" type="text" spellcheck="false" name="id" accesskey="g" value="{{.Today}}" required>
         <button>Edit</button>
       </form>
     </header>
