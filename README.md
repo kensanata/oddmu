@@ -3,34 +3,36 @@
 This program helps you run a minimal wiki, blog, digital garden, memex
 or Zettelkasten. There is no version history.
 
-It's well suited as a self-hosted, single-user web application: the is
-no need for collaboration on the site. Links and email connect you to
-the rest of the net. The wiki can be public or private. Perhaps it
-just runs on your local machine, unreachable from the Internet.
+It's well suited as a self-hosted, single-user web application, when
+there is no need for collaboration on the site itself. Links and email
+connect you to the rest of the net. The wiki can be public or private.
+Perhaps it just runs on your local machine, unreachable from the
+Internet.
 
-It's well suited as a secondary medium for a group: collaboration and
-conversation happens elsewhere, in chat, on social media. The wiki
-serves as the text repository that results from these discussions.
+It's well suited as a secondary medium for a close-knit group:
+collaboration and conversation happens elsewhere, in chat, on social
+media. The wiki serves as the text repository that results from these
+discussions. As there are no logins and no version histories, it is
+not possible to undo vandalism and spam. Only allow people you trust
+write-access to the site.
 
 It's well suited as a simple static site generator. There are no
 plugins.
 
-Oddµ can be used as a web server behind a reverse proxy such as Apache
-or it can be used as a static site generator.
-
 When Oddµ runs as a web server, it serves all the Markdown files
-(ending in `.md`) as web pages and allows you to edit them.
+(ending in `.md`) as web pages. These pages can be edited via the web.
 
 Oddmu adds the following extensions to Markdown: local links `[[like
 this]]`, hashtags `#Like_This` and fediverse account links like
 `@alex@alexschroeder.ch`.
 
-If your files don't provide their own title (`# title`), the file name
-(without `.md`) is used for the title. Subdirectories are created as
+If your pages don't provide their own title (`# title`), the file name
+(without `.md`) is used as the title. Subdirectories are created as
 necessary.
 
-Other files can be uploaded and images can be resized when they are
-uploaded.
+Other files can be uploaded and images (ending in `.jpg`, `.jpeg`,
+`.png`, `.heic` or `webp`) can be resized when they are uploaded
+(resulting in `.jpg` or `.png` files).
 
 ## Documentation
 
@@ -220,6 +222,18 @@ high-level introduction to the various source files.
 - `view.go` implements the `/view` handler
 - `watch.go` implements the filesystem notification watch
 - `wiki.go` implements the main function
+
+The code of this package is licensed to you under the
+AGPL-3.0-or-later license. If you do make changes and your site is
+public, be aware of section 13:
+
+> … if you modify the Program, your modified version must prominently
+> offer all users interacting with it remotely through a computer
+> network (if your version supports such interaction) an opportunity
+> to receive the Corresponding Source of your version by providing
+> access to the Corresponding Source from a network server at no
+> charge, through some standard or customary means of facilitating
+> copying of software.
 
 ### Changing the markup rules
 
