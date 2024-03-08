@@ -4,7 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"github.com/charmbracelet/lipgloss"
+	"github.com/muesli/reflow/wordwrap"
 	"github.com/google/subcommands"
 	"io"
 	"os"
@@ -83,16 +83,17 @@ func searchCli(w io.Writer, dir string, n int, all, extract bool, quiet bool, ar
 
 // searchExtract prints the search extracts to stdout with highlighting for a terminal.
 func searchExtract(w io.Writer, items []*Page) {
-	heading := lipgloss.NewStyle().Bold(true).Underline(true)
-	quote := lipgloss.NewStyle().PaddingLeft(4).Width(78)
-	match := lipgloss.NewStyle().Bold(true)
+	heading := func (s string) string { return "\x1b[1;4m" + s + "\x1b[0m" } // bold + underline
+	match := func (s string) string { return "\x1b[1m" + s + "\x1b[0m" } // bold
 	re := regexp.MustCompile(`<b>(.*?)</b>`)
 	for _, p := range items {
-		s := re.ReplaceAllString(string(p.Html), match.Render(`$1`))
-		fmt.Fprintln(w, heading.Render(p.Title))
+		s := re.ReplaceAllString(string(p.Html), match(`$1`))
+		fmt.Fprintln(w, heading(p.Title))
 		if p.Name != p.Title {
 			fmt.Fprintln(w, p.Name)
 		}
-		fmt.Fprintln(w, quote.Render(s))
+		for _, s := range strings.Split(wordwrap.String(s, 72), "\n") {
+			fmt.Fprintln(w, "    ", s)
+		}
 	}
 }

@@ -301,8 +301,8 @@ necessary because after resizing, the EXIF data is gone. MIT.
 [github.com/google/subcommands](https://github.com/google/subcommands)
 is used for the parsing and documenting of subcommands. Apache-2.0.
 
-[github.com/charmbracelet/lipgloss](https://github.com/charmbracelet/lipgloss)
-is used to add colours to the search subcommand output. MIT.
+[github.com/muesli/reflow/wordwrap](https://github.com/muesli/reflow/wordwrap)
+is used to wrap the search subcommand output. MIT.
 
 [github.com/hexops/gotextdiff](https://github.com/hexops/gotextdiff)
 is used to show a compact unified diff on the command line before
