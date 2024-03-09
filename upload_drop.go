@@ -4,11 +4,13 @@ package main
 // This is why we import goheif for side effects: HEIC files are read correctly.
 
 import (
+	"fmt"
 	_ "github.com/bashdrew/goheif"
 	"github.com/disintegration/imaging"
 	"github.com/edwvee/exiffix"
 	"io"
 	"log"
+	"mime"
 	"net/http"
 	"net/url"
 	"os"
@@ -44,31 +46,53 @@ func uploadHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		data.Quality = quality
 	}
 	name := r.FormValue("filename")
+	var err error
 	if name != "" {
-		data.Name = name
+		data.Name, err = next(dir, name, 0)
 	} else if last := r.FormValue("last"); last != "" {
-		ext := strings.ToLower(filepath.Ext(last))
-		switch ext {
-		case ".png", ".jpg", ".jpeg":
-			data.Image = true
-		}
 		data.Last = last
-		data.Name, _ = next(last)
+		mimeType := mime.TypeByExtension(filepath.Ext(last))
+		data.Image = strings.HasPrefix(mimeType, "image/")
+		data.Name, err = next(dir, last, 1)
+	}
+	if err != nil {
+		log.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 	renderTemplate(w, dir, "upload", data)
 }
 
-// next returns the next name for a string matching lastRe. The last number in the given string is incremented by one
-// ("a2b" → "a3b"). The second return value indicates whether such a replacement was made or not.
-func next(s string) (string, bool) {
-	m := lastRe.FindStringSubmatch(s)
-	if m != nil {
-		n, err := strconv.Atoi(m[2])
-		if err == nil {
-			return m[1] + strconv.Itoa(n+1) + m[3], true
+// next returns the next filename for a filename containing a number. The last number is identified using lastRe. This
+// number is increased by the second argument. Then, for as long as a file with that number exists, the number is
+// increased by one. Thus, when called with "image-1.jpg", 0 the string returned will be "image-1.jpg" if no such file
+// exists. If "image-1.jpg" exists but "image-2.jpg" does not, then that is returned. When called with "image.jpg"
+// (containing no number) and the file does not exist, it is returned unchanged. If it exists, "image-1.jpg" is assumed
+// and the algorithm described previously is used to find the next unused filename.
+func next(dir, fn string, i int) (string, error) {
+	m := lastRe.FindStringSubmatch(fn)
+	if m == nil {
+		_, err := os.Stat(filepath.Join(dir, fn))
+		if err != nil {
+			return fn, nil
+		}
+		ext := filepath.Ext(fn)
+		// faking it
+		m = []string{"", fn[:len(fn)-len(ext)]+"-", "0", ext}
+	}
+	n, err := strconv.Atoi(m[2])
+	if err == nil {
+		n += i
+		for {
+			s := m[1] + strconv.Itoa(n) + m[3]
+			_, err = os.Stat(filepath.Join(dir, s))
+			if err != nil {
+				return s, nil
+			}
+			n += 1
 		}
 	}
-	return s, false
+	return fn, fmt.Errorf("unable to find next filename after %s", fn)
 }
 
 // dropHandler takes the "name" form field and the "file" form file and saves the file under the given name. The browser
@@ -83,7 +107,7 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		return
 	}
 	if !fi.IsDir() {
-		http.Error(w, "directory does not exist", http.StatusBadRequest)
+		http.Error(w, "not a directory", http.StatusBadRequest)
 		return
 	}
 	data := url.Values{}
@@ -135,13 +159,13 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 			return
 		}
 		defer file.Close()
+		// the first filename overwrites!
 		if !first {
-			s, ok := next(filename)
-			if ok {
-				filename = s
-			} else {
-				ext := filepath.Ext(s)
-				filename = s[:len(s)-len(ext)] + "-1" + ext
+			filename, err = next(d, filename, 1)
+			if err != nil {
+				log.Println(err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
 			}
 		}
 		first = false

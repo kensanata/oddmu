@@ -237,7 +237,7 @@ func TestUploadTwoInOneAgain(t *testing.T) {
 	form := new(bytes.Buffer)
 	writer := multipart.NewWriter(form)
 	field, _ := writer.CreateFormField("name")
-	field.Write([]byte("image.jpg")) // cannot be incremented!
+	field.Write([]byte("image.jpg"))
 	file1, _ := writer.CreateFormFile("file", "one.jpg")
 	img1 := image.NewRGBA(image.Rect(0, 0, 10, 10))
 	jpeg.Encode(file1, img1, &jpeg.Options{Quality: 90})

@@ -107,9 +107,9 @@ _{{.Name}}_ is the _filename_ query parameter.
 
 _{{.Last}}_ is the filename of the last image uploaded.
 
-_{{.Image}}_ is a boolean to indicate whether the file is an image or not, i.e.
-if the previous image uploaded had a filename that ended in _.png_, _.jpg_ or
-_.jpeg_.
+_{{.Image}}_ is a boolean to indicate whether the last file uploaded has a file
+name indicating an image or not (such as ending in _.jpg_). If so, a thumbnail
+can be shown by the template, for example.
 
 _{{.MaxWidth}}_ is the _maxwidth_ query parameter, i.e. the value used for the
 previous image uploaded.

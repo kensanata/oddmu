@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-TEMPLATES" "5" "2024-03-04" "File Formats Manual"
+.TH "ODDMU-TEMPLATES" "5" "2024-03-09" "File Formats Manual"
 .PP
 .SH NAME
 .PP
@@ -129,9 +129,9 @@ path, percent-escaped except for the slashes.\&
 .PP
 \fI{{.\&Last}}\fR is the filename of the last image uploaded.\&
 .PP
-\fI{{.\&Image}}\fR is a boolean to indicate whether the file is an image or not, i.\&e.\&
-if the previous image uploaded had a filename that ended in \fI.\&png\fR, \fI.\&jpg\fR or
-\fI.\&jpeg\fR.\&
+\fI{{.\&Image}}\fR is a boolean to indicate whether the last file uploaded has a file
+name indicating an image or not (such as ending in \fI.\&jpg\fR).\& If so, a thumbnail
+can be shown by the template, for example.\&
 .PP
 \fI{{.\&MaxWidth}}\fR is the \fImaxwidth\fR query parameter, i.\&e.\& the value used for the
 previous image uploaded.\&
