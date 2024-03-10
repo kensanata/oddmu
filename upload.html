@@ -12,6 +12,36 @@ form, textarea { width: 100%; }
 label { display: inline-block; width: 20ch }
 .last { max-width: 20% }
     </style>
+    <script type="text/javascript">
+var pasteImage = {
+  init: function() {
+    let e = document.getElementById('form');
+    if (e)
+      e.addEventListener('paste', pasteImage.handler);
+  },
+  handler: function(e) {
+    if (e.clipboardData.files.length) {
+      pasteImage.post(e.clipboardData.files);
+    }
+  },
+  post: function(files) {
+    let action = document.getElementById('form').getAttribute('action');
+    var fd = new FormData();
+    fd.append("name", document.getElementById('name').value);
+    fd.append("maxwidth", document.getElementById('maxwidth').value);
+    fd.append("quality", document.getElementById('quality').value);
+    for (var i = 0; i < files.length; i++) {
+      fd.append("file", files[i]);
+    }
+    try {
+      fetch(action, { method: "POST", body: fd }).then((r) => window.location = r.url);
+    } catch (e) {
+      alert(e);
+    }
+  },
+};
+window.addEventListener('load', pasteImage.init);
+</script>
   </head>
   <body lang="en">
     <h1>Upload Files</h1>
@@ -24,12 +54,12 @@ label { display: inline-block; width: 20ch }
     <p>Link: <tt>[text]({{.Last}})</tt>
     {{end}}
     {{end}}
-    <form action="/drop/{{.Dir}}" method="POST" enctype="multipart/form-data">
+    <form id="form" action="/drop/{{.Dir}}" method="POST" enctype="multipart/form-data">
       <p>When uploading pictures from a phone, its filename is going to be something cryptic like IMG_1234.JPG.
         Please provide your own filename. End the base name with "-1" to auto-increment.
         Use <tt>.jpg</tt> or <tt>.png</tt> as the extension if you want to resize the picture.
-      <p><label for="text">Filename to use:</label>
-        <input id="text" name="name" value="{{.Name}}" type="text" placeholder="image-1.jpg" autofocus required>
+      <p><label for="name">Filename to use:</label>
+        <input id="name" name="name" value="{{.Name}}" type="text" placeholder="image-1.jpg" autofocus required>
       <p>If the uploaded file is a picture from a phone, it is going to be too big for your site.
         Sadly, resizing only works when uploading <tt>.jpeg</tt>, <tt>.webp</tt>, <tt>.heic</tt> and <tt>.png</tt> files.
         Feel free to specify a max width of 1200 pixels, for example.
