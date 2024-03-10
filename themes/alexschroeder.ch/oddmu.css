@@ -17,7 +17,9 @@ ins  { background-color: #af8 }
 #view   form  { margin-top: 2px }
 #view  button { width: 6ch }
 #view   label { display: inline-block; width: 10ch }
-#upload label { display: inline-block; width: 20ch }
+#upload label { display: inline-block; width: 10ch }
+#upload input[type=text] { width: 30ch }
+#upload input[type=number] { width: 10ch }
 img.last { max-width: 20% }
 hr { border-bottom: 1px }
 th { font-weight: normal }
