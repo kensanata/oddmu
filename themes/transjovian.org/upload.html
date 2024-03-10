@@ -12,25 +12,85 @@ body { hyphens: auto; }
 textarea, input, button { color: #222; background-color: #ddd; border: 1px solid #eee; }
 form, textarea { width: 100%; }
 label { display: inline-block; width: 20ch }
+input [type=text] { width: 30ch }
 .last { max-width: 20% }
     </style>
+    <script type="text/javascript">
+var uploadFiles = {
+  init: function() {
+    let e = document.getElementById('form');
+    if (e) {
+      e.addEventListener('paste', uploadFiles.pasteHandler);
+      e.addEventListener('dragover', e => e.preventDefault());
+      e.addEventListener('drop', uploadFiles.dropHandler);
+    }
+  },
+  pasteHandler: function(e) {
+    uploadFiles.handle(e.clipboardData);
+  },
+  dropHandler: function(e) {
+    e.preventDefault();
+    uploadFiles.handle(e.dataTransfer);
+  },
+  handle: function(dataTransfer) {
+    let files = [];
+    if (dataTransfer.items) {
+      [...dataTransfer.items].forEach((item, i) => {
+        if (item.kind === "file")
+          files.push(item.getAsFile());
+      });
+    } else {
+      [...dataTransfer.files].forEach((file, i) => {
+        files.push(file);
+      });
+    }
+    if (files.length)
+      uploadFiles.post(files)
+  },
+  post: function(files) {
+    let action = document.getElementById('form').getAttribute('action');
+    var fd = new FormData();
+    fd.append("name", document.getElementById('name').value);
+    fd.append("maxwidth", document.getElementById('maxwidth').value);
+    fd.append("quality", document.getElementById('quality').value);
+    for (var i = 0; i < files.length; i++) {
+      fd.append("file", files[i]);
+    }
+    try {
+      fetch(action, { method: "POST", body: fd })
+        .then(response => {
+          if (response.ok) {
+            window.location = response.url;
+          } else {
+            alert(response.text);
+          }})
+    } catch (e) {
+      alert(e);
+    }
+  },
+};
+window.addEventListener('load', uploadFiles.init);
+</script>
   </head>
   <body lang="en">
     <h1>Upload Files</h1>
     {{if ne .Last ""}}
-    <p>Previous upload: <a href="/view/{{.Dir}}{{.Last}}">{{.Last}}</a></p>
+    <p>Previous upload: <a href="/view/{{.Dir}}{{.Last}}">{{.Last}}</a>
     {{if .Image}}
-    <p><img class="last" src="/view/{{.Dir}}{{.Last}}"></p>
+    <p><img class="last" src="/view/{{.Dir}}{{.Last}}"><br>
+      <tt>Link: ![]({{.Last}})</tt>
+    {{else}}
+    <p>Link: <tt>[text]({{.Last}})</tt>
     {{end}}
     {{end}}
-    <form action="/drop/{{.Dir}}" method="POST" enctype="multipart/form-data">
-      <p>When uploading pictures from a phone, its filename is going to be something cryptic like IMG_1234.JPG.
+    <form id="form" action="/drop/{{.Dir}}" method="POST" enctype="multipart/form-data">
+      <p>When uploading a picture from a phone, its filename is going to be something like IMG_1234.JPG.
         Please provide your own filename. End the base name with "-1" to auto-increment.
-        Use <tt>.jpg</tt> or <tt>.png</tt> as the extension.
-      <p><label for="text">Filename to use:</label>
-        <input id="text" name="name" value="{{.Name}}" type="text" placeholder="image-1.jpg" autofocus required>
+        Use <tt>.jpg</tt> or <tt>.png</tt> as the extension if you want to resize the picture.
+      <p><label for="name">Filename:</label>
+        <input id="name" name="name" value="{{.Name}}" type="text" placeholder="image-1.jpg" autofocus required>
       <p>If the uploaded file is a picture from a phone, it is going to be too big for your site.
-        Sadly, resizing only works when uploading <tt>.jpeg</tt>, <tt>.heic</tt> and <tt>.png</tt> files.
+        Sadly, resizing only works when uploading <tt>.jpeg</tt>, <tt>.webp</tt>, <tt>.heic</tt> and <tt>.png</tt> files.
         Feel free to specify a max width of 1200 pixels, for example.
       <p><label for="maxwidth">Max width:</label>
         <input id="maxwidth" name="maxwidth" value="{{.MaxWidth}}" type="number" min="10" placeholder="1200">
@@ -41,10 +101,13 @@ label { display: inline-block; width: 20ch }
       <p>Finally, pick the files or photos to upload.
         Picture metadata is only removed if the pictures gets resized.
         Providing a new max width is recommended for all pictures.
+        If you're uploading multiple files, they are all renamed using the filename above and therefore they all get the same extension so they must be of the same type.
+      <p>To delete a file, upload an empty file.
       <p><label for="file">Pick files to upload:</label>
         <input type="file" name="file" required multiple>
       <p><input type="submit" value="Save">
-        <a href="/view/index"><button type="button">Cancel</button></a></p>
+        <a href="/view/index"><button type="button">Cancel</button></a>
+      <p>You can also paste images or drag and drop files.
     </form>
   </body>
 </html>
