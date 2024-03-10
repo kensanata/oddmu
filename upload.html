@@ -16,7 +16,7 @@ input [type=text] { width: 30ch }
     <script type="text/javascript">
 var uploadFiles = {
   init: function() {
-    let e = document.getElementById('form');
+    let e = document.getElementById('upload');
     if (e) {
       e.addEventListener('paste', uploadFiles.pasteHandler);
       e.addEventListener('dragover', e => e.preventDefault());
@@ -46,7 +46,7 @@ var uploadFiles = {
       uploadFiles.post(files)
   },
   post: function(files) {
-    let action = document.getElementById('form').getAttribute('action');
+    let action = document.getElementById('upload').getAttribute('action');
     var fd = new FormData();
     fd.append("name", document.getElementById('name').value);
     fd.append("maxwidth", document.getElementById('maxwidth').value);
@@ -81,11 +81,11 @@ window.addEventListener('load', uploadFiles.init);
     <p>Link: <tt>[text]({{.Last}})</tt>
     {{end}}
     {{end}}
-    <form id="form" action="/drop/{{.Dir}}" method="POST" enctype="multipart/form-data">
+    <form id="upload" action="/drop/{{.Dir}}" method="POST" enctype="multipart/form-data">
       <p>When uploading a picture from a phone, its filename is going to be something like IMG_1234.JPG.
         Please provide your own filename. End the base name with "-1" to auto-increment.
         Use <tt>.jpg</tt> or <tt>.png</tt> as the extension if you want to resize the picture.
-      <p><label for="name">Filename to use:</label>
+      <p><label for="name">Filename:</label>
         <input id="name" name="name" value="{{.Name}}" type="text" placeholder="image-1.jpg" autofocus required>
       <p>If the uploaded file is a picture from a phone, it is going to be too big for your site.
         Sadly, resizing only works when uploading <tt>.jpeg</tt>, <tt>.webp</tt>, <tt>.heic</tt> and <tt>.png</tt> files.

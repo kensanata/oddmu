@@ -33,6 +33,11 @@ use, for example:
 
 The upload template can use the _Today_ property.
 
+The upload template comes with JavaScript that allows users to paste images or
+drag and drop files.
+
+The upload template changed the id for the filename field from `text` to `name`.
+
 The source repository now comes with example templates.
 
 ## 1.8 (2024)
