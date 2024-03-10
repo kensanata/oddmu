@@ -20,7 +20,7 @@ Silver leaves shine bright
 They droop, boneless, weak and sad
 A cruel sun stares down`)}
 	p.renderHtml()
-	r := `<h1>Sun</h1>
+	r := `<h1 id="sun">Sun</h1>
 
 <p>Silver leaves shine bright
 They droop, boneless, weak and sad
@@ -37,7 +37,7 @@ I am cold, alone
 
 #Haiku #Cold_Poets`)}
 	p.renderHtml()
-	r := `<h1>Comet</h1>
+	r := `<h1 id="comet">Comet</h1>
 
 <p>Stars flicker above
 Too faint to focus, so far
@@ -54,7 +54,7 @@ Blue and green and black
 Sky and grass and [ragged cliffs](cliffs)
 Our [[time together]]`)}
 	p.renderHtml()
-	r := `<h1>Photos and Books</h1>
+	r := `<h1 id="photos-and-books">Photos and Books</h1>
 
 <p>Blue and green and black
 Sky and grass and <a href="cliffs">ragged cliffs</a>
@@ -69,7 +69,7 @@ Dragonfly hovers
 darts chases turns lands and rests
 A mighty jewel`)}
 	p.renderHtml()
-	r := `<h1>No $dollar$ can buy this</h1>
+	r := `<h1 id="no-dollar-can-buy-this">No $dollar$ can buy this</h1>
 
 <p>Dragonfly hovers
 darts chases turns lands and rests

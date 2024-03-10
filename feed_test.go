@@ -48,8 +48,8 @@ Writing poems about plants.
 	assert.Contains(t, body, "<title>Plants</title>")
 	assert.Contains(t, body, "<title>Cactus</title>")
 	assert.Contains(t, body, "<title>Dragon</title>")
-	assert.Contains(t, body, "&lt;h1&gt;Cactus&lt;/h1&gt;")
-	assert.Contains(t, body, "&lt;h1&gt;Dragon&lt;/h1&gt;")
+	assert.Contains(t, body, "&lt;h1 id=&#34;cactus&#34;&gt;Cactus&lt;/h1&gt;")
+	assert.Contains(t, body, "&lt;h1 id=&#34;dragon&#34;&gt;Dragon&lt;/h1&gt;")
 	assert.Contains(t, body, "<category>Succulent</category>")
 	assert.Contains(t, body, "<category>Palmtree</category>")
 }
