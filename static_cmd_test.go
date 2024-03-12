@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestStatusCmd(t *testing.T) {
+func TestStaticCmd(t *testing.T) {
 	cleanup(t, "testdata/static")
 	s := staticCli("testdata/static", 2, true)
 	assert.Equal(t, subcommands.ExitSuccess, s)
@@ -19,7 +19,7 @@ func TestStatusCmd(t *testing.T) {
 	assert.FileExists(t, "testdata/static/static_cmd_test.go")
 }
 
-func TestFeedStatusCmd(t *testing.T) {
+func TestFeedStaticCmd(t *testing.T) {
 	cleanup(t, "testdata/static-feed")
 	cleanup(t, "testdata/static-feed-out")
 	p := &Page{Name: "testdata/static-feed/Haiku", Body: []byte("# Haiku\n")}

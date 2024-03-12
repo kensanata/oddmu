@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-STATIC" "1" "2024-03-07"
+.TH "ODDMU-STATIC" "1" "2024-03-12"
 .PP
 .SH NAME
 .PP
@@ -18,8 +18,8 @@ oddmu-static - create a static copy of the site
 .SH DESCRIPTION
 .PP
 The "static" subcommand generates a static copy of the pages in the current
-directory and saves them in the given destination directory.\& The destination
-directory must not exist.\&
+directory and saves them in the given destination directory.\& Existing files are
+only overwritten if they are older than the source file.\&
 .PP
 All pages (files with the ".\&md" extension) are turned into HTML files (with the
 ".\&html" extension) using the "static.\&html" template.\& Links pointing to existing
@@ -53,11 +53,13 @@ original, too.\&
 .PP
 .SH EXAMPLE
 .PP
-Generate a static copy of the site:
+Generate a static copy of the site, but only loading language detection for
+German and English, significantly reducing the time it takes to generate the
+static site:
 .PP
 .nf
 .RS 4
-oddmu static \&.\&./archive
+env ODDMU_LANGUAGES=de,en oddmu static \&.\&./archive
 .fi
 .RE
 .PP
