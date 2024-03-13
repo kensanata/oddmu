@@ -10,8 +10,10 @@ man: ${MAN}
 
 html: ${HTML}
 
-%.html: %
-	groff -mandoc -Dutf8 -Thtml $< | sed 's/<style type="text\/css">/<style type="text\/css">\n       body {font-family: mono; max-width: 80ch }/' > $@
+%.html: %.md
+	echo '<!DOCTYPE html>' > $@
+	oddmu html $(basename $<) | sed --regexp-extended \
+	  -e 's/<a href="(oddmu[a-z.-]*.[1-9])">([^<>]*)<\/a>/<a href="\1.html">\2<\/a>/g' >> $@
 
 md: ${MD}
 
