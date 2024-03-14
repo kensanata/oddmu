@@ -56,3 +56,9 @@ func language(s string) string {
 	}
 	return ""
 }
+
+// Language returns the language used for the page, as a lower case
+// ISO 639-1 string, e.g. "en" or "de".
+func (p *Page) Language() string {
+	return language(p.plainText())
+}

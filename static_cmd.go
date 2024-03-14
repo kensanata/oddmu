@@ -202,7 +202,6 @@ func staticPage(source, target string) (*Page, error) {
 	maybeUnsafeHTML := markdown.Render(doc, renderer)
 	p.Name = nameEscape(p.Name)
 	p.Html = unsafeBytes(maybeUnsafeHTML)
-	p.Language = language(p.plainText())
 	p.Hashtags = *hashtags
 	return p, write(p, target, "", "static.html")
 }

@@ -23,7 +23,6 @@ import (
 type Page struct {
 	Title    string
 	Name     string
-	Language string
 	Body     []byte
 	Html     template.HTML
 	Score    int
@@ -109,7 +108,7 @@ func loadPage(path string) (*Page, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Page{Title: path, Name: path, Body: body, Language: ""}, nil
+	return &Page{Title: path, Name: path, Body: body}, nil
 }
 
 // handleTitle extracts the title from a Page and sets Page.Title, if any. If replace is true, the page title is also
@@ -132,12 +131,11 @@ func (p *Page) score(q string) {
 	p.Score = score(q, string(p.Body)) + score(q, p.Title)
 }
 
-// summarize sets Page.Html to an extract and sets Page.Language.
+// summarize sets Page.Html to an extract.
 func (p *Page) summarize(q string) {
 	t := p.plainText()
 	p.Name = nameEscape(p.Name)
 	p.Html = sanitizeStrict(snippets(q, t))
-	p.Language = language(t)
 }
 
 // IsBlog returns true if the page name starts with an ISO date

@@ -90,7 +90,6 @@ func (p *Page) renderHtml() {
 	maybeUnsafeHTML := markdown.ToHTML(p.Body, parser, renderer)
 	p.Name = nameEscape(p.Name)
 	p.Html = unsafeBytes(maybeUnsafeHTML)
-	p.Language = language(p.plainText())
 	p.Hashtags = *hashtags
 }
 
