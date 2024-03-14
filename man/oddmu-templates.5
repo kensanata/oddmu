@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-TEMPLATES" "5" "2024-03-09" "File Formats Manual"
+.TH "ODDMU-TEMPLATES" "5" "2024-03-14" "File Formats Manual"
 .PP
 .SH NAME
 .PP
@@ -77,7 +77,10 @@ For \fIsearch.\&html\fR, it is a page summary, with bold matches, as HTML.\&
 For \fIfeed.\&html\fR, it is the escaped (!\&) HTML of the feed item.\&
 .PD
 .PP
-\fI{{.\&Score}}\fR is a numerical score.\& It is onlly computed for \fIsearch.\&html\fR.\&
+\fI{{.\&Score}}\fR is a numerical score.\& It is only computed for \fIsearch.\&html\fR.\&
+.PP
+\fI{{.\&IsBlog}}\fR says whether the current page has a name starting with an ISO
+date.\&
 .PP
 \fI{{.\&Today}}\fR is the current date, in ISO format.\& This is useful for "new page"
 like links or forms (see \fBEXAMPLE\fR below).\&
@@ -186,6 +189,16 @@ The following form allows people to edit the suggested page name.\&
 	  accesskey="g" value="{{\&.Today}}" required>
   <button>Edit</button>
 </form>
+.fi
+.RE
+.PP
+The following puts the current date into the text area if and only if the page
+itself is a blog page.\& Useful for \fIadd.\&html\fR:
+.PP
+.nf
+.RS 4
+<textarea name="body" rows="20" cols="80" placeholder="Text" lang=""
+	  autofocus required>{{- if \&.IsBlog}}**{{\&.Today}}**\&. {{end}}</textarea>
 .fi
 .RE
 .PP

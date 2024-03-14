@@ -140,8 +140,8 @@ func (p *Page) summarize(q string) {
 	p.Language = language(t)
 }
 
-// isBlog returns true if the page name starts with an ISO date
-func (p *Page) isBlog() bool {
+// IsBlog returns true if the page name starts with an ISO date
+func (p *Page) IsBlog() bool {
 	name := path.Base(p.Name)
 	return blogRe.MatchString(name)
 }

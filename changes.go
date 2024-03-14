@@ -29,7 +29,7 @@ func (p *Page) notify() error {
 		log.Printf("Updating changes in %s failed: %s", dir, err)
 		return err
 	}
-	if p.isBlog() {
+	if p.IsBlog() {
 		// Add to the index only if the blog post is for the current year
 		if strings.HasPrefix(path.Base(p.Name), time.Now().Format("2006")) {
 			err := addLink(path.Join(dir, "index"), true, link, re)

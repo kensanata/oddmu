@@ -55,7 +55,10 @@ _{{.Html}}_ contains some sort of HTML that depends on the template used.
 - For _search.html_, it is a page summary, with bold matches, as HTML.
 - For _feed.html_, it is the escaped (!) HTML of the feed item.
 
-_{{.Score}}_ is a numerical score. It is onlly computed for _search.html_.
+_{{.Score}}_ is a numerical score. It is only computed for _search.html_.
+
+_{{.IsBlog}}_ says whether the current page has a name starting with an ISO
+date.
 
 _{{.Today}}_ is the current date, in ISO format. This is useful for "new page"
 like links or forms (see *EXAMPLE* below).
@@ -161,6 +164,14 @@ The following form allows people to edit the suggested page name.
 	  accesskey="g" value="{{.Today}}" required>
   <button>Edit</button>
 </form>
+```
+
+The following puts the current date into the text area if and only if the page
+itself is a blog page. Useful for _add.html_:
+
+```
+<textarea name="body" rows="20" cols="80" placeholder="Text" lang=""
+	  autofocus required>{{- if .IsBlog}}**{{.Today}}**. {{end}}</textarea>
 ```
 
 # NOTES
