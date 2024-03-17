@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-TEMPLATES" "5" "2024-03-14" "File Formats Manual"
+.TH "ODDMU-TEMPLATES" "5" "2024-03-17" "File Formats Manual"
 .PP
 .SH NAME
 .PP
@@ -84,6 +84,10 @@ date.\&
 .PP
 \fI{{.\&Today}}\fR is the current date, in ISO format.\& This is useful for "new page"
 like links or forms (see \fBEXAMPLE\fR below).\&
+.PP
+\fI{{.\&Parents}}\fR is the array of links to parent pages (see \fBEXAMPLE\fR below).\& To
+refer to them, you need to use a \fI{{range .\&Parents}}\fR … \fI{{end}}\fR construct.\& A
+link has to properties, \fI{{.\&Title}}\fR and \fI{{.\&Url}}\fR.\&
 .PP
 \fI{{.\&Diff}}\fR is the page diff for \fIdiff.\&html\fR.\& It is only computed on demand so
 it can be used in other templates, too.\& It probably doesn'\&t make much sense to
@@ -199,6 +203,16 @@ itself is a blog page.\& Useful for \fIadd.\&html\fR:
 .RS 4
 <textarea name="body" rows="20" cols="80" placeholder="Text" lang=""
 	  autofocus required>{{- if \&.IsBlog}}**{{\&.Today}}**\&. {{end}}</textarea>
+.fi
+.RE
+.PP
+The following adds a list of links to parent directories.\& Useful for \fIview.\&html\fR:
+.PP
+.nf
+.RS 4
+<nav>
+{{range \&.Parents}}/ <a href="{{\&.Url}}">{{\&.Title}}</a>{{end}}
+</nav>
 .fi
 .RE
 .PP

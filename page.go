@@ -14,12 +14,10 @@ import (
 	"time"
 )
 
-// Page is a struct containing information about a single page. Title
-// is the title extracted from the page content using titleRegexp.
-// Name is the path without extension (so a path of "foo.md"
-// results in the Name "foo"). Body is the Markdown content of the
-// page and Html is the rendered HTML for that Markdown. Score is a
-// number indicating how well the page matched for a search query.
+// Page is a struct containing information about a single page. Title is the title extracted from the page content using
+// titleRegexp. Name is the path without extension (so a path of "foo.md" results in the Name "foo"). Body is the
+// Markdown content of the page and Html is the rendered HTML for that Markdown. Score is a number indicating how well
+// the page matched for a search query.
 type Page struct {
 	Title    string
 	Name     string
@@ -29,6 +27,15 @@ type Page struct {
 	Hashtags []string
 }
 
+// Link is a struct containing a title and a name. Name is the path without extension (so a path of "foo.md" results in
+// the Name "foo").
+type Link struct {
+	Title    string
+	Url     string
+}
+
+// blogRe is a regular expression that matches blog pages. If the filename of a blog page starts with an ISO date
+// (YYYY-MM-DD), then it's a blog page.
 var blogRe = regexp.MustCompile(`^\d\d\d\d-\d\d-\d\d`)
 
 // santizeStrict uses bluemonday to sanitize the HTML away. No elements are allowed except for the b tag because this is
@@ -167,4 +174,28 @@ func (p *Page) Base() string {
 // Today returns the date, as a string, for use in templates.
 func (p *Page) Today() string {
 	return time.Now().Format(time.DateOnly)
+}
+
+// Parents returns a Link array to parent pages, up the directory structure.
+func (p *Page) Parents() []*Link {
+	links := make([]*Link, 0)
+	index.RLock()
+	defer index.RUnlock()
+	// foo/bar/baz ⇒ index, foo/index
+	elems := strings.Split(p.Name, "/")
+	if len(elems) == 1 {
+		return links
+	}
+	s := ""
+	for i := 0; i < len(elems) - 1; i++ {
+		name := s + "index"
+		title, ok := index.titles[name]
+		if !ok {
+			title = "…"
+		}
+		link := &Link{ Title: title, Url: strings.Repeat("../", len(elems) - i - 1) + "index" }
+		links = append(links, link)
+		s += elems[i] + "/"
+	}
+	return links
 }

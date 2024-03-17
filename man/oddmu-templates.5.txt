@@ -63,6 +63,10 @@ date.
 _{{.Today}}_ is the current date, in ISO format. This is useful for "new page"
 like links or forms (see *EXAMPLE* below).
 
+_{{.Parents}}_ is the array of links to parent pages (see *EXAMPLE* below). To
+refer to them, you need to use a _{{range .Parents}}_ … _{{end}}_ construct. A
+link has to properties, _{{.Title}}_ and _{{.Url}}_.
+
 _{{.Diff}}_ is the page diff for _diff.html_. It is only computed on demand so
 it can be used in other templates, too. It probably doesn't make much sense to
 do so, however.
@@ -172,6 +176,14 @@ itself is a blog page. Useful for _add.html_:
 ```
 <textarea name="body" rows="20" cols="80" placeholder="Text" lang=""
 	  autofocus required>{{- if .IsBlog}}**{{.Today}}**. {{end}}</textarea>
+```
+
+The following adds a list of links to parent directories. Useful for _view.html_:
+
+```
+<nav>
+{{range .Parents}}/ <a href="{{.Url}}">{{.Title}}</a>{{end}}
+</nav>
 ```
 
 # NOTES
