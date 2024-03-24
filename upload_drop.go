@@ -30,7 +30,7 @@ type upload struct {
 	Quality  string
 }
 
-var lastRe = regexp.MustCompile(`^(.*)([0-9]+)(.*)$`)
+var lastRe = regexp.MustCompile(`^(.*?)([0-9]+)([^0-9]*)$`)
 
 // uploadHandler uses the "upload.html" template to enable uploads. The file is saved using the dropHandler. URL
 // parameters are used to copy name, maxwidth and quality from the previous upload. If the previous name contains a
