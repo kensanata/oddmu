@@ -76,7 +76,7 @@ window.addEventListener('load', uploadFiles.init);
     <p>Previous upload: <a href="/view/{{.Dir}}{{.Last}}">{{.Last}}</a>
     {{if .Image}}
     <p><img class="last" src="/view/{{.Dir}}{{.Last}}"><br>
-      <tt>Link: ![]({{.Last}})</tt>
+      Links:<tt>{{range .Actual}}<br>![]({{.}}){{end}}</tt>
     {{else}}
     <p>Link: <tt>[text]({{.Last}})</tt>
     {{end}}

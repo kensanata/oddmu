@@ -114,6 +114,9 @@ _{{.Name}}_ is the _filename_ query parameter.
 
 _{{.Last}}_ is the filename of the last image uploaded.
 
+_{{.Actual}}_ is an array of filenames of all the images uploaded. Use {{range
+.Actual}} … {{.}} … {{end}} to loop over all the filenames.
+
 _{{.Image}}_ is a boolean to indicate whether the last file uploaded has a file
 name indicating an image or not (such as ending in _.jpg_). If so, a thumbnail
 can be shown by the template, for example.

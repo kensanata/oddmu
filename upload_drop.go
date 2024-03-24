@@ -28,6 +28,7 @@ type upload struct {
 	Image    bool
 	MaxWidth string
 	Quality  string
+	Actual   []string
 }
 
 var lastRe = regexp.MustCompile(`^(.*?)([0-9]+)([^0-9]*)$`)
@@ -54,6 +55,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		mimeType := mime.TypeByExtension(filepath.Ext(last))
 		data.Image = strings.HasPrefix(mimeType, "image/")
 		data.Name, err = next(dir, last, 1)
+		data.Actual = r.Form["actual"]
 	}
 	if err != nil {
 		log.Println(err)
@@ -129,7 +131,7 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		data.Add("maxwidth", maxwidth)
+		data.Set("maxwidth", maxwidth)
 		// determine how the file will be written
 		ext := strings.ToLower(filepath.Ext(filename))
 		switch ext {
@@ -143,7 +145,7 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 					http.Error(w, err.Error(), http.StatusBadRequest)
 					return
 				}
-				data.Add("quality", q)
+				data.Set("quality", q)
 			}
 			format = imaging.JPEG
 		default:
@@ -223,6 +225,7 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 				log.Println("Delete", path)
 			}
 		}
+		data.Add("actual", filename)
 		username, _, ok := r.BasicAuth()
 		if ok {
 			log.Println("Save", path, "by", username)
