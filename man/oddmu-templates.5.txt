@@ -112,10 +112,15 @@ path, percent-escaped except for the slashes.
 
 _{{.Name}}_ is the _filename_ query parameter.
 
-_{{.Last}}_ is the filename of the last image uploaded.
+_{{.Last}}_ is the filename of the last file uploaded.
 
-_{{.Actual}}_ is an array of filenames of all the images uploaded. Use {{range
+_{{.Actual}}_ is an array of filenames of all the files uploaded. Use {{range
 .Actual}} … {{.}} … {{end}} to loop over all the filenames.
+
+_{{.Base}}_ is the basename of the first file uploaded (without the directory,
+extension and numeric part at the end), escaped for use in URLs.
+
+_{{.Title}}_ is the title of the basename, if it exists.
 
 _{{.Image}}_ is a boolean to indicate whether the last file uploaded has a file
 name indicating an image or not (such as ending in _.jpg_). If so, a thumbnail

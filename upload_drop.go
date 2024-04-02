@@ -14,6 +14,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -32,6 +33,7 @@ type upload struct {
 }
 
 var lastRe = regexp.MustCompile(`^(.*?)([0-9]+)([^0-9]*)$`)
+var baseRe = regexp.MustCompile(`^(.*?)-[0-9]+$`)
 
 // uploadHandler uses the "upload.html" template to enable uploads. The file is saved using the dropHandler. URL
 // parameters are used to copy name, maxwidth and quality from the previous upload. If the previous name contains a
@@ -236,6 +238,31 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 	}
 	data.Set("last", filename) // has no slashes
 	http.Redirect(w, r, "/upload/"+dir+"?"+data.Encode(), http.StatusFound)
+}
+// Base returns a page name matching the first uploaded file: no extension and no appended number. If the name
+// refers to a directory, returns "index". This is used to create the form target in "upload.html", for example.
+func (u *upload) Base() string {
+	n := u.Name[:strings.LastIndex(u.Name, ".")]
+	m := baseRe.FindStringSubmatch(n)
+	if m != nil {
+		return m[1]
+	}
+	if n == "." {
+		return "index"
+	}
+	return n
+}
+
+// Title returns the title of the matching page, if it exists.
+func (u *upload) Title() string {
+	index.RLock()
+	defer index.RUnlock()
+	name := path.Join(u.Dir, u.Base())
+	title, ok := index.titles[name]
+	if ok {
+		return title
+	}
+	return name
 }
 
 // Today returns the date, as a string, for use in templates.

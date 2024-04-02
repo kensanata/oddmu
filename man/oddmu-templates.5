@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-TEMPLATES" "5" "2024-03-24" "File Formats Manual"
+.TH "ODDMU-TEMPLATES" "5" "2024-04-02" "File Formats Manual"
 .PP
 .SH NAME
 .PP
@@ -134,10 +134,15 @@ path, percent-escaped except for the slashes.\&
 .PP
 \fI{{.\&Name}}\fR is the \fIfilename\fR query parameter.\&
 .PP
-\fI{{.\&Last}}\fR is the filename of the last image uploaded.\&
+\fI{{.\&Last}}\fR is the filename of the last file uploaded.\&
 .PP
-\fI{{.\&Actual}}\fR is an array of filenames of all the images uploaded.\& Use {{range
+\fI{{.\&Actual}}\fR is an array of filenames of all the files uploaded.\& Use {{range
 Actual}} … {{.\&}} … {{end}} to loop over all the filenames.\&
+.PP
+\fI{{.\&Base}}\fR is the basename of the first file uploaded (without the directory,
+extension and numeric part at the end), escaped for use in URLs.\&
+.PP
+\fI{{.\&Title}}\fR is the title of the basename, if it exists.\&
 .PP
 \fI{{.\&Image}}\fR is a boolean to indicate whether the last file uploaded has a file
 name indicating an image or not (such as ending in \fI.\&jpg\fR).\& If so, a thumbnail
