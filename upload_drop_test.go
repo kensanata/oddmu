@@ -31,7 +31,7 @@ func TestUpload(t *testing.T) {
 	err = writer.Close()
 	assert.NoError(t, err)
 	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/files/",
-		writer.FormDataContentType(), form, "/upload/testdata/files/?last=ok.txt")
+		writer.FormDataContentType(), form, "/upload/testdata/files/?actual=ok.txt&last=ok.txt")
 	assert.Contains(t,
 		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/files/ok.txt", nil),
 		"Hello!")
@@ -50,7 +50,7 @@ func TestUploadPng(t *testing.T) {
 	png.Encode(file, img)
 	writer.Close()
 	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/png/",
-		writer.FormDataContentType(), form, "/upload/testdata/png/?last=ok.png")
+		writer.FormDataContentType(), form, "/upload/testdata/png/?actual=ok.png&last=ok.png")
 }
 
 func TestUploadJpg(t *testing.T) {
@@ -66,7 +66,7 @@ func TestUploadJpg(t *testing.T) {
 	jpeg.Encode(file, img, &jpeg.Options{Quality: 90})
 	writer.Close()
 	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/jpg/",
-		writer.FormDataContentType(), form, "/upload/testdata/jpg/?last=ok.jpg")
+		writer.FormDataContentType(), form, "/upload/testdata/jpg/?actual=ok.jpg&last=ok.jpg")
 }
 
 func TestUploadHeic(t *testing.T) {
@@ -94,7 +94,7 @@ YXQAAAApKAGvEyE1mvXho5qH3STtzcWnOxedwNIXAKNDaJNqz3uONoCHeUhi/HA=`
 	file.Write(img)
 	writer.Close()
 	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/heic/",
-		writer.FormDataContentType(), form, "/upload/testdata/heic/?last=ok.jpg")
+		writer.FormDataContentType(), form, "/upload/testdata/heic/?actual=ok.jpg&last=ok.jpg")
 }
 
 func TestDeleteFile(t *testing.T) {
@@ -116,7 +116,7 @@ What happened just now?`), 0644))
 	file.Write([]byte(""))
 	writer.Close()
 	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/delete/",
-		writer.FormDataContentType(), form, "/upload/testdata/delete/?last=nothing.txt")
+		writer.FormDataContentType(), form, "/upload/testdata/delete/?actual=nothing.txt&last=nothing.txt")
 	// check that it worked
 	assert.NoFileExists(t, "testdata/delete/nothing.txt")
 }
