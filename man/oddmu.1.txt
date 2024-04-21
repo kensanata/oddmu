@@ -167,13 +167,12 @@ Unix-domain socket under systemd and Apache.
 
 If the machine you are running Oddmu on is accessible from the Internet, you
 must secure your installation. The best way to do this is use a regular web
-server as a reverse proxy.
-
-See _oddmu-apache_(5) for an example.
+server as a reverse proxy. See _oddmu-apache_(5) and _oddmu-nginx_(5) for
+example configurations.
 
 Oddmu assumes that all the users that can edit pages or upload files are trusted
-users and therefore their content is trusted. Therefore, Oddmu doesn't perform
-HTML sanitization!
+users and therefore their content is trusted. Oddmu does not perform HTML
+sanitization!
 
 For an extra dose of security, consider using a Unix-domain socket.
 

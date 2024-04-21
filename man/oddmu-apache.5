@@ -5,13 +5,13 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-APACHE" "5" "2024-02-19"
+.TH "ODDMU-APACHE" "5" "2024-04-21"
 .PP
 .SH NAME
 .PP
 oddmu-apache - how to setup Apache as a reverse proxy for Oddmu
 .PP
-.SS DESCRIPTION
+.SH DESCRIPTION
 .PP
 The oddmu program serves the current working directory as a wiki on port 8080.\&
 This is an unpriviledged port so an ordinary user account can do this.\&
@@ -22,7 +22,7 @@ The best way to protect the wiki against vandalism and spam is to use a regular
 web server as reverse proxy.\& This page explains how to setup Apache on Debian to
 do this.\&
 .PP
-.SS CONFIGURATION
+.SH CONFIGURATION
 .PP
 HTTPS is not part of Oddmu.\& You probably want to configure this in your
 webserver.\& I guess you could use stunnel, too.\& If you'\&re using Apache, you can
@@ -143,15 +143,6 @@ ServerAdmin alex@alexschroeder\&.ch
 Instead of having Oddmu listen on a TCP port, you can have it listen on a
 Unix-domain socket.\& This requires socket activation.\& An example of configuring
 the service is given in \fIoddmu.\&service(5)\fR.\&
-.PP
-To test just the unix domain socket, use \fIncat(1)\fR:
-.PP
-.nf
-.RS 4
-echo -e "GET /view/index HTTP/1\&.1rnHost: localhostrnrn" 
-  | ncat --unixsock /run/oddmu/oddmu\&.sock
-.fi
-.RE
 .PP
 On the Apache side, you can proxy to the socket directly.\& This sends all
 requests to the socket:

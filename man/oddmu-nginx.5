@@ -5,13 +5,13 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-NGINX" "5" "2024-02-19"
+.TH "ODDMU-NGINX" "5" "2024-04-21"
 .PP
 .SH NAME
 .PP
 oddmu-nginx - how to setup Nginx as a reverse proxy for Oddmu
 .PP
-.SS DESCRIPTION
+.SH DESCRIPTION
 .PP
 The oddmu program serves the current working directory as a wiki on port 8080.\&
 This is an unpriviledged port so an ordinary user account can do this.\&
@@ -20,7 +20,7 @@ This page explains how to setup NGINX on Debian to act as a reverse proxy for
 Oddmu.\& Once this is done, you can use NGINX to provide HTTPS, request users to
 authenticate themselves, and so on.\&
 .PP
-.SS CONFIGURATION
+.SH CONFIGURATION
 .PP
 The site is defined in "/etc/nginx/sites-available/default", in the \fIserver\fR
 section.\& Add a new \fIlocation\fR section after the existing \fIlocation\fR section:
@@ -37,6 +37,12 @@ If you remove an action from the regular expression, those requests no longer
 get passed on to Oddmu.\& They are essentially disabled.\& Somebody on the same
 machine pointing their browser at http://localhost:8080/ directly would still
 have access to all the actions, of course.\&
+.PP
+.SS Access
+.PP
+Access control is not part of Oddmu.\& By default, the wiki is editable by all.\&
+This is most likely not what you want unless you'\&re running it stand-alone,
+unconnected to the Internet – a personal memex on your laptop, for example.\&
 .PP
 To restrict access to some actions, use two different \fIlocation\fR sections:
 .PP
@@ -70,6 +76,49 @@ using this password:
 .nf
 .RS 4
 alex:$1$DOwphABk$W4VmR9p8t2\&.htxF6ctXHX\&.
+.fi
+.RE
+.PP
+These instructions create user accounts with passwords just for Oddmu.\&
+These users are not real users on the web server and don'\&t have access to a
+shell, mail, or any other service.\&
+.PP
+.SS Using a Unix-domain Socket
+.PP
+Instead of having Oddmu listen on a TCP port, you can have it listen on a
+Unix-domain socket.\& This requires socket activation.\& An example of configuring
+the service is given in \fIoddmu.\&service(5)\fR.\&
+.PP
+On the nginx side, you can proxy to the socket using an \fIupstream\fR section.\& This
+sends all requests to the socket.\& Use the upstream name as the server name for
+\fIproxy_pass\fR.\& Add something like the configuration below to your existing nginx
+server configuration.\& On a Debian system, that'\&d be in
+"/etc/nginx/sites-available/default".\&
+.PP
+.nf
+.RS 4
+location ~ ^/(view|diff|edit|save|add|append|upload|drop|search|archive)/ {
+        proxy_pass http://unix:/run/oddmu/oddmu\&.sock:;
+}
+.fi
+.RE
+.PP
+Reload the configuration:
+.PP
+.nf
+.RS 4
+sudo systemd reload nginx
+.fi
+.RE
+.PP
+Now, all traffic between the web server and the wiki goes over the socket at
+"/run/oddmu/oddmu.\&sock".\&
+.PP
+To test it on the command-line, use a tool like \fIcurl(1)\fR.\&
+.PP
+.nf
+.RS 4
+curl http://localhost/view/index
 .fi
 .RE
 .PP

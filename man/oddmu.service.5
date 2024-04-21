@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU.SERVICE" "5" "2024-02-17"
+.TH "ODDMU.SERVICE" "5" "2024-04-21"
 .PP
 .SH NAME
 .PP
@@ -32,13 +32,14 @@ all the templates files ending in ".\&html" from the source distribution to
 If you want to keep everything in one place, copy the binary "oddmu" and the
 service file "oddmu.\&service" to "/home/oddmu", too.\&
 .PP
-Edit the `oddmu.\&service` file.\& These are the lines you most likely have to take
+Edit the "oddmu.\&service" file.\& These are the lines you most likely have to take
 care of:
 .PP
 .nf
 .RS 4
 ExecStart=/home/oddmu/oddmu
 WorkingDirectory=/home/oddmu
+ReadWritePaths=/home/oddmu
 Environment="ODDMU_PORT=8080"
 Environment="ODDMU_WEBFINGER=1"
 .fi
@@ -71,15 +72,6 @@ journalctl --follow --unit oddmu
 .fi
 .RE
 .PP
-For it to restart when the server reboots:
-.PP
-.nf
-.RS 4
-sudo ln -sf /home/oddmu/oddmu\&.service 
-  /etc/systemd/system/multi-user\&.target\&.wants/
-.fi
-.RE
-.PP
 .SH Socket Activation
 .PP
 Alternatively, you can let systemd handle the creation of the listening socket,
@@ -91,19 +83,58 @@ tells systemd to pass the socket to the service as its standard input.\&
 "Accept=no" tells systemd to pass a listening socket, rather than to try calling
 Oddmu for each connection.\&
 .PP
-The instructions for starting and enabling the systemd service are almost
-exactly the same as those in the previous section, with "oddmu.\&service" replaced
-by "oddmu-unix-domain.\&service".\& You'\&ll also need to run the following:
+Instead of using "oddmu.\&service", you need to use "oddmu-unix-domain.\&socket" and
+"oddmu-unix-domain.\&service".\&
+.PP
+The unit file for the socket defines a file name.\& You probably need to create
+the directory or change the file name.\&
+.PP
+.nf
+.RS 4
+sudo mkdir /run/oddmu
+.fi
+.RE
+.PP
+The unit file for the service defines where the "oddmu" is and where the data
+directory is.\& These are the lines you most likely have to take care of:
+.PP
+.nf
+.RS 4
+ExecStart=/home/oddmu/oddmu
+WorkingDirectory=/home/oddmu
+ReadWritePaths=/home/oddmu
+Environment="ODDMU_PORT=8080"
+Environment="ODDMU_WEBFINGER=1"
+.fi
+.RE
+.PP
+To install, enable and start both units:
 .PP
 .nf
 .RS 4
 ln -s /home/oddmu/oddmu-unix-domain\&.socket /etc/systemd/system
+ln -s /home/oddmu/oddmu-unix-domain\&.service /etc/systemd/system
+systemctl enable --now oddmu-unix-domain\&.socket
+systemctl enable --now oddmu-unix-domain\&.service
 .fi
 .RE
 .PP
+To test just the unix domain socket, use \fIncat(1)\fR:
+.PP
+.nf
+.RS 4
+echo -e "GET /view/index HTTP/1\&.1rnHost: localhostrnrn" 
+  | ncat --unixsock /run/oddmu/oddmu\&.sock
+.fi
+.RE
+.PP
+Now you need to set up your web browser to use the Unix domain socket.\& See
+\fIoddmu-apache\fR(5) or \fIoddmu-nginx\fR(5) for example configurations.\&
+.PP
 .SH SEE ALSO
 .PP
-\fIoddmu\fR(1), \fIsystemd.\&exec\fR(5), \fIsystemd.\&socket(5), \fRcapabilities_(7)
+\fIoddmu\fR(1), \fIoddmu-apache\fR(5), \fIoddmu-nginx\fR(5), \fIsystemd.\&exec\fR(5),
+\fIsystemd.\&socket(5), \fRcapabilities_(7)
 .PP
 .SH AUTHORS
 .PP

@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU" "1" "2024-03-07"
+.TH "ODDMU" "1" "2024-04-21"
 .PP
 .SH NAME
 .PP
@@ -212,13 +212,12 @@ Unix-domain socket under systemd and Apache.\&
 .PP
 If the machine you are running Oddmu on is accessible from the Internet, you
 must secure your installation.\& The best way to do this is use a regular web
-server as a reverse proxy.\&
-.PP
-See \fIoddmu-apache\fR(5) for an example.\&
+server as a reverse proxy.\& See \fIoddmu-apache\fR(5) and \fIoddmu-nginx\fR(5) for
+example configurations.\&
 .PP
 Oddmu assumes that all the users that can edit pages or upload files are trusted
-users and therefore their content is trusted.\& Therefore, Oddmu doesn'\&t perform
-HTML sanitization!\&
+users and therefore their content is trusted.\& Oddmu does not perform HTML
+sanitization!\&
 .PP
 For an extra dose of security, consider using a Unix-domain socket.\&
 .PP
