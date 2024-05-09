@@ -171,6 +171,7 @@ func serve() {
 	http.HandleFunc("/", rootHandler)
 	http.HandleFunc("/archive/", makeHandler(archiveHandler, true))
 	http.HandleFunc("/view/", makeHandler(viewHandler, false))
+	http.HandleFunc("/preview/", makeHandler(previewHandler, false))
 	http.HandleFunc("/diff/", makeHandler(diffHandler, true))
 	http.HandleFunc("/edit/", makeHandler(editHandler, true))
 	http.HandleFunc("/save/", makeHandler(saveHandler, true))

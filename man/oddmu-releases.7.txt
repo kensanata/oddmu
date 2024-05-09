@@ -10,6 +10,15 @@ This page lists user-visible features and template changes to consider.
 
 ## 1.10 (unreleased)
 
+You can now preview edits instead of saving them.
+
+- a preview button was added to "edit.html"
+- a new "preview.html" was added
+
+If you want to take advantage of this, you'll need to adapt your templates
+accordingly. The "preview.html" template is a mix of "view.html" and
+"edit.html".
+
 There is an optional change to make to copies of _upload.html_ if you upload
 multiple images at a time. Instead of showing just the link to the last upload,
 you can now show the link (and the images or links, if you want to) to all the

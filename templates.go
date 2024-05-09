@@ -14,7 +14,7 @@ import (
 
 // templateFiles are the various HTML template files used. These files must exist in the root directory for Oddmu to be
 // able to generate HTML output. This always requires a template.
-var templateFiles = []string{"edit.html", "add.html", "view.html",
+var templateFiles = []string{"edit.html", "add.html", "view.html", "preview.html",
 	"diff.html", "search.html", "static.html", "upload.html", "feed.html"}
 
 // templateStore controls access to map of parsed HTML templates. Make sure to lock and unlock as appropriate. See

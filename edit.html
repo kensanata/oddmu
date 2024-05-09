@@ -18,6 +18,7 @@ form, textarea { width: 100%; }
 Text" lang="{{.Language}}" autofocus>{{printf "%s" .Body}}</textarea>
       <p><label><input type="checkbox" name="notify" checked> Add link to <a href="changes">the list of changes</a>.</label></p>
       <p><input type="submit" value="Save">
+        <button formaction="/preview/{{.Name}}" type="submit">Preview</button>
         <a href="/view/{{.Name}}"><button type="button">Cancel</button></a></p>
     </form>
   </body>
