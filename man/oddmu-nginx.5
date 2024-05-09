@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-NGINX" "5" "2024-04-21"
+.TH "ODDMU-NGINX" "5" "2024-05-09"
 .PP
 .SH NAME
 .PP
@@ -87,7 +87,7 @@ shell, mail, or any other service.\&
 .PP
 Instead of having Oddmu listen on a TCP port, you can have it listen on a
 Unix-domain socket.\& This requires socket activation.\& An example of configuring
-the service is given in \fIoddmu.\&service(5)\fR.\&
+the service is given in \fIoddmu.\&service\fR(5).\&
 .PP
 On the nginx side, you can proxy to the socket using an \fIupstream\fR section.\& This
 sends all requests to the socket.\& Use the upstream name as the server name for
@@ -98,7 +98,7 @@ server configuration.\& On a Debian system, that'\&d be in
 .nf
 .RS 4
 location ~ ^/(view|diff|edit|save|add|append|upload|drop|search|archive)/ {
-        proxy_pass http://unix:/run/oddmu/oddmu\&.sock:;
+  proxy_pass http://unix:/run/oddmu/oddmu\&.sock:;
 }
 .fi
 .RE
