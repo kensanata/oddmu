@@ -8,7 +8,7 @@ oddmu-releases - what's new in this releases?
 
 This page lists user-visible features and template changes to consider.
 
-## 1.10 (unreleased)
+## 1.10 (2024)
 
 You can now preview edits instead of saving them.
 
