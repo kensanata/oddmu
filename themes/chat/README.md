@@ -4,10 +4,18 @@ A theme that focuses on appending short paragraphs to existing pages.
 
 This theme makes it all look like chat. 😍
 
-Type and submit. 🥳
-
 Hm. 🤔
+
+> Oh, and quotes are messages from other people! 😲
 
 I think I like it! 😄
 
-More [themes](../index)! 👀
+> You are not alone. 👍
+
+Type and submit in the textarea. 🥳
+
+It really does feel like chat. 🍵 😌
+
+> Check out the other [themes](../index)! 👀
+
+No. 🙃
