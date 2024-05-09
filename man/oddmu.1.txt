@@ -47,6 +47,7 @@ directory:
 - _/view/dir/name.rss_ shows  the RSS feed for the pages linked
 - _/diff/dir/name_ shows the last change to a page
 - _/edit/dir/name_ shows a form to edit a page
+- _/preview/dir/name_ shows a preview of a page edit and the form to edit it
 - _/save/dir/name_ saves an edit
 - _/add/dir/name_ shows a form to add to a page
 - _/append/dir/name_ appends an addition to a page
@@ -103,18 +104,8 @@ curl --remote-name 'http://localhost:8080/archive/man/man.zip
 
 # CONFIGURATION
 
-The template files are the HTML files in the working directory:
-
-- _view.html_ shows a page
-- _diff.html_ shows the last change to a page
-- _edit.html_ shows a form to edit a page
-- _add.html_ shows a form to add to a page
-- _upload.html_ shows a form to upload a file
-- _search.html_ shows the search results
-- _static.html_ is used to generate a static site
-- _feed.html_ is used to generate a RSS feed
-
-Please change the templates!
+The template files are the HTML files in the working directory. Please change
+these templates!
 
 The first change you should make is to replace the name and email address in the
 footer of _view.html_. Look for "Your Name" and "example.org".

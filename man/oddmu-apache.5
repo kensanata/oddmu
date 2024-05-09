@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-APACHE" "5" "2024-04-21"
+.TH "ODDMU-APACHE" "5" "2024-05-09"
 .PP
 .SH NAME
 .PP
@@ -48,7 +48,7 @@ ServerAdmin alex@alexschroeder\&.ch
 <VirtualHost *:443>
   ServerName transjovian\&.org
   SSLEngine on
-  ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search|archive)/(\&.*))?$" 
+  ProxyPassMatch "^/((view|preview|diff|edit|save|add|append|upload|drop|search|archive)/(\&.*))?$" 
                  "http://localhost:8080/$1"
 </VirtualHost>
 .fi
@@ -132,7 +132,7 @@ ServerAdmin alex@alexschroeder\&.ch
 <VirtualHost *:443>
   ServerName transjovian\&.org
   SSLEngine on
-  ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search|archive)/(\&.*))?$" 
+  ProxyPassMatch "^/((view|preview|diff|edit|save|add|append|upload|drop|search|archive)/(\&.*))?$" 
                  "http://localhost:8080/$1"
 </VirtualHost>
 .fi
@@ -170,7 +170,7 @@ In that case, you need to use the ProxyPassMatch directive.\&
 .PP
 .nf
 .RS 4
-ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search|archive)/(\&.*))?$" 
+ProxyPassMatch "^/((view|preview|diff|edit|save|add|append|upload|drop|search|archive)/(\&.*))?$" 
                "unix:/run/oddmu/oddmu\&.sock|http://localhost/$1"
 .fi
 .RE
@@ -189,7 +189,7 @@ A workaround is to add the redirect manually and drop the question-mark:
 .nf
 .RS 4
 RedirectMatch "^/$" "/view/index"
-ProxyPassMatch "^/((view|diff|edit|save|add|append|upload|drop|search|archive)/(\&.*))$" 
+ProxyPassMatch "^/((view|preview|diff|edit|save|add|append|upload|drop|search|archive)/(\&.*))$" 
                "unix:/run/oddmu/oddmu\&.sock|http://localhost/$1"
 .fi
 .RE
@@ -274,7 +274,7 @@ directory:
 .PP
 .nf
 .RS 4
-<LocationMatch "^/(edit|save|add|append|upload|drop|(view|search|archive)/secret)/">
+<LocationMatch "^/(edit|save|add|append|upload|drop|(view|preview|search|archive)/secret)/">
   AuthType Basic
   AuthName "Password Required"
   AuthUserFile /home/oddmu/\&.htpasswd

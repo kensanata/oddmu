@@ -19,7 +19,7 @@ The site is defined in "/etc/nginx/sites-available/default", in the _server_
 section. Add a new _location_ section after the existing _location_ section:
 
 ```
-location ~ ^/(view|diff|edit|save|add|append|upload|drop|search|archive)/ {
+location ~ ^/(view|preview|diff|edit|save|add|append|upload|drop|search|archive)/ {
         proxy_pass http://localhost:8080;
 }
 ```
@@ -81,7 +81,7 @@ server configuration. On a Debian system, that'd be in
 "/etc/nginx/sites-available/default".
 
 ```
-location ~ ^/(view|diff|edit|save|add|append|upload|drop|search|archive)/ {
+location ~ ^/(view|preview|diff|edit|save|add|append|upload|drop|search|archive)/ {
   proxy_pass http://unix:/run/oddmu/oddmu.sock:;
 }
 ```

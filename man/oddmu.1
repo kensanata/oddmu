@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU" "1" "2024-04-21"
+.TH "ODDMU" "1" "2024-05-09"
 .PP
 .SH NAME
 .PP
@@ -62,6 +62,8 @@ directory:
 \fI/diff/dir/name\fR shows the last change to a page
 .IP \(bu 4
 \fI/edit/dir/name\fR shows a form to edit a page
+.IP \(bu 4
+\fI/preview/dir/name\fR shows a preview of a page edit and the form to edit it
 .IP \(bu 4
 \fI/save/dir/name\fR saves an edit
 .IP \(bu 4
@@ -136,28 +138,8 @@ curl --remote-name \&'http://localhost:8080/archive/man/man\&.zip
 .PP
 .SH CONFIGURATION
 .PP
-The template files are the HTML files in the working directory:
-.PP
-.PD 0
-.IP \(bu 4
-\fIview.\&html\fR shows a page
-.IP \(bu 4
-\fIdiff.\&html\fR shows the last change to a page
-.IP \(bu 4
-\fIedit.\&html\fR shows a form to edit a page
-.IP \(bu 4
-\fIadd.\&html\fR shows a form to add to a page
-.IP \(bu 4
-\fIupload.\&html\fR shows a form to upload a file
-.IP \(bu 4
-\fIsearch.\&html\fR shows the search results
-.IP \(bu 4
-\fIstatic.\&html\fR is used to generate a static site
-.IP \(bu 4
-\fIfeed.\&html\fR is used to generate a RSS feed
-.PD
-.PP
-Please change the templates!\&
+The template files are the HTML files in the working directory.\& Please change
+these templates!\&
 .PP
 The first change you should make is to replace the name and email address in the
 footer of \fIview.\&html\fR.\& Look for "Your Name" and "example.\&org".\&
