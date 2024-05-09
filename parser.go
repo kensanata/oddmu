@@ -12,7 +12,7 @@ import (
 // wikiLink returns an inline parser function. This indirection is
 // required because we want to call the previous definition in case
 // this is not a wikiLink.
-func wikiLink(p *parser.Parser, fn func(p *parser.Parser, data []byte, offset int) (int, ast.Node)) func(p *parser.Parser, data []byte, offset int) (int, ast.Node) {
+func wikiLink(fn func(p *parser.Parser, data []byte, offset int) (int, ast.Node)) func(p *parser.Parser, data []byte, offset int) (int, ast.Node) {
 	return func(p *parser.Parser, original []byte, offset int) (int, ast.Node) {
 		data := original[offset:]
 		n := len(data)
@@ -64,7 +64,7 @@ func wikiParser() (*parser.Parser, *[]string) {
 	extensions := (parser.CommonExtensions | parser.AutoHeadingIDs | parser.Attributes) & ^parser.MathJax
 	parser := parser.NewWithExtensions(extensions)
 	prev := parser.RegisterInline('[', nil)
-	parser.RegisterInline('[', wikiLink(parser, prev))
+	parser.RegisterInline('[', wikiLink(prev))
 	fn, hashtags := hashtag()
 	parser.RegisterInline('#', fn)
 	if useWebfinger {
