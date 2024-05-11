@@ -48,6 +48,18 @@ I am cold, alone</p>
 	assert.Equal(t, r, string(p.Html))
 }
 
+func TestPageHtmlHashtagCornerCases(t *testing.T) {
+	p := &Page{Body: []byte(`#
+
+ok # #o #ok`)}
+	p.renderHtml()
+	r := `<p>#</p>
+
+<p>ok # <a class="tag" href="/search/?q=%23o">#o</a> <a class="tag" href="/search/?q=%23ok">#ok</a></p>
+`
+	assert.Equal(t, r, string(p.Html))
+}
+
 func TestPageHtmlWikiLink(t *testing.T) {
 	p := &Page{Body: []byte(`# Photos and Books
 Blue and green and black

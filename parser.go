@@ -44,7 +44,7 @@ func hashtag() (func(p *parser.Parser, data []byte, offset int) (int, ast.Node),
 		for i < n && !parser.IsSpace(data[i]) {
 			i++
 		}
-		if i == 0 {
+		if i <= 1 {
 			return 0, nil
 		}
 		hashtags = append(hashtags, string(data[1:i]))
