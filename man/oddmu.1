@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU" "1" "2024-05-09"
+.TH "ODDMU" "1" "2024-05-11"
 .PP
 .SH NAME
 .PP
@@ -186,9 +186,9 @@ ODDMU_FILTER can be used to exclude subdirectories from such tree actions.\& See
 Instead of specifying ODDMU_ADDRESS or ODDMU_PORT, you can start the service
 through socket activation.\& The advantage of this method is that you can use a
 Unix-domain socket instead of a TCP socket, and the permissions and ownership of
-the socket are set before the program starts.\& See \fIoddmu.\&service\fR(5) and
-\fIoddmu-apache\fR(5) for an example of how to use socket activation with a
-Unix-domain socket under systemd and Apache.\&
+the socket are set before the program starts.\& See \fIoddmu.\&service\fR(5),
+\fIoddmu-apache\fR(5) and \fIoddmu-nginx\fR(5) for an example of how to use socket
+activation with a Unix-domain socket under systemd and Apache.\&
 .PP
 .SH SECURITY
 .PP
