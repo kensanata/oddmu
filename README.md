@@ -213,6 +213,7 @@ high-level introduction to the various source files.
 - `languages.go` implements the language detection
 - `page.go` implements the page loading and saving
 - `parser.go` implements the Markdown parsing
+- `preview.go` implements the `/preview` handler
 - `score.go` implements the page scoring when showing search results
 - `search.go` implements the `/search` handler
 - `snippets.go` implements the page summaries for search results
