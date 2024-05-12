@@ -10,7 +10,10 @@ This page lists user-visible features and template changes to consider.
 
 ## 1.11 (unreleased)
 
-No new user-visible features and template changes to consider.
+The HTML renderer option for smart fractions support was removed. Therefore, 1/8
+no longer turns into ⅛ or ¹⁄₈. The benefit is that something like "doi:
+10.1017/9781009157926.007" doesn't turn into "doi: 10.1017⁄9781009157926.007".
+If you need to change this, take a look at the _wikiRenderer_ function.
 
 ## 1.10 (2024)
 

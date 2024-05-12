@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-RELEASES" "7" "2024-05-09"
+.TH "ODDMU-RELEASES" "7" "2024-05-12"
 .PP
 .SH NAME
 .PP
@@ -17,7 +17,10 @@ This page lists user-visible features and template changes to consider.\&
 .PP
 .SS 1.11 (unreleased)
 .PP
-No new user-visible features and template changes to consider.\&
+The HTML renderer option for smart fractions support was removed.\& Therefore, 1/8
+no longer turns into ⅛ or ¹⁄₈.\& The benefit is that something like "doi:
+10.\&1017/9781009157926.\&007" doesn'\&t turn into "doi: 10.\&1017⁄9781009157926.\&007".\&
+If you need to change this, take a look at the \fIwikiRenderer\fR function.\&
 .PP
 .SS 1.10 (2024)
 .PP

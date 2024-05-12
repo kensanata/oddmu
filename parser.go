@@ -73,17 +73,16 @@ func wikiParser() (*parser.Parser, *[]string) {
 	return parser, hashtags
 }
 
-// wikiRenderer is a Renderer for Markdown that adds lazy loading of images. This in turn requires an exception for the
-// sanitization policy!
+// wikiRenderer is a Renderer for Markdown that adds lazy loading of images and disables fractions support. Remember
+// that there is no HTML sanitization.
 func wikiRenderer() *html.Renderer {
-	htmlFlags := html.CommonFlags | html.LazyLoadImages
+	htmlFlags := html.CommonFlags | html.LazyLoadImages & ^html.SmartypantsFractions
 	opts := html.RendererOptions{Flags: htmlFlags}
 	renderer := html.NewRenderer(opts)
 	return renderer
 }
 
 // renderHtml renders the Page.Body to HTML and sets Page.Html, Page.Language, Page.Hashtags, and escapes Page.Name.
-// Note: If the rendered HTML doesn't contain the attributes or elements you expect it to contain, check sanitizeBytes!
 func (p *Page) renderHtml() {
 	parser, hashtags := wikiParser()
 	renderer := wikiRenderer()
