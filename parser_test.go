@@ -95,3 +95,17 @@ func TestLazyLoadImages(t *testing.T) {
 	p.renderHtml()
 	assert.Contains(t, string(p.Html), "lazy")
 }
+
+// The fractions available in Latin 1 (?) are rendered.
+func TestFractions(t *testing.T) {
+	p := &Page{Body: []byte(`1/4`)}
+	p.renderHtml()
+	assert.Contains(t, string(p.Html), "&frac14;")
+}
+
+// Other fractions are not rendered.
+func TestNoFractions(t *testing.T) {
+	p := &Page{Body: []byte(`1/6`)}
+	p.renderHtml()
+	assert.Contains(t, string(p.Html), "1/6")
+}

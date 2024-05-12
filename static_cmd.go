@@ -196,7 +196,8 @@ func staticPage(source, target string) (*Page, error) {
 	doc := markdown.Parse(p.Body, parser)
 	ast.WalkFunc(doc, staticLinks)
 	opts := html.RendererOptions{
-		Flags: html.CommonFlags,
+		// sync with wikiRenderer
+		Flags: html.CommonFlags & ^html.SmartypantsFractions | html.LazyLoadImages,
 	}
 	renderer := html.NewRenderer(opts)
 	maybeUnsafeHTML := markdown.Render(doc, renderer)

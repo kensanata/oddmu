@@ -76,7 +76,8 @@ func wikiParser() (*parser.Parser, *[]string) {
 // wikiRenderer is a Renderer for Markdown that adds lazy loading of images and disables fractions support. Remember
 // that there is no HTML sanitization.
 func wikiRenderer() *html.Renderer {
-	htmlFlags := html.CommonFlags | html.LazyLoadImages & ^html.SmartypantsFractions
+	// sync with staticPage
+	htmlFlags := html.CommonFlags & ^html.SmartypantsFractions | html.LazyLoadImages
 	opts := html.RendererOptions{Flags: htmlFlags}
 	renderer := html.NewRenderer(opts)
 	return renderer
