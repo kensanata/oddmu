@@ -16,6 +16,10 @@ import (
 
 type docid uint
 
+type imageData struct {
+	title, name string
+}
+
 // indexStore controls access to the maps used for search. Make sure to lock and unlock as appropriate.
 type indexStore struct {
 	sync.RWMutex
@@ -31,6 +35,9 @@ type indexStore struct {
 
 	// titles is a map, mapping page names to titles.
 	titles map[string]string
+
+	// images is a map, mapping pages names to alt text to an array of image data.
+	images map[string][]imageData
 }
 
 var index indexStore
@@ -45,6 +52,7 @@ func (idx *indexStore) reset() {
 	idx.token = make(map[string][]docid)
 	idx.documents = make(map[docid]string)
 	idx.titles = make(map[string]string)
+	idx.images = make(map[string][]imageData)
 }
 
 // addDocument adds the text as a new document. This assumes that the index is locked!
@@ -102,6 +110,7 @@ func (idx *indexStore) deletePageName(name string) {
 		delete(idx.documents, id)
 	}
 	delete(idx.titles, name)
+	delete(idx.images, name)
 }
 
 // remove the page from the index. Do this when deleting a page. This assumes that the index is unlocked.
@@ -153,6 +162,7 @@ func (idx *indexStore) addPage(p *Page) {
 	idx.documents[id] = p.Name
 	p.handleTitle(false)
 	idx.titles[p.Name] = p.Title
+	idx.images[p.Name] = p.images()
 }
 
 // add a page to the index. This assumes that the index is unlocked.

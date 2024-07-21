@@ -119,3 +119,23 @@ func (p *Page) plainText() string {
 	}
 	return string(text)
 }
+
+// images returns a map mapping alt texts to file names.
+func (p *Page) images() []imageData {
+	images := make([]imageData, 0)
+	parser := parser.New()
+	doc := markdown.Parse(p.Body, parser)
+	ast.WalkFunc(doc, func(node ast.Node, entering bool) ast.WalkStatus {
+		if entering {
+			switch v := node.(type) {
+			case *ast.Image:
+				// not an absolute URL, not a full URL, not a mailto: URI
+				if v.Title != nil {
+					images = append(images, imageData{title: string(v.Title), name: string(v.Destination)})
+				}
+			}
+		}
+		return ast.GoToNext
+	})
+	return images
+}
