@@ -38,7 +38,7 @@ run:
 
 upload: build
 	rsync --itemize-changes --archive oddmu sibirocobombus.root:/home/oddmu/
-	ssh sibirocobombus.root "systemctl restart oddmu; systemctl restart alex; systemctl restart claudia; systemctl restart campaignwiki"
+	ssh sibirocobombus.root "systemctl restart oddmu; systemctl restart alex; systemctl restart claudia; systemctl restart campaignwiki; systemctl restart community"
 	@echo Changes to the template files need careful consideration
 
 docs:
