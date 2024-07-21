@@ -69,13 +69,17 @@ func highlightTokens(q string) []string {
 }
 
 // hashtags returns a slice of hashtags. Use this to extract hashtags
-// from a page body.
+// from a page body. This ignores Markdown completely.
 func hashtags(s []byte) []string {
 	hashtags := make([]string, 0)
 	for {
 		i := bytes.IndexRune(s, '#')
 		if i == -1 {
 			return hashtags
+		}
+		if i > 0 && s[i-1] == '\\' {
+			s = s[i+1:]
+			continue
 		}
 		from := i
 		i++
