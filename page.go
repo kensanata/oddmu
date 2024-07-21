@@ -16,14 +16,12 @@ import (
 
 // Page is a struct containing information about a single page. Title is the title extracted from the page content using
 // titleRegexp. Name is the path without extension (so a path of "foo.md" results in the Name "foo"). Body is the
-// Markdown content of the page and Html is the rendered HTML for that Markdown. Score is a number indicating how well
-// the page matched for a search query.
+// Markdown content of the page and Html is the rendered HTML for that Markdown.
 type Page struct {
 	Title    string
 	Name     string
 	Body     []byte
 	Html     template.HTML
-	Score    int
 	Hashtags []string
 }
 
@@ -130,12 +128,6 @@ func (p *Page) handleTitle(replace bool) {
 			p.Body = []byte(strings.Replace(s, m[0], "", 1))
 		}
 	}
-}
-
-// score sets Page.Title and computes Page.Score.
-func (p *Page) score(q string) {
-	p.handleTitle(true)
-	p.Score = score(q, string(p.Body)) + score(q, p.Title)
 }
 
 // summarize sets Page.Html to an extract.

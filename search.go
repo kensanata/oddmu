@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"html/template"
 	"net/http"
 	"os"
 	"path"
@@ -13,6 +14,14 @@ import (
 	"unicode/utf8"
 )
 
+// Result is a page plus image data. Page is the page being used as the search result. Score is a number indicating how
+// well the page matched for a search query. Images are the images whose description match the query.
+type Result struct {
+	Page
+	Score    int
+	Images []ImageData
+}
+
 // Search is a struct containing the result of a search. Query is the
 // query string and Items is the array of pages with the result.
 // Currently there is no pagination of results! When a page is part of
@@ -20,7 +29,7 @@ import (
 type Search struct {
 	Query    string
 	Dir      string
-	Items    []*Page
+	Items    []*Result
 	Previous int
 	Page     int
 	Next     int
@@ -94,9 +103,9 @@ const itemsPerPage = 20
 // size is 20. Specify either the page number to return, or that all the results should be returned. Only ask for all
 // results if runtime is not an issue, like on the command line. The boolean return value indicates whether there are
 // more results.
-func search(q, dir, filter string, page int, all bool) ([]*Page, bool) {
+func search(q, dir, filter string, page int, all bool) ([]*Result, bool) {
 	if len(q) == 0 {
-		return make([]*Page, 0), false
+		return make([]*Result, 0), false
 	}
 	names := index.search(q) // hashtags or all names
 	names = filterPath(names, dir, filter)
@@ -104,16 +113,51 @@ func search(q, dir, filter string, page int, all bool) ([]*Page, bool) {
 	names = filterNames(names, predicates)
 	index.RLock()
 	slices.SortFunc(names, sortNames(terms))
-	index.RUnlock()
+	index.RUnlock() // unlock because grep takes long
 	names, keepFirst := prependQueryPage(names, dir, q)
 	from := itemsPerPage * (page - 1)
 	to := from + itemsPerPage - 1
 	items, more := grep(terms, names, from, to, all, keepFirst)
-	for _, p := range items {
-		p.score(q)
-		p.summarize(q)
+	results := make([]*Result, len(items))
+	for i, p := range items {
+		r := &Result{}
+		r.Title = p.Title
+		r.Name = p.Name
+		r.Body = p.Body
+		// Hashtags aren't computed and Html is getting overwritten anyway
+		r.summarize(q)
+		r.score(q)
+		results[i] = r
 	}
-	return items, more
+	if len(terms) > 0 {
+		index.RLock()
+		res := make([]ImageData, 0)
+		for _, r := range results {
+		ImageLoop:
+			for _, img := range index.images[r.Name] {
+				title := strings.ToLower(img.Title)
+				for _, term := range terms {
+					if strings.Contains(title, term) {
+						re, err := re(term)
+						if err == nil {
+							img.Html = template.HTML(highlight(re, img.Title))
+						}
+						res = append(res, img)
+						continue ImageLoop
+					}
+				}
+			}
+			r.Images = res
+		}
+		index.RUnlock()
+	}
+	return results, more
+}
+
+// score sets Page.Title and computes Page.Score.
+func (r *Result) score(q string) {
+	r.handleTitle(true)
+	r.Score = score(q, string(r.Body)) + score(q, r.Title)
 }
 
 // filterPath filters the names by prefix and by a regular expression. A prefix of "." means that all the names are

@@ -12,12 +12,18 @@ import (
 	"sort"
 	"strings"
 	"sync"
+	"html/template"
 )
 
 type docid uint
 
-type imageData struct {
-	title, name string
+// ImageData holds the data used to search for images using the alt-text. Title is the alt-text; Name is the complete
+// URL including path (which is important since the image link itself only has the URL relative to the page in which it
+// is found; and Html is a copy of the Title with highlighting of a term as applied when searching. This is temporary.
+// It depends on the fact that Title is always plain text.
+type ImageData struct {
+	Title, Name string
+	Html template.HTML
 }
 
 // indexStore controls access to the maps used for search. Make sure to lock and unlock as appropriate.
@@ -37,7 +43,7 @@ type indexStore struct {
 	titles map[string]string
 
 	// images is a map, mapping pages names to alt text to an array of image data.
-	images map[string][]imageData
+	images map[string][]ImageData
 }
 
 var index indexStore
@@ -52,7 +58,7 @@ func (idx *indexStore) reset() {
 	idx.token = make(map[string][]docid)
 	idx.documents = make(map[docid]string)
 	idx.titles = make(map[string]string)
-	idx.images = make(map[string][]imageData)
+	idx.images = make(map[string][]ImageData)
 }
 
 // addDocument adds the text as a new document. This assumes that the index is locked!

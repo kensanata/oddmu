@@ -92,13 +92,16 @@ func TestScoreSubstring(t *testing.T) {
 
 func TestScorePageAndMarkup(t *testing.T) {
 	s := `The Transjovian Council accepts new members. If you think we'd be a good fit, apply for an account. Contact [Alex Schroeder](https://alexschroeder.ch/wiki/Contact). Mail is best. Encrypted mail is best. [Delta Chat](https://delta.chat/de/) is a messenger app that uses encrypted mail. It's the bestest best.`
-	p := &Page{Title: "Test", Name: "Test", Body: []byte(s)}
+	r := &Result{}
+	r.Title = "Test"
+	r.Name = "Test"
+	r.Body = []byte(s)
 	q := "wiki"
-	p.score(q)
+	r.score(q)
 	// "wiki" is not visible in the plain text but the score is no affected:
 	// - wiki, all, whole, beginning, end (5)
-	if p.Score != 5 {
-		t.Logf("%s score is %d", q, p.Score)
+	if r.Score != 5 {
+		t.Logf("%s score is %d", q, r.Score)
 		t.Fail()
 	}
 }

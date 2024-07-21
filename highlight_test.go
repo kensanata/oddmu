@@ -16,7 +16,7 @@ No birds to be heard.`
 
 	q := "window"
 	re, _ := re(q)
-	r := highlight(q, re, s)
+	r := highlight(re, s)
 	if r != h {
 		t.Logf("The highlighting is wrong in ｢%s｣", r)
 		t.Fail()
@@ -35,7 +35,7 @@ I hear the fountain`
 
 	q := "shout out"
 	re, _ := re(q)
-	r := highlight(q, re, s)
+	r := highlight(re, s)
 	if r != h {
 		t.Logf("The highlighting is wrong in ｢%s｣", r)
 		t.Fail()

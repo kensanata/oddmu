@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-RELEASES" "7" "2024-05-12"
+.TH "ODDMU-RELEASES" "7" "2024-07-21"
 .PP
 .SH NAME
 .PP
@@ -15,12 +15,33 @@ oddmu-releases - what'\&s new in this releases?\&
 .PP
 This page lists user-visible features and template changes to consider.\&
 .PP
-.SS 1.11 (unreleased)
+.SS 1.11 (2024)
 .PP
 The HTML renderer option for smart fractions support was removed.\& Therefore, 1/8
 no longer turns into ⅛ or ¹⁄₈.\& The benefit is that something like "doi:
 10.\&1017/9781009157926.\&007" doesn'\&t turn into "doi: 10.\&1017⁄9781009157926.\&007".\&
 If you need to change this, take a look at the \fIwikiRenderer\fR function.\&
+.PP
+When search terms (excluding hashtags) match the alt text given for an image,
+that image is part of the data available to the search template.\&
+.PP
+If you want to take advantage of this, you'\&ll need to adapt your "search.\&html"
+template accordingly.\& Use like this, for example:
+.PP
+.nf
+.RS 4
+{{range \&.Items}}
+<article lang="{{\&.Language}}">
+  <p><a class="result" href="/view/{{\&.Name}}">{{\&.Title}}</a>
+    <span class="score">{{\&.Score}}</span></p>
+  <blockquote>{{\&.Html}}</blockquote>
+  {{range \&.Images}}
+  <p class="image"><a href="/view/{{\&.Name}}"><img class="last" src="/view/{{\&.Name}}"></a><br/>{{\&.Html}}
+  {{end}}
+</article>
+{{end}}
+.fi
+.RE
 .PP
 .SS 1.10 (2024)
 .PP

@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-TEMPLATES" "5" "2024-05-09" "File Formats Manual"
+.TH "ODDMU-TEMPLATES" "5" "2024-07-21" "File Formats Manual"
 .PP
 .SH NAME
 .PP
@@ -79,8 +79,6 @@ For \fIsearch.\&html\fR, it is a page summary, with bold matches, as HTML.\&
 For \fIfeed.\&html\fR, it is the escaped (!\&) HTML of the feed item.\&
 .PD
 .PP
-\fI{{.\&Score}}\fR is a numerical score.\& It is only computed for \fIsearch.\&html\fR.\&
-.PP
 \fI{{.\&IsBlog}}\fR says whether the current page has a name starting with an ISO
 date.\&
 .PP
@@ -117,9 +115,6 @@ An item is a page plus a date.\& All the properties of a page can be used (see
 \fI{{.\&Dir}}\fR is the directory in which the search starts, percent-escaped except
 for the slashes.\&
 .PP
-\fI{{.\&Items}}\fR is an array of pages (see \fBPage\fR above).\& To refer to them, you need
-to use a \fI{{range .\&Items}}\fR … \fI{{end}}\fR construct.\&
-.PP
 \fI{{.\&Previous}}\fR, \fI{{.\&Page}}\fR and \fI{{.\&Next}}\fR are the previous, current and next
 page number in the results since doing arithmetics in templates is hard.\& The
 first page number is 1.\& The last page is expensive to dermine and so that is not
@@ -128,6 +123,29 @@ available.\&
 \fI{{.\&More}}\fR indicates if there are any more search results.\&
 .PP
 \fI{{.\&Results}}\fR indicates if there were any search results at all.\&
+.PP
+\fI{{.\&Items}}\fR is an array of results.\& To refer to them, you need to use a
+\fI{{range .\&Items}}\fR … \fI{{end}}\fR construct.\&
+.PP
+A result is a page plus a score and possibly images.\& All the properties of a
+page can be used (see \fBPage\fR above).\&
+.PP
+\fI{{.\&Score}}\fR is a numerical score.\& It is only computed for \fIsearch.\&html\fR.\&
+.PP
+\fI{{.\&Images}}\fR are the images where the alt-text matches at least one of the
+query terms (but not predicates and not hashtags since those apply to the page
+as a whole).\& To refer to them, you need to use a \fI{{range .\&Images}}\fR … \fI{{end}}\fR
+construct.\&
+.PP
+Each image has three properties:
+.PP
+\fI{{.\&Title}}\fR is the alt-text of the image.\& It can never be empty because images
+are only listed if a search term matches.\&
+.PP
+\fI{{.\&Name}}\fR is the file name for use in URLs.\&
+.PP
+\fI{{.\&Html}}\fR the image alt-text with a bold tag used to highlight the first
+search term that matched.\&
 .PP
 .SS Upload
 .PP

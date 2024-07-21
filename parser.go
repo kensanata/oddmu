@@ -7,6 +7,8 @@ import (
 	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
 	"net/url"
+	"path"
+	"path/filepath"
 )
 
 // wikiLink returns an inline parser function. This indirection is
@@ -120,9 +122,10 @@ func (p *Page) plainText() string {
 	return string(text)
 }
 
-// images returns a map mapping alt texts to file names.
-func (p *Page) images() []imageData {
-	images := make([]imageData, 0)
+// images returns an array of ImageData.
+func (p *Page) images() []ImageData {
+	dir := path.Dir(filepath.ToSlash(p.Name))
+	images := make([]ImageData, 0)
 	parser := parser.New()
 	doc := markdown.Parse(p.Body, parser)
 	ast.WalkFunc(doc, func(node ast.Node, entering bool) ast.WalkStatus {
@@ -130,12 +133,33 @@ func (p *Page) images() []imageData {
 			switch v := node.(type) {
 			case *ast.Image:
 				// not an absolute URL, not a full URL, not a mailto: URI
-				if v.Title != nil {
-					images = append(images, imageData{title: string(v.Title), name: string(v.Destination)})
+				text := toString(v)
+				if len(text) > 0 {
+					name := path.Join(dir, string(v.Destination))
+					image := ImageData{Title: text, Name: name}
+					images = append(images, image)
 				}
+				return ast.SkipChildren
 			}
 		}
 		return ast.GoToNext
 	})
 	return images
+}
+
+// toString for a node returns the text nodes' literals, concatenated. There is no whitespace added so the expectation
+// is that there is only one child node. Otherwise, there may be a space missing between the literals, depending on the
+// exact child nodes they belong to.
+func toString(node ast.Node) string {
+	b := new(bytes.Buffer)
+	ast.WalkFunc(node, func(node ast.Node, entering bool) ast.WalkStatus {
+		if entering {
+			switch v := node.(type) {
+			case *ast.Text:
+				b.Write(v.Literal)
+			}
+		}
+		return ast.GoToNext
+	})
+	return b.String()
 }

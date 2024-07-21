@@ -35,7 +35,7 @@ func snippets(q string, s string) string {
 	}
 	// Short cut for short pages
 	if len(s) <= snippetlen {
-		return highlight(q, re, s)
+		return highlight(re, s)
 	}
 	// show a snippet from the beginning of the document
 	j := strings.LastIndex(s[:snippetlen], " ")
@@ -47,7 +47,7 @@ func snippets(q string, s string) string {
 			if len(s) > 400 {
 				s = s[0:400] + " …"
 			}
-			return highlight(q, re, s)
+			return highlight(re, s)
 		}
 	}
 	t := s[0:j]
@@ -98,5 +98,5 @@ func snippets(q string, s string) string {
 			s = s[end:]
 		}
 	}
-	return highlight(q, re, res)
+	return highlight(re, res)
 }

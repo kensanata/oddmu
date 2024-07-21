@@ -7,6 +7,7 @@ import (
 	"github.com/muesli/reflow/wordwrap"
 	"github.com/google/subcommands"
 	"io"
+	"net/url"
 	"os"
 	"regexp"
 	"strings"
@@ -82,7 +83,7 @@ func searchCli(w io.Writer, dir string, n int, all, extract bool, quiet bool, ar
 }
 
 // searchExtract prints the search extracts to stdout with highlighting for a terminal.
-func searchExtract(w io.Writer, items []*Page) {
+func searchExtract(w io.Writer, items []*Result) {
 	heading := func (s string) string { return "\x1b[1;4m" + s + "\x1b[0m" } // bold + underline
 	match := func (s string) string { return "\x1b[1m" + s + "\x1b[0m" } // bold
 	re := regexp.MustCompile(`<b>(.*?)</b>`)
@@ -94,6 +95,16 @@ func searchExtract(w io.Writer, items []*Page) {
 		}
 		for _, s := range strings.Split(wordwrap.String(s, 72), "\n") {
 			fmt.Fprintln(w, "    ", s)
+		}
+		for _, img := range p.Images {
+			name, err := url.PathUnescape(img.Name)
+			if err != nil {
+				name = img.Name
+			}
+			fmt.Fprintln(w, "    - ", name);
+			for _, s := range strings.Split(wordwrap.String(img.Title, 70), "\n") {
+				fmt.Fprintln(w, "      ", s)
+			}
 		}
 	}
 }

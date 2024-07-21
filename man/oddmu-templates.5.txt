@@ -56,8 +56,6 @@ _{{.Html}}_ contains some sort of HTML that depends on the template used.
 - For _search.html_, it is a page summary, with bold matches, as HTML.
 - For _feed.html_, it is the escaped (!) HTML of the feed item.
 
-_{{.Score}}_ is a numerical score. It is only computed for _search.html_.
-
 _{{.IsBlog}}_ says whether the current page has a name starting with an ISO
 date.
 
@@ -94,9 +92,6 @@ _{{.Query}}_ is the query string.
 _{{.Dir}}_ is the directory in which the search starts, percent-escaped except
 for the slashes.
 
-_{{.Items}}_ is an array of pages (see *Page* above). To refer to them, you need
-to use a _{{range .Items}}_ … _{{end}}_ construct.
-
 _{{.Previous}}_, _{{.Page}}_ and _{{.Next}}_ are the previous, current and next
 page number in the results since doing arithmetics in templates is hard. The
 first page number is 1. The last page is expensive to dermine and so that is not
@@ -105,6 +100,29 @@ available.
 _{{.More}}_ indicates if there are any more search results.
 
 _{{.Results}}_ indicates if there were any search results at all.
+
+_{{.Items}}_ is an array of results. To refer to them, you need to use a
+_{{range .Items}}_ … _{{end}}_ construct.
+
+A result is a page plus a score and possibly images. All the properties of a
+page can be used (see *Page* above).
+
+_{{.Score}}_ is a numerical score. It is only computed for _search.html_.
+
+_{{.Images}}_ are the images where the alt-text matches at least one of the
+query terms (but not predicates and not hashtags since those apply to the page
+as a whole). To refer to them, you need to use a _{{range .Images}}_ … _{{end}}_
+construct.
+
+Each image has three properties:
+
+_{{.Title}}_ is the alt-text of the image. It can never be empty because images
+are only listed if a search term matches.
+
+_{{.Name}}_ is the file name for use in URLs.
+
+_{{.Html}}_ the image alt-text with a bold tag used to highlight the first
+search term that matched.
 
 ## Upload
 

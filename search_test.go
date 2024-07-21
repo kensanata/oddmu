@@ -227,6 +227,28 @@ A quick sip too quick
 	assert.Equal(t, "Tea", items[1].Title, items[1].Name)
 }
 
+func TestImageSearch(t *testing.T) {
+	cleanup(t, "testdata/images")
+
+	p := &Page{Name: "testdata/images/2024-07-21", Body: []byte(`# Pictures
+
+![phone](2024-07-21.jpg)
+
+Pictures in the box
+Tiny windows to our past
+Where are you, my love?
+
+`)}
+	p.save()
+
+	items, _ := search("phone", "testdata/images", "", 1, false)
+	assert.Equal(t, 1, len(items), "one page found")
+	assert.Equal(t, "Pictures", items[0].Title)
+	assert.Equal(t, "phone", items[0].Images[0].Title)
+	assert.Equal(t, "<b>phone</b>", string(items[0].Images[0].Html))
+	assert.Equal(t, "testdata/images/2024-07-21.jpg", items[0].Images[0].Name)
+}
+
 func TestSearchQuestionmark(t *testing.T) {
 	cleanup(t, "testdata/question")
 	p := &Page{Name: "testdata/question/Odd?", Body: []byte(`# Even?
