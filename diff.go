@@ -46,23 +46,23 @@ func (p *Page) Diff() template.HTML {
 }
 
 func diff2html(diffs []diffmatchpatch.Diff) string {
-	var buff bytes.Buffer
+	var buf bytes.Buffer
 	for _, item := range diffs {
 		text := strings.ReplaceAll(html.EscapeString(item.Text), "\n", "<br>")
 		switch item.Type {
 		case diffmatchpatch.DiffInsert:
-			_, _ = buff.WriteString("<ins>")
-			_, _ = buff.WriteString(text)
-			_, _ = buff.WriteString("</ins>")
+			_, _ = buf.WriteString("<ins>")
+			_, _ = buf.WriteString(text)
+			_, _ = buf.WriteString("</ins>")
 		case diffmatchpatch.DiffDelete:
-			_, _ = buff.WriteString("<del>")
-			_, _ = buff.WriteString(text)
-			_, _ = buff.WriteString("</del>")
+			_, _ = buf.WriteString("<del>")
+			_, _ = buf.WriteString(text)
+			_, _ = buf.WriteString("</del>")
 		case diffmatchpatch.DiffEqual:
-			_, _ = buff.WriteString("<span>")
-			_, _ = buff.WriteString(text)
-			_, _ = buff.WriteString("</span>")
+			_, _ = buf.WriteString("<span>")
+			_, _ = buf.WriteString(text)
+			_, _ = buf.WriteString("</span>")
 		}
 	}
-	return buff.String()
+	return buf.String()
 }
