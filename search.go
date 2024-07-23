@@ -131,8 +131,8 @@ func search(q, dir, filter string, page int, all bool) ([]*Result, bool) {
 	}
 	if len(terms) > 0 {
 		index.RLock()
-		res := make([]ImageData, 0)
 		for _, r := range results {
+			res := make([]ImageData, 0)
 		ImageLoop:
 			for _, img := range index.images[r.Name] {
 				title := strings.ToLower(img.Title)

@@ -230,9 +230,9 @@ A quick sip too quick
 func TestImageSearch(t *testing.T) {
 	cleanup(t, "testdata/images")
 
-	p := &Page{Name: "testdata/images/2024-07-21", Body: []byte(`# Pictures
+	p := &Page{Name: "testdata/images/2024-07-21", Body: []byte(`# 2024-07-21 Pictures
 
-![phone](2024-07-21.jpg)
+![phone call](2024-07-21.jpg)
 
 Pictures in the box
 Tiny windows to our past
@@ -241,12 +241,26 @@ Where are you, my love?
 `)}
 	p.save()
 
-	items, _ := search("phone", "testdata/images", "", 1, false)
-	assert.Equal(t, 1, len(items), "one page found")
-	assert.Equal(t, "Pictures", items[0].Title)
-	assert.Equal(t, "phone", items[0].Images[0].Title)
-	assert.Equal(t, "<b>phone</b>", string(items[0].Images[0].Html))
+	q := &Page{Name: "testdata/images/2024-07-22", Body: []byte(`# 2024-07-22 The Moon
+
+When the night is light
+Behind clouds the moon is bright
+Please call me, my love.
+`)}
+	q.save()
+
+	items, _ := search("call", "testdata/images", "", 1, false)
+	assert.Equal(t, 2, len(items), "two pages found")
+
+	assert.Equal(t, "2024-07-21 Pictures", items[0].Title)
+	assert.Equal(t, "2024-07-22 The Moon", items[1].Title)
+
+	assert.NotEmpty(t, items[0].Images)
+	assert.Equal(t, "phone call", items[0].Images[0].Title)
+	assert.Equal(t, "phone <b>call</b>", string(items[0].Images[0].Html))
 	assert.Equal(t, "testdata/images/2024-07-21.jpg", items[0].Images[0].Name)
+
+	assert.Empty(t, items[1].Images)
 }
 
 func TestSearchQuestionmark(t *testing.T) {
