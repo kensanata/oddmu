@@ -57,3 +57,6 @@ oddmu-linux-amd64: *.go
 %.tar.gz: %
 	tar czf $@ --transform='s/^$</oddmu/' --transform='s/^/oddmu\//' --exclude='*~' \
 	  $< Makefile *.socket *.service *.md man/Makefile man/*.1 man/*.5 man/*.7 themes/
+
+priv:
+	sudo setcap 'cap_net_bind_service=+ep' oddmu

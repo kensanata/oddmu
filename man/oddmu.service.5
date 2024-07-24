@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU.SERVICE" "5" "2024-04-21"
+.TH "ODDMU.SERVICE" "5" "2024-07-24"
 .PP
 .SH NAME
 .PP
@@ -131,11 +131,67 @@ echo -e "GET /view/index HTTP/1\&.1rnHost: localhostrnrn"
 Now you need to set up your web browser to use the Unix domain socket.\& See
 \fIoddmu-apache\fR(5) or \fIoddmu-nginx\fR(5) for example configurations.\&
 .PP
+.SS A personal wiki
+.PP
+On a single user machine, it might be useful to have a single wiki for the main
+user available, on the standard port (80).\& In order to do this, setup a "user"
+unit using systemd and save the following as "user-unix-domain.\&service":
+.PP
+.nf
+.RS 4
+[Unit]
+Description=Oddmu
+After=network\&.target
+[Install]
+WantedBy=default\&.target
+[Service]
+Type=simple
+Restart=always
+StandardOutput=journal
+StandardError=journal
+ExecStart=/home/alex/src/oddmu/oddmu
+WorkingDirectory=/home/alex/wiki
+Environment="ODDMU_PORT=80"
+Environment="ODDMU_LANGUAGES=de,en"
+.fi
+.RE
+.PP
+Since this is a priviledged port, the binary needs an extra capability for an
+ordinary user to do this.\& This is necessary so that the files are created and
+owned by the same user.\& Otherwise, the regular user wouldn'\&t be able to edit the
+files using their favourite text editor.\&
+.PP
+.nf
+.RS 4
+sudo setcap \&'cap_net_bind_service=+ep\&' oddmu
+.fi
+.RE
+.PP
+Note that as soon as you recomile, the capability is gone again and the above
+must be repeated.\&
+.PP
+Install it:
+.PP
+.nf
+.RS 4
+systemctl --user enable --now user-unix-domain\&.service
+.fi
+.RE
+.PP
+To examine the log:
+.PP
+.nf
+.RS 4
+journalctl --user --unit user-unix-domain\&.service
+.fi
+.RE
+.PP
 .SH SEE ALSO
 .PP
 \fIoddmu\fR(1), \fIoddmu-apache\fR(5), \fIoddmu-nginx\fR(5), \fIsystemd.\&exec\fR(5),
-\fIsystemd.\&socket(5), \fRcapabilities_(7)
+\fIsystemd.\&socket\fR(5), \fIcapabilities\fR(7)
 .PP
 .SH AUTHORS
 .PP
 Maintained by Alex Schroeder <alex@gnu.\&org>.\&
+.PP

@@ -106,11 +106,59 @@ echo -e "GET /view/index HTTP/1.1\r\nHost: localhost\r\n\r\n" \
 Now you need to set up your web browser to use the Unix domain socket. See
 _oddmu-apache_(5) or _oddmu-nginx_(5) for example configurations.
 
+## A personal wiki
+
+On a single user machine, it might be useful to have a single wiki for the main
+user available, on the standard port (80). In order to do this, setup a "user"
+unit using systemd and save the following as "user-unix-domain.service":
+
+```
+[Unit]
+Description=Oddmu
+After=network.target
+[Install]
+WantedBy=default.target
+[Service]
+Type=simple
+Restart=always
+StandardOutput=journal
+StandardError=journal
+ExecStart=/home/alex/src/oddmu/oddmu
+WorkingDirectory=/home/alex/wiki
+Environment="ODDMU_PORT=80"
+Environment="ODDMU_LANGUAGES=de,en"
+```
+
+Since this is a priviledged port, the binary needs an extra capability for an
+ordinary user to do this. This is necessary so that the files are created and
+owned by the same user. Otherwise, the regular user wouldn't be able to edit the
+files using their favourite text editor.
+
+```
+sudo setcap 'cap_net_bind_service=+ep' oddmu
+```
+
+Note that as soon as you recomile, the capability is gone again and the above
+must be repeated.
+
+Install it:
+
+```
+systemctl --user enable --now user-unix-domain.service
+```
+
+To examine the log:
+
+```
+journalctl --user --unit user-unix-domain.service
+```
+
 # SEE ALSO
 
 _oddmu_(1), _oddmu-apache_(5), _oddmu-nginx_(5), _systemd.exec_(5),
-_systemd.socket(5), _capabilities_(7)
+_systemd.socket_(5), _capabilities_(7)
 
 # AUTHORS
 
 Maintained by Alex Schroeder <alex@gnu.org>.
+
