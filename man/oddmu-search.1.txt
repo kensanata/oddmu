@@ -10,14 +10,19 @@ oddmu-search - search the Oddmu pages from the command-line
 
 # DESCRIPTION
 
-The "search" subcommand searches the Markdown files in the current
-directory.
+The "search" subcommand resursively searches the Markdown files in the current
+directory tree. That is, the files in the current directory and all its child
+directories are searched.
 
 Be default, this returns a Markdown-formatted list suitable for pasting into
 Oddmu pages.
 
 If a directory is provided, only files from the tree starting at that
 subdirectory are listed, and the directory is stripped from the page name.
+
+If multiple terms are provided, they are all concatenated into a single,
+space-separated query string. That is, searching for the terms A B and the term
+"A B" is equivalent.
 
 See _oddmu-search_(7) for more information of how pages are searched, sorted and
 scored.
@@ -36,17 +41,27 @@ scored.
 
 # EXAMPLE
 
-Search for "oddmu" in the Markdown files of the current directory:
+Search for the two words "Alex" and "Schroeder". All of the following are
+equivalent: Alex Schroeder, Schroeder Alex, "Alex Schroeder", "Schroeder Alex".
+The ordering of terms does not matter.
 
 ```
-oddmu search oddmu
+~/src/oddmu $ oddmu search Alex Schroeder
+Search for Alex Schroeder, page 1: 3 results
+* [Alex Schroeder theme](themes/alexschroeder.ch/README)
+* [Oddµ: A minimal wiki](README)
+* [Themes](themes/index)
 ```
 
-Result:
+Search for the exact phrase "Alex Schroeder". In order to pass the quotes to
+Oddmu, a second level of quotes is required. All of the following are
+equivalent: '"Alex Schroeder"', "'Alex Schroeder'", \\"Alex\\ Schroeder\\",
+\\"Alex Schroeder\\".
 
 ```
-Search oddmu: 1 result
-* [Oddµ: A minimal wiki](README) (5)
+~/src/oddmu $ oddmu search "'Alex Schroeder'"
+Search for 'Alex Schroeder', page 1: 1 result
+* [Alex Schroeder theme](themes/alexschroeder.ch/README)
 ```
 
 # SEE ALSO

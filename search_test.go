@@ -69,6 +69,10 @@ func TestSearch(t *testing.T) {
 
 	body = assert.HTTPBody(makeHandler(searchHandler, false), "GET", "/search/testdata", data)
 	assert.NotContains(t, body, "Welcome")
+
+	data.Set("q", "'create a new page'")
+	body = assert.HTTPBody(makeHandler(searchHandler, false), "GET", "/search/", data)
+	assert.Contains(t, body, "Welcome")
 }
 
 func TestSearchFilter(t *testing.T) {

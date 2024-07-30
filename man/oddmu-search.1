@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-SEARCH" "1" "2024-02-17"
+.TH "ODDMU-SEARCH" "1" "2024-07-30"
 .PP
 .SH NAME
 .PP
@@ -17,14 +17,19 @@ oddmu-search - search the Oddmu pages from the command-line
 .PP
 .SH DESCRIPTION
 .PP
-The "search" subcommand searches the Markdown files in the current
-directory.\&
+The "search" subcommand resursively searches the Markdown files in the current
+directory tree.\& That is, the files in the current directory and all its child
+directories are searched.\&
 .PP
 Be default, this returns a Markdown-formatted list suitable for pasting into
 Oddmu pages.\&
 .PP
 If a directory is provided, only files from the tree starting at that
 subdirectory are listed, and the directory is stripped from the page name.\&
+.PP
+If multiple terms are provided, they are all concatenated into a single,
+space-separated query string.\& That is, searching for the terms A B and the term
+"A B" is equivalent.\&
 .PP
 See \fIoddmu-search\fR(7) for more information of how pages are searched, sorted and
 scored.\&
@@ -51,20 +56,30 @@ Ignore pagination and just print a long list of results.\&
 .RE
 .SH EXAMPLE
 .PP
-Search for "oddmu" in the Markdown files of the current directory:
+Search for the two words "Alex" and "Schroeder".\& All of the following are
+equivalent: Alex Schroeder, Schroeder Alex, "Alex Schroeder", "Schroeder Alex".\&
+The ordering of terms does not matter.\&
 .PP
 .nf
 .RS 4
-oddmu search oddmu
+~/src/oddmu $ oddmu search Alex Schroeder
+Search for Alex Schroeder, page 1: 3 results
+* [Alex Schroeder theme](themes/alexschroeder\&.ch/README)
+* [Oddµ: A minimal wiki](README)
+* [Themes](themes/index)
 .fi
 .RE
 .PP
-Result:
+Search for the exact phrase "Alex Schroeder".\& In order to pass the quotes to
+Oddmu, a second level of quotes is required.\& All of the following are
+equivalent: '\&"Alex Schroeder"'\&, "'\&Alex Schroeder'\&", \e"Alex\e Schroeder\e",
+\e"Alex Schroeder\e".\&
 .PP
 .nf
 .RS 4
-Search oddmu: 1 result
-* [Oddµ: A minimal wiki](README) (5)
+~/src/oddmu $ oddmu search "\&'Alex Schroeder\&'"
+Search for \&'Alex Schroeder\&', page 1: 1 result
+* [Alex Schroeder theme](themes/alexschroeder\&.ch/README)
 .fi
 .RE
 .PP
