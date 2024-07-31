@@ -52,7 +52,7 @@ func hashtagsCli(w io.Writer) subcommands.ExitStatus {
 
 	fmt.Fprintln(w, "Rank\tHashtag\tCount")
 	for i, hashtag := range hashtags {
-		fmt.Fprintf(w, "%d\t%s\t%d\n", i, hashtag.label, hashtag.count)
+		fmt.Fprintf(w, "%d\t%s\t%d\n", i+1, hashtag.label, hashtag.count)
 	}
 
 	return subcommands.ExitSuccess
