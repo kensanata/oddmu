@@ -1,0 +1,30 @@
+ODDMU-HASHTAGS(1)
+
+# NAME
+
+oddmu-hashtags - count the hashtags used from the command-line
+
+# SYNOPSIS
+
+*oddmu hashtags*
+
+# DESCRIPTION
+
+The "hashtags" subcommand counts all the hashtags used and lists them, separated
+by a TAB character.
+
+# EXAMPLE
+
+List the top 10 hashtags. This requires 11 lines because of the header line.
+
+```
+oddmu hashtags | head -n 11
+```
+
+# SEE ALSO
+
+_oddmu_(1)
+
+# AUTHORS
+
+Maintained by Alex Schroeder <alex@gnu.org>.

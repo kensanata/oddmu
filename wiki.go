@@ -200,6 +200,7 @@ func commands() {
 	subcommands.Register(subcommands.HelpCommand(), "")
 	subcommands.Register(subcommands.FlagsCommand(), "")
 	subcommands.Register(subcommands.CommandsCommand(), "")
+	subcommands.Register(&hashtagsCmd{}, "")
 	subcommands.Register(&htmlCmd{}, "")
 	subcommands.Register(&listCmd{}, "")
 	subcommands.Register(&missingCmd{}, "")

@@ -87,6 +87,10 @@ the files much like find(1), grep(1) and sed(1) or perl(1).
 man page documents the "missing" subcommand to list local links that
 don't point to any existing pages or files.
 
+[oddmu-hashtags(1)](/oddmu.git/blob/main/man/oddmu-hashtags.1.txt):
+This man page documents the "hashtags" subcommand to count the
+hashtags used from the command line.
+
 [oddmu-html(1)](/oddmu.git/blob/main/man/oddmu-html.1.txt): This man
 page documents the "html" subcommand to generate HTML from Markdown
 pages from the command line.
