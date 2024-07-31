@@ -9,7 +9,7 @@ import (
 
 func TestStaticCmd(t *testing.T) {
 	cleanup(t, "testdata/static")
-	s := staticCli("testdata/static", 2, true)
+	s := staticCli(".", "testdata/static", 2, true)
 	assert.Equal(t, subcommands.ExitSuccess, s)
 	// pages
 	assert.FileExists(t, "testdata/static/index.html")
@@ -34,12 +34,8 @@ And the cars so loud
 `)}
 	h.save()
 	h.notify()
-	wd, err := os.Getwd()
-	assert.NoError(t, err)
-	assert.NoError(t, os.Chdir("testdata/static-feed"))
-	s := staticCli("../static-feed-out/", 2, true)
+	s := staticCli("testdata/static-feed", "testdata/static-feed-out", 2, true)
 	assert.Equal(t, subcommands.ExitSuccess, s)
-	assert.NoError(t, os.Chdir(wd))
 	assert.FileExists(t, "testdata/static-feed-out/2024-03-07-poem.html")
 	assert.FileExists(t, "testdata/static-feed-out/Haiku.html")
 	b, err := os.ReadFile("testdata/static-feed-out/Haiku.rss")

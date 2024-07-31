@@ -42,7 +42,7 @@ func (cmd *staticCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface
 		return subcommands.ExitFailure
 	}
 	dir := filepath.Clean(args[0])
-	return staticCli(dir, cmd.jobs, false)
+	return staticCli(".", dir, cmd.jobs, false)
 }
 
 type args struct {
@@ -51,8 +51,8 @@ type args struct {
 }
 
 // staticCli generates a static site in the designated directory. The quiet flag is used to suppress output when running
-// tests.
-func staticCli(dir string, jobs int, quiet bool) subcommands.ExitStatus {
+// tests. The source directory cannot be set from the command-line. The current directory (".") is assumed.
+func staticCli(source, target string, jobs int, quiet bool) subcommands.ExitStatus {
 	index.load()
 	index.RLock()
 	defer index.RUnlock()
@@ -65,7 +65,7 @@ func staticCli(dir string, jobs int, quiet bool) subcommands.ExitStatus {
 	for i := 0; i < jobs; i++ {
 		go staticWorker(tasks, results, done)
 	}
-	go staticWalk(dir, tasks, stop)
+	go staticWalk(source, target, tasks, stop)
 	go staticWatch(jobs, results, done)
 	n, err := staticProgressIndicator(results, stop, quiet)
 	if !quiet {
@@ -78,13 +78,13 @@ func staticCli(dir string, jobs int, quiet bool) subcommands.ExitStatus {
 	return subcommands.ExitSuccess
 }
 
-// staticWalk walks the directory tree. Any directory it finds, it recreates in the destination directory. Any file it
+// staticWalk walks the source directory tree. Any directory it finds, it recreates in the target directory. Any file it
 // finds, it puts into the tasks channel for the staticWorker. When the directory walk is finished, the tasks channel is
 // closed. If there's an error on the stop channel, the walk returns that error.
-func staticWalk (dir string, tasks chan(args), stop chan(error)) {
+func staticWalk (source, target string, tasks chan(args), stop chan(error)) {
 	// The error returned here is what's in the stop channel but at the very end, a worker might return an error
 	// even though the walk is already done. This is why we cannot rely on the return value of the walk.
-	filepath.Walk(".", func(path string, info fs.FileInfo, err error) error {
+	filepath.Walk(source, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -102,18 +102,28 @@ func staticWalk (dir string, tasks chan(args), stop chan(error)) {
 				}
 			}
 			// skip backup files, avoid recursion
-			if strings.HasSuffix(path, "~") || strings.HasPrefix(path, dir) {
+			if strings.HasSuffix(path, "~") || strings.HasPrefix(path, target) {
 				return nil
 			}
+			// determine the actual target: if source is a/ and target is b/ and path is a/file, then the
+			// target is b/file
+			var actual_target string
+			if (source == ".") {
+				actual_target = filepath.Join(target, path)
+			} else {
+				if (!strings.HasPrefix(path, source)) {
+					return fmt.Errorf("%s is not a subdirectory of %s", path, source)
+				}
+				actual_target = filepath.Join(target, path[len(source):])
+			}
 			// recreate subdirectories
-			target := filepath.Join(dir, path)
 			if info.IsDir() {
-				return os.Mkdir(target, 0755)
+				return os.Mkdir(actual_target, 0755)
 			}
 			// do the task if the target file doesn't exist or if the source file is newer
-			other, err := os.Stat(target)
+			other, err := os.Stat(actual_target)
 			if err != nil || info.ModTime().After(other.ModTime()) {
-				tasks <- args{ source: path, target: target, info: info }
+				tasks <- args{ source: path, target: actual_target, info: info }
 			}
 			return nil
 		}
