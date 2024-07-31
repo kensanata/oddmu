@@ -14,7 +14,7 @@ func TestWatchedPageUpdate(t *testing.T) {
 	index.load()
 	watches.install()
 	assert.NoError(t, os.MkdirAll(dir, 0755))
-	time.Sleep(time.Millisecond)
+	time.Sleep(10 * time.Millisecond)
 	assert.Contains(t, watches.watcher.WatchList(), dir)
 
 	haiku := []byte(`# Pine cones
@@ -24,7 +24,7 @@ Up and up in single file
 Who ate half a cone?`)
 	assert.NoError(t, os.WriteFile(path, haiku, 0644))
 
-	time.Sleep(time.Millisecond)
+	time.Sleep(10 * time.Millisecond)
 
 	watches.RLock()
 	assert.Contains(t, watches.files, path)
@@ -50,7 +50,7 @@ func TestWatchedTemplateUpdate(t *testing.T) {
 	watches.install()
 	assert.NoError(t, os.MkdirAll(dir, 0755))
 
-	time.Sleep(time.Millisecond)
+	time.Sleep(10 * time.Millisecond)
 
 	assert.Contains(t, watches.watcher.WatchList(), dir)
 
@@ -71,7 +71,7 @@ the smell is everywhere
 			[]byte("<body><h1>{{.Title}}</h1>{{.Html}}"),
 			0644))
 
-	time.Sleep(time.Millisecond)
+	time.Sleep(10 * time.Millisecond)
 
 	watches.RLock()
 	assert.Contains(t, watches.files, path)
