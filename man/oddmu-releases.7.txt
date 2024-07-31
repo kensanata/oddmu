@@ -8,6 +8,36 @@ oddmu-releases - what's new in this releases?
 
 This page lists user-visible features and template changes to consider.
 
+## 1.12 (unreleased)
+
+Add _hashtags_ subcommand.
+
+Support searching for multiple words using all sorts of quotation marks. That
+means that it is now impossible to search for words that begin with such a
+quotation mark.
+
+These are the quotation marks currently supported: 'foo' "foo" ‘foo’ ‚foo‘ ’foo’
+“foo” „foo“ ”foo” «foo» »foo« ‹foo› ›foo‹ ｢foo｣ 「ｆｏｏ」 『ｆｏｏ』 – any such
+quoted text is searched as-is, including whitespace.
+
+Add loading="lazy" for images in search.html
+
+If you want to take advantage of this, you'll need to adapt your "search.html"
+template accordingly. Use like this, for example:
+
+```
+{{range .Items}}
+<article lang="{{.Language}}">
+  <p><a class="result" href="/view/{{.Name}}">{{.Title}}</a>
+    <span class="score">{{.Score}}</span></p>
+  <blockquote>{{.Html}}</blockquote>
+  {{range .Images}}
+  <p class="image"><a href="/view/{{.Name}}"><img loading="lazy" src="/view/{{.Name}}"></a><br/>{{.Html}}
+  {{end}}
+</article>
+{{end}}
+```
+
 ## 1.11 (2024)
 
 The HTML renderer option for smart fractions support was removed. Therefore, 1/8
