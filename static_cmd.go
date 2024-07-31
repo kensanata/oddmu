@@ -47,7 +47,7 @@ func (cmd *staticCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface
 
 type args struct {
 	source, target string
-	info fs.FileInfo
+	info           fs.FileInfo
 }
 
 // staticCli generates a static site in the designated directory. The quiet flag is used to suppress output when running
@@ -81,7 +81,7 @@ func staticCli(source, target string, jobs int, quiet bool) subcommands.ExitStat
 // staticWalk walks the source directory tree. Any directory it finds, it recreates in the target directory. Any file it
 // finds, it puts into the tasks channel for the staticWorker. When the directory walk is finished, the tasks channel is
 // closed. If there's an error on the stop channel, the walk returns that error.
-func staticWalk (source, target string, tasks chan(args), stop chan(error)) {
+func staticWalk(source, target string, tasks chan (args), stop chan (error)) {
 	// The error returned here is what's in the stop channel but at the very end, a worker might return an error
 	// even though the walk is already done. This is why we cannot rely on the return value of the walk.
 	filepath.Walk(source, func(path string, info fs.FileInfo, err error) error {
@@ -89,7 +89,7 @@ func staticWalk (source, target string, tasks chan(args), stop chan(error)) {
 			return err
 		}
 		select {
-		case err := <- stop:
+		case err := <-stop:
 			return err
 		default:
 			base := filepath.Base(path)
@@ -108,10 +108,10 @@ func staticWalk (source, target string, tasks chan(args), stop chan(error)) {
 			// determine the actual target: if source is a/ and target is b/ and path is a/file, then the
 			// target is b/file
 			var actual_target string
-			if (source == ".") {
+			if source == "." {
 				actual_target = filepath.Join(target, path)
 			} else {
-				if (!strings.HasPrefix(path, source)) {
+				if !strings.HasPrefix(path, source) {
 					return fmt.Errorf("%s is not a subdirectory of %s", path, source)
 				}
 				actual_target = filepath.Join(target, path[len(source):])
@@ -123,7 +123,7 @@ func staticWalk (source, target string, tasks chan(args), stop chan(error)) {
 			// do the task if the target file doesn't exist or if the source file is newer
 			other, err := os.Stat(actual_target)
 			if err != nil || info.ModTime().After(other.ModTime()) {
-				tasks <- args{ source: path, target: actual_target, info: info }
+				tasks <- args{source: path, target: actual_target, info: info}
 			}
 			return nil
 		}
@@ -133,27 +133,27 @@ func staticWalk (source, target string, tasks chan(args), stop chan(error)) {
 
 // staticWatch counts the values coming out of the done channel. When the count matches the number of jobs started, we
 // know that all the tasks have been processed and the results channel is closed.
-func staticWatch(jobs int, results chan(error), done chan(bool)) {
+func staticWatch(jobs int, results chan (error), done chan (bool)) {
 	for i := 0; i < jobs; i++ {
-		<- done
+		<-done
 	}
 	close(results)
 }
 
 // staticWorker takes arguments off the tasks channel (the file to process) and put results in the results channel (any
 // errors encountered); when they're done they send true on the done channel.
-func staticWorker(tasks chan(args), results chan(error), done chan(bool)) {
-	task, ok := <- tasks
+func staticWorker(tasks chan (args), results chan (error), done chan (bool)) {
+	task, ok := <-tasks
 	for ok {
 		results <- staticFile(task.source, task.target, task.info)
-		task, ok = <- tasks
+		task, ok = <-tasks
 	}
 	done <- true
 }
 
 // staticProgressIndicator watches the results channel and does a countdown. If the result channel reports an error,
 // that is put into the stop channel so that staticWalk stops adding to the tasks channel.
-func staticProgressIndicator(results chan(error), stop chan(error), quiet bool) (int, error) {
+func staticProgressIndicator(results chan (error), stop chan (error), quiet bool) (int, error) {
 	n := 0
 	t := time.Now()
 	var err error
@@ -164,7 +164,7 @@ func staticProgressIndicator(results chan(error), stop chan(error), quiet bool) 
 			stop <- err
 		} else {
 			n++
-			if !quiet && n % 13 == 0 {
+			if !quiet && n%13 == 0 {
 				if time.Since(t) > time.Second {
 					fmt.Printf("\r%d", n)
 					t = time.Now()
@@ -180,11 +180,11 @@ func staticProgressIndicator(results chan(error), stop chan(error), quiet bool) 
 func staticFile(source, target string, info fs.FileInfo) error {
 	// render pages
 	if strings.HasSuffix(source, ".md") {
-		p, err := staticPage(source[:len(source)-3], target[:len(target)-3] + ".html")
+		p, err := staticPage(source[:len(source)-3], target[:len(target)-3]+".html")
 		if err != nil {
 			return err
 		}
-		return staticFeed(source[:len(source)-3], target[:len(target)-3] + ".rss", p, info.ModTime())
+		return staticFeed(source[:len(source)-3], target[:len(target)-3]+".rss", p, info.ModTime())
 	}
 	// remaining files are linked unless this is a template
 	if slices.Contains(templateFiles, filepath.Base(source)) {

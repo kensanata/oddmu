@@ -28,8 +28,8 @@ type Page struct {
 // Link is a struct containing a title and a name. Name is the path without extension (so a path of "foo.md" results in
 // the Name "foo").
 type Link struct {
-	Title    string
-	Url     string
+	Title string
+	Url   string
 }
 
 // blogRe is a regular expression that matches blog pages. If the filename of a blog page starts with an ISO date
@@ -179,13 +179,13 @@ func (p *Page) Parents() []*Link {
 		return links
 	}
 	s := ""
-	for i := 0; i < len(elems) - 1; i++ {
+	for i := 0; i < len(elems)-1; i++ {
 		name := s + "index"
 		title, ok := index.titles[name]
 		if !ok {
 			title = "…"
 		}
-		link := &Link{ Title: title, Url: strings.Repeat("../", len(elems) - i - 1) + "index" }
+		link := &Link{Title: title, Url: strings.Repeat("../", len(elems)-i-1) + "index"}
 		links = append(links, link)
 		s += elems[i] + "/"
 	}

@@ -6,13 +6,13 @@ package main
 
 import (
 	"golang.org/x/exp/constraints"
+	"html/template"
 	"io/fs"
 	"log"
 	"path/filepath"
 	"sort"
 	"strings"
 	"sync"
-	"html/template"
 )
 
 type docid uint
@@ -23,7 +23,7 @@ type docid uint
 // It depends on the fact that Title is always plain text.
 type ImageData struct {
 	Title, Name string
-	Html template.HTML
+	Html        template.HTML
 }
 
 // indexStore controls access to the maps used for search. Make sure to lock and unlock as appropriate.

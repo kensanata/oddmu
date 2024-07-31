@@ -35,13 +35,13 @@ func hashtagsCli(w io.Writer) subcommands.ExitStatus {
 	index.RLock()
 	defer index.RUnlock()
 
-	type hashtag struct{
+	type hashtag struct {
 		label string
 		count int
 	}
-	
+
 	hashtags := []hashtag{}
-	
+
 	for token, docids := range index.token {
 		hashtags = append(hashtags, hashtag{label: token, count: len(docids)})
 	}
@@ -54,6 +54,6 @@ func hashtagsCli(w io.Writer) subcommands.ExitStatus {
 	for i, hashtag := range hashtags {
 		fmt.Fprintf(w, "%d\t%s\t%d\n", i, hashtag.label, hashtag.count)
 	}
-	
+
 	return subcommands.ExitSuccess
 }

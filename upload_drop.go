@@ -82,7 +82,7 @@ func next(dir, fn string, i int) (string, error) {
 		}
 		ext := filepath.Ext(fn)
 		// faking it
-		m = []string{"", fn[:len(fn)-len(ext)]+"-", "0", ext}
+		m = []string{"", fn[:len(fn)-len(ext)] + "-", "0", ext}
 	}
 	n, err := strconv.Atoi(m[2])
 	if err == nil {
@@ -239,6 +239,7 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 	data.Set("last", filename) // has no slashes
 	http.Redirect(w, r, "/upload/"+dir+"?"+data.Encode(), http.StatusFound)
 }
+
 // Base returns a page name matching the first uploaded file: no extension and no appended number. If the name
 // refers to a directory, returns "index". This is used to create the form target in "upload.html", for example.
 func (u *upload) Base() string {

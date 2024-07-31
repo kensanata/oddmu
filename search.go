@@ -1,8 +1,8 @@
 package main
 
 import (
-	"log"
 	"html/template"
+	"log"
 	"net/http"
 	"os"
 	"path"
@@ -18,7 +18,7 @@ import (
 // well the page matched for a search query. Images are the images whose description match the query.
 type Result struct {
 	Page
-	Score    int
+	Score  int
 	Images []ImageData
 }
 

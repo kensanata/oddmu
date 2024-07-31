@@ -24,7 +24,6 @@ func TestTokensAndPredicates(t *testing.T) {
 	assert.EqualValues(t, []string{"title:bar"}, predicates)
 }
 
-
 func TestQuoteRunes(t *testing.T) {
 	s := `'"‘’‘‚“”„«»«‹›‹｢｣「」『』`
 	for _, rune := range s {
@@ -38,9 +37,8 @@ func TestQuotes(t *testing.T) {
 	tokens := tokenizeWithQuotes(s)
 	assert.EqualValues(t, []string{
 		"foo", "foo", "foo", "foo", "foo", "foo", "foo", "foo", "foo", "foo", "foo", "foo", "foo",
-		"ｆｏｏ", "ｆｏｏ", }, tokens)
+		"ｆｏｏ", "ｆｏｏ"}, tokens)
 }
-
 
 func TestPhrases(t *testing.T) {
 	s := `look for 'foo bar'`
