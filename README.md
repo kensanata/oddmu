@@ -40,86 +40,88 @@ This project uses man(1) pages. They are generated from text files
 using [scdoc](https://git.sr.ht/~sircmpwn/scdoc). These are the files
 available:
 
-[oddmu(1)](/oddmu.git/blob/main/man/oddmu.1.txt): This man page has a
-short introduction to Oddmu, its configuration via templates and
+[oddmu(1)](https://alexschroeder.ch/view/oddmu/oddmu.1): This man page
+has a short introduction to Oddmu, its configuration via templates and
 environment variables, plus points to the other man pages.
 
-[oddmu(5)](/oddmu.git/blob/main/man/oddmu.5.txt): This man page talks
-about the Markdown and includes some examples for the non-standard
-features such as table markup. It also talks about the Oddmu
-extensions to Markdown: wiki links, hashtags and fediverse account
-links. Local links must use percent encoding for page names so there
-is a section about percent encoding. The man page also explains how
-feeds are generated.
+[oddmu(5)](https://alexschroeder.ch/view/oddmu/oddmu.5): This man page
+talks about the Markdown and includes some examples for the
+non-standard features such as table markup. It also talks about the
+Oddmu extensions to Markdown: wiki links, hashtags and fediverse
+account links. Local links must use percent encoding for page names so
+there is a section about percent encoding. The man page also explains
+how feeds are generated.
 
-[oddmu-releases(7)](/oddmu.git/blob/main/man/oddmu-releases.7.txt):
+[oddmu-releases(7)](https://alexschroeder.ch/view/oddmu/oddmu-releases.7):
 This man page lists all the Oddmu versions and their user-visible
 changes.
 
-[oddmu-releases(7)](/oddmu.git/blob/main/man/oddmu-releases.7.txt):
+[oddmu-releases(7)](https://alexschroeder.ch/view/oddmu/oddmu-releases.7):
 This man page lists all the Oddmu versions and their user-visible
 changes.
 
-[oddmu-version(1)](/oddmu.git/blob/main/man/oddmu-version.1.txt): This
-man page documents the "version" subcommand which you can use to get
-installed Oddmu version.
+[oddmu-version(1)](https://alexschroeder.ch/view/oddmu/oddmu-version.1):
+This man page documents the "version" subcommand which you can use to
+get installed Oddmu version.
 
-[oddmu-list(1)](/oddmu.git/blob/main/man/oddmu-list.1.txt): This man
-page documents the "list" subcommand which you can use to get page
-names and page titles.
+[oddmu-list(1)](https://alexschroeder.ch/view/oddmu/oddmu-list.1):
+This man page documents the "list" subcommand which you can use to get
+page names and page titles.
 
-[oddmu-search(1)](/oddmu.git/blob/main/man/oddmu-search.1.txt): This
-man page documents the "search" subcommand which you can use to build
-indexes – lists of page links. These are important for feeds.
+[oddmu-search(1)](https://alexschroeder.ch/view/oddmu/oddmu-search.1):
+This man page documents the "search" subcommand which you can use to
+build indexes – lists of page links. These are important for feeds.
 
-[oddmu-search(7)](/oddmu.git/blob/main/man/oddmu-search.7.txt): This
-man page documents how search and scoring work.
+[oddmu-search(7)](https://alexschroeder.ch/view/oddmu/oddmu-search.7):
+This man page documents how search and scoring work.
 
-[oddmu-filter(7)](/oddmu.git/blob/main/man/oddmu-filter.7.txt): This
-man page documents how to exclude subdirectories from search and
+[oddmu-filter(7)](https://alexschroeder.ch/view/oddmu/oddmu-filter.7):
+This man page documents how to exclude subdirectories from search and
 archiving.
 
-[oddmu-replace(1)](/oddmu.git/blob/main/man/oddmu-replace.1.txt): This
-man page documents the "replace" subcommand to make mass changes to
-the files much like find(1), grep(1) and sed(1) or perl(1).
+[oddmu-replace(1)](https://alexschroeder.ch/view/oddmu/oddmu-replace.1):
+This man page documents the "replace" subcommand to make mass changes
+to the files much like find(1), grep(1) and sed(1) or perl(1).
 
-[oddmu-missing(1)](/oddmu.git/blob/main/man/oddmu-missing.1.txt): This
-man page documents the "missing" subcommand to list local links that
-don't point to any existing pages or files.
+[oddmu-missing(1)](https://alexschroeder.ch/view/oddmu/oddmu-missing.1):
+This man page documents the "missing" subcommand to list local links
+that don't point to any existing pages or files.
 
-[oddmu-hashtags(1)](/oddmu.git/blob/main/man/oddmu-hashtags.1.txt):
+[oddmu-hashtags(1)](https://alexschroeder.ch/view/oddmu/oddmu-hashtags.1):
 This man page documents the "hashtags" subcommand to count the
 hashtags used from the command line.
 
-[oddmu-html(1)](/oddmu.git/blob/main/man/oddmu-html.1.txt): This man
-page documents the "html" subcommand to generate HTML from Markdown
-pages from the command line.
+[oddmu-html(1)](https://alexschroeder.ch/view/oddmu/oddmu-html.1):
+This man page documents the "html" subcommand to generate HTML from
+Markdown pages from the command line.
 
-[oddmu-static(1)](/oddmu.git/blob/main/man/oddmu-static.1.txt): This
-man page documents the "static" subcommand to generate an entire
+[oddmu-static(1)](https://alexschroeder.ch/view/oddmu/oddmu-static.1):
+This man page documents the "static" subcommand to generate an entire
 static website from the command line, avoiding the need to run Oddmu
 as a server. Also great for archiving.
 
-[oddmu-notify(1)](/oddmu.git/blob/main/man/oddmu-notify.1.txt): This
-man page documents the "notify" subcommand to add links to hashtag
-pages, index and changes for a given page. This is useful when you
-edit the Markdown files locally.
+[oddmu-notify(1)](https://alexschroeder.ch/view/oddmu/oddmu-notify.1):
+This man page documents the "notify" subcommand to add links to
+hashtag pages, index and changes for a given page. This is useful when
+you edit the Markdown files locally.
 
-[oddmu-templates(5)](/oddmu.git/blob/main/man/oddmu-templates.5.txt):
+[oddmu-templates(5)](https://alexschroeder.ch/view/oddmu/oddmu-templates.5):
 This man page documents how the templates can be changed (how they
 *must* be changed) and lists the attributes available for the various
 templates.
 
-[oddmu-apache(5)](/oddmu.git/blob/main/man/oddmu-apache.5.txt): This
-man page documents how to set up the Apache web server for various
-common tasks such as using logins to limit what visitors can edit.
+[oddmu-apache(5)](https://alexschroeder.ch/view/oddmu/oddmu-apache.5):
+This man page documents how to set up the Apache web server for
+various common tasks such as using logins to limit what visitors can
+edit.
 
-[oddmu-nginx(5)](/oddmu.git/blob/main/man/oddmu-nginx.5.txt): This man
-page documents how to set up the freenginx web server for various
-common tasks such as using logins to limit what visitors can edit.
+[oddmu-nginx(5)](https://alexschroeder.ch/view/oddmu/oddmu-nginx.5):
+This man page documents how to set up the freenginx web server for
+various common tasks such as using logins to limit what visitors can
+edit.
 
-[oddmu.service(5)](/oddmu.git/blob/main/man/oddmu.service.5.txt): This
-man page documents how to setup a systemd unit and have it manage
+[oddmu.service(5)](https://alexschroeder.ch/view/oddmu/oddmu.service.5):
+This man page documents how to setup a systemd unit and have it manage
 Oddmu. “Great configurability brings great burdens.”
 
 ## Building
