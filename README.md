@@ -64,6 +64,10 @@ changes.
 This man page documents the "version" subcommand which you can use to
 get installed Oddmu version.
 
+[oddmu-links(1)](https://alexschroeder.ch/view/oddmu/oddmu-links.1):
+This man page documents the "links" subcommand which you can use to
+get the outgoing links for a page.
+
 [oddmu-list(1)](https://alexschroeder.ch/view/oddmu/oddmu-list.1):
 This man page documents the "list" subcommand which you can use to get
 page names and page titles.

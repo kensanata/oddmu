@@ -1,0 +1,21 @@
+ODDMU-LINKS(1)
+
+# NAME
+
+oddmu-links - list outgoing links for pages
+
+# SYNOPSIS
+
+*oddmu links*  _page names..._
+
+# DESCRIPTION
+
+The "links" subcommand lists outgoing links for one or more page names.
+
+# SEE ALSO
+
+_oddmu_(1), _oddmu-missing_(1)
+
+# AUTHORS
+
+Maintained by Alex Schroeder <alex@gnu.org>.

@@ -1,0 +1,44 @@
+package main
+
+import (
+	"context"
+	"flag"
+	"fmt"
+	"github.com/google/subcommands"
+	"io"
+	"os"
+)
+
+type linksCmd struct {
+}
+
+func (cmd *linksCmd) SetFlags(f *flag.FlagSet) {
+}
+
+func (*linksCmd) Name() string     { return "links" }
+func (*linksCmd) Synopsis() string { return "List outgoing links for a page." }
+func (*linksCmd) Usage() string {
+	return `links <page name> ...:
+  Lists all the links on a page.
+`
+}
+
+func (cmd *linksCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
+	return linksCli(os.Stdout, f.Args())
+}
+
+// linksCli runs the links command on the command line. It is used
+// here with an io.Writer for easy testing.
+func linksCli(w io.Writer, args []string) subcommands.ExitStatus {
+	for _, name := range args {
+		p, err := loadPage(name)
+		if err != nil {
+			fmt.Fprintf(w, "Loading %s: %s\n", name, err)
+			return subcommands.ExitFailure
+		}
+		for _, link := range p.links() {
+			fmt.Fprintln(w, link)
+		}
+	}
+	return subcommands.ExitSuccess
+}

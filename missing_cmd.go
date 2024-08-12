@@ -124,8 +124,17 @@ func (p *Page) links() []string {
 			switch v := node.(type) {
 			case *ast.Link:
 				link := string(v.Destination)
-				dir := p.Dir()
-				links = append(links, path.Join(dir, link))
+				url, err := url.Parse(link)
+				if err != nil {
+					// no error reporting
+					return ast.GoToNext
+				}
+				if url.IsAbs() {
+					links = append(links, link)
+				} else {
+					dir := p.Dir()
+					links = append(links, path.Join(dir, link))
+				}
 			}
 		}
 		return ast.GoToNext

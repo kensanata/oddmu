@@ -308,6 +308,8 @@ Oddmu running as a webserver:
 - _oddmu-hashtags_(1), on how to count the hashtags used from the command-line
 - _oddmu-html_(1), on how to render a page from the command-line
 - _oddmu-list_(1), on how to list pages and titles from the command-line
+- _oddmu-links_(1), on how to list the outgoing links for a page from the
+  command-line
 - _oddmu-missing_(1), on how to find broken local links from the command-line
 - _oddmu-notify_(1), on updating index, changes and hashtag pages from the
   command-line

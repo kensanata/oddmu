@@ -203,6 +203,7 @@ func commands() {
 	subcommands.Register(&hashtagsCmd{}, "")
 	subcommands.Register(&htmlCmd{}, "")
 	subcommands.Register(&listCmd{}, "")
+	subcommands.Register(&linksCmd{}, "")
 	subcommands.Register(&missingCmd{}, "")
 	subcommands.Register(&notifyCmd{}, "")
 	subcommands.Register(&replaceCmd{}, "")
