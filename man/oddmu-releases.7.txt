@@ -10,7 +10,7 @@ This page lists user-visible features and template changes to consider.
 
 ## 1.12 (unreleased)
 
-Add _hashtags_ and _links_ subcommands.
+Add _hashtags_, _links_ and _toc_ subcommands.
 
 Support searching for multiple words using all sorts of quotation marks. That
 means that it is now impossible to search for words that begin with such a
