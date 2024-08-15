@@ -8,7 +8,7 @@ oddmu-releases - what's new?
 
 This page lists user-visible features and template changes to consider.
 
-## 1.12 (unreleased)
+## 1.12 (2024)
 
 Add _hashtags_, _links_ and _toc_ subcommands.
 
