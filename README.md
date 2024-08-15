@@ -56,13 +56,11 @@ how feeds are generated.
 This man page lists all the Oddmu versions and their user-visible
 changes.
 
-[oddmu-releases(7)](https://alexschroeder.ch/view/oddmu/oddmu-releases.7):
-This man page lists all the Oddmu versions and their user-visible
-changes.
-
 [oddmu-version(1)](https://alexschroeder.ch/view/oddmu/oddmu-version.1):
 This man page documents the "version" subcommand which you can use to
-get installed Oddmu version.
+get the installed Oddmu version.
+
+Working locally:
 
 [oddmu-links(1)](https://alexschroeder.ch/view/oddmu/oddmu-links.1):
 This man page documents the "links" subcommand which you can use to
@@ -72,6 +70,10 @@ get the outgoing links for a page.
 This man page documents the "list" subcommand which you can use to get
 page names and page titles.
 
+[oddmu-replace(1)](https://alexschroeder.ch/view/oddmu/oddmu-replace.1):
+This man page documents the "replace" subcommand to make mass changes
+to the files much like find(1), grep(1) and sed(1) or perl(1).
+
 [oddmu-search(1)](https://alexschroeder.ch/view/oddmu/oddmu-search.1):
 This man page documents the "search" subcommand which you can use to
 build indexes – lists of page links. These are important for feeds.
@@ -79,13 +81,11 @@ build indexes – lists of page links. These are important for feeds.
 [oddmu-search(7)](https://alexschroeder.ch/view/oddmu/oddmu-search.7):
 This man page documents how search and scoring work.
 
-[oddmu-filter(7)](https://alexschroeder.ch/view/oddmu/oddmu-filter.7):
-This man page documents how to exclude subdirectories from search and
-archiving.
+[oddmu-toc(1)](https://alexschroeder.ch/view/oddmu/oddmu-toc.1): This
+man page documents the "toc" subcommand which you can use to generate
+a table of contents linking to all the headings on the page.
 
-[oddmu-replace(1)](https://alexschroeder.ch/view/oddmu/oddmu-replace.1):
-This man page documents the "replace" subcommand to make mass changes
-to the files much like find(1), grep(1) and sed(1) or perl(1).
+Reporting:
 
 [oddmu-missing(1)](https://alexschroeder.ch/view/oddmu/oddmu-missing.1):
 This man page documents the "missing" subcommand to list local links
@@ -94,6 +94,8 @@ that don't point to any existing pages or files.
 [oddmu-hashtags(1)](https://alexschroeder.ch/view/oddmu/oddmu-hashtags.1):
 This man page documents the "hashtags" subcommand to count the
 hashtags used from the command line.
+
+Static site generator:
 
 [oddmu-html(1)](https://alexschroeder.ch/view/oddmu/oddmu-html.1):
 This man page documents the "html" subcommand to generate HTML from
@@ -109,15 +111,23 @@ This man page documents the "notify" subcommand to add links to
 hashtag pages, index and changes for a given page. This is useful when
 you edit the Markdown files locally.
 
+Configuration:
+
 [oddmu-templates(5)](https://alexschroeder.ch/view/oddmu/oddmu-templates.5):
 This man page documents how the templates can be changed (how they
 *must* be changed) and lists the attributes available for the various
 templates.
 
+System administration:
+
 [oddmu-apache(5)](https://alexschroeder.ch/view/oddmu/oddmu-apache.5):
 This man page documents how to set up the Apache web server for
 various common tasks such as using logins to limit what visitors can
 edit.
+
+[oddmu-filter(7)](https://alexschroeder.ch/view/oddmu/oddmu-filter.7):
+This man page documents how to exclude subdirectories from search and
+archiving.
 
 [oddmu-nginx(5)](https://alexschroeder.ch/view/oddmu/oddmu-nginx.5):
 This man page documents how to set up the freenginx web server for

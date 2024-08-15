@@ -209,6 +209,7 @@ func commands() {
 	subcommands.Register(&replaceCmd{}, "")
 	subcommands.Register(&searchCmd{}, "")
 	subcommands.Register(&staticCmd{}, "")
+	subcommands.Register(&tocCmd{}, "")
 	subcommands.Register(&versionCmd{}, "")
 
 	flag.Parse()

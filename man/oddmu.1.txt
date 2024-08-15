@@ -316,6 +316,8 @@ Oddmu running as a webserver:
 - _oddmu-replace_(1), on how to search and replace text from the command-line
 - _oddmu-search_(1), on how to run a search from the command-line
 - _oddmu-static_(1), on generating a static site from the command-line
+- _oddmu-toc_(1), on how to list the table of contents (toc) a page from the
+  command-line
 - _oddmu-version_(1), on how to get all the build information from the binary
 
 # AUTHORS

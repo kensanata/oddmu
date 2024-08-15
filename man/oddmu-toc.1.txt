@@ -1,0 +1,26 @@
+ODDMU-TOC(1)
+
+# NAME
+
+oddmu-toc - print the table of contents (toc) for pages
+
+# SYNOPSIS
+
+*oddmu toc*  _page names..._
+
+# DESCRIPTION
+
+The "toc" subcommand prints the table of contents for one or more page
+names. Use "-" as the page name if you want to read Markdown from
+*stdin*.
+
+This can be useful for very long pages that need a table of contents
+at the beginning.
+
+# SEE ALSO
+
+_oddmu_(1)
+
+# AUTHORS
+
+Maintained by Alex Schroeder <alex@gnu.org>.

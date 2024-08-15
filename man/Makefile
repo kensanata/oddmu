@@ -11,14 +11,16 @@ man: ${MAN}
 html: ${HTML}
 
 %.html: %.md
-	echo '<!DOCTYPE html>' > $@
-	oddmu html $(basename $<) | sed --regexp-extended \
+	@echo Making $@
+	@echo '<!DOCTYPE html>' > $@
+	@oddmu html $(basename $<) | sed --regexp-extended \
 	  -e 's/<a href="(oddmu[a-z.-]*.[1-9])">([^<>]*)<\/a>/<a href="\1.html">\2<\/a>/g' >> $@
 
 md: ${MD}
 
 %.md: %.txt
-	sed --regexp-extended \
+	@echo Making $@
+	@sed --regexp-extended \
 	  -e 's/\*([^*]+)\*/**\1**/g' \
 	  -e 's/_(oddmu[a-z.-]*)_\(([1-9])\)/[\1(\2)](\1.\2)/g' \
 	  -e 's/\b_([^_]+)_\b/*\1*/g' \
@@ -30,7 +32,8 @@ md: ${MD}
 	  < $< > $@
 
 README.md: ../README.md
-	sed --regexp-extended \
+	@echo Making $@
+	@sed --regexp-extended \
 	  -e 's/\]\(.*\/(.*)\.txt\)/](\1)/' \
 	  < $< > $@
 
