@@ -17,7 +17,7 @@ func (cmd *hashtagsCmd) SetFlags(f *flag.FlagSet) {
 }
 
 func (*hashtagsCmd) Name() string     { return "hashtags" }
-func (*hashtagsCmd) Synopsis() string { return "Hashtag overview." }
+func (*hashtagsCmd) Synopsis() string { return "hashtag overview" }
 func (*hashtagsCmd) Usage() string {
 	return `hashtags:
   Count the use of all hashtags and list them, separated by a tabulator.

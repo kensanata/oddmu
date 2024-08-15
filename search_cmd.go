@@ -28,7 +28,7 @@ func (cmd *searchCmd) SetFlags(f *flag.FlagSet) {
 }
 
 func (*searchCmd) Name() string     { return "search" }
-func (*searchCmd) Synopsis() string { return "Search pages and print a list of links." }
+func (*searchCmd) Synopsis() string { return "search pages and print a list of links" }
 func (*searchCmd) Usage() string {
 	return `search [-dir string] [-page <n>|-all] [-extract] <terms>:
   Search for pages matching terms and print the result set as a

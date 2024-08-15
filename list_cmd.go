@@ -20,7 +20,7 @@ func (cmd *listCmd) SetFlags(f *flag.FlagSet) {
 }
 
 func (*listCmd) Name() string     { return "list" }
-func (*listCmd) Synopsis() string { return "List pages with name and title." }
+func (*listCmd) Synopsis() string { return "list pages with name and title" }
 func (*listCmd) Usage() string {
 	return `list [-dir string]:
   List all pages with name and title, separated by a tabulator.
