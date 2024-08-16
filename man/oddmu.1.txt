@@ -305,19 +305,16 @@ If you run Oddmu as a web server:
 If you run Oddmu as a static site generator or pages offline and sync them with
 Oddmu running as a webserver:
 
-- _oddmu-hashtags_(1), on how to count the hashtags used from the command-line
-- _oddmu-html_(1), on how to render a page from the command-line
-- _oddmu-list_(1), on how to list pages and titles from the command-line
-- _oddmu-links_(1), on how to list the outgoing links for a page from the
-  command-line
-- _oddmu-missing_(1), on how to find broken local links from the command-line
-- _oddmu-notify_(1), on updating index, changes and hashtag pages from the
-  command-line
-- _oddmu-replace_(1), on how to search and replace text from the command-line
-- _oddmu-search_(1), on how to run a search from the command-line
-- _oddmu-static_(1), on generating a static site from the command-line
-- _oddmu-toc_(1), on how to list the table of contents (toc) a page from the
-  command-line
+- _oddmu-hashtags_(1), on how to count the hashtags used
+- _oddmu-html_(1), on how to render a page
+- _oddmu-list_(1), on how to list pages and titles
+- _oddmu-links_(1), on how to list the outgoing links for a page
+- _oddmu-missing_(1), on how to find broken local links
+- _oddmu-notify_(1), on updating index, changes and hashtag pages
+- _oddmu-replace_(1), on how to search and replace text
+- _oddmu-search_(1), on how to run a search
+- _oddmu-static_(1), on generating a static site
+- _oddmu-toc_(1), on how to list the table of contents (toc) a page
 - _oddmu-version_(1), on how to get all the build information from the binary
 
 If you want to stop using Oddmu:

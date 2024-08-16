@@ -2,7 +2,7 @@ ODDMU-HTML(1)
 
 # NAME
 
-oddmu-html - render Oddmu page HTML from the command-line
+oddmu-html - render Oddmu page HTML
 
 # SYNOPSIS
 

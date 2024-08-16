@@ -2,7 +2,7 @@ ODDMU-REPLACE(1)
 
 # NAME
 
-oddmu-replace - replace text in Oddmu pages from the command-line
+oddmu-replace - replace text in Oddmu pages
 
 # SYNOPSIS
 

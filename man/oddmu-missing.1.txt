@@ -2,7 +2,7 @@ ODDMU-MISSING(1)
 
 # NAME
 
-oddmu-missing - list missing pages from the command-line
+oddmu-missing - list missing pages
 
 # SYNOPSIS
 

@@ -2,7 +2,7 @@ ODDMU-LIST(1)
 
 # NAME
 
-oddmu-list - list page names and titles from the command-line
+oddmu-list - list page names and titles
 
 # SYNOPSIS
 

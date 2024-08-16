@@ -2,7 +2,7 @@ ODDMU-HASHTAGS(1)
 
 # NAME
 
-oddmu-hashtags - count the hashtags used from the command-line
+oddmu-hashtags - count the hashtags used
 
 # SYNOPSIS
 
