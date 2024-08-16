@@ -8,11 +8,9 @@ import (
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/google/subcommands"
 	"io"
-	"io/fs"
 	"net/url"
 	"os"
 	"path"
-	"path/filepath"
 	"strings"
 )
 
@@ -38,19 +36,12 @@ func (cmd *missingCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interfac
 }
 
 func missingCli(w io.Writer) subcommands.ExitStatus {
-	names, err := existingPages()
-	if err != nil {
-		fmt.Fprintln(w, err)
-		return subcommands.ExitFailure
-	}
+	index.load()
 	found := false
-	for name, isPage := range names {
-		if !isPage {
-			continue
-		}
+	for name := range index.titles {
 		p, err := loadPage(name)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Loading %s: %s\n", p.Name, err)
+			fmt.Fprintf(os.Stderr, "Loading %s: %s\n", name, err)
 			return subcommands.ExitFailure
 		}
 		for _, link := range p.links() {
@@ -66,13 +57,17 @@ func missingCli(w io.Writer) subcommands.ExitStatus {
 				u.Path = strings.TrimSuffix(u.Path, ".md")
 				// pages containing a colon need the ./ prefix
 				u.Path = strings.TrimPrefix(u.Path, "./")
-				// check whether the destinatino is a known page
+				// check whether the destination is a known page
 				destination, err := url.PathUnescape(u.Path)
 				if err != nil {
 					fmt.Fprintf(os.Stderr, "Cannot decode %s: %s\n", link, err)
 					return subcommands.ExitFailure
 				}
-				_, ok := names[destination]
+				_, ok := index.titles[destination]
+				// links to directories can work
+				if !ok {
+					_, ok = index.titles[path.Join(destination, "index")]
+				}
 				if !ok {
 					if !found {
 						fmt.Fprintln(w, "Page\tMissing")
@@ -87,31 +82,6 @@ func missingCli(w io.Writer) subcommands.ExitStatus {
 		fmt.Fprintln(w, "No missing pages found.")
 	}
 	return subcommands.ExitSuccess
-}
-
-func existingPages() (map[string]bool, error) {
-	names := make(map[string]bool)
-	err := filepath.Walk(".", func(path string, info fs.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		// skip hidden directories and files
-		if path != "." && strings.HasPrefix(filepath.Base(path), ".") {
-			if info.IsDir() {
-				return filepath.SkipDir
-			} else {
-				return nil
-			}
-		}
-		if strings.HasSuffix(path, ".md") {
-			name := filepath.ToSlash(strings.TrimSuffix(path, ".md"))
-			names[name] = true
-		} else {
-			names[path] = false
-		}
-		return nil
-	})
-	return names, err
 }
 
 // links parses the page content and returns an array of link destinations.
