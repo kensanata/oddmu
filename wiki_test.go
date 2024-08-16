@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"os"
+	"path/filepath"
 	"slices"
 	"strings"
 	"testing"
@@ -113,4 +114,20 @@ func cleanup(t *testing.T, dir string) {
 			})
 		}
 	})
+}
+
+// minimalIndex creates a new indexStore containing just the known Markdown files without any additional Markdown files
+// from testdata.
+func minimalIndex(t *testing.T) *indexStore {
+	idx := &indexStore{}
+	idx.reset()
+	names := []string{"index", "README"}
+	for _, name := range names {
+		p, err := loadPage(name)
+		assert.NoError(t, err)
+		idx.addPage(p)
+	}
+	err := filepath.Walk("themes", idx.walk)
+	assert.NoError(t, err)
+	return idx
 }

@@ -32,13 +32,16 @@ func (cmd *missingCmd) SetFlags(f *flag.FlagSet) {
 }
 
 func (cmd *missingCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
-	return missingCli(os.Stdout)
+	return missingCli(os.Stdout, &index)
 }
 
-func missingCli(w io.Writer) subcommands.ExitStatus {
-	index.load()
+// missingCli implements the finding of links to missing pages. In order to make testing easier, it takes a Writer and
+// an indexStore. The Writer is important so that test code can provide a buffer instead of os.Stdout; the indexStore is
+// important so that test code can ensure no other test running in parallel can interfere with the list of known pages
+// (by adding or deleting pages).
+func missingCli(w io.Writer, idx *indexStore) subcommands.ExitStatus {
 	found := false
-	for name := range index.titles {
+	for name := range idx.titles {
 		p, err := loadPage(name)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Loading %s: %s\n", name, err)
@@ -63,10 +66,10 @@ func missingCli(w io.Writer) subcommands.ExitStatus {
 					fmt.Fprintf(os.Stderr, "Cannot decode %s: %s\n", link, err)
 					return subcommands.ExitFailure
 				}
-				_, ok := index.titles[destination]
+				_, ok := idx.titles[destination]
 				// links to directories can work
 				if !ok {
-					_, ok = index.titles[path.Join(destination, "index")]
+					_, ok = idx.titles[path.Join(destination, "index")]
 				}
 				if !ok {
 					if !found {

@@ -42,18 +42,20 @@ func (*exportCmd) Usage() string {
 }
 
 func (cmd *exportCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
-	return exportCli(os.Stdout, cmd.templateName)
+	return exportCli(os.Stdout, cmd.templateName, &index)
 }
 
-// exportCli runs the export command on the command line. It is used
-// here with an io.Writer for easy testing.
-func exportCli(w io.Writer, templateName string) subcommands.ExitStatus {
-	index.load()
+// exportCli runs the export command on the command line. In order to make testing easier, it takes a Writer and an
+// indexStore. The Writer is important so that test code can provide a buffer instead of os.Stdout; the indexStore is
+// important so that test code can ensure no other test running in parallel can interfere with the list of known pages
+// (by adding or deleting pages).
+func exportCli(w io.Writer, templateName string, idx *indexStore) subcommands.ExitStatus {
+	loadLanguages()
 	feed := new(Feed)
 	items := []Item{}
 	// feed.Name remains unset
 	feed.Date = time.Now().Format(time.RFC3339)
-	for name, title := range index.titles {
+	for name, title := range idx.titles {
 		if name == "index" {
 			feed.Title = title
 		}
@@ -72,6 +74,7 @@ func exportCli(w io.Writer, templateName string) subcommands.ExitStatus {
 		it := Item{Date: fi.ModTime().Format(time.RFC3339)}
 		it.Title = p.Title
 		it.Name = p.Name
+		it.Body = p.Body
 		it.Html = htmlTemplate.HTML(htmlTemplate.HTMLEscaper(p.Html))
 		it.Hashtags = p.Hashtags
 		items = append(items, it)
