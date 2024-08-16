@@ -85,7 +85,7 @@ func wikiRenderer() *html.Renderer {
 	return renderer
 }
 
-// renderHtml renders the Page.Body to HTML and sets Page.Html, Page.Language, Page.Hashtags, and escapes Page.Name.
+// renderHtml renders the Page.Body to HTML and sets Page.Html, Page.Hashtags, and escapes Page.Name.
 func (p *Page) renderHtml() {
 	parser, hashtags := wikiParser()
 	renderer := wikiRenderer()
