@@ -31,7 +31,7 @@ By default, the export uses the **feed.html** template in the current directory.
 Export all the pages into a big XML file:
 
 ```
-oddmu export > /tmp/export.xml
+env ODDMU_LANGUAGES=de,en oddmu export > /tmp/export.xml
 ```
 
 Alternatively, consider a template file like the following, to generate a JSON
