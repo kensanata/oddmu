@@ -31,6 +31,7 @@ oddmu: *.go
 	go build
 
 test:
+	rm -rf testdata/*
 	go test -shuffle on .
 
 run:
