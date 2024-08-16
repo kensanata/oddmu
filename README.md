@@ -138,6 +138,13 @@ edit.
 This man page documents how to setup a systemd unit and have it manage
 Oddmu. “Great configurability brings great burdens.”
 
+Leaving:
+
+[oddmu-export(1)](https://alexschroeder.ch/view/oddmu/oddmu-export.1):
+This man page documents how to export all the pages as one RSS feed so
+that you can import them all into a new platform that doesn't use
+Markdown files.
+
 ## Building
 
 To build the binary:

@@ -1,0 +1,39 @@
+ODDMU-EXPORT(1)
+
+# NAME
+
+oddmu-export - export all pages into one file
+
+# SYNOPSIS
+
+*oddmu export*
+
+# DESCRIPTION
+
+The "export" subcommand prints a RSS file containing all the pages to stdout.
+You probably want to redirect this into a file so that you can upload and import
+it somewhere.
+
+Note that this only handles pages (Markdown files). All other files (images,
+PDFs, whatever else you uploaded) are not part of the feed and has to be
+uploaded to the new platform in some other way.
+
+# FILES
+
+The export uses the **feed.html** template in the current directory.
+
+# EXAMPLE
+
+Export all the pages into a big XML file:
+
+```
+oddmu export > /tmp/export.xml
+```
+
+# SEE ALSO
+
+_oddmu_(1), _oddmu-templates_(5), _oddmu-static_(1)
+
+# AUTHORS
+
+Maintained by Alex Schroeder <alex@gnu.org>.

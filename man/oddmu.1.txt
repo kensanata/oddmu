@@ -320,6 +320,10 @@ Oddmu running as a webserver:
   command-line
 - _oddmu-version_(1), on how to get all the build information from the binary
 
+If you want to stop using Oddmu:
+
+- _oddmu-export_(1), on how to export all the files as one big RSS file
+
 # AUTHORS
 
 Maintained by Alex Schroeder <alex@gnu.org>.

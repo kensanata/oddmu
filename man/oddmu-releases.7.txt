@@ -8,6 +8,10 @@ oddmu-releases - what's new?
 
 This page lists user-visible features and template changes to consider.
 
+## 1.13 (unreleased)
+
+Add _export_ subcommand.
+
 ## 1.12 (2024)
 
 Add _hashtags_, _links_ and _toc_ subcommands.
