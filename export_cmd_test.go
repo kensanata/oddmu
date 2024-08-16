@@ -9,7 +9,7 @@ import (
 
 func TestExportCmd(t *testing.T) {
 	b := new(bytes.Buffer)
-	s := exportCli(b)
+	s := exportCli(b, "feed.html")
 	assert.Equal(t, subcommands.ExitSuccess, s)
 	assert.Contains(t, b.String(), "<title>Oddµ: A minimal wiki</title>")
 	assert.Contains(t, b.String(), "<title>Welcome to Oddµ</title>")

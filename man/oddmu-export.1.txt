@@ -6,7 +6,7 @@ oddmu-export - export all pages into one file
 
 # SYNOPSIS
 
-*oddmu export*
+*oddmu export* [*-template* _filename_]
 
 # DESCRIPTION
 
@@ -18,9 +18,13 @@ Note that this only handles pages (Markdown files). All other files (images,
 PDFs, whatever else you uploaded) are not part of the feed and has to be
 uploaded to the new platform in some other way.
 
+The *-template* option specifies the template to use. If the template filename
+ends in _.xml_, _.html_ or _.rss_, it is assumed to contain XML and the optional
+XML preamble is printed and appropriate escaping rules are used.
+
 # FILES
 
-The export uses the **feed.html** template in the current directory.
+By default, the export uses the **feed.html** template in the current directory.
 
 # EXAMPLE
 
@@ -28,6 +32,31 @@ Export all the pages into a big XML file:
 
 ```
 oddmu export > /tmp/export.xml
+```
+
+Alternatively, consider a template file like the following, to generate a JSON
+feed. The rule to disallow a comma at the end of arrays means that we need to
+add an empty tag and an empty item, unfortunately:
+
+```
+{
+  "version": "https://jsonfeed.org/version/1.1",
+  "title": "{{.Title}}",
+  "home_page_url": "https://alexschroeder.ch",
+  "others": [],
+  "items": [{{range .Items}}
+    {
+      "id": "{{.Name}}",
+      "url": "https://alexschroeder.ch/view/{{.Name}}",
+      "title": "{{.Title}}",
+      "content_html": "{{.Html}}",
+      "date_modified": "{{.Date}}",
+      "tags": [{{range .Hashtags}}"{{.}}",{{end}}""],
+      "language": "{{.Language}}"
+    },{{end}}
+    {}
+  ]
+}
 ```
 
 # SEE ALSO
