@@ -25,10 +25,9 @@ most importantly tables and definition lists.
 
 ## Local links
 
-Local links use double square brackets [[like this]]. Oddmu does not treat
-underscores like spaces, so [[like this]] and [[like_this]] link to different
-destinations and are served by different files: "like this.md" and
-"like_this.md".
+Local links use double square brackets. Oddmu does not treat underscores like
+spaces, so "[[like this]]" and "[[like_this]]" link to different destinations
+and are served by different files: "like this.md" and "like_this.md".
 
 ## Hashtags
 

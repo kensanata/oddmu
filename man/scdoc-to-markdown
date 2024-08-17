@@ -1,0 +1,27 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+my $literal = 0;
+while (<>) {
+  # bold
+  s/\*([^*]+)\*/**$1**/g;
+  # link to oddmu man pages (before italics)
+  s/_(oddmu[a-z.-]*)_\(([1-9])\)/[$1($2)]($1.$2)/g;
+  # italic
+  s/\b_([^_]+)_\b/*$1*/g;
+  # move all H1 headers to H2
+  s/^# /## /;
+  # the new H1 title
+  s/^([A-Z.-]*\([1-9]\))( ".*")?$/# $1/;
+  # quoted URLs
+  s/"(http.*?)"/`$1`/g;
+  # quoted wiki links
+  s/"(\[\[[^]]*\]\])"/`$1`/g;
+  # quoted Markdown links
+  s/"(\[.*?\]\(.*?\))"/`$1`/g;
+  # switch literal style
+  $literal = !$literal if /^```$/;
+  # protect hashtags except within literal blocks
+  s/#([^ #])/\\#$1/ unless $literal;
+  print;
+}
