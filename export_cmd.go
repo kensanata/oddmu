@@ -42,6 +42,7 @@ func (*exportCmd) Usage() string {
 }
 
 func (cmd *exportCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
+	index.load()
 	return exportCli(os.Stdout, cmd.templateName, &index)
 }
 
