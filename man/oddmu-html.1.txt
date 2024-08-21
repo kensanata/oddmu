@@ -12,7 +12,8 @@ oddmu-html - render Oddmu page HTML
 
 The "html" subcommand opens the Markdown file for the given page name (appending
 the ".md" extension) and prints the HTML to STDOUT without invoking the
-"view.html" template.
+"view.html" template. Use "-" as the page name if you want to read Markdown from
+*stdin*.
 
 # OPTIONS
 
@@ -22,11 +23,18 @@ the ".md" extension) and prints the HTML to STDOUT without invoking the
 
 # EXAMPLE
 
-Generate the HTML for "README.md":
+Generate "README.html" from "README.md":
 
 ```
-oddmu html README
+oddmu html README > README.html
 ```
+
+Alternatively:
+
+```
+oddmu html - < README.md > README.html
+```
+
 
 # ENVIRONMENT
 
