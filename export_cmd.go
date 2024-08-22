@@ -5,12 +5,12 @@ import (
 	"flag"
 	"fmt"
 	"github.com/google/subcommands"
+	htmlTemplate "html/template"
 	"io"
 	"os"
 	"strings"
-	"time"
 	textTemplate "text/template"
-	htmlTemplate "html/template"
+	"time"
 )
 
 type exportCmd struct {

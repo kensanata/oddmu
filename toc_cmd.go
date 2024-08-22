@@ -81,8 +81,8 @@ func (p *Page) toc() Toc {
 // other level one headings, this is a "regular" table of contents. For a regular table of contents, the first entry is
 // skipped.
 func (toc Toc) print(w io.Writer) {
-	minLevel := 0;
-	levelOneCount := 0;
+	minLevel := 0
+	levelOneCount := 0
 	for _, h := range toc {
 		if h.Level == 1 {
 			levelOneCount++
@@ -101,7 +101,7 @@ func (toc Toc) print(w io.Writer) {
 		}
 		fmt.Fprint(w, "* [")
 		for _, c := range h.GetChildren() {
-			fmt.Fprint(w, string(c.AsLeaf().Literal));
+			fmt.Fprint(w, string(c.AsLeaf().Literal))
 		}
 		fmt.Fprintf(w, "](#%s)\n", h.HeadingID)
 	}
