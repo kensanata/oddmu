@@ -328,7 +328,7 @@ in turn can be used by browsers to get hyphenation right. Apache-2.0.
 is used to sniff the MIME type of files with unknown filename
 extensions. MIT.
 
-[github.com/adrium/goheif](https://github.com/bashdrew/goheif) is
+[github.com/gen2brain/heic](https://github.com/gen2brain/heic) is
 used to decode HEIC files (the new default file format for photos on
 iPhones). LGPL-3.0-only.
 
