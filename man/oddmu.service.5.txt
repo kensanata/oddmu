@@ -37,8 +37,7 @@ Environment="ODDMU_WEBFINGER=1"
 Install the service file and enable it:
 
 ```
-ln -s /home/oddmu/oddmu.service /etc/systemd/system/
-systemctl enable --now oddmu
+sudo systemctl enable --now ./oddmu.service
 ```
 
 You should be able to visit the wiki at http://localhost:8080/.
@@ -90,10 +89,8 @@ Environment="ODDMU_WEBFINGER=1"
 To install, enable and start both units:
 
 ```
-ln -s /home/oddmu/oddmu-unix-domain.socket /etc/systemd/system
-ln -s /home/oddmu/oddmu-unix-domain.service /etc/systemd/system
-systemctl enable --now oddmu-unix-domain.socket
-systemctl enable --now oddmu-unix-domain.service
+sudo systemctl enable --now ./oddmu-unix-domain.socket
+sudo systemctl enable --now ./oddmu-unix-domain.service
 ```
 
 To test just the unix domain socket, use _ncat(1)_:
@@ -109,8 +106,8 @@ _oddmu-apache_(5) or _oddmu-nginx_(5) for example configurations.
 ## A personal wiki
 
 On a single user machine, it might be useful to have a single wiki for the main
-user available, on the standard port (80). In order to do this, setup a "user"
-unit using systemd and save the following as "user-unix-domain.service":
+user available. In order to do this, setup a "user" unit using systemd and save
+the following as "user-unix-domain.service":
 
 ```
 [Unit]
@@ -125,26 +122,16 @@ StandardOutput=journal
 StandardError=journal
 ExecStart=/home/alex/src/oddmu/oddmu
 WorkingDirectory=/home/alex/wiki
-Environment="ODDMU_PORT=80"
 Environment="ODDMU_LANGUAGES=de,en"
 ```
 
-Since this is a priviledged port, the binary needs an extra capability for an
-ordinary user to do this. This is necessary so that the files are created and
-owned by the same user. Otherwise, the regular user wouldn't be able to edit the
-files using their favourite text editor.
-
-```
-sudo setcap 'cap_net_bind_service=+ep' oddmu
-```
-
-Note that as soon as you recomile, the capability is gone again and the above
-must be repeated.
+Since this is a user service, the same user can edit the files using their
+favourite text editor.
 
 Install it:
 
 ```
-systemctl --user enable --now user-unix-domain.service
+systemctl --user enable --now ./user-unix-domain.service
 ```
 
 To examine the log:
@@ -152,6 +139,38 @@ To examine the log:
 ```
 journalctl --user --unit user-unix-domain.service
 ```
+
+Note that no sudo is required!
+
+## Using the priviledged port 80
+
+When running a personal wiki, you can have the oddmu binary listen on port 80,
+the standard HTTP port. It is not really worth the effort: It means that you can
+visit "http://localhost/" instead of "http://localhost:8080". Nevertheless, if
+you're interested in giving it a try, here's how to do it.
+
+The service definition must specify the new port:
+
+Environment="ODDMU_PORT=80"
+
+Since this is a privileged port, the binary needs an extra capability for an
+ordinary user to do this.
+
+```
+sudo setcap 'cap_net_bind_service=+ep' oddmu
+```
+
+Note that as soon as you recompile, the capability is gone again and the above
+must be repeated.
+
+# SECURITY
+
+Only allow direct access to Oddmu on systems and networks where you're OK with
+every user editing the pages. On the open web, this is not true. If your server
+is on the open web, always run Oddmu behind a regular web server acting as a
+reverse proxy, limiting regular visitors to read-only access. This means that
+the regular web server listens on the regular privileged ports (80 for HTTP,
+443 for HTTPS) and passes requests to Oddmu on some other port.
 
 # SEE ALSO
 
@@ -161,4 +180,3 @@ _systemd.socket_(5), _capabilities_(7)
 # AUTHORS
 
 Maintained by Alex Schroeder <alex@gnu.org>.
-
