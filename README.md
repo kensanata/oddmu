@@ -31,7 +31,7 @@ If your pages don't provide their own title (`# title`), the file name
 necessary.
 
 Other files can be uploaded and images (ending in `.jpg`, `.jpeg`,
-`.png`, `.heic` or `webp`) can be resized when they are uploaded
+`.png`, `.heic` or `.webp`) can be resized when they are uploaded
 (resulting in `.jpg` or `.png` files).
 
 ## Documentation
