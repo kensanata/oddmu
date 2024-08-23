@@ -3,7 +3,7 @@ module alexschroeder.ch/cgit/oddmu
 go 1.21.0
 
 require (
-	github.com/bashdrew/goheif v0.0.0-20230406184952-7a08ca9c9bdd
+	github.com/adrium/goheif v0.0.0-20230113233934-ca402e77a786
 	github.com/disintegration/imaging v1.6.2
 	github.com/edwvee/exiffix v0.0.0-20210922235313-0f6cbda5e58f
 	github.com/fsnotify/fsnotify v1.7.0

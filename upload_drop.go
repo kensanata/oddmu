@@ -5,7 +5,7 @@ package main
 
 import (
 	"fmt"
-	_ "github.com/bashdrew/goheif"
+	_ "github.com/adrium/goheif"
 	"github.com/disintegration/imaging"
 	"github.com/edwvee/exiffix"
 	"io"
