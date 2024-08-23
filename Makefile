@@ -1,7 +1,7 @@
 SHELL=/bin/bash
 PREFIX=${HOME}/.local
 
-.PHONY: help build test run upload docs install missing
+.PHONY: help build test run upload docs install priv
 
 help:
 	@echo Help for Oddmu
@@ -24,6 +24,9 @@ help:
 	@echo
 	@echo make upload
 	@echo "    this is how I upgrade my server"
+	@echo
+	@echo make dist
+	@echo "    cross compile for other systems"
 
 build: oddmu
 
@@ -50,10 +53,24 @@ install:
 	install -D -t ${PREFIX}/.local/bin oddmu
 
 # More could be added, of course!
-dist: oddmu-linux-amd64.tar.gz
+dist: oddmu-linux-amd64.tar.gz oddmu-darwin-amd64.tar.gz oddmu-windows-amd64.tar.gz
 
 oddmu-linux-amd64: *.go
 	GOOS=linux GOARCH=amd64 go build -o $@
+
+oddmu-linux-arm64: *.go
+	env GOOS=linux GOARCH=arm64 GOARM=5 go build -o $@
+
+oddmu-darwin-amd64: *.go
+	GOOS=darwin GOARCH=arm64 go build -o $@
+
+oddmu.exe: *.go
+	GOOS=windows GOARCH=amd64 go build -o $@
+
+oddmu-windows-amd64.tar.gz: oddmu.exe
+	cd man && make html
+	tar czf $@ --transform='s/^/oddmu\//' --exclude='*~' \
+	  $< *.md man/*.[157].{html,md} themes/
 
 %.tar.gz: %
 	tar czf $@ --transform='s/^$</oddmu/' --transform='s/^/oddmu\//' --exclude='*~' \
