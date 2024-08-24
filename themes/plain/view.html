@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="{{.Language}}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width">
+    <title>{{.Title}}</title>
+  </head>
+  <body>
+    <header>
+      <a href="#main">Skip navigation</a>
+      <a href="/view/index">Home</a>
+      <a href="/edit/{{.Name}}" accesskey="e">Edit</a>
+      <form role="search" action="/search/{{.Dir}}" method="GET">
+        <label for="search">Search:</label>
+        <input id="search" type="text" spellcheck="false" name="q" accesskey="f" placeholder="term" required>
+        <button>Go</button>
+      </form>
+    </header>
+    <main>
+<pre>
+{{printf "%s" .Body}}
+</pre>
+    </main>
+  </body>
+</html>

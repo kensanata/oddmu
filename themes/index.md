@@ -12,5 +12,6 @@ your own sites.
 Theoretical themes:
 
 - [themes/chat](chat/README)
+- [themes/plain](plain/README)
 
 (Up to the [Welcome](../index) page.)
