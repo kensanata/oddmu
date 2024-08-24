@@ -6,8 +6,6 @@
     <meta name="viewport" content="width=device-width">
     <title>Search for {{.Query}}</title>
     <style>
-html { max-width: 70ch; padding: 2ch; margin: auto; color: #111; background-color: #ffe; }
-body { hyphens: auto; }
 header a { margin-right: 1ch; }
 form { display: inline-block; }
 input#search { width: 20ch; }
@@ -29,7 +27,6 @@ button { background-color: #eee; color: inherit; border-radius: 4px; border-widt
       </form>
     </header>
     <main id="main">
-      <h1>Search for {{.Query}}</h1>
       {{if .Results}}
       <p>
         {{if gt .Page 2}}<a href="/search/{{.Dir}}?q={{.Query}}&page=1">First</a>{{end}}
