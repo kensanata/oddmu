@@ -3,6 +3,20 @@ MAN=$(patsubst %.txt,%,${TEXT})
 HTML=$(patsubst %.txt,%.html,${TEXT})
 MD=$(patsubst %.txt,%.md,${TEXT})
 
+help:
+	@echo Help for Oddmu Documentation
+	@echo ============================
+	@echo make man
+	@echo "    regenerate man pages"
+	@echo make html
+	@echo "    generate HTML pages"
+	@echo make md
+	@echo "    generate Markdown pages"
+	@echo make clean
+	@echo "    delete HTML and Markdown pages"
+	@echo make realclean
+	@echo "    delete HTML, Markdown and man pages"
+
 man: ${MAN}
 
 %: %.txt
@@ -33,7 +47,9 @@ upload: ${MD} README.md
 	make clean
 
 clean:
-	rm --force ${HTML} ${MD} README.md
+	@echo Removing HTML and Markdown files
+	@rm --force ${HTML} ${MD} README.md
 
 realclean: clean
-	rm --force ${MAN}
+	@echo Removing man pages
+	@rm --force ${MAN}

@@ -5,28 +5,23 @@ PREFIX=${HOME}/.local
 
 help:
 	@echo Help for Oddmu
-	@echo =====================
-	@echo
+	@echo ==============
 	@echo make run
 	@echo "    runs program, offline"
-	@echo
 	@echo make test
 	@echo "    runs the tests without log output"
-	@echo
 	@echo make docs
 	@echo "    create man pages from text files"
-	@echo
 	@echo make build
 	@echo "    just build it"
-	@echo
 	@echo make install
 	@echo "    install the files to ~/.local"
-	@echo
 	@echo make upload
 	@echo "    this is how I upgrade my server"
-	@echo
 	@echo make dist
 	@echo "    cross compile for other systems"
+	@echo make clean
+	@echo "    remove built files"
 
 build: oddmu
 
@@ -46,14 +41,17 @@ upload: build
 	@echo Changes to the template files need careful consideration
 
 docs:
-	cd man; make
+	cd man; make man
 
 install:
 	for n in 1 5 7; do install -D -t ${PREFIX}/share/man/man$$n man/*.$$n; done
-	install -D -t ${PREFIX}/.local/bin oddmu
+	install -D -t ${PREFIX}/bin oddmu
 
-# More could be added, of course!
-dist: oddmu-linux-amd64.tar.gz oddmu-darwin-amd64.tar.gz oddmu-windows-amd64.tar.gz
+clean:
+	rm --force oddmu oddmu.exe oddmu-{linux,darwin,windows}-{amd64,arm64}{,.tar.gz}
+	cd man && make clean
+
+dist: oddmu-linux-amd64.tar.gz oddmu-linux-arm64 oddmu-darwin-amd64.tar.gz oddmu-windows-amd64.tar.gz
 
 oddmu-linux-amd64: *.go
 	GOOS=linux GOARCH=amd64 go build -o $@
@@ -69,11 +67,11 @@ oddmu.exe: *.go
 
 oddmu-windows-amd64.tar.gz: oddmu.exe
 	cd man && make html
-	tar czf $@ --transform='s/^/oddmu\//' --exclude='*~' \
+	tar --create --file $@ --transform='s/^/oddmu\//' --exclude='*~' \
 	  $< *.md man/*.[157].{html,md} themes/
 
 %.tar.gz: %
-	tar czf $@ --transform='s/^$</oddmu/' --transform='s/^/oddmu\//' --exclude='*~' \
+	tar --create --file $@ --transform='s/^$</oddmu/' --transform='s/^/oddmu\//' --exclude='*~' \
 	  $< Makefile *.socket *.service *.md man/Makefile man/*.1 man/*.5 man/*.7 themes/
 
 priv:
