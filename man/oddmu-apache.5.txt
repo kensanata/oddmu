@@ -224,10 +224,10 @@ _oddmu-filter_(7).
 
 In the following example, ODDMU_FILTER is set to "^secret/".
 
-http://transjovian.org/search/index?q=something does not search the "secret/"
+"http://transjovian.org/search/index?q=something" does not search the "secret/"
 directory and its subdirectories are excluded.
 
-http://transjovian.org/search/secret/index?q=something searches just the
+"http://transjovian.org/search/secret/index?q=something" searches just the
 "secret" directory and its subdirectories.
 
 You need to configure the web server to prevent access to the "secret/"

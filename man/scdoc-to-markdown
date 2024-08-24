@@ -3,6 +3,12 @@ use strict;
 use warnings;
 my $literal = 0;
 while (<>) {
+  # switch literal style
+  $literal = !$literal if /^```$/;
+  if ($literal) {
+    print;
+    next;
+  }
   # bold
   s/\*([^*]+)\*/**$1**/g;
   # link to oddmu man pages (before italics)
@@ -19,9 +25,7 @@ while (<>) {
   s/"(\[\[[^]]*\]\])"/`$1`/g;
   # quoted Markdown links
   s/"(\[.*?\]\(.*?\))"/`$1`/g;
-  # switch literal style
-  $literal = !$literal if /^```$/;
-  # protect hashtags except within literal blocks
-  s/#([^ #])/\\#$1/ unless $literal;
+  # protect hashtags
+  s/#([^ #])/\\#$1/;
   print;
 }
