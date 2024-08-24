@@ -8,7 +8,7 @@ oddmu-releases - what's new?
 
 This page lists user-visible features and template changes to consider.
 
-## 1.13 (unreleased)
+## 1.13 (2024)
 
 Add _export_ subcommand.
 
