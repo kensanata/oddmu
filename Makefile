@@ -51,7 +51,7 @@ clean:
 	rm --force oddmu oddmu.exe oddmu-{linux,darwin,windows}-{amd64,arm64}{,.tar.gz}
 	cd man && make clean
 
-dist: oddmu-linux-amd64.tar.gz oddmu-linux-arm64 oddmu-darwin-amd64.tar.gz oddmu-windows-amd64.tar.gz
+dist: oddmu-linux-amd64.tar.gz oddmu-linux-arm64.tar.gz oddmu-darwin-amd64.tar.gz oddmu-windows-amd64.tar.gz
 
 oddmu-linux-amd64: *.go
 	GOOS=linux GOARCH=amd64 go build -o $@
