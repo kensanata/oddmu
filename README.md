@@ -205,9 +205,9 @@ into `$HOME/.local/share/man/`.
 make install
 ```
 
-To install it elsewhere, here's an example using [GNU
-Stow](https://www.gnu.org/software/stow/) to install it into
-`/usr/local/stow` in a way that allows you to uninstall it later:
+Here's an example using [GNU Stow](https://www.gnu.org/software/stow/)
+to install it into `/usr/local/stow` in a way that allows you to
+uninstall it later:
 
 ```sh
 sudo mkdir /usr/local/stow/oddmu
@@ -306,6 +306,20 @@ This is how you can prevent some actions by simply not passing them on
 to Oddmu, or you can require authentication for certain actions.
 Furthermore, you can do the same for directories, allowing you to use
 subdirectories as separate sites, each with their own editors.
+
+### Templates
+
+The `themes` folder has some ideas of how to tweak the HTML templates.
+
+### Permissions
+
+An unexplored idea would be to parse a config file that has usernames
+and passwords, groups usernames into roles, and assigns access to the
+various actions based on these roles. This would obviate the need for
+a web server acting as a reverse proxy.
+
+Then again, not having to care about roles and permissions has been a
+relief.
 
 ## Dependencies
 
