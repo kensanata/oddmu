@@ -177,7 +177,7 @@ func TestTitleSearch(t *testing.T) {
 	index.load()
 
 	items, more := search("title:readme", "", "", 1, false)
-	assert.Equal(t, 0, len(items), "no page found")
+	assert.Equal(t, 1, len(items), "just one page found") // themes/plain/README
 	assert.False(t, more)
 
 	items, more = search("title:wel", "", "", 1, false) // README also contains "wel"
