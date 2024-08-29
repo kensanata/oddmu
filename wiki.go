@@ -179,6 +179,8 @@ func serve() {
 	http.HandleFunc("/append/", makeHandler(appendHandler, true))
 	http.HandleFunc("/upload/", makeHandler(uploadHandler, false))
 	http.HandleFunc("/drop/", makeHandler(dropHandler, false))
+	http.HandleFunc("/list/", makeHandler(listHandler, false))
+	http.HandleFunc("/delete/", makeHandler(deleteHandler, true))
 	http.HandleFunc("/search/", makeHandler(searchHandler, false))
 	go scheduleLoadIndex()
 	go scheduleLoadLanguages()

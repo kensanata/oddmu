@@ -238,6 +238,7 @@ high-level introduction to the various source files.
   search results
 - `index.go` implements the index of all the hashtags
 - `languages.go` implements the language detection
+- `list.go` implements the file list page
 - `page.go` implements the page loading and saving
 - `parser.go` implements the Markdown parsing
 - `preview.go` implements the `/preview` handler

@@ -8,6 +8,23 @@ oddmu-releases - what's new?
 
 This page lists user-visible features and template changes to consider.
 
+## 1.14 (unreleased)
+
+Add _list_ and _delete_ actions.
+
+This most likely requires a change to your web server setup because you need to
+restrict access to these actions: you need to pass these two actions along to
+Oddmu.
+
+See _oddmu-apache_(5) or _oddmu-nginx_(5).
+
+In addition to that, you might want a link to the _list_ action from one of the
+existing templates. For example, from upload.html:
+
+```
+<p>You can delete files <a href="/list/{{.Dir}}">from the file list</a>.
+```
+
 ## 1.13 (2024)
 
 Add _export_ subcommand.

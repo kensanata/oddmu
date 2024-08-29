@@ -19,7 +19,7 @@ The site is defined in "/etc/nginx/sites-available/default", in the _server_
 section. Add a new _location_ section after the existing _location_ section:
 
 ```
-location ~ ^/(view|preview|diff|edit|save|add|append|upload|drop|search|archive)/ {
+location ~ ^/(view|preview|diff|edit|save|add|append|upload|drop|list|delete|search|archive)/ {
         proxy_pass http://localhost:8080;
 }
 ```
@@ -43,7 +43,7 @@ location ~ ^/(view|diff|search)/ {
         proxy_pass http://localhost:8080;
 }
 # password required
-location ~ ^/(edit|save|add|append|upload|drop|archive)/ {
+location ~ ^/(edit|save|add|append|upload|drop|list|delete|archive)/ {
         auth_basic            "Oddmu author";
         auth_basic_user_file  /etc/nginx/conf.d/htpasswd;
         proxy_pass            http://localhost:8080;
@@ -81,7 +81,7 @@ server configuration. On a Debian system, that'd be in
 "/etc/nginx/sites-available/default".
 
 ```
-location ~ ^/(view|preview|diff|edit|save|add|append|upload|drop|search|archive)/ {
+location ~ ^/(view|preview|diff|edit|save|add|append|upload|drop|list|delete|search|archive)/ {
   proxy_pass http://unix:/run/oddmu/oddmu.sock:;
 }
 ```

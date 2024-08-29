@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-APACHE" "5" "2024-05-09"
+.TH "ODDMU-APACHE" "5" "2024-08-29"
 .PP
 .SH NAME
 .PP
@@ -48,7 +48,7 @@ ServerAdmin alex@alexschroeder\&.ch
 <VirtualHost *:443>
   ServerName transjovian\&.org
   SSLEngine on
-  ProxyPassMatch "^/((view|preview|diff|edit|save|add|append|upload|drop|search|archive)/(\&.*))?$" 
+  ProxyPassMatch "^/((view|preview|diff|edit|save|add|append|upload|drop|list|delete|search|archive)/(\&.*))?$" 
                  "http://localhost:8080/$1"
 </VirtualHost>
 .fi
@@ -126,13 +126,13 @@ ServerAdmin alex@alexschroeder\&.ch
   ServerName transjovian\&.org
   ProxyPassMatch "^/((view|diff|search|archive)/(\&.*))?$" 
                  "http://localhost:8080/$1"
-  RedirectMatch  "^/((edit|save|add|append|upload|drop)/(\&.*))?$" 
+  RedirectMatch  "^/((edit|save|add|append|upload|drop|list|delete)/(\&.*))?$" 
                  "https://transjovian\&.org/$1"
 </VirtualHost>
 <VirtualHost *:443>
   ServerName transjovian\&.org
   SSLEngine on
-  ProxyPassMatch "^/((view|preview|diff|edit|save|add|append|upload|drop|search|archive)/(\&.*))?$" 
+  ProxyPassMatch "^/((view|preview|diff|edit|save|add|append|upload|drop|list|delete|search|archive)/(\&.*))?$" 
                  "http://localhost:8080/$1"
 </VirtualHost>
 .fi
@@ -170,7 +170,7 @@ In that case, you need to use the ProxyPassMatch directive.\&
 .PP
 .nf
 .RS 4
-ProxyPassMatch "^/((view|preview|diff|edit|save|add|append|upload|drop|search|archive)/(\&.*))?$" 
+ProxyPassMatch "^/((view|preview|diff|edit|save|add|append|upload|drop|list|delete|search|archive)/(\&.*))?$" 
                "unix:/run/oddmu/oddmu\&.sock|http://localhost/$1"
 .fi
 .RE
@@ -189,7 +189,7 @@ A workaround is to add the redirect manually and drop the question-mark:
 .nf
 .RS 4
 RedirectMatch "^/$" "/view/index"
-ProxyPassMatch "^/((view|preview|diff|edit|save|add|append|upload|drop|search|archive)/(\&.*))$" 
+ProxyPassMatch "^/((view|preview|diff|edit|save|add|append|upload|drop|list|delete|search|archive)/(\&.*))$" 
                "unix:/run/oddmu/oddmu\&.sock|http://localhost/$1"
 .fi
 .RE
@@ -234,12 +234,12 @@ htpasswd -D \&.htpasswd berta
 .RE
 .PP
 Modify your site configuration and protect the "/edit/", "/save/", "/add/",
-"/append/", "/upload/" and "/drop/" URLs with a password by adding the following
-to your "<VirtualHost *:443>" section:
+"/append/", "/upload/", "/drop/", "/list/" and "/delete/" URLs with a password
+by adding the following to your "<VirtualHost *:443>" section:
 .PP
 .nf
 .RS 4
-<LocationMatch "^/(edit|save|add|append|upload|drop)/">
+<LocationMatch "^/(edit|save|add|append|upload|drop|list|delete)/">
   AuthType Basic
   AuthName "Password Required"
   AuthUserFile /home/oddmu/\&.htpasswd
@@ -263,10 +263,10 @@ expression, all directories matching the regular expression are excluded.\& See
 .PP
 In the following example, ODDMU_FILTER is set to "^secret/".\&
 .PP
-http://transjovian.\&org/search/index?\&q=something does not search the "secret/"
+"http://transjovian.\&org/search/index?\&q=something" does not search the "secret/"
 directory and its subdirectories are excluded.\&
 .PP
-http://transjovian.\&org/search/secret/index?\&q=something searches just the
+"http://transjovian.\&org/search/secret/index?\&q=something" searches just the
 "secret" directory and its subdirectories.\&
 .PP
 You need to configure the web server to prevent access to the "secret/"
@@ -274,7 +274,7 @@ directory:
 .PP
 .nf
 .RS 4
-<LocationMatch "^/(edit|save|add|append|upload|drop|(view|preview|search|archive)/secret)/">
+<LocationMatch "^/(edit|save|add|append|upload|drop|list|delete|(view|preview|search|archive)/secret)/">
   AuthType Basic
   AuthName "Password Required"
   AuthUserFile /home/oddmu/\&.htpasswd
@@ -349,7 +349,7 @@ This requires a valid login by the user "alex" or "berta":
 .PP
 .nf
 .RS 4
-<LocationMatch "^/(edit|save|add|append|upload|drop)/intetebi/">
+<LocationMatch "^/(edit|save|add|append|upload|drop|list|delete)/intetebi/">
   Require user alex berta
 </LocationMatch>
 .fi
