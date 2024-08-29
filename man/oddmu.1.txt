@@ -10,6 +10,8 @@ Oddmu is sometimes written Oddµ because µ is the letter mu.
 
 *oddmu*
 
+*oddmu* _subcommand_ [_arguments_...]
+
 # DESCRIPTION
 
 Oddmu can be used as a static site generator, turning Markdown files into HTML
@@ -174,14 +176,20 @@ Oddmu can be run on the command-line using various subcommands.
 - to generate the HTML for a single page, see _oddmu-html_(1)
 - to generate the HTML for the entire site, using Oddmu as a static site
   generator, see _oddmu-static_(1)
-- to search a regular expression and replace it across all files, see
-  _oddmu-replace_(1)
+- to export the HTML for the entire site in one big feed, see _oddmu-export_(1)
 - to emulate a search of the files, see _oddmu-search_(1); to understand how the
   search engine indexes pages and how it sorts and scores results, see
   _oddmu-search_(7)
+- to search a regular expression and replace it across all files, see
+  _oddmu-replace_(1)
+- to learn what the most popular hashtags are, see _oddmu-hashtags_(1)
+- to print a table of contents (TOC) for a page, see _oddmu-toc_(1)
+- to list the outgoing links for a page, see _oddmu-links_(1)
 - to find missing pages (local links that go nowhere), see _oddmu-missing_(1)
+- to list all the pages with name and title, see _oddmu-list_(1)
 - to add links to changes, index and hashtag pages to pages you created locally,
   see _oddmu-notify_(1)
+- to display build information, see _oddmu-version_(1)
 
 # EXAMPLES
 
