@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU" "1" "2024-08-16"
+.TH "ODDMU" "1" "2024-08-29"
 .PP
 .SH NAME
 .PP
@@ -16,6 +16,8 @@ Oddmu is sometimes written Oddµ because µ is the letter mu.\&
 .SH SYNOPSIS
 .PP
 \fBoddmu\fR
+.PP
+\fBoddmu\fR \fIsubcommand\fR [\fIarguments\fR.\&.\&.\&]
 .PP
 .SH DESCRIPTION
 .PP
@@ -214,20 +216,32 @@ to generate the HTML for a single page, see \fIoddmu-html\fR(1)
 to generate the HTML for the entire site, using Oddmu as a static site
 generator, see \fIoddmu-static\fR(1)
 .IP \(bu 4
-to search a regular expression and replace it across all files, see
-\fIoddmu-replace\fR(1)
+to export the HTML for the entire site in one big feed, see \fIoddmu-export\fR(1)
 .IP \(bu 4
 to emulate a search of the files, see \fIoddmu-search\fR(1); to understand how the
 search engine indexes pages and how it sorts and scores results, see
 \fIoddmu-search\fR(7)
 .IP \(bu 4
+to search a regular expression and replace it across all files, see
+\fIoddmu-replace\fR(1)
+.IP \(bu 4
+to learn what the most popular hashtags are, see \fIoddmu-hashtags\fR(1)
+.IP \(bu 4
+to print a table of contents (TOC) for a page, see \fIoddmu-toc\fR(1)
+.IP \(bu 4
+to list the outgoing links for a page, see \fIoddmu-links\fR(1)
+.IP \(bu 4
 to find missing pages (local links that go nowhere), see \fIoddmu-missing\fR(1)
+.IP \(bu 4
+to list all the pages with name and title, see \fIoddmu-list\fR(1)
 .IP \(bu 4
 to add links to changes, index and hashtag pages to pages you created locally,
 see \fIoddmu-notify\fR(1)
+.IP \(bu 4
+to display build information, see \fIoddmu-version\fR(1)
 .PD
 .PP
-.SH EXAMPLE
+.SH EXAMPLES
 .PP
 When saving a page, the page name is take from the URL and the page content is
 taken from the "body" form parameter.\& To illustrate, here'\&s how to edit a page
