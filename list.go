@@ -78,21 +78,25 @@ func listHandler(w http.ResponseWriter, r *http.Request, dir string) {
 
 // deleteHandler deletes the named file and then redirects back to the list
 func deleteHandler(w http.ResponseWriter, r *http.Request, path string) {
-	fn := filepath.FromSlash(path)
-	fi, err := os.Stat(fn)
-	if err != nil {
-		log.Println(err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	err = os.RemoveAll(fn) // and all its children!
+	fn := filepath.Clean(filepath.FromSlash(path))
+	err := os.RemoveAll(fn) // and all its children!
 	if err != nil {
 		log.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	if fi.IsDir() {
-		fn = filepath.Dir(fn) // net result is that the redirect goes to the parent
-	}
 	http.Redirect(w, r, "/list/"+filepath.Dir(fn)+"/", http.StatusFound)
+}
+
+// renameHandler renames the named file and then redirects back to the list
+func renameHandler(w http.ResponseWriter, r *http.Request, path string) {
+	fn := filepath.Clean(filepath.FromSlash(path))
+	target := filepath.Join(filepath.Dir(fn), r.FormValue("name"))
+	err := os.Rename(fn, target)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	http.Redirect(w, r, "/list/"+filepath.Dir(target)+"/", http.StatusFound)
 }

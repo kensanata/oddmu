@@ -10,19 +10,19 @@ This page lists user-visible features and template changes to consider.
 
 ## 1.14 (unreleased)
 
-Add _list_ and _delete_ actions.
+Add _list_, _delete_ and _rename_ actions.
 
-This most likely requires a change to your web server setup because you need to
-restrict access to these actions: you need to pass these two actions along to
-Oddmu.
+This requires a change to your web server setup if you are using a it as a
+reverse proxy because you need to pass these new actions along to Oddmu,
+together with appropriate permission checks.
 
-See _oddmu-apache_(5) or _oddmu-nginx_(5).
+See _oddmu-apache_(5) or _oddmu-nginx_(5) for example.
 
 In addition to that, you might want a link to the _list_ action from one of the
 existing templates. For example, from upload.html:
 
 ```
-<p>You can delete files <a href="/list/{{.Dir}}">from the file list</a>.
+<p>You can rename and delete files <a href="/list/{{.Dir}}">from the file list</a>.
 ```
 
 ## 1.13 (2024)

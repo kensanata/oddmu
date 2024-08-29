@@ -27,7 +27,7 @@ section.\& Add a new \fIlocation\fR section after the existing \fIlocation\fR se
 .PP
 .nf
 .RS 4
-location ~ ^/(view|preview|diff|edit|save|add|append|upload|drop|list|delete|search|archive)/ {
+location ~ ^/(view|preview|diff|edit|save|add|append|upload|drop|list|delete|rename|search|archive)/ {
         proxy_pass http://localhost:8080;
 }
 .fi
@@ -53,7 +53,7 @@ location ~ ^/(view|diff|search)/ {
         proxy_pass http://localhost:8080;
 }
 # password required
-location ~ ^/(edit|save|add|append|upload|drop|list|delete|archive)/ {
+location ~ ^/(edit|save|add|append|upload|drop|list|delete|rename|archive)/ {
         auth_basic            "Oddmu author";
         auth_basic_user_file  /etc/nginx/conf\&.d/htpasswd;
         proxy_pass            http://localhost:8080;
@@ -97,7 +97,7 @@ server configuration.\& On a Debian system, that'\&d be in
 .PP
 .nf
 .RS 4
-location ~ ^/(view|preview|diff|edit|save|add|append|upload|drop|list|delete|search|archive)/ {
+location ~ ^/(view|preview|diff|edit|save|add|append|upload|drop|list|delete|rename|search|archive)/ {
   proxy_pass http://unix:/run/oddmu/oddmu\&.sock:;
 }
 .fi

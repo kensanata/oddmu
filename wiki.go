@@ -181,6 +181,7 @@ func serve() {
 	http.HandleFunc("/drop/", makeHandler(dropHandler, false))
 	http.HandleFunc("/list/", makeHandler(listHandler, false))
 	http.HandleFunc("/delete/", makeHandler(deleteHandler, true))
+	http.HandleFunc("/rename/", makeHandler(renameHandler, true))
 	http.HandleFunc("/search/", makeHandler(searchHandler, false))
 	go scheduleLoadIndex()
 	go scheduleLoadLanguages()

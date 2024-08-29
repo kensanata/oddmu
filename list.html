@@ -6,9 +6,17 @@
     <meta name="viewport" content="width=device-width">
     <title>Manage Files</title>
     <style>
-html { max-width: 70ch; padding: 2ch; margin: auto; color: #111; background-color: #ffe; }
-body { hyphens: auto; }
-form { width: 100%; }
+html { max-width: 70ch; padding: 2ch; margin: auto; color: #111; background-color: #ffe }
+body { hyphens: auto }
+form { width: 100% }
+table { border-collapse: collapse }
+th:nth-child(3) { max-width: 3ex; overflow: visible }
+td form { display: inline }
+td { padding-right: 1ch }
+td:last-child { padding-right: 0 }
+td:first-child { max-width: 30ch; overflow: hidden }
+tr:nth-child(odd) { background-color: #eed }
+td:first-child, td:last-child { white-space: nowrap }
     </style>
   </head>
   <body lang="en">
@@ -25,27 +33,27 @@ form { width: 100%; }
     </header>
     <main>
       <h1>Manage Files</h1>
-      <form id="manage" method="POST">
-        <p><mark>Deletions are immediate and there is no undo!</mark></p>
-        <table>
-          <tr>
-            <th>Name</th>
-            <th>Title</th>
-            <th>Action</th>
-          </tr>
-          {{range .Files}}
-          <tr>
-            {{if .IsDir}}
-            <td><a href="/list/{{$.Dir}}{{.Name}}">{{.Name}}</a></td>
-            {{else}}
-            <td><a href="/view/{{$.Dir}}{{.Name}}">{{.Name}}</a></td>
-            {{end}}
-            <td>{{.Title}}</td>
-            <td>{{if .IsUp}}{{else}}<button formaction="/delete/{{$.Dir}}{{.Name}}">Delete</button>{{end}}</td>
-          </tr>
-          {{end}}
-        </table>
+      <form id="manage">
+        <p><mark>Deletions and renamings take effect immediately and there is no undo!</mark></p>
       </form>
+      <table>
+        <tr>
+          <th>Name</th>
+          <th>Title</th>
+          <th>Delete</th>
+          <th>Rename</th>
+        </tr>{{range .Files}}
+        <tr>
+          <td>{{if .IsDir}}<a href="/list/{{$.Dir}}{{.Name}}">{{.Name}}</a>{{else}}<a href="/view/{{$.Dir}}{{.Name}}">{{.Name}}</a>{{end}}</td>
+          <td>{{.Title}}</td>
+          <td>{{if .IsUp}}{{else}}<button form="manage" formaction="/delete/{{$.Dir}}{{.Name}}" title="Delete {{.Name}}">🗑</button>{{end}}</td>
+          <td>{{if .IsUp}}{{else}}
+            <form action="/rename/{{$.Dir}}{{.Name}}">
+              <input name="name" placeholder="New name"/>
+              <button title="Rename {{.Name}}">♺</button>
+            </form>{{end}}</td>
+        </tr>{{end}}
+      </table>
     </main>
   </body>
 </html>
