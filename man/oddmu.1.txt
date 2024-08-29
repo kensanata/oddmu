@@ -183,7 +183,7 @@ Oddmu can be run on the command-line using various subcommands.
 - to add links to changes, index and hashtag pages to pages you created locally,
   see _oddmu-notify_(1)
 
-# EXAMPLE
+# EXAMPLES
 
 When saving a page, the page name is take from the URL and the page content is
 taken from the "body" form parameter. To illustrate, here's how to edit a page

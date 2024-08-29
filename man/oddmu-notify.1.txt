@@ -42,7 +42,7 @@ using the asterisk ('\*'). If no such list exists, a new one is started at the
 bottom of the page. This allows you to have a different unnumbered list further
 up on the page, as long as it uses the minus for items ('-').
 
-# EXAMPLE
+# EXAMPLES
 
 After writing the file "2023-11-05-climate.md" containing the hashtag
 "#Climate", add links to it from "index.md", "changes.md", and "Climate.md" (if

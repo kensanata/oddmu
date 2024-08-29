@@ -177,7 +177,7 @@ result is added to the "article" element for each snippet.
 point, the language isn't known, so "en" is used for the "html" element and no
 language is used for the "textarea" element.
 
-# EXAMPLE
+# EXAMPLES
 
 The following link in a template takes people to today's page. If no such page
 exists, they are redirected to the edit form where it can be created.

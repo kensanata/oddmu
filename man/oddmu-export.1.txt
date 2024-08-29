@@ -26,7 +26,7 @@ XML preamble is printed and appropriate escaping rules are used.
 
 By default, the export uses the **feed.html** template in the current directory.
 
-# EXAMPLE
+# EXAMPLES
 
 Export all the pages into a big XML file:
 

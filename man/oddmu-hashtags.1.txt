@@ -13,7 +13,7 @@ oddmu-hashtags - count the hashtags used
 The "hashtags" subcommand counts all the hashtags used and lists them, separated
 by a TAB character.
 
-# EXAMPLE
+# EXAMPLES
 
 List the top 10 hashtags. This requires 11 lines because of the header line.
 

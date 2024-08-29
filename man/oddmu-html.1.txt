@@ -21,7 +21,7 @@ the ".md" extension) and prints the HTML to STDOUT without invoking the
 	Use the "view.html" template to render the page. Without this, the HTML
 	lacks html and body tags.
 
-# EXAMPLE
+# EXAMPLES
 
 Generate "README.html" from "README.md":
 

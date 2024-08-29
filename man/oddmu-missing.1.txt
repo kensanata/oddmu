@@ -19,7 +19,7 @@ that start with a slash "/" and links that start with a known URL schema
 
 Notably, links that start with "../" are reported as missing.
 
-# EXAMPLE
+# EXAMPLES
 
 Looking for broken links:
 

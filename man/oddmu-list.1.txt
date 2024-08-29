@@ -22,7 +22,7 @@ subdirectory are listed, and the directory is stripped from the page name.
 *-dir* _string_
 	Limit the list to a particular directory.
 
-# EXAMPLE
+# EXAMPLES
 
 Create list of links to pages in the "dad" directory, filter it for date pages
 (starting with "2"), format it as a list of links and sort in reverse order.

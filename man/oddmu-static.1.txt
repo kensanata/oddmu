@@ -44,7 +44,7 @@ then again, who knows. A SQLite file, for example, would change in-place, and
 therefore making changes to it in the destination directory would change the
 original, too.
 
-# EXAMPLE
+# EXAMPLES
 
 Generate a static copy of the site, but only loading language detection for
 German and English, significantly reducing the time it takes to generate the

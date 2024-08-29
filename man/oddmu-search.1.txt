@@ -39,7 +39,7 @@ scored.
 *-all*
 	Ignore pagination and just print a long list of results.
 
-# EXAMPLE
+# EXAMPLES
 
 Search for the two words "Alex" and "Schroeder". All of the following are
 equivalent: Alex Schroeder, Schroeder Alex, "Alex Schroeder", "Schroeder Alex".
