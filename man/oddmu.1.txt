@@ -55,6 +55,9 @@ directory:
 - _/append/dir/name_ appends an addition to a page
 - _/upload/dir/name_ shows a form to upload a file
 - _/drop/dir/name_ saves an upload
+- _/list/dir/_ lists the files in a directory
+- _/delete/dir/name_ deletes a file or directory
+- _/rename/dir/name?name=new_ renames a file or directory
 - _/search/dir/?q=term_ to search for a term
 - _/archive/dir/name.zip_ to download a zip file of a directory
 
