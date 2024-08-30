@@ -6,9 +6,8 @@ oddmu-templates - how to write the templates
 
 # SYNOPSIS
 
-These files act as HTML templates: _add.html_, _diff.html_, _edit.html_,
-_feed.html_, _preview.html_, _search.html_, _static.html_, _upload.html_ and
-_view.html_. They contain special placeholders in double bracers {{like this}}.
+Some HTML files act as templates. They contain special placeholders in double
+bracers {{like this}}.
 
 # DESCRIPTION
 
