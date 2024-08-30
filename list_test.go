@@ -26,5 +26,5 @@ And an orange sky
 	list := assert.HTTPBody(makeHandler(listHandler, false), "GET", "/list/testdata/delete/", nil)
 	assert.Contains(t, list, `<a href="/view/testdata/delete/haiku.md">haiku.md</a>`)
 	assert.Contains(t, list, `<td>Sunset</td>`)
-	assert.Contains(t, list, `<button formaction="/delete/testdata/delete/haiku.md">Delete</button>`)
+	assert.Contains(t, list, `<button form="manage" formaction="/delete/testdata/delete/haiku.md" title="Delete haiku.md">`)
 }
