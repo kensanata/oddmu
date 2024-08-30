@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-TEMPLATES" "5" "2024-08-29" "File Formats Manual"
+.TH "ODDMU-TEMPLATES" "5" "2024-08-30" "File Formats Manual"
 .PP
 .SH NAME
 .PP
@@ -31,6 +31,8 @@ placeholders.\&
 \fIedit.\&html\fR uses a \fIpage\fR
 .IP \(bu 4
 \fIfeed.\&html\fR uses a \fIfeed\fR
+.IP \(bu 4
+\fIlist.\&html\fR uses a \fIlist\fR
 .IP \(bu 4
 \fIpreview.\&html\fR uses a \fIpage\fR
 .IP \(bu 4
@@ -107,6 +109,30 @@ An item is a page plus a date.\& All the properties of a page can be used (see
 \fBPage\fR above).\&
 .PP
 \fI{{.\&Date}}\fR is the date of the last update to the page, in RFC 822 format.\&
+.PP
+.SS List
+.PP
+The list contains a directory name and an array of files.\&
+.PP
+\fI{{.\&Dir}}\fR is the directory name that is being listed.\&
+.PP
+\fI{{.\&Files}}\fR is the array of files.\& To refer to them, you need to use a \fI{{range
+Files}}\fR … \fI{{end}}\fR construct.\&
+.PP
+Each file has the following attributes:
+.PP
+\fI{{.\&Name}}\fR is the filename.\& The ".\&md" suffix for Markdown files is part of the
+name (unlike page names).\&
+.PP
+\fI{{.\&Title}}\fR is the page title, if the file in question is a Markdown file.\&
+.PP
+\fI{{.\&IsDir}}\fR is a boolean used to indicate that this file is a directory.\&
+.PP
+\fI{{.\&IsUp}}\fR is a boolean used to indicate the entry for the parent directory
+(the first file in the array, unless the directory being listed is the top
+directory).\& The filename of this file is ".\&.\&".\&
+.PP
+\fI{{.\&Date}}\fR is the last modification date of the file.\&
 .PP
 .SS Search
 .PP

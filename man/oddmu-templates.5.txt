@@ -19,6 +19,7 @@ placeholders.
 - _diff.html_ uses a _page_
 - _edit.html_ uses a _page_
 - _feed.html_ uses a _feed_
+- _list.html_ uses a _list_
 - _preview.html_ uses a _page_
 - _search.html_ uses a _search_
 - _static.html_ uses a _page_
@@ -84,6 +85,30 @@ An item is a page plus a date. All the properties of a page can be used (see
 *Page* above).
 
 _{{.Date}}_ is the date of the last update to the page, in RFC 822 format.
+
+## List
+
+The list contains a directory name and an array of files.
+
+_{{.Dir}}_ is the directory name that is being listed.
+
+_{{.Files}}_ is the array of files. To refer to them, you need to use a _{{range
+.Files}}_ … _{{end}}_ construct.
+
+Each file has the following attributes:
+
+_{{.Name}}_ is the filename. The ".md" suffix for Markdown files is part of the
+name (unlike page names).
+
+_{{.Title}}_ is the page title, if the file in question is a Markdown file.
+
+_{{.IsDir}}_ is a boolean used to indicate that this file is a directory.
+
+_{{.IsUp}}_ is a boolean used to indicate the entry for the parent directory
+(the first file in the array, unless the directory being listed is the top
+directory). The filename of this file is "..".
+
+_{{.Date}}_ is the last modification date of the file.
 
 ## Search
 
