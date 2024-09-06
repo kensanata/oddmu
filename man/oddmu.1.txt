@@ -311,6 +311,7 @@ If you run Oddmu as a web server:
 
 - _oddmu-apache_(5), on how to set up Apache as a reverse proxy
 - _oddmu-nginx_(5), on how to set up freenginx as a reverse proxy
+- _oddmu-webdav_(5), on how to set up Apache as a Web-DAV server
 - _oddmu.service_(5), on how to run the service under systemd
 
 If you run Oddmu as a static site generator or pages offline and sync them with

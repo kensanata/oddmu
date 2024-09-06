@@ -269,8 +269,8 @@ Disallow: /
 Your site now serves "/robots.txt" without interfering with the wiki, and
 without needing a wiki page.
 
-Another option would be to create a CSS file and use it with a <link> element in
-all the templates instead of relying on the <style> element.
+Another option would be to create a CSS file and use it with a \<link\> element in
+all the templates instead of relying on the \<style\> element.
 
 The "view.html" template would start as follows:
 
@@ -342,13 +342,16 @@ https://httpd.apache.org/docs/current/howto/auth.html
 "Apache Module mod_proxy".
 https://httpd.apache.org/docs/current/mod/mod_proxy.html
 
+"Apache Module mod_dav".
+https://httpd.apache.org/docs/current/mod/mod_dav.html
+
 "Robot exclusion standard" on Wikipedia.
 https://en.wikipedia.org/wiki/Robot_exclusion_standard
 
-"<style>: The Style Information element"
+"\<style\>: The Style Information element"
 https://developer.mozilla.org/en-US/docs/Web/HTML/Element/style
 
-"<link>: The External Resource Link element"
+"\<link\>: The External Resource Link element"
 https://developer.mozilla.org/en-US/docs/Web/HTML/Element/link
 
 # AUTHORS

@@ -138,6 +138,10 @@ edit.
 This man page documents how to setup a systemd unit and have it manage
 Oddmu. “Great configurability brings great burdens.”
 
+[oddmu-webdav(5)](https://alexschroeder.ch/view/oddmu/oddmu-webdav.5):
+This man page documents how to set up the Apache web server so that
+the wiki can be accessed via Web-DAV.
+
 Leaving:
 
 [oddmu-export(1)](https://alexschroeder.ch/view/oddmu/oddmu-export.1):
