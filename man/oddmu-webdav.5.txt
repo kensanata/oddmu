@@ -161,6 +161,9 @@ alex@melanobombus ~> echo test >> knochentanz/index.md
 
 _oddmu_(1), _oddmu-apache_(5)
 
+"Apache Module mod_dav".
+https://httpd.apache.org/docs/current/mod/mod_dav.html
+
 # AUTHORS
 
 Maintained by Alex Schroeder <alex@gnu.org>.
