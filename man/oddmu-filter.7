@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-FILTER" "7" "2024-02-19"
+.TH "ODDMU-FILTER" "7" "2024-09-30"
 .PP
 .SH NAME
 .PP
@@ -18,22 +18,17 @@ not just a single page.\& These actions walk the directory tree, including all
 subdirectories.\& In some cases, this is not desirable.\&
 .PP
 Sometimes, subdirectories are separate sites, like the sites of other projects
-or different people.\& Essentially, the subdirectory acts as a different site.\&
-Depending on how you think about it, you might not want to include those "sites"
-in searches or archives of the whole site.\&
-.PP
-What'\&s important in this situation is whether the visitor is looking at the
-"main site" (a page further up in the directory tree) or at a particular page in
-a "separate site".\&
+or different people.\& Depending on how you think about it, you might not want to
+include those "sites" in searches or archives of the whole site.\&
 .PP
 Since directory tree actions always start in the directory the visitor is
-currenly looking at, directory tree actions starting in a "separate site"
+currently looking at, directory tree actions starting in a "separate site"
 automatically act as expected.\& The action is limited to that subdirectory tree.\&
 .PP
 When visitors look at a page in the "main site", however, directory tree actions
 must skip any sub directories that are part of a "separate site".\&
 .PP
-The way to identify separate sates is via the environment variable ODDMU_FILTER.\&
+The way to identify separate sites is via the environment variable ODDMU_FILTER.\&
 It'\&s value is a regular expression matching separate sites.\&
 .PP
 .SH EXAMPLES

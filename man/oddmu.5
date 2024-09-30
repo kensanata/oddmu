@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU" "5" "2024-08-29" "File Formats Manual"
+.TH "ODDMU" "5" "2024-09-30" "File Formats Manual"
 .PP
 .SH NAME
 .PP
@@ -117,7 +117,7 @@ autolinking of "naked" URLs are supported
 .IP \(bu 4
 strikethrough using two tildes is supported (~~like this~~)
 .IP \(bu 4
-it is strict about prefix heading rules
+a space is required between the last # and the text for headings
 .IP \(bu 4
 you can specify an id for headings ({#id})
 .IP \(bu 4
@@ -126,12 +126,12 @@ trailing backslashes turn into line breaks
 .PP
 .SH FEEDS
 .PP
-Every file can be viewed as feed by using the extension ".\&rss".\& The feed items
+Every file can be viewed as a feed by using the extension ".\&rss".\& The feed items
 are based on links in bullet lists using the asterix ("*").\& The items must
 point to local pages.\& This is why the link may not contain two forward slashes
 ("//").\&
 .PP
-Assume this is the index page.\& The feed would be "/view/index.\&rss".\& It would
+Below is an example index page.\& The feed would be "/view/index.\&rss".\& It would
 contain the pages "Arianism", "Donatism" and "Monophysitism" but it would not
 contain the pages "Feed" and "About" since the list items don'\&t start with an
 asterix.\&
@@ -153,7 +153,8 @@ Recent posts:
 .fi
 .RE
 .PP
-The feed contains at most 10 items, starting at the top.\&
+The feed contains at most 10 items, starting at the top.\& Thus, new items must be
+added at the beginning of the list.\&
 .PP
 .SH PERCENT ENCODING
 .PP

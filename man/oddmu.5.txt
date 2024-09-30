@@ -74,7 +74,7 @@ Internet
 ## Fediverse account links
 
 Fediverse accounts look a bit like an at sign followed by an email address, e.g.
-@alex@alexschroeder.ch. When rendering a page, these turn into a username linked
+\@alex@alexschroeder.ch. When rendering a page, these turn into a username linked
 to a profile page. In this case, "@alex" would be linked to
 "https://alexschroeder.ch/users/alex".
 
@@ -96,18 +96,18 @@ The Markdown processor comes with a few extensions:
 - fenced code blocks are supported
 - autolinking of "naked" URLs are supported
 - strikethrough using two tildes is supported (~~like this~~)
-- it is strict about prefix heading rules
+- a space is required between the last # and the text for headings
 - you can specify an id for headings ({#id})
 - trailing backslashes turn into line breaks
 
 # FEEDS
 
-Every file can be viewed as feed by using the extension ".rss". The feed items
+Every file can be viewed as a feed by using the extension ".rss". The feed items
 are based on links in bullet lists using the asterix ("\*"). The items must
 point to local pages. This is why the link may not contain two forward slashes
 ("//").
 
-Assume this is the index page. The feed would be "/view/index.rss". It would
+Below is an example index page. The feed would be "/view/index.rss". It would
 contain the pages "Arianism", "Donatism" and "Monophysitism" but it would not
 contain the pages "Feed" and "About" since the list items don't start with an
 asterix.
@@ -127,7 +127,8 @@ Recent posts:
 * [Monophysitism](monophysitism)
 ```
 
-The feed contains at most 10 items, starting at the top.
+The feed contains at most 10 items, starting at the top. Thus, new items must be
+added at the beginning of the list.
 
 # PERCENT ENCODING
 
