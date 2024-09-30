@@ -64,15 +64,25 @@ func hashtag() (func(p *parser.Parser, data []byte, offset int) (int, ast.Node),
 // @webfinger@accounts. It also uses the CommonExtensions and Block Attributes, and no MathJax ($).
 func wikiParser() (*parser.Parser, *[]string) {
 	extensions := (parser.CommonExtensions | parser.AutoHeadingIDs | parser.Attributes) & ^parser.MathJax
-	parser := parser.NewWithExtensions(extensions)
-	prev := parser.RegisterInline('[', nil)
-	parser.RegisterInline('[', wikiLink(prev))
+	p := parser.NewWithExtensions(extensions)
+	prev := p.RegisterInline('[', nil)
+	p.RegisterInline('[', wikiLink(prev))
 	fn, hashtags := hashtag()
-	parser.RegisterInline('#', fn)
+	p.RegisterInline('#', fn)
 	if useWebfinger {
-		parser.RegisterInline('@', accountLink)
+		p.RegisterInline('@', accountLink)
+		// handle escape with \@
+		var escape func(p *parser.Parser, data []byte, offset int) (int, ast.Node);
+		newEscape := func(p *parser.Parser, data []byte, offset int) (int, ast.Node) {
+			i := offset + 1
+			if len(data) > i && data[i] == '@' {
+				return 2, &ast.Text{Leaf: ast.Leaf{Literal: data[i:i+1]}}
+			}
+			return escape(p, data, offset)
+		}
+		escape = p.RegisterInline('\\', newEscape)
 	}
-	return parser, hashtags
+	return p, hashtags
 }
 
 // wikiRenderer is a Renderer for Markdown that adds lazy loading of images and disables fractions support. Remember
