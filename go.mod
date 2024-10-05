@@ -9,7 +9,7 @@ require (
 	github.com/edwvee/exiffix v0.0.0-20210922235313-0f6cbda5e58f
 	github.com/fsnotify/fsnotify v1.7.0
 	github.com/gabriel-vasile/mimetype v1.4.3
-	github.com/gomarkdown/markdown v0.0.0-20240730141124-034f12af3bf6
+	github.com/gomarkdown/markdown v0.0.0-20240930133403-7e0a027d98c5
 	github.com/google/subcommands v1.2.0
 	github.com/hexops/gotextdiff v1.0.3
 	github.com/microcosm-cc/bluemonday v1.0.26

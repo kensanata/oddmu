@@ -71,16 +71,7 @@ func wikiParser() (*parser.Parser, *[]string) {
 	p.RegisterInline('#', fn)
 	if useWebfinger {
 		p.RegisterInline('@', accountLink)
-		// handle escape with \@
-		var escape func(p *parser.Parser, data []byte, offset int) (int, ast.Node);
-		newEscape := func(p *parser.Parser, data []byte, offset int) (int, ast.Node) {
-			i := offset + 1
-			if len(data) > i && data[i] == '@' {
-				return 2, &ast.Text{Leaf: ast.Leaf{Literal: data[i:i+1]}}
-			}
-			return escape(p, data, offset)
-		}
-		escape = p.RegisterInline('\\', newEscape)
+		parser.EscapeChars = append(parser.EscapeChars, '@')
 	}
 	return p, hashtags
 }
