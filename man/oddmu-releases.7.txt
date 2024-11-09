@@ -25,6 +25,16 @@ existing templates. For example, from upload.html:
 <p>You can rename and delete files <a href="/list/{{.Dir}}">from the file list</a>.
 ```
 
+The following line was added to the "preview.html" template:
+
+```
+<base href="/view/{{.Dir}}">
+```
+
+You might want to do that as well, if you have your own. Without this, links in
+the preview cannot be followed as they all point to */preview* instead of
+*/view*.
+
 ## 1.13 (2024)
 
 Add _export_ subcommand.

@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-RELEASES" "7" "2024-08-29"
+.TH "ODDMU-RELEASES" "7" "2024-11-09"
 .PP
 .SH NAME
 .PP
@@ -33,6 +33,18 @@ existing templates.\& For example, from upload.\&html:
 <p>You can rename and delete files <a href="/list/{{\&.Dir}}">from the file list</a>\&.
 .fi
 .RE
+.PP
+The following line was added to the "preview.\&html" template:
+.PP
+.nf
+.RS 4
+<base href="/view/{{\&.Dir}}">
+.fi
+.RE
+.PP
+You might want to do that as well, if you have your own.\& Without this, links in
+the preview cannot be followed as they all point to \fB/preview\fR instead of
+\fB/view\fR.\&
 .PP
 .SS 1.13 (2024)
 .PP
