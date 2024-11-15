@@ -8,6 +8,10 @@ oddmu-releases - what's new?
 
 This page lists user-visible features and template changes to consider.
 
+## 1.15 (unreleased)
+
+No user visible changes.
+
 ## 1.14 (2024)
 
 Add _list_, _delete_ and _rename_ actions.
