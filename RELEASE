@@ -4,6 +4,8 @@ When preparing a new release
 1. Run tests
 
 2. Update man/oddmu-releases.7.txt
+   - add missing items
+   - change "(unreleased)"
 
 3. make docs
 

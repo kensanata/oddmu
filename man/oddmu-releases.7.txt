@@ -8,7 +8,7 @@ oddmu-releases - what's new?
 
 This page lists user-visible features and template changes to consider.
 
-## 1.14 (unreleased)
+## 1.14 (2024)
 
 Add _list_, _delete_ and _rename_ actions.
 
@@ -25,7 +25,7 @@ existing templates. For example, from upload.html:
 <p>You can rename and delete files <a href="/list/{{.Dir}}">from the file list</a>.
 ```
 
-The following line was added to the "preview.html" template:
+The following line was added to the "preview.html" and "edit.html" template:
 
 ```
 <base href="/view/{{.Dir}}">
@@ -33,7 +33,8 @@ The following line was added to the "preview.html" template:
 
 You might want to do that as well, if you have your own. Without this, links in
 the preview cannot be followed as they all point to */preview* instead of
-*/view*.
+*/view* and the link to the list of changes cannot be followed from the edit
+page: it leads to editing the list of changes.
 
 ## 1.13 (2024)
 
