@@ -70,6 +70,7 @@ I hate the machine!`
 I shiver at home
 the monitor glares and moans
 my grey heart grows cold`
+	// create s and overwrite it with r
 	p := &Page{Name: "testdata/backup/cold", Body: []byte(s)}
 	p.save()
 	p = &Page{Name: "testdata/backup/cold", Body: []byte(r)}
@@ -78,19 +79,29 @@ my grey heart grows cold`
 	// diff from s to r:
 	assert.Contains(t, body, `<del>fear or cold, who knows?</del>`)
 	assert.Contains(t, body, `<ins>I hate the machine!</ins>`)
+	// save u
 	p = &Page{Name: "testdata/backup/cold", Body: []byte(u)}
 	p.save()
 	body = string(p.Diff())
-	// diff from s to u since r was not 60 min or older
+	// diff from s to u since r was not 60 min or older and so the backup is kept
 	assert.Contains(t, body, `<del>fear or cold, who knows?</del>`)
 	assert.Contains(t, body, `<ins>my grey heart grows cold</ins>`)
 	// set timestamp 2h in the past
 	ts := time.Now().Add(-2 * time.Hour)
 	assert.NoError(t, os.Chtimes("testdata/backup/cold.md~", ts, ts))
+	assert.NoError(t, os.Chtimes("testdata/backup/cold.md", ts, ts))
+	// save r
 	p = &Page{Name: "testdata/backup/cold", Body: []byte(r)}
 	p.save()
 	body = string(p.Diff())
-	// diff from u to r:
+	// diff from u to r since enough time has passed and the old backup is discarded
 	assert.Contains(t, body, `<del>my grey heart grows cold</del>`)
 	assert.Contains(t, body, `<ins>I hate the machine!</ins>`)
+	// save s
+	p = &Page{Name: "testdata/backup/cold", Body: []byte(s)}
+	p.save()
+	body = string(p.Diff())
+	// diff from u to s since this is still "the same" editing window
+	assert.Contains(t, body, `<del>my grey heart grows cold</del>`)
+	assert.Contains(t, body, `<ins>fear or cold, who knows?</ins>`)
 }

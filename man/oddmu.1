@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU" "1" "2024-09-25"
+.TH "ODDMU" "1" "2024-11-16"
 .PP
 .SH NAME
 .PP
@@ -288,9 +288,10 @@ it, it can'\&t be a page name.\& Filenames can contain slashes and Oddmu creates
 subdirectories as necessary.\&
 .PP
 Files may not end with a tilde ('\&~'\&) – these are backup files.\& When saving pages
-and file uploads, the old file renamed to the backup file unless the backup file
-is less than an hour old, thus collapsing all edits made in an hour into a
-single diff when comparing backup and current version.\&
+and file uploads, the old file is renamed to the backup file unless the backup
+file is less than an hour old, thus collapsing all edits made in an hour into a
+single diff when comparing backup and current version.\& The backup also gets an
+updated timestamp so that subsequent edits don'\&t immediately overwrite it.\&
 .PP
 The \fBindex\fR page is the default page.\& People visiting the "root" of the site are
 redirected to "/view/index".\&

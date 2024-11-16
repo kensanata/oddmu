@@ -88,9 +88,10 @@ func (p *Page) save() error {
 	return os.WriteFile(fp, s, 0644)
 }
 
-// backup a file by renaming (!) it unless the existing backup is less than an hour old. A backup gets a tilde appended
-// to it ("~"). This is true even if the file refers to a binary file like "image.png" and most applications don't know
-// what to do with a file called "image.png~". This expects a file path. Use filepath.FromSlash(path) if necessary.
+// backup a file by renaming it unless the existing backup is less than an hour old. A backup gets a tilde appended to
+// it ("~"). This is true even if the file refers to a binary file like "image.png" and most applications don't know
+// what to do with a file called "image.png~". This expects a file path. Use filepath.FromSlash(path) if necessary. The
+// backup file gets its modification time set to now so that subsequent edits don't immediately overwrite it again.
 func backup(fp string) error {
 	_, err := os.Stat(fp)
 	if err != nil {
@@ -99,7 +100,12 @@ func backup(fp string) error {
 	bp := fp + "~"
 	fi, err := os.Stat(bp)
 	if err != nil || time.Since(fi.ModTime()).Minutes() >= 60 {
-		return os.Rename(fp, bp)
+		err = os.Rename(fp, bp)
+		if err != nil {
+			return err
+		}
+		ts := time.Now()
+		return os.Chtimes(bp, ts, ts)
 	}
 	return nil
 }

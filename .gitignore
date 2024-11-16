@@ -1,3 +1,7 @@
-/oddmu
 test.md
 /testdata/
+/oddmu-darwin-*
+/oddmu-linux-*
+/oddmu-windows-*
+/oddmu.exe
+/oddmu
