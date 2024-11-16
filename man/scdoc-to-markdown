@@ -16,9 +16,9 @@ while (<>) {
   # italic
   s/\b_([^_]+)_\b/*$1*/g;
   # move all H1 headers to H2
-  s/^# /## /;
+  s/^# (.*)/"## ".ucfirst(lc($1))/e;
   # the new H1 title
-  s/^([A-Z.-]*\([1-9]\))( ".*")?$/# $1/;
+  s/^([A-Z.-]*\([1-9]\))( ".*")?$/"# ".lc($1)/e;
   # quoted URLs
   s/"(http.*?)"/`$1`/g;
   # quoted wiki links
