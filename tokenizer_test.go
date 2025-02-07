@@ -7,7 +7,7 @@ import (
 )
 
 func TestHashtags(t *testing.T) {
-	assert.EqualValues(t, []string{"#truth"}, hashtags([]byte("This is boring. #Truth")), "hashtags")
+	assert.EqualValues(t, []string{"Truth"}, hashtags([]byte("This is boring. #Truth")), "hashtags")
 }
 
 func TestEscapedHashtags(t *testing.T) {

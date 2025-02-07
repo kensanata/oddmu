@@ -9,6 +9,7 @@ import (
 	"io"
 	"net/url"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 )
@@ -18,6 +19,8 @@ type searchCmd struct {
 	page    int
 	all     bool
 	extract bool
+	files   bool
+	quiet   bool
 }
 
 func (cmd *searchCmd) SetFlags(f *flag.FlagSet) {
@@ -25,12 +28,14 @@ func (cmd *searchCmd) SetFlags(f *flag.FlagSet) {
 	f.IntVar(&cmd.page, "page", 1, "the page in the search result set, default 1")
 	f.BoolVar(&cmd.all, "all", false, "show all the pages and ignore -page")
 	f.BoolVar(&cmd.extract, "extract", false, "print page extract instead of link list")
+	f.BoolVar(&cmd.files, "files", false, "show just the filenames")
+	f.BoolVar(&cmd.quiet, "quiet", false, "suppress summary line at the top")
 }
 
 func (*searchCmd) Name() string     { return "search" }
 func (*searchCmd) Synopsis() string { return "search pages and print a list of links" }
 func (*searchCmd) Usage() string {
-	return `search [-dir string] [-page <n>|-all] [-extract] <terms>:
+	return `search [-dir string] [-page <n>|-all] [-extract|-files] [-quiet] <terms>:
   Search for pages matching terms and print the result set as a
   Markdown list. Before searching, all the pages are indexed. Thus,
   startup is slow. The benefit is that the page order is exactly as
@@ -39,24 +44,24 @@ func (*searchCmd) Usage() string {
 }
 
 func (cmd *searchCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
-	return searchCli(os.Stdout, cmd.dir, cmd.page, cmd.all, cmd.extract, false, f.Args())
+	return searchCli(os.Stdout, cmd, f.Args())
 }
 
 // searchCli runs the search command on the command line. It is used
 // here with an io.Writer for easy testing.
-func searchCli(w io.Writer, dir string, n int, all, extract bool, quiet bool, args []string) subcommands.ExitStatus {
-	dir, err := checkDir(dir)
+func searchCli(w io.Writer, cmd *searchCmd, args []string) subcommands.ExitStatus {
+	dir, err := checkDir(cmd.dir)
 	if err != nil {
 		return subcommands.ExitFailure
 	}
 	index.reset()
 	index.load()
 	q := strings.Join(args, " ")
-	items, more := search(q, dir, "", n, true)
-	if !quiet {
+	items, more := search(q, dir, "", cmd.page, true)
+	if !cmd.quiet {
 		fmt.Fprint(os.Stderr, "Search for ", q)
-		if !all {
-			fmt.Fprint(os.Stderr, ", page ", n)
+		if !cmd.all {
+			fmt.Fprint(os.Stderr, ", page ", cmd.page)
 		}
 		fmt.Fprint(os.Stderr, ": ", len(items))
 		if len(items) == 1 {
@@ -65,8 +70,13 @@ func searchCli(w io.Writer, dir string, n int, all, extract bool, quiet bool, ar
 			fmt.Fprint(os.Stderr, " results\n")
 		}
 	}
-	if extract {
+	if cmd.extract {
 		searchExtract(w, items)
+	} else if cmd.files {
+		for _, p := range items {
+			name := filepath.FromSlash(p.Name) + ".md\n"
+			fmt.Fprintf(w, name)
+		}
 	} else {
 		for _, p := range items {
 			name := p.Name

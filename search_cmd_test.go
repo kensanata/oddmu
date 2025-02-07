@@ -9,7 +9,7 @@ import (
 
 func TestSearchCmd(t *testing.T) {
 	b := new(bytes.Buffer)
-	s := searchCli(b, "", 1, false, false, true, []string{"oddµ"})
+	s := searchCli(b, &searchCmd{quiet: true}, []string{"oddµ"})
 	assert.Equal(t, subcommands.ExitSuccess, s)
 	r := `* [Oddµ: A minimal wiki](README)
 * [Themes](themes/index)
@@ -26,7 +26,7 @@ that before we type and speak
 we hear that moment`)}
 	p.save()
 	b := new(bytes.Buffer)
-	s := searchCli(b, "testdata/search", 1, false, false, true, []string{"speak"})
+	s := searchCli(b, &searchCmd{dir: "testdata/search", quiet: true}, []string{"speak"})
 	assert.Equal(t, subcommands.ExitSuccess, s)
 	r := `* [Wait](wait)
 `

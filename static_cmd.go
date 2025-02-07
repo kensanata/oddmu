@@ -221,7 +221,7 @@ func staticPage(source, target string) (*Page, error) {
 func staticFeed(source, target string, p *Page, ti time.Time) error {
 	// render feed, maybe
 	base := filepath.Base(source)
-	_, ok := index.token["#"+strings.ToLower(base)]
+	_, ok := index.token[strings.ToLower(base)]
 	if base == "index" || ok {
 		f := feed(p, ti)
 		if len(f.Items) > 0 {

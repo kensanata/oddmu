@@ -11,8 +11,8 @@ func TestIndexAdd(t *testing.T) {
 	idx.reset()
 	idx.Lock()
 	defer idx.Unlock()
-	tag := "#hello"
-	id := idx.addDocument([]byte("oh hi " + tag))
+	tag := "hello"
+	id := idx.addDocument([]byte("oh hi #" + tag))
 	assert.Contains(t, idx.token, tag)
 	idx.deleteDocument(id)
 	assert.NotContains(t, idx.token, tag)
@@ -31,10 +31,19 @@ func TestIndex(t *testing.T) {
 	}
 }
 
+// Lower case hashtag!
 func TestSearchHashtag(t *testing.T) {
+	cleanup(t, "testdata/search-hashtag")
+	p := &Page{Name: "testdata/search-hashtag/search", Body: []byte(`# Search
+
+I'm back in this room
+Shelf, table, chair, and shelf again
+Where are my glasses?
+
+#Searching`)}
+	p.save()
 	index.load()
-	q := "#like_this"
-	pages, _ := search(q, "", "", 1, false)
+	pages, _ := search("#searching", "", "", 1, false)
 	assert.NotZero(t, len(pages))
 }
 

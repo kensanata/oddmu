@@ -37,9 +37,13 @@ func wikiLink(fn func(p *parser.Parser, data []byte, offset int) (int, ast.Node)
 
 // hashtag returns an inline parser function. This indirection is
 // required because we want to receive an array of hashtags found.
+// The hashtags in the array keep their case.
 func hashtag() (func(p *parser.Parser, data []byte, offset int) (int, ast.Node), *[]string) {
 	hashtags := make([]string, 0)
 	return func(p *parser.Parser, data []byte, offset int) (int, ast.Node) {
+		if p.InsideLink {
+			return 0, nil
+		}
 		data = data[offset:]
 		i := 0
 		n := len(data)
@@ -146,6 +150,13 @@ func (p *Page) images() []ImageData {
 		return ast.GoToNext
 	})
 	return images
+}
+
+// hashtags returns an array of hashtags
+func hashtags(s []byte) []string {
+	parser, hashtags := wikiParser()
+	markdown.Parse(s, parser)
+	return *hashtags
 }
 
 // toString for a node returns the text nodes' literals, concatenated. There is no whitespace added so the expectation

@@ -1,10 +1,8 @@
 package main
 
 import (
-	"bytes"
 	"strings"
 	"unicode"
-	"unicode/utf8"
 )
 
 // lowercaseFilter returns a slice of lower case tokens.
@@ -132,34 +130,4 @@ func highlightTokens(q string) []string {
 	tokens := tokenizeWithQuotes(q)
 	tokens = lowercaseFilter(tokens)
 	return noPredicateFilter(tokens)
-}
-
-// hashtags returns a slice of hashtags. Use this to extract hashtags
-// from a page body. This ignores Markdown completely.
-func hashtags(s []byte) []string {
-	hashtags := make([]string, 0)
-	for {
-		i := bytes.IndexRune(s, '#')
-		if i == -1 {
-			return hashtags
-		}
-		if i > 0 && s[i-1] == '\\' {
-			s = s[i+1:]
-			continue
-		}
-		from := i
-		i++
-		for {
-			r, n := utf8.DecodeRune(s[i:])
-			if n > 0 && (unicode.IsLetter(r) || unicode.IsNumber(r) || r == '_') {
-				i += n
-			} else {
-				break
-			}
-		}
-		if i > from+1 { // not just "#"
-			hashtags = append(hashtags, string(bytes.ToLower(s[from:i])))
-		}
-		s = s[i:]
-	}
 }

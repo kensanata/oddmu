@@ -9,7 +9,8 @@ require (
 	github.com/edwvee/exiffix v0.0.0-20210922235313-0f6cbda5e58f
 	github.com/fsnotify/fsnotify v1.7.0
 	github.com/gabriel-vasile/mimetype v1.4.3
-	github.com/gomarkdown/markdown v0.0.0-20240930133403-7e0a027d98c5
+	github.com/gen2brain/heic v0.3.1
+	github.com/gomarkdown/markdown v0.0.0-20250207164621-7a1f277a159e
 	github.com/google/subcommands v1.2.0
 	github.com/hexops/gotextdiff v1.0.3
 	github.com/microcosm-cc/bluemonday v1.0.26
@@ -24,7 +25,6 @@ require (
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/ebitengine/purego v0.7.1 // indirect
-	github.com/gen2brain/heic v0.3.1 // indirect
 	github.com/gorilla/css v1.0.1 // indirect
 	github.com/mattn/go-runewidth v0.0.15 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect

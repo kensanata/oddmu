@@ -51,11 +51,13 @@ I am cold, alone</p>
 func TestPageHtmlHashtagCornerCases(t *testing.T) {
 	p := &Page{Body: []byte(`#
 
-ok # #o #ok`)}
+ok # #o #ok
+[oh #ok \#nok](ok)`)}
 	p.renderHtml()
 	r := `<p>#</p>
 
-<p>ok # <a class="tag" href="/search/?q=%23o">#o</a> <a class="tag" href="/search/?q=%23ok">#ok</a></p>
+<p>ok # <a class="tag" href="/search/?q=%23o">#o</a> <a class="tag" href="/search/?q=%23ok">#ok</a>
+<a href="ok">oh #ok #nok</a></p>
 `
 	assert.Equal(t, r, string(p.Html))
 }

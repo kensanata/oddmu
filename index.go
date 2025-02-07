@@ -62,10 +62,12 @@ func (idx *indexStore) reset() {
 }
 
 // addDocument adds the text as a new document. This assumes that the index is locked!
+// The hashtags (only!) are used as tokens. They are stored in lower case.
 func (idx *indexStore) addDocument(text []byte) docid {
 	id := idx.next_id
 	idx.next_id++
 	for _, token := range hashtags(text) {
+		token = strings.ToLower(token)
 		ids := idx.token[token]
 		// Don't add same ID more than once. Checking the last
 		// position of the []docid works because the id is
@@ -193,8 +195,8 @@ func (idx *indexStore) update(p *Page) {
 	idx.add(p)
 }
 
-// search searches the index for a query string and returns page
-// names.
+// search searches the index. The query string is parsed for tokens. Each token is turned to lower cased and looked up
+// in the index. Each page in the result must contain all the tokens. Returns page names.
 func (idx *indexStore) search(q string) []string {
 	idx.RLock()
 	defer idx.RUnlock()
@@ -203,6 +205,7 @@ func (idx *indexStore) search(q string) []string {
 	if len(hashtags) > 0 {
 		var r []docid
 		for _, token := range hashtags {
+			token = strings.ToLower(token)
 			if ids, ok := idx.token[token]; ok {
 				if r == nil {
 					r = ids
