@@ -5,16 +5,37 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width">
     <title>{{.Title}}</title>
+    <style>
+      label { display: inline-block; width: 10ch }
+    </style>
+    <script>
+window.onload = rocketLinks;
+function rocketLinks() {
+  const elements = document.getElementsByTagName("pre");
+  const re = /^=&gt; *(\S+) *(.*)/gm;
+  for (const element of elements) {
+    element.innerHTML = element.innerHTML.replaceAll(
+      /^=&gt; *(\S+) *(.*)/gm,
+      function (match, href, text, offset) {
+        text ||= href;
+        return `⇒ <a href="${href}">${text}</a>` })}}
+    </script>
   </head>
   <body>
     <header>
-      <a href="#main">Skip navigation</a>
-      <a href="/view/index">Home</a>
+      <a href="#main">Skip</a>
+      <a href="index">Home</a>
+      <a href="../index">Up</a>
       <a href="/edit/{{.Name}}" accesskey="e">Edit</a>
       <form role="search" action="/search/{{.Dir}}" method="GET">
         <label for="search">Search:</label>
         <input id="search" type="text" spellcheck="false" name="q" accesskey="f" placeholder="term" required>
         <button>Go</button>
+      </form>
+      <form action="/edit/{{.Dir}}" method="GET">
+        <label for="id">New page:</label>
+        <input id="id" type="text" spellcheck="false" name="id" accesskey="g" value="{{.Today}}" required>
+        <button>Edit</button>
       </form>
     </header>
     <main>

@@ -12,8 +12,10 @@ Now, the text is still saved in Markdown files and the Markdown is
 still rendered to HTML – but the "view" template just prints the page
 body inside a "pre" block and ignores the rendered HTML.
 
-This being text files, there are also no links to follow. That is why
-there's no link here back to themes. Sorry!
+In addition to that, a piece of JavaScript goes through the text and
+replaces rocket links with actual links. Rocket links are how Gemini
+links to other pages: On a line by itself (no inline links!) write
+"=>", a space, the URL, and optionally another space and the text to
+use.
 
-This also means that you can only edit new files by editing the URL in
-the address bar of your browser since you can't link to them.
+=> ../index Themes

@@ -18,8 +18,8 @@ button { background-color: #eee; color: inherit; border-radius: 4px; border-widt
   </head>
   <body>
     <header>
-      <a href="#main">Skip navigation</a>
-      <a href="/view/index">Home</a>
+      <a href="#main">Skip</a>
+      <a href="/view/{{.Dir}}">Home</a>
       <form role="search" action="/search/{{.Dir}}" method="GET">
         <label for="search">Search:</label>
         <input id="search" type="text" value="{{.Query}}" spellcheck="false" name="q" accesskey="f" placeholder="term #tag title:term blog:true" required>
