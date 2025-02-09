@@ -22,11 +22,17 @@ label { display: inline-block; width: 7ch }
     <main>
       <h1>Upload</h1>
       {{if ne .Last ""}}
-      <p>Use the following for <a href="/view/{{.Dir}}{{.Today}}">{{.Today}}</a>:
-      <pre>![]({{.Last}})</a></pre>
       {{if .Image}}
       <p><img class="last" src="/view/{{.Dir}}{{.Last}}">
       {{end}}
+      <p>Use the following to post the image:
+      <pre>![]({{.Last}})</a></pre>
+      <form id="add" action="/append/{{.Dir}}{{.Base}}" method="POST">
+        <input type="hidden" name="body" value="{{range .Actual}}![]({{.}})
+{{end}}">
+        <p>Append this to <a href="/view/{{.Dir}}{{.Base}}">{{.Title}}</a>?
+        <input type="submit" value="Add">
+      </form>
       {{end}}
       <form id="upload" action="/drop/{{.Dir}}" method="POST" enctype="multipart/form-data">
         <p>What name to use for the uploads.

@@ -13,23 +13,33 @@ label { width: 7ch; display: inline-block; }
 #search { width: 30ch; }
 button { font-size: large; background-color: #eee; color: inherit; border-radius: 6px; border-width: 1px; }
 main > *, footer { clear: both; }
-main p {
+main > p, main > ul, main > ol, main > dl {
     float: right;
     color: #000; background: #8fd;
     padding: 3px 1ch; margin: 1pt auto 1pt 5ch;
     border-radius: 6px; border: 1px outset #eee; }
-main blockquote {
+main blockquote, ul p, ol p, dl p {
     padding: 0; margin: 0; }
 main blockquote p {
     float: left;
     color: #000; background: #ccc;
     padding: 3px 1ch; margin: 1pt 5ch 1pt 0;
     border-radius: 6px; border: 1px outset #eee; }
-p + blockquote > p, blockquote + p { margin-top: 5pt; }
-main ul, main ol, main dl {
-    float: left;
-    color: #000; background: #4ed;
-    padding: 3px 1ch; margin: 1pt 0; border-radius: 6px; border: 1px outset #eee; }
+p + blockquote > p, blockquote + p {
+    margin-top: 5pt; }
+/* for the marker */
+main ul {
+    padding-left: 2em; }
+main ol {
+  display: table; }
+ol li {
+  counter-increment: list-item;
+  display: table-row; }
+ol li::before {
+  content: counter(list-item) ".\a0";
+  display: table-cell;
+  text-align: right; }
+/* footer */
 footer p { margin: 0.5ch 0 0 0; }
 textarea {
     width: 97%; margin: 1ch 0 0 0; padding: 0 0.5ch; font: inherit;
@@ -43,7 +53,7 @@ img { max-width: 100%; margin-top: 5px; }
       <a href="index">Home</a>
       <a href="{{.Today}}" accesskey="t">Today</a>
       <a href="/edit/{{.Name}}" accesskey="e">Edit</a>
-      <a href="/upload/{{.Dir}}?filename={{.Today}}-pic-1.jpg" accesskey="u">Upload</a>
+      <a href="/upload/{{.Dir}}?filename={{.Base}}-1.jpg" accesskey="u">Upload</a>
       <form role="search" action="/search/{{.Dir}}" method="GET">
         <label for="search">Suchen:</label>
         <input id="search" type="text" spellcheck="false" name="q" accesskey="f" placeholder="term #tag title:term blog:true" required>
