@@ -30,6 +30,9 @@
         <p><a class="result" href="/view/{{.Name}}">{{.Title}}</a>
           <span class="score">{{.Score}}</span></p>
         <blockquote>{{.Html}}</blockquote>
+        {{range .Images}}
+        <p class="image"><a href="/view/{{.Name}}"><img loading="lazy" src="/view/{{.Name}}"></a><br/>{{.Html}}
+        {{end}}
       </article>
       {{end}}
       <p>

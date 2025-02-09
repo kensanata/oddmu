@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width">
+    <base href="/view/{{.Dir}}">
     <title>Editing {{.Title}}</title>
     <link href="oddmu.css" rel="stylesheet" />
   </head>
@@ -15,6 +16,7 @@
 Text" lang="{{.Language}}" autofocus>{{ or .Body (printf "# %s " .Today) | printf "%s" }}</textarea>
       <p><label><input type="checkbox" name="notify" checked> Add link to <a href="/view/changes">the list of changes</a>.</label></p>
       <p><input type="submit" value="Save">
+        <button formaction="/preview/{{.Name}}" type="submit">Preview</button>
         <a href="/view/{{.Name}}"><button type="button">Cancel</button></a></p>
     </form>
   </body>
