@@ -8,9 +8,16 @@ oddmu-releases - what's new?
 
 This page lists user-visible features and template changes to consider.
 
-## 1.15 (unreleased)
+## 1.15 (2025)
 
-No user visible changes.
+Fix the hashtag detection. This was necessary to cut down on the many false
+positives. They were most obvious with the _hashtags_ subcommand. Now the
+Markdown parser is used at startup to index the pages, making startup slower
+(about twice as long with my blog). The Markdown parser is also used to parse
+search terms (where it makes little difference).
+
+Fix the timestamp for backup files. This was necessary because the diff didn't
+work as intended.
 
 ## 1.14 (2024)
 
