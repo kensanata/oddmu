@@ -8,6 +8,12 @@ oddmu-releases - what's new?
 
 This page lists user-visible features and template changes to consider.
 
+## 1.16 (unreleased)
+
+Improved the chat and plain example themes. The chat theme got better list
+styling and better upload functionality with automatic "add" button; the plain
+theme got rocket links via JavaScript.
+
 ## 1.15 (2025)
 
 Fix the hashtag detection. This was necessary to cut down on the many false
