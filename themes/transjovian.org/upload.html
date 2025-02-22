@@ -92,7 +92,7 @@ window.addEventListener('load', uploadFiles.init);
     <form id="form" action="/drop/{{.Dir}}" method="POST" enctype="multipart/form-data">
       <p>When uploading a picture from a phone, its filename is going to be something like IMG_1234.JPG.
         Please provide your own filename. End the base name with "-1" to auto-increment.
-        Use <tt>.jpg</tt> or <tt>.png</tt> as the extension if you want to resize the picture.
+        Use <tt>.jpg</tt>, <tt>.png</tt> or <tt>.webp</tt> as the extension if you want to resize the picture.
       <p><label for="name">Filename:</label>
         <input id="name" name="name" value="{{.Name}}" type="text" placeholder="image-1.jpg" autofocus required>
       <p>If the uploaded file is a picture from a phone, it is going to be too big for your site.
@@ -100,7 +100,7 @@ window.addEventListener('load', uploadFiles.init);
         Feel free to specify a max width of 1200 pixels, for example.
       <p><label for="maxwidth">Max width:</label>
         <input id="maxwidth" name="maxwidth" value="{{.MaxWidth}}" type="number" min="10" placeholder="1200">
-      <p>If the filename you provided above ends in <tt>.jpg</tt>, you can specify a quality.
+      <p>If the filename you provided above ends in <tt>.jpg</tt> or <tt>.webp</tt>, you can specify a quality.
         Typically, a quality of 60 is not too bad and a quality of 90 is more than enough.
       <p><label for="quality">Quality:</label>
         <input id="quality" name="quality" value="{{.Quality}}" type="number" min="1" max="99" placeholder="75">
