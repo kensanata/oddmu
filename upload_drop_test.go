@@ -3,13 +3,17 @@ package main
 import (
 	"bytes"
 	"encoding/base64"
+	"github.com/gabriel-vasile/mimetype"
+	"github.com/gen2brain/webp"
 	"github.com/stretchr/testify/assert"
 	"image"
 	"image/jpeg"
 	"image/png"
+	"mime"
 	"mime/multipart"
 	"net/url"
 	"os"
+	"path/filepath"
 	"testing"
 )
 
@@ -95,7 +99,13 @@ YXQAAAApKAGvEyE1mvXho5qH3STtzcWnOxedwNIXAKNDaJNqz3uONoCHeUhi/HA=`
 	writer.Close()
 	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/heic/",
 		writer.FormDataContentType(), form, "/upload/testdata/heic/?actual=ok.jpg&last=ok.jpg")
-	assert.FileExists(t, "testdata/heic/ok.jpg");
+	fp := "testdata/heic/ok.jpg"
+	fi, err := os.Open(fp)
+	assert.NoError(t, err)
+	b, err := mimetype.DetectReader(fi)
+	assert.NoError(t, err)
+	a := mime.TypeByExtension(filepath.Ext(fp))
+	assert.Equal(t, a, b.String())
 }
 
 func TestUploadWebp(t *testing.T) {
@@ -105,17 +115,43 @@ func TestUploadWebp(t *testing.T) {
 	form := new(bytes.Buffer)
 	writer := multipart.NewWriter(form)
 	field, _ := writer.CreateFormField("name")
-	field.Write([]byte("ok.webp"))                       // target
+	field.Write([]byte("ok.jpg"))                       // target
 	file, _ := writer.CreateFormFile("file", "ok.webp") // source
-	// convert -size 1x1 canvas: webp:- | base64
-	imgBase64 := `UklGRiQAAABXRUJQVlA4IBgAAAAwAQCdASoBAAEAAgA0JaQAA3AA/vuUAAA=`
-	img, err := base64.StdEncoding.DecodeString(imgBase64)
-	assert.NoError(t, err)
-	file.Write(img)
+	img := image.NewRGBA(image.Rect(0, 0, 20, 20))
+	webp.Encode(file, img)
 	writer.Close()
 	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/webp/",
-		writer.FormDataContentType(), form, "/upload/testdata/webp/?actual=ok.webp&last=ok.webp")
-	assert.FileExists(t, "testdata/webp/ok.webp");
+		writer.FormDataContentType(), form, "/upload/testdata/webp/?actual=ok.jpg&last=ok.jpg")
+	fp := "testdata/webp/ok.jpg"
+	fi, err := os.Open(fp)
+	assert.NoError(t, err)
+	b, err := mimetype.DetectReader(fi)
+	assert.NoError(t, err)
+	a := mime.TypeByExtension(filepath.Ext(fp))
+	assert.Equal(t, a, b.String())
+}
+
+func TestConvertToWebp(t *testing.T) {
+	cleanup(t, "testdata/towebp")
+	// for uploads, the directory is not created automatically
+	os.MkdirAll("testdata/towebp", 0755)
+	form := new(bytes.Buffer)
+	writer := multipart.NewWriter(form)
+	field, _ := writer.CreateFormField("name")
+	field.Write([]byte("ok.webp"))
+	file, _ := writer.CreateFormFile("file", "ok.png")
+	img := image.NewRGBA(image.Rect(0, 0, 20, 20))
+	png.Encode(file, img)
+	writer.Close()
+	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/towebp/",
+		writer.FormDataContentType(), form, "/upload/testdata/towebp/?actual=ok.webp&last=ok.webp")
+	fp := "testdata/towebp/ok.webp"
+	fi, err := os.Open(fp)
+	assert.NoError(t, err)
+	b, err := mimetype.DetectReader(fi)
+	assert.NoError(t, err)
+	a := mime.TypeByExtension(filepath.Ext(fp))
+	assert.Equal(t, a, b.String())
 }
 
 func TestDeleteFile(t *testing.T) {

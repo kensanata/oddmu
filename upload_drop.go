@@ -1,14 +1,17 @@
 package main
 
 // The imaging library uses image.Decode internally. This function can use all image decoders available at that time.
-// This is why we import goheif for side effects: HEIC files are read correctly.
+// This is why we import heic for side effects. For writing, the particular encoders have to be imported.
 
 import (
+	"errors"
 	"fmt"
 	_ "github.com/gen2brain/heic"
-	_ "github.com/gen2brain/webp"
 	"github.com/disintegration/imaging"
 	"github.com/edwvee/exiffix"
+	"github.com/gen2brain/webp"
+	"image/png"
+	"image/jpeg"
 	"io"
 	"log"
 	"mime"
@@ -123,39 +126,30 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		http.Error(w, "no filename", http.StatusForbidden)
 		return
 	}
-	// prepare for image encoding (saving) with the encoder based on the desired file name extensions
-	var format imaging.Format
-	quality := 75
-	maxwidth := r.FormValue("maxwidth")
+	// Quality is a number. If no quality is set and a quality is required, 75 is used.
+	q := 75
+	quality := r.FormValue("quality")
+	if len(quality) > 0 {
+		q, err = strconv.Atoi(quality)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		data.Set("quality", quality) // remember for the next request
+	}
+	// maxwidth is a number. If no maxwidth is set, no resizing is done.
 	mw := 0
+	maxwidth := r.FormValue("maxwidth")
 	if len(maxwidth) > 0 {
 		mw, err = strconv.Atoi(maxwidth)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		data.Set("maxwidth", maxwidth)
-		// determine how the file will be written
-		ext := strings.ToLower(filepath.Ext(filename))
-		switch ext {
-		case ".png":
-			format = imaging.PNG
-		case ".jpg", ".jpeg", ".webp":
-			q := r.FormValue("quality")
-			if len(q) > 0 {
-				quality, err = strconv.Atoi(q)
-				if err != nil {
-					http.Error(w, err.Error(), http.StatusBadRequest)
-					return
-				}
-				data.Set("quality", q)
-			}
-			format = imaging.JPEG
-		default:
-			http.Error(w, "Resizing images requires a .png, .jpg, .jpeg or .webp extension for the filename", http.StatusBadRequest)
-			return
-		}
+		data.Set("maxwidth", maxwidth) // remember for the next request
 	}
+	// the destination image format is determined by the extension
+	to := strings.ToLower(filepath.Ext(filename))
 	first := true
 	for _, fhs := range r.MultipartForm.File["file"] {
 		file, err := fhs.Open()
@@ -189,21 +183,34 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 			return
 		}
 		defer dst.Close()
-		if mw > 0 {
+		// the source image format is determined by the extension
+		from := strings.ToLower(filepath.Ext(fhs.Filename))
+		if q != 75 || mw > 0 || from != to {
 			// do not use imaging.Decode(file, imaging.AutoOrientation(true)) because that only works for JPEG files
 			img, fmt, err := exiffix.Decode(file)
 			if err != nil {
-				http.Error(w, "The image could not be decoded (only PNG, JPG, WEBP and HEIC formats are supported for resizing)", http.StatusBadRequest)
+				http.Error(w, "The image could not be decoded from " + from + " format", http.StatusBadRequest)
 				return
 			}
 			log.Println("Decoded", fmt, "file")
-			res := imaging.Resize(img, mw, 0, imaging.Lanczos) // preserve aspect ratio
-			// imaging functions don't return errors but empty images…
-			if !res.Rect.Empty() {
-				img = res
+			if mw > 0 {
+				res := imaging.Resize(img, mw, 0, imaging.Lanczos) // preserve aspect ratio
+				// imaging functions don't return errors but empty images…
+				if !res.Rect.Empty() {
+					img = res
+				}
 			}
 			// images are always reencoded, so image quality goes down
-			err = imaging.Encode(dst, img, format, imaging.JPEGQuality(quality))
+			switch (to) {
+			case ".png":
+				err = png.Encode(dst, img)
+			case ".jpg", ".jpeg":
+				err = jpeg.Encode(dst, img, &jpeg.Options{Quality: q})
+			case ".webp":
+				err = webp.Encode(dst, img, webp.Options{Quality: q}) // Quality of 100 implies Lossless.
+			default:
+				err = errors.New("Unsupported destination format for image conversion: " + to)
+			}
 			if err != nil {
 				log.Println(err)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
