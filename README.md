@@ -32,7 +32,7 @@ necessary.
 
 Other files can be uploaded and images (ending in `.jpg`, `.jpeg`,
 `.png`, `.heic` or `.webp`) can be resized when they are uploaded
-(resulting in `.jpg` or `.png` files).
+(resulting in `.jpg`, `.png` or `.webp` files).
 
 ## Documentation
 
@@ -345,9 +345,12 @@ in turn can be used by browsers to get hyphenation right. Apache-2.0.
 is used to sniff the MIME type of files with unknown filename
 extensions. MIT.
 
-[github.com/gen2brain/heic](https://github.com/gen2brain/heic) is
-used to decode HEIC files (the new default file format for photos on
-iPhones). LGPL-3.0-only.
+[github.com/gen2brain/heic](https://github.com/gen2brain/heic) is used
+to decode HEIC files (the new default file format for photos on
+iPhones). MIT.
+
+[github.com/gen2brain/webp](https://github.com/gen2brain/webp) is used
+to encode and decode WebP files. MIT.
 
 [github.com/disintegration/imaging](https://github.com/disintegration/imaging)
 is used to resize images. MIT.

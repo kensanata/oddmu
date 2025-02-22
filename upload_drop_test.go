@@ -97,6 +97,25 @@ YXQAAAApKAGvEyE1mvXho5qH3STtzcWnOxedwNIXAKNDaJNqz3uONoCHeUhi/HA=`
 		writer.FormDataContentType(), form, "/upload/testdata/heic/?actual=ok.jpg&last=ok.jpg")
 }
 
+func TestUploadWebp(t *testing.T) {
+	cleanup(t, "testdata/webp")
+	// for uploads, the directory is not created automatically
+	os.MkdirAll("testdata/webp", 0755)
+	form := new(bytes.Buffer)
+	writer := multipart.NewWriter(form)
+	field, _ := writer.CreateFormField("name")
+	field.Write([]byte("ok.webp"))                       // target
+	file, _ := writer.CreateFormFile("file", "ok.webp") // source
+	// convert -size 1x1 canvas: webp:- | base64
+	imgBase64 := `UklGRiQAAABXRUJQVlA4IBgAAAAwAQCdASoBAAEAAgA0JaQAA3AA/vuUAAA=`
+	img, err := base64.StdEncoding.DecodeString(imgBase64)
+	assert.NoError(t, err)
+	file.Write(img)
+	writer.Close()
+	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/webp/",
+		writer.FormDataContentType(), form, "/upload/testdata/webp/?actual=ok.webp&last=ok.webp")
+}
+
 func TestDeleteFile(t *testing.T) {
 	cleanup(t, "testdata/delete")
 	os.MkdirAll("testdata/delete", 0755)

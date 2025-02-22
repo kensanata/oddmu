@@ -10,6 +10,8 @@ This page lists user-visible features and template changes to consider.
 
 ## 1.16 (unreleased)
 
+Add support for WebP images for uploading and resizing.
+
 Improved the example themes. The chat theme got better list styling and better
 upload functionality with automatic "add" button; the plain theme got rocket
 links via JavaScript; the alexschroeder.ch theme got a preview button and better

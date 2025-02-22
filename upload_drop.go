@@ -6,6 +6,7 @@ package main
 import (
 	"fmt"
 	_ "github.com/gen2brain/heic"
+	_ "github.com/gen2brain/webp"
 	"github.com/disintegration/imaging"
 	"github.com/edwvee/exiffix"
 	"io"
@@ -139,7 +140,7 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		switch ext {
 		case ".png":
 			format = imaging.PNG
-		case ".jpg", ".jpeg":
+		case ".jpg", ".jpeg", ".webp":
 			q := r.FormValue("quality")
 			if len(q) > 0 {
 				quality, err = strconv.Atoi(q)
@@ -151,7 +152,7 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 			}
 			format = imaging.JPEG
 		default:
-			http.Error(w, "Resizing images requires a .png, .jpg or .jpeg extension for the filename", http.StatusBadRequest)
+			http.Error(w, "Resizing images requires a .png, .jpg, .jpeg or .webp extension for the filename", http.StatusBadRequest)
 			return
 		}
 	}
