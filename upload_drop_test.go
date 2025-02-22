@@ -95,6 +95,7 @@ YXQAAAApKAGvEyE1mvXho5qH3STtzcWnOxedwNIXAKNDaJNqz3uONoCHeUhi/HA=`
 	writer.Close()
 	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/heic/",
 		writer.FormDataContentType(), form, "/upload/testdata/heic/?actual=ok.jpg&last=ok.jpg")
+	assert.FileExists(t, "testdata/heic/ok.jpg");
 }
 
 func TestUploadWebp(t *testing.T) {
@@ -114,6 +115,7 @@ func TestUploadWebp(t *testing.T) {
 	writer.Close()
 	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/webp/",
 		writer.FormDataContentType(), form, "/upload/testdata/webp/?actual=ok.webp&last=ok.webp")
+	assert.FileExists(t, "testdata/webp/ok.webp");
 }
 
 func TestDeleteFile(t *testing.T) {
