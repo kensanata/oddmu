@@ -49,7 +49,7 @@ The ordering of terms does not matter.
 ~/src/oddmu $ oddmu search Alex Schroeder
 Search for Alex Schroeder, page 1: 3 results
 * [Alex Schroeder theme](themes/alexschroeder.ch/README)
-* [Oddµ: A minimal wiki](README)
+* [Oddμ: A minimal wiki](README)
 * [Themes](themes/index)
 ```
 

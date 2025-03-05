@@ -1,6 +1,6 @@
 # Themes
 
-[Oddµ](../index) uses HTML templates to create its pages. The following
+[Oddμ](../index) uses HTML templates to create its pages. The following
 subdirectories contain different themes for you to use and adapt for
 your own sites.
 

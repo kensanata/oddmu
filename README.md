@@ -1,4 +1,4 @@
-# Oddµ: A minimal wiki
+# Oddμ: A minimal wiki
 
 This program helps you run a minimal wiki, blog, digital garden, memex
 or Zettelkasten. There is no version history.
@@ -19,7 +19,7 @@ write-access to the site.
 It's well suited as a simple static site generator. There are no
 plugins.
 
-When Oddµ runs as a web server, it serves all the Markdown files
+When Oddμ runs as a web server, it serves all the Markdown files
 (ending in `.md`) as web pages. These pages can be edited via the web.
 
 Oddmu adds the following extensions to Markdown: local links `[[like

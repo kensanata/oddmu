@@ -30,7 +30,7 @@ the current directory and its subdirectories.
 Replace "Oddmu" in the Markdown files of the current directory:
 
 ```
-oddmu replace Oddmu Oddµ
+oddmu replace Oddmu Oddμ
 ```
 
 Result:

@@ -4,7 +4,7 @@ ODDMU(1)
 
 oddmu - a wiki server
 
-Oddmu is sometimes written Oddµ because µ is the letter mu.
+Oddmu is sometimes written Oddμ because μ is the letter mu.
 
 # SYNOPSIS
 

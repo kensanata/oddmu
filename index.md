@@ -1,4 +1,4 @@
-# Welcome to Oddµ
+# Welcome to Oddμ
 
 Hello! 🙃
 
