@@ -12,8 +12,8 @@ func TestListCmd(t *testing.T) {
 	s := listCli(b, "", nil)
 	assert.Equal(t, subcommands.ExitSuccess, s)
 	x := b.String()
-	assert.Contains(t, x, "README\tOddµ: A minimal wiki\n")
-	assert.Contains(t, x, "index\tWelcome to Oddµ\n")
+	assert.Contains(t, x, "README\tOddμ: A minimal wiki\n")
+	assert.Contains(t, x, "index\tWelcome to Oddμ\n")
 }
 
 func TestListSubdirCmd(t *testing.T) {

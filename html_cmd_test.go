@@ -11,7 +11,7 @@ func TestHtmlCmd(t *testing.T) {
 	b := new(bytes.Buffer)
 	s := htmlCli(b, false, []string{"index"})
 	assert.Equal(t, subcommands.ExitSuccess, s)
-	r := `<h1 id="welcome-to-oddµ">Welcome to Oddµ</h1>
+	r := `<h1 id="welcome-to-oddμ">Welcome to Oddμ</h1>
 
 <p>Hello! 🙃</p>
 

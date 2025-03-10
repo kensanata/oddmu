@@ -57,7 +57,7 @@ And untouchable`)}
 	p = &Page{Name: "testdata/parents/children/something/other"}
 	// "testdata/parents/children/something/index" is a sibling and doesn't count!
 	parents := p.Parents()
-	assert.Equal(t, "Welcome to Oddµ", parents[0].Title)
+	assert.Equal(t, "Welcome to Oddμ", parents[0].Title)
 	assert.Equal(t, "../../../../index", parents[0].Url)
 	assert.Equal(t, "…", parents[1].Title)
 	assert.Equal(t, "../../../index", parents[1].Url)

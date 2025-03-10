@@ -9,7 +9,7 @@ import (
 func TestFeed(t *testing.T) {
 	assert.Contains(t,
 		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/index.rss", nil),
-		"Welcome to Oddµ")
+		"Welcome to Oddμ")
 }
 
 func TestNoFeed(t *testing.T) {

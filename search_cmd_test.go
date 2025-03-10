@@ -9,11 +9,11 @@ import (
 
 func TestSearchCmd(t *testing.T) {
 	b := new(bytes.Buffer)
-	s := searchCli(b, &searchCmd{quiet: true}, []string{"oddµ"})
+	s := searchCli(b, &searchCmd{quiet: true}, []string{"oddμ"})
 	assert.Equal(t, subcommands.ExitSuccess, s)
-	r := `* [Oddµ: A minimal wiki](README)
+	r := `* [Oddμ: A minimal wiki](README)
 * [Themes](themes/index)
-* [Welcome to Oddµ](index)
+* [Welcome to Oddμ](index)
 `
 	assert.Equal(t, r, b.String())
 }

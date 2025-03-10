@@ -61,7 +61,7 @@ func TestSearch(t *testing.T) {
 	index.load()
 
 	data := url.Values{}
-	data.Set("q", "oddµ")
+	data.Set("q", "oddμ")
 
 	body := assert.HTTPBody(makeHandler(searchHandler, false), "GET", "/search/", data)
 	assert.Contains(t, body, "Welcome")
@@ -182,7 +182,7 @@ func TestTitleSearch(t *testing.T) {
 
 	items, more = search("title:wel", "", "", 1, false) // README also contains "wel"
 	assert.Equal(t, 1, len(items), "one page found")
-	assert.Equal(t, "index", items[0].Name, "Welcome to Oddµ")
+	assert.Equal(t, "index", items[0].Name, "Welcome to Oddμ")
 	assert.Greater(t, items[0].Score, 0, "matches result in a score")
 	assert.False(t, more)
 

@@ -16,7 +16,7 @@ func TestRootHandler(t *testing.T) {
 func TestViewHandler(t *testing.T) {
 	assert.Contains(t,
 		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/index", nil),
-		"Welcome to Oddµ")
+		"Welcome to Oddμ")
 }
 
 func TestViewHandlerDir(t *testing.T) {
@@ -49,7 +49,7 @@ func TestViewHandlerWithId(t *testing.T) {
 	data.Set("id", "index")
 	assert.Contains(t,
 		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/", data),
-		"Welcome to Oddµ")
+		"Welcome to Oddμ")
 }
 
 func TestPageTitleWithAmp(t *testing.T) {

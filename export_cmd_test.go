@@ -13,8 +13,8 @@ func TestExportCmd(t *testing.T) {
 	b := new(bytes.Buffer)
 	s := exportCli(b, "feed.html", minimalIndex(t))
 	assert.Equal(t, subcommands.ExitSuccess, s)
-	assert.Contains(t, b.String(), "<title>Oddµ: A minimal wiki</title>")
-	assert.Contains(t, b.String(), "<title>Welcome to Oddµ</title>")
+	assert.Contains(t, b.String(), "<title>Oddμ: A minimal wiki</title>")
+	assert.Contains(t, b.String(), "<title>Welcome to Oddμ</title>")
 }
 
 func TestExportCmdLanguage(t *testing.T) {
@@ -50,6 +50,6 @@ func TestExportCmdJsonFeed(t *testing.T) {
 	b := new(bytes.Buffer)
 	s := exportCli(b, "testdata/json/template.json", minimalIndex(t))
 	assert.Equal(t, subcommands.ExitSuccess, s)
-	assert.Contains(t, b.String(), `"title": "Oddµ: A minimal wiki"`)
-	assert.Regexp(t, regexp.MustCompile("&lt;h1.*&gt;Welcome to Oddµ&lt;/h1&gt;"), b.String()) // skip id
+	assert.Contains(t, b.String(), `"title": "Oddμ: A minimal wiki"`)
+	assert.Regexp(t, regexp.MustCompile("&lt;h1.*&gt;Welcome to Oddμ&lt;/h1&gt;"), b.String()) // skip id
 }

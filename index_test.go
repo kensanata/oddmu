@@ -21,7 +21,7 @@ func TestIndexAdd(t *testing.T) {
 // TestIndex relies on README.md being indexed
 func TestIndex(t *testing.T) {
 	index.load()
-	q := "Oddµ"
+	q := "Oddμ"
 	pages, _ := search(q, "", "", 1, false)
 	assert.NotZero(t, len(pages))
 	for _, p := range pages {
