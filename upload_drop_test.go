@@ -328,3 +328,29 @@ func TestUploadNext(t *testing.T) {
 	r := []string{"test-1.jpg", "test-2.jpg", "test-3.jpg", "test-4.jpg", "test-5.jpg", "test-6.jpg", "test-7.jpg", "test-8.jpg", "test-9.jpg", "test-10.jpg", "test-11.jpg", "test-12.jpg", "test-13.jpg", "test-14.jpg", "test-15.jpg", "test-16.jpg", "test-17.jpg", "test-18.jpg", "test-19.jpg", "test-20.jpg", "test-21.jpg", "test-22.jpg", "test-23.jpg", "test-24.jpg", "test-25.jpg"}
 	assert.Equal(t, r, s)
 }
+
+func TestUploadUmlaut(t *testing.T) {
+	cleanup(t, "testdata/umlaut")
+	// for uploads, the directory is not created automatically
+	os.MkdirAll("testdata/umlaut", 0755)
+	form := new(bytes.Buffer)
+	writer := multipart.NewWriter(form)
+	field, err := writer.CreateFormField("name")
+	assert.NoError(t, err)
+	_, err = field.Write([]byte("ärger.txt"))
+	assert.NoError(t, err)
+	file, err := writer.CreateFormFile("file", "ärger.txt")
+	assert.NoError(t, err)
+	_, err = file.Write([]byte("Hello!"))
+	assert.NoError(t, err)
+	err = writer.Close()
+	assert.NoError(t, err)
+	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/umlaut/",
+		writer.FormDataContentType(), form, "/upload/testdata/umlaut/?actual=%C3%A4rger.txt&last=%C3%A4rger.txt")
+	assert.Contains(t,
+		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/umlaut/%C3%A4rger.txt", nil),
+		"Hello!")
+	assert.Contains(t,
+		assert.HTTPBody(makeHandler(listHandler, false), "GET", "/list/testdata/umlaut/", nil),
+		"ärger.txt")
+}
