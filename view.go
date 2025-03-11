@@ -75,7 +75,7 @@ func viewHandler(w http.ResponseWriter, r *http.Request, path string) {
 	}
 	// if nothing was found, offer to create it
 	if t == unknown {
-		http.Redirect(w, r, "/edit/"+path, http.StatusFound)
+		http.Redirect(w, r, urlpath.Join("/edit", path), http.StatusFound)
 		return
 	}
 	// directories are redirected to the index page
@@ -127,7 +127,7 @@ func viewHandler(w http.ResponseWriter, r *http.Request, path string) {
 	}
 	p, err := loadPage(path)
 	if err != nil {
-		http.Redirect(w, r, "/edit/"+path, http.StatusFound)
+		http.Redirect(w, r, urlpath.Join("/edit", path), http.StatusFound)
 		return
 	}
 	p.handleTitle(true)
