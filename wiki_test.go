@@ -45,10 +45,13 @@ func HTTPRedirectTo(t *testing.T, handler http.HandlerFunc, method, url string, 
 	handler(w, req)
 	code := w.Code
 	isRedirectCode := code >= http.StatusMultipleChoices && code <= http.StatusTemporaryRedirect
-	assert.True(t, isRedirectCode, "Expected HTTP redirect status code for %q but received %d", url+"?"+values.Encode(), code)
+	if (values != nil) {
+		url += "?" + values.Encode()
+	}
+	assert.True(t, isRedirectCode, "Expected HTTP redirect status code for %q but received %d", url, code)
 	headers := w.Result().Header["Location"]
 	assert.True(t, len(headers) == 1 && headers[0] == destination,
-		"Expected HTTP redirect location %s for %q but received %v", destination, url+"?"+values.Encode(), headers)
+		"Expected HTTP redirect location %s for %q but received %v", destination, url, headers)
 	return isRedirectCode
 }
 
