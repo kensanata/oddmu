@@ -331,8 +331,19 @@ func TestUploadNext(t *testing.T) {
 
 func TestUploadUmlaut(t *testing.T) {
 	cleanup(t, "testdata/umlaut")
-	// for uploads, the directory is not created automatically
-	os.MkdirAll("testdata/umlaut", 0755)
+	// create a page
+	p := &Page{Name: "testdata/umlaut/ärger", Body: []byte(`# Ärger
+Worte auf Papier
+Leute, die ich nie gesehen
+Unfassbar, all das`)}
+	p.save()
+	// check location for upload on a page name containing an umlaut
+	body := assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/umlaut/%C3%A4rger", nil)
+	assert.Contains(t, body, `href="/upload/testdata/umlaut/?filename=%c3%a4rger-1.jpg"`) // changed to lowercase
+	// check location for drop in a directory containing an umlaut
+	body = assert.HTTPBody(makeHandler(uploadHandler, false), "GET", "/upload/%C3%A4rger/dir/", nil)
+	assert.Contains(t, body, `action="/drop/%c3%a4rger/dir/"`) // changed to lowercase
+	// actual upload
 	form := new(bytes.Buffer)
 	writer := multipart.NewWriter(form)
 	field, err := writer.CreateFormField("name")
