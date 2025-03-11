@@ -166,6 +166,8 @@ func (p *Page) Base() string {
 	if n == "." {
 		return ""
 	}
+	// prevent double escaping by the template; ignore errors
+	n, _ = url.PathUnescape(n)
 	return n
 }
 
