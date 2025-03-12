@@ -20,9 +20,9 @@ img { max-width: 100%; }
     <header>
       <a href="#main">Skip navigation</a>
       <a href="/view/index">Home</a>
-      <a href="/edit/{{.Name}}" accesskey="e">Edit</a>
-      <a href="/add/{{.Name}}" accesskey="a">Add</a>
-      <a href="/diff/{{.Name}}" accesskey="d">Diff</a>
+      <a href="/edit/{{.Path}}" accesskey="e">Edit</a>
+      <a href="/add/{{.Path}}" accesskey="a">Add</a>
+      <a href="/diff/{{.Path}}" accesskey="d">Diff</a>
       <a href="/archive/{{.Dir}}data.zip" accesskey="z">Zip</a>
       <a href="/upload/{{.Dir}}?filename={{.Base}}-1.jpg" accesskey="u">Upload</a>
       <form role="search" action="/search/{{.Dir}}" method="GET">

@@ -3,13 +3,13 @@
     <docs>http://blogs.law.harvard.edu/tech/rss</docs>
     <title>{{.Title}}</title>
     <link>https://flying-carpet.ch/</link>
-    <atom:link href="https://flying-carpet.ch/view/{{.Name}}.rss" rel="self" type="application/rss+xml"/>
+    <atom:link href="https://flying-carpet.ch/view/{{.Path}}.rss" rel="self" type="application/rss+xml"/>
     <description>This is the digital garden of Claudia.</description>
     {{range .Items}}
     <item>
       <title>{{.Title}}</title>
-      <link>https://flying-carpet.ch/view/{{.Name}}</link>
-      <guid>https://flying-carpet.ch/view/{{.Name}}</guid>
+      <link>https://flying-carpet.ch/view/{{.Path}}</link>
+      <guid>https://flying-carpet.ch/view/{{.Path}}</guid>
       <description>{{.Html}}</description>
       <pubDate>{{.Date}}</pubDate>
       {{range .Hashtags}}

@@ -30,7 +30,7 @@ p { margin: 0.5ch 0 0 0; }
     </header>
     <main>
       <h1>{{.Title}}</h1>
-      <form action="/save/{{.Name}}" method="POST">
+      <form action="/save/{{.Path}}" method="POST">
         <textarea name="body" rows="20" cols="30" lang="" autofocus>{{printf "# %s" .Today | or .Body | printf "%s"}}</textarea>
         <input type="hidden" name="notify" value="on">
         <p><input id="send" type="submit" value="Save">

@@ -38,11 +38,11 @@ button { background-color: #eee; color: inherit; border-radius: 4px; border-widt
         {{if .More}}<a href="/search/{{.Dir}}?q={{.Query}}&page={{.Next}}">Next</a>{{end}}
       {{range .Items}}
       <article lang="{{.Language}}">
-        <p><a class="result" href="/view/{{.Name}}">{{.Title}}</a>
+        <p><a class="result" href="/view/{{.Path}}">{{.Title}}</a>
           <span class="score">{{.Score}}</span></p>
         <blockquote>{{.Html}}</blockquote>
         {{range .Images}}
-        <p class="image"><a href="/view/{{.Name}}"><img loading="lazy" src="/view/{{.Name}}"></a><br/>{{.Html}}
+        <p class="image"><a href="/view/{{.Path}}"><img loading="lazy" src="/view/{{.Path}}"></a><br/>{{.Html}}
         {{end}}
       </article>
       {{end}}

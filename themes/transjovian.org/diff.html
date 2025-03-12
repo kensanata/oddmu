@@ -16,11 +16,11 @@ pre { white-space: normal; color: #222; background-color: #ddd; border: 1px soli
   </head>
   <body>
     <header>
-      <a href="/view/{{.Name}}">Back</a>
+      <a href="/view/{{.Path}}">Back</a>
     </header>
     <main id="main">
       <h1>{{.Title}}</h1>
-      <p>This is the diff between <a href="/view/{{.Name}}.md~">the backup</a> and <a href="/view/{{.Name}}.md">the current copy</a>.</p>
+      <p>This is the diff between <a href="/view/{{.Path}}.md~">the backup</a> and <a href="/view/{{.Path}}.md">the current copy</a>.</p>
       <pre>
 {{.Diff}}
       </pre>

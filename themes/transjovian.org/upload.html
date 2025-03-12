@@ -94,7 +94,7 @@ window.addEventListener('load', uploadFiles.init);
         Please provide your own filename. End the base name with "-1" to auto-increment.
         Use <tt>.jpg</tt>, <tt>.png</tt> or <tt>.webp</tt> as the extension if you want to resize the picture.
       <p><label for="name">Filename:</label>
-        <input id="name" name="name" value="{{.Name}}" type="text" placeholder="image-1.jpg" autofocus required>
+        <input id="name" name="name" value="{{.Path}}" type="text" placeholder="image-1.jpg" autofocus required>
       <p>If the uploaded file is a picture from a phone, it is going to be too big for your site.
         Sadly, resizing only works when uploading <tt>.jpeg</tt>, <tt>.webp</tt>, <tt>.heic</tt> and <tt>.png</tt> files.
         Feel free to specify a max width of 1200 pixels, for example.

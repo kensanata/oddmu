@@ -9,11 +9,11 @@
   </head>
   <body>
     <h1>Adding to {{.Title}}</h1>
-    <form action="/append/{{.Name}}" method="POST">
+    <form action="/append/{{.Path}}" method="POST">
       <textarea name="body" rows="20" cols="80" placeholder="Text" lang="{{.Language}}" autofocus required>{{if .IsBlog}}**{{.Today}}**. {{end}}</textarea>
       <p><label><input type="checkbox" name="notify" checked> Add link to <a href="/view/changes">the list of changes</a>.</label></p>
       <p><input type="submit" value="Add">
-        <a href="/view/{{.Name}}"><button type="button">Cancel</button></a></p>
+        <a href="/view/{{.Path}}"><button type="button">Cancel</button></a></p>
     </form>
   </body>
 </html>

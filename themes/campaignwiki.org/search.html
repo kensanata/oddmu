@@ -37,7 +37,7 @@ img { max-width: 20%; }
         {{if .More}}<a href="/search/{{.Dir}}?q={{.Query}}&page={{.Next}}">Next</a>{{end}}
       {{range .Items}}
       <article lang="{{.Language}}">
-        <p><a class="result" href="/view/{{.Name}}">{{.Title}}</a>
+        <p><a class="result" href="/view/{{.Path}}">{{.Title}}</a>
           <span class="score">{{.Score}}</span></p>
         <blockquote>{{.Html}}</blockquote>
       </article>

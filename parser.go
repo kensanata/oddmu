@@ -95,7 +95,6 @@ func (p *Page) renderHtml() {
 	parser, hashtags := wikiParser()
 	renderer := wikiRenderer()
 	maybeUnsafeHTML := markdown.ToHTML(p.Body, parser, renderer)
-	p.Name = nameEscape(p.Name)
 	p.Html = unsafeBytes(maybeUnsafeHTML)
 	p.Hashtags = *hashtags
 }

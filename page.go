@@ -139,7 +139,6 @@ func (p *Page) handleTitle(replace bool) {
 // summarize sets Page.Html to an extract.
 func (p *Page) summarize(q string) {
 	t := p.plainText()
-	p.Name = nameEscape(p.Name)
 	p.Html = sanitizeStrict(snippets(q, t))
 }
 
@@ -147,6 +146,32 @@ func (p *Page) summarize(q string) {
 func (p *Page) IsBlog() bool {
 	name := path.Base(p.Name)
 	return blogRe.MatchString(name)
+}
+
+const upperhex = "0123456789ABCDEF"
+
+// Path returns the page name with semicolon, comma and questionmark escaped because html/template doesn't escape those.
+func (p *Page) Path() string {
+	s := p.Name
+	n := strings.Count(s, ";") + strings.Count(s, ",") + strings.Count(s, "?")
+	if n == 0 {
+		return p.Name
+	}
+	t := make([]byte, len(s) + 2*n)
+	j := 0
+	for i := 0; i < len(s); i++ {
+		switch s[i] {
+		case ';', ',', '?':
+			t[j] = '%'
+			t[j+1] = upperhex[s[i]>>4]
+			t[j+2] = upperhex[s[i]&15]
+			j += 3
+		default:
+			t[j] = s[i]
+			j++
+		}
+	}
+	return string(t);
 }
 
 // Dir returns the directory the page is in. It's either the empty string if the page is in the Oddmu working directory,
@@ -166,8 +191,6 @@ func (p *Page) Base() string {
 	if n == "." {
 		return ""
 	}
-	// prevent double escaping by the template; ignore errors
-	n, _ = url.PathUnescape(n)
 	return n
 }
 

@@ -6,16 +6,16 @@
     <meta name="viewport" content="width=device-width">
     <title>{{.Title}}</title>
     <link href="oddmu.css" rel="stylesheet" />
-    <link rel="alternate" type="application/rss+xml" title="Alex Schroeder: {{.Title}}" href="/view/{{.Name}}.rss" />
+    <link rel="alternate" type="application/rss+xml" title="Alex Schroeder: {{.Title}}" href="/view/{{.Path}}.rss" />
   </head>
   <body>
     <header id="view">
       <a href="#main">Skip</a>
       <a href="index">Home</a>
       <a href="changes">Changes</a>
-      <a href="/edit/{{.Name}}" accesskey="e">Edit</a>
-      <a href="/add/{{.Name}}" accesskey="a">Add</a>
-      <a href="/diff/{{.Name}}" accesskey="d">Diff</a>
+      <a href="/edit/{{.Path}}" accesskey="e">Edit</a>
+      <a href="/add/{{.Path}}" accesskey="a">Add</a>
+      <a href="/diff/{{.Path}}" accesskey="d">Diff</a>
       <a href="/upload/{{.Dir}}?filename={{.Base}}-1.jpg" accesskey="u">Upload</a>
       <form role="search" action="/search/{{.Dir}}" method="GET">
         <label for="search">Search:</label>

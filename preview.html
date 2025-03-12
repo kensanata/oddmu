@@ -28,12 +28,12 @@ img { max-width: 100%; }
     <hr>
     <section id="edit">
       <h2>Editing {{.Title}}</h2>
-      <form action="/save/{{.Name}}" method="POST">
+      <form action="/save/{{.Path}}" method="POST">
         <textarea name="body" rows="20" cols="80" lang="{{.Language}}" autofocus>{{printf "# %s\n\n%s" .Title .Body}}</textarea>
         <p><label><input type="checkbox" name="notify" checked> Add link to <a href="changes">the list of changes</a>.</label></p>
         <p><input type="submit" value="Save">
-          <button formaction="/preview/{{.Name}}" type="submit">Preview</button>
-          <a href="/view/{{.Name}}"><button type="button">Cancel</button></a></p>
+          <button formaction="/preview/{{.Path}}" type="submit">Preview</button>
+          <a href="/view/{{.Path}}"><button type="button">Cancel</button></a></p>
       </form>
     </section>
   </body>

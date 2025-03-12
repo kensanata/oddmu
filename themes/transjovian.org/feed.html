@@ -5,7 +5,7 @@
     <link>https://transjovian.org/</link>
     <managingEditor>jupiter@transjovian.org (Ashivom Bandaralum)</managingEditor>
     <webMaster>jupiter@transjovian.org (Ashivom Bandaralum)</webMaster>
-    <atom:link href="https://transjovian.org/view/{{.Name}}.rss" rel="self" type="application/rss+xml"/>
+    <atom:link href="https://transjovian.org/view/{{.Path}}.rss" rel="self" type="application/rss+xml"/>
     <description>This is the digital garden of Ashivom Bandaralum.</description>
     <image>
       <url>https://transjovian.org/jupiter.svg</url>
@@ -15,8 +15,8 @@
     {{range .Items}}
     <item>
       <title>{{.Title}}</title>
-      <link>https://transjovian.org/view/{{.Name}}</link>
-      <guid>https://transjovian.org/view/{{.Name}}</guid>
+      <link>https://transjovian.org/view/{{.Path}}</link>
+      <guid>https://transjovian.org/view/{{.Path}}</guid>
       <description>{{.Html}}</description>
       <pubDate>{{.Date}}</pubDate>
       {{range .Hashtags}}
