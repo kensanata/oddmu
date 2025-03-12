@@ -278,18 +278,10 @@ extensions can be added.
 
 ### Filenames and URL path
 
-One of the sad parts of the code is the distinction between path and
-filepath. On a Linux system, this doesn't matter. I suspect that it
-also doesn't matter on MacOS and Windows because the file systems
-handle forward slashes just fine. The code still tries to do the right
-thing. A path that is derived from a URL is a path with slashes.
-Before accessing a file, it has to be turned into a filepath using
-`filepath.FromSlashes` and in the rare case where the inverse happens,
-use `filepath.ToSlashes`. Any path received via the URL path uses
-slashes and needs to be converted to a filepath before passing it to
-any `os` function. Any path received within a `path/filepath.WalkFunc`
-is a filepath and needs to be converted to use slashes when used in
-HTML output.
+There are some simplifications made. The code doesn't consider the
+various encodings (UTF-8 NFC on the web vs UTF-8 NFD for HFS+, for
+example; it also doesn't check for characters in page names that are
+illegal filenames on the filesystem used).
 
 If you need to access the page name in code that is used from a
 template, you have to decode the path. See the code in `diff.go` for

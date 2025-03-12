@@ -31,8 +31,9 @@ var titleRegexp = regexp.MustCompile("(?m)^#\\s*(.*)\n+")
 // path is /edit/foo/bar, the editHandler is called with "foo/bar" as its argument. This uses the second group from the
 // validPath regular expression. The boolean argument indicates whether the following path is required. When false, a
 // URL like /upload/ is OK. The argument can also be provided using a form parameter, i.e. call /edit/?id=foo/bar. The
-// handle itself is called with the remaining URL path fragment. To turn it into a filepath:
-// filepath.Clean(filepath.FromSlash(url.PathUnescape(dir))).
+// handle itself is called with the remaining URL path fragment. Any path segment beginning with a period is rejected
+// because it's considered to be a hidden file or directory. This also takes care of path traversal since ".." is
+// treated the same. To turn it into a filepath: filepath.Clean(filepath.FromSlash(url.PathUnescape(dir))).
 func makeHandler(fn func(http.ResponseWriter, *http.Request, string), required bool) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// no hidden files or directories
@@ -49,6 +50,7 @@ func makeHandler(fn func(http.ResponseWriter, *http.Request, string), required b
 			return
 		}
 		path := m[2]
+		// extract page id from the query parameter
 		if r.Method == "GET" && (path == "" || strings.HasSuffix(path, "/")) {
 			err := r.ParseForm()
 			if err == nil {

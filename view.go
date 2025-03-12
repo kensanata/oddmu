@@ -6,7 +6,7 @@ import (
 	"mime"
 	"net/http"
 	"os"
-	urlpath "path"
+	"path"
 	"path/filepath"
 	"strings"
 	"time"
@@ -34,7 +34,7 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 // Caching: a 304 NOT MODIFIED is returned if the request has an If-Modified-Since header that matches the file's
 // modification time, truncated to one second. Truncation is required because the file's modtime has sub-second
 // precision and the HTTP timestamp for the Last-Modified header has not.
-func viewHandler(w http.ResponseWriter, r *http.Request, path string) {
+func viewHandler(w http.ResponseWriter, r *http.Request, name string) {
 	const (
 		unknown = iota
 		file
@@ -43,11 +43,11 @@ func viewHandler(w http.ResponseWriter, r *http.Request, path string) {
 		dir
 	)
 	t := unknown
-	if strings.HasSuffix(path, ".rss") {
-		path = path[:len(path)-4]
+	if strings.HasSuffix(name, ".rss") {
+		name = name[:len(name)-4]
 		t = rss
 	}
-	fp := filepath.FromSlash(path)
+	fp := filepath.FromSlash(name)
 	fi, err := os.Stat(fp + ".md")
 	if err == nil {
 		if fi.IsDir() {
@@ -75,12 +75,12 @@ func viewHandler(w http.ResponseWriter, r *http.Request, path string) {
 	}
 	// if nothing was found, offer to create it
 	if t == unknown {
-		http.Redirect(w, r, urlpath.Join("/edit", path), http.StatusFound)
+		http.Redirect(w, r, path.Join("/edit", nameEscape(name)), http.StatusFound)
 		return
 	}
 	// directories are redirected to the index page
 	if t == dir {
-		http.Redirect(w, r, urlpath.Join("/view", path, "index"), http.StatusFound)
+		http.Redirect(w, r, path.Join("/view", nameEscape(name), "index"), http.StatusFound)
 		return
 	}
 	// if the page has not been modified, return (file, rss or page)
@@ -125,9 +125,9 @@ func viewHandler(w http.ResponseWriter, r *http.Request, path string) {
 		}
 		return
 	}
-	p, err := loadPage(path)
+	p, err := loadPage(name)
 	if err != nil {
-		http.Redirect(w, r, urlpath.Join("/edit", path), http.StatusFound)
+		http.Redirect(w, r, path.Join("/edit", nameEscape(name)), http.StatusFound)
 		return
 	}
 	p.handleTitle(true)

@@ -141,11 +141,10 @@ Just me and the birds.
 		assert.HTTPBody(h, "HEAD", "/view/testdata/head/peace", nil))
 }
 
-// Is this correct? The redirect is an IRI instead of a URI?
 func TestViewUmlaut(t *testing.T) {
 	assert.Contains(t,
 		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/%C3%A4rger", nil),
-		`<a href="/edit/ärger">`)
+		`<a href="/edit/%C3%A4rger">`)
 }
 
 func TestMimeType(t *testing.T) {

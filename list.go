@@ -32,7 +32,7 @@ func listHandler(w http.ResponseWriter, r *http.Request, dir string) {
 	if d == "" {
 		d = "."
 	} else if !strings.HasSuffix(d, "/") {
-		http.Redirect(w, r, "/list/"+d+"/", http.StatusFound)
+		http.Redirect(w, r, "/list/" + nameEscape(dir) + "/", http.StatusFound)
 		return
 	} else {
 		it := File{Name: "..", IsUp: true, IsDir: true }
@@ -85,7 +85,7 @@ func deleteHandler(w http.ResponseWriter, r *http.Request, path string) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	http.Redirect(w, r, "/list/"+filepath.Dir(fn)+"/", http.StatusFound)
+	http.Redirect(w, r, "/list/" + nameEscape(filepath.Dir(fn)) + "/", http.StatusFound)
 }
 
 // renameHandler renames the named file and then redirects back to the list
@@ -98,5 +98,5 @@ func renameHandler(w http.ResponseWriter, r *http.Request, path string) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	http.Redirect(w, r, "/list/"+filepath.Dir(target)+"/", http.StatusFound)
+	http.Redirect(w, r, "/list/" + nameEscape(filepath.Dir(target)) + "/", http.StatusFound)
 }

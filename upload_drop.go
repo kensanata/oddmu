@@ -245,7 +245,7 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		updateTemplate(path)
 	}
 	data.Set("last", filename) // has no slashes
-	http.Redirect(w, r, "/upload/"+dir+"?"+data.Encode(), http.StatusFound)
+	http.Redirect(w, r, "/upload/" + nameEscape(dir) + "?" + data.Encode(), http.StatusFound)
 }
 
 // Base returns a page name matching the first uploaded file: no extension and no appended number. If the name
