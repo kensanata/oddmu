@@ -63,7 +63,7 @@ func feed(p *Page, ti time.Time) *Feed {
 		if !ok || bytes.Contains(link.Destination, []byte("//")) {
 			return ast.GoToNext
 		}
-		name := path.Join(path.Dir(p.Name), string(link.Destination))
+		name := path.Join(p.Dir(), string(link.Destination))
 		fi, err := os.Stat(filepath.FromSlash(name) + ".md")
 		if err != nil {
 			return ast.GoToNext

@@ -102,6 +102,12 @@ func TestForbidden(t *testing.T) {
 	assert.HTTPStatusCode(t, makeHandler(viewHandler, false), "GET", "/view/.", nil, http.StatusForbidden)
 	assert.HTTPStatusCode(t, makeHandler(viewHandler, false), "GET", "/view/.htaccess", nil, http.StatusForbidden)
 	assert.HTTPStatusCode(t, makeHandler(viewHandler, false), "GET", "/view/.git/description", nil, http.StatusForbidden)
+	assert.HTTPStatusCode(t, makeHandler(viewHandler, false), "GET", "/view/../oddmu", nil, http.StatusForbidden)
+	data := make(url.Values)
+	data.Set("id", "..")
+	assert.HTTPStatusCode(t, makeHandler(viewHandler, false), "GET", "/view/", data, http.StatusForbidden)
+	data.Set("id", "foo/bar")
+	assert.HTTPStatusCode(t, makeHandler(viewHandler, false), "GET", "/view/", data, http.StatusBadRequest)
 }
 
 func TestPageLastModified(t *testing.T) {

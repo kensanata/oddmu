@@ -8,7 +8,6 @@ import (
 	"github.com/gomarkdown/markdown/parser"
 	"net/url"
 	"path"
-	"path/filepath"
 )
 
 // wikiLink returns an inline parser function. This indirection is
@@ -128,7 +127,7 @@ func (p *Page) plainText() string {
 
 // images returns an array of ImageData.
 func (p *Page) images() []ImageData {
-	dir := path.Dir(filepath.ToSlash(p.Name))
+	dir := p.Dir()
 	images := make([]ImageData, 0)
 	parser := parser.New()
 	doc := markdown.Parse(p.Body, parser)

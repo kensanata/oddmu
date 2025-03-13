@@ -20,10 +20,10 @@ func (p *Page) notify() error {
 	if p.Title == "" {
 		p.Title = p.Name
 	}
-	esc := nameEscape(path.Base(p.Name))
+	esc := nameEscape(p.Base())
 	link := "* [" + p.Title + "](" + esc + ")\n"
 	re := regexp.MustCompile(`(?m)^\* \[[^\]]+\]\(` + esc + `\)\n`)
-	dir := path.Dir(p.Name)
+	dir := p.Dir()
 	err := addLinkWithDate(path.Join(dir, "changes"), link, re)
 	if err != nil {
 		log.Printf("Updating changes in %s failed: %s", dir, err)
@@ -31,7 +31,7 @@ func (p *Page) notify() error {
 	}
 	if p.IsBlog() {
 		// Add to the index only if the blog post is for the current year
-		if strings.HasPrefix(path.Base(p.Name), time.Now().Format("2006")) {
+		if strings.HasPrefix(p.Base(), time.Now().Format("2006")) {
 			err := addLink(path.Join(dir, "index"), true, link, re)
 			if err != nil {
 				log.Printf("Updating index in %s failed: %s", dir, err)

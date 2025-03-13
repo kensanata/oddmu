@@ -6,7 +6,6 @@ import (
 	"html"
 	"html/template"
 	"net/http"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -25,11 +24,7 @@ func diffHandler(w http.ResponseWriter, r *http.Request, name string) {
 
 // Diff computes the diff for a page. At this point, renderHtml has already been called so the Name is escaped.
 func (p *Page) Diff() template.HTML {
-	path, err := url.PathUnescape(p.Name)
-	if err != nil {
-		return template.HTML("Cannot unescape " + p.Name)
-	}
-	fp := filepath.FromSlash(path)
+	fp := filepath.FromSlash(p.Name)
 	a := fp + ".md~"
 	t1, err := os.ReadFile(a)
 	if err != nil {

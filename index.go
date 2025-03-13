@@ -139,12 +139,12 @@ func (idx *indexStore) load() (int, error) {
 }
 
 // walk reads a file and adds it to the index. This assumes that the index is locked.
-func (idx *indexStore) walk(path string, info fs.FileInfo, err error) error {
+func (idx *indexStore) walk(fp string, info fs.FileInfo, err error) error {
 	if err != nil {
 		return err
 	}
 	// skip hidden directories and files
-	if path != "." && strings.HasPrefix(filepath.Base(path), ".") {
+	if fp != "." && strings.HasPrefix(filepath.Base(fp), ".") {
 		if info.IsDir() {
 			return filepath.SkipDir
 		} else {
@@ -152,10 +152,10 @@ func (idx *indexStore) walk(path string, info fs.FileInfo, err error) error {
 		}
 	}
 	// skipp all but page files
-	if !strings.HasSuffix(path, ".md") {
+	if !strings.HasSuffix(fp, ".md") {
 		return nil
 	}
-	p, err := loadPage(strings.TrimSuffix(path, ".md"))
+	p, err := loadPage(strings.TrimSuffix(filepath.ToSlash(fp), ".md"))
 	if err != nil {
 		return err
 	}

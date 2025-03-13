@@ -64,7 +64,7 @@ func nameEscape(s string) string {
 // carriage return characters ("\r"). Page.Title and Page.Html are not saved. There is no caching. Before removing or
 // writing a file, the old copy is renamed to a backup, appending "~". Errors are not logged but returned.
 func (p *Page) save() error {
-	fp := filepath.FromSlash(p.Name + ".md")
+	fp := filepath.FromSlash(p.Name) + ".md"
 	watches.ignore(fp)
 	s := bytes.ReplaceAll(p.Body, []byte{'\r'}, []byte{})
 	if len(s) == 0 {
@@ -90,8 +90,8 @@ func (p *Page) save() error {
 
 // backup a file by renaming it unless the existing backup is less than an hour old. A backup gets a tilde appended to
 // it ("~"). This is true even if the file refers to a binary file like "image.png" and most applications don't know
-// what to do with a file called "image.png~". This expects a file path. Use filepath.FromSlash(path) if necessary. The
-// backup file gets its modification time set to now so that subsequent edits don't immediately overwrite it again.
+// what to do with a file called "image.png~". This expects a filepath. The backup file gets its modification time set
+// to now so that subsequent edits don't immediately overwrite it again.
 func backup(fp string) error {
 	_, err := os.Stat(fp)
 	if err != nil {
@@ -113,13 +113,13 @@ func backup(fp string) error {
 // loadPage loads a Page given a name. The path loaded is that Page.Name with the ".md" extension. The Page.Title is set
 // to the Page.Name (and possibly changed, later). The Page.Body is set to the file content. The Page.Html remains
 // undefined (there is no caching).
-func loadPage(path string) (*Page, error) {
-	path = strings.TrimPrefix(path, "./") // result of a filepath.TreeWalk starting with "."
-	body, err := os.ReadFile(filepath.FromSlash(path + ".md"))
+func loadPage(name string) (*Page, error) {
+	name = strings.TrimPrefix(name, "./") // result of a path.TreeWalk starting with "."
+	body, err := os.ReadFile(filepath.FromSlash(name) + ".md")
 	if err != nil {
 		return nil, err
 	}
-	return &Page{Title: path, Name: path, Body: body}, nil
+	return &Page{Title: name, Name: name, Body: body}, nil
 }
 
 // handleTitle extracts the title from a Page and sets Page.Title, if any. If replace is true, the page title is also
@@ -151,6 +151,7 @@ func (p *Page) IsBlog() bool {
 const upperhex = "0123456789ABCDEF"
 
 // Path returns the page name with semicolon, comma and questionmark escaped because html/template doesn't escape those.
+// This is suitable for use in HTML templates.
 func (p *Page) Path() string {
 	s := p.Name
 	n := strings.Count(s, ";") + strings.Count(s, ",") + strings.Count(s, "?")
@@ -174,10 +175,10 @@ func (p *Page) Path() string {
 	return string(t);
 }
 
-// Dir returns the directory the page is in. It's either the empty string if the page is in the Oddmu working directory,
-// or it ends in a slash. This is used to create the upload link in "view.html", for example.
+// Dir returns the directory part of the page name. It's either the empty string if the page is in the Oddmu working
+// directory, or it ends in a slash. This is used to create the upload link in "view.html", for example.
 func (p *Page) Dir() string {
-	d := filepath.Dir(p.Name)
+	d := path.Dir(p.Name)
 	if d == "." {
 		return ""
 	}
@@ -187,7 +188,7 @@ func (p *Page) Dir() string {
 // Base returns the basename of the page name: no directory. This is used to create the upload link in "view.html", for
 // example.
 func (p *Page) Base() string {
-	n := filepath.Base(p.Name)
+	n := path.Base(p.Name)
 	if n == "." {
 		return ""
 	}

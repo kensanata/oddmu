@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"time"
@@ -26,38 +27,38 @@ type List struct {
 }
 
 // listHandler uses the "list.html" template to enable file management in a particular directory.
-func listHandler(w http.ResponseWriter, r *http.Request, dir string) {
+func listHandler(w http.ResponseWriter, r *http.Request, name string) {
 	files := []File{}
-	d := filepath.FromSlash(dir)
+	d := filepath.FromSlash(name)
 	if d == "" {
 		d = "."
 	} else if !strings.HasSuffix(d, "/") {
-		http.Redirect(w, r, "/list/" + nameEscape(dir) + "/", http.StatusFound)
+		http.Redirect(w, r, "/list/" + nameEscape(name) + "/", http.StatusFound)
 		return
 	} else {
 		it := File{Name: "..", IsUp: true, IsDir: true }
 		files = append(files, it)
 	}
-	err := filepath.Walk(d, func (path string, fi fs.FileInfo, err error) error {
+	err := filepath.Walk(d, func (fp string, fi fs.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 		isDir := false
 		if fi.IsDir() {
-			if d == path {
+			if d == fp {
 				return nil
 			}
 			isDir = true
 		}
-		name := filepath.ToSlash(path)
-		base := filepath.Base(name)
+		name := filepath.ToSlash(fp)
+		base := filepath.Base(fp)
 		title := ""
 		if !isDir && strings.HasSuffix(name, ".md") {
 			index.RLock()
 			defer index.RUnlock()
 			title = index.titles[name[:len(name)-3]]
-		}
-		if isDir {
+		} else if isDir {
+			// even on Windows, this looks like a Unix directory
 			base += "/"
 		}
 		it := File{Name: base, Title: title, Date: fi.ModTime().Format(time.DateTime), IsDir: isDir }
@@ -72,31 +73,36 @@ func listHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	renderTemplate(w, dir, "list", &List{Dir: dir, Files: files})
+	renderTemplate(w, d, "list", &List{Dir: name, Files: files})
 }
 
 
 // deleteHandler deletes the named file and then redirects back to the list
-func deleteHandler(w http.ResponseWriter, r *http.Request, path string) {
-	fn := filepath.Clean(filepath.FromSlash(path))
+func deleteHandler(w http.ResponseWriter, r *http.Request, name string) {
+	fn := filepath.FromSlash(name)
 	err := os.RemoveAll(fn) // and all its children!
 	if err != nil {
 		log.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	http.Redirect(w, r, "/list/" + nameEscape(filepath.Dir(fn)) + "/", http.StatusFound)
+	http.Redirect(w, r, "/list/" + nameEscape(path.Dir(name)) + "/", http.StatusFound)
 }
 
 // renameHandler renames the named file and then redirects back to the list
-func renameHandler(w http.ResponseWriter, r *http.Request, path string) {
-	fn := filepath.Clean(filepath.FromSlash(path))
-	target := filepath.Join(filepath.Dir(fn), r.FormValue("name"))
-	err := os.Rename(fn, target)
+func renameHandler(w http.ResponseWriter, r *http.Request, name string) {
+	fn := filepath.FromSlash(name)
+	dir := path.Dir(name)
+	target := path.Join(dir, r.FormValue("name"))
+	if (isHiddenName(target)) {
+		http.Error(w, "the target file would be hidden", http.StatusForbidden)
+		return
+	}
+	err := os.Rename(fn, filepath.FromSlash(target))
 	if err != nil {
 		log.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	http.Redirect(w, r, "/list/" + nameEscape(filepath.Dir(target)) + "/", http.StatusFound)
+	http.Redirect(w, r, "/list/" + nameEscape(path.Dir(filepath.ToSlash(target))) + "/", http.StatusFound)
 }

@@ -20,14 +20,14 @@ func TestManPages(t *testing.T) {
 	main := string(b)
 	assert.NoError(t, err)
 	count := 0
-	filepath.Walk("man", func(path string, info fs.FileInfo, err error) error {
+	filepath.Walk("man", func(fp string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
-		if strings.HasSuffix(path, ".txt") &&
-			path != "man/oddmu.1.txt" {
+		if strings.HasSuffix(fp, ".txt") &&
+			fp != "man/oddmu.1.txt" {
 			count++
-			s := strings.TrimPrefix(path, "man/")
+			s := strings.TrimPrefix(fp, "man/")
 			s = strings.TrimSuffix(s, ".txt")
 			i := strings.LastIndex(s, ".")
 			ref := "_" + s[:i] + "_(" + s[i+1:] + ")"
@@ -44,15 +44,15 @@ func TestManTemplates(t *testing.T) {
 	man := string(b)
 	assert.NoError(t, err)
 	count := 0
-	filepath.Walk(".", func(path string, info fs.FileInfo, err error) error {
+	filepath.Walk(".", func(fp string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
-		if strings.HasSuffix(path, ".html") {
+		if strings.HasSuffix(fp, ".html") {
 			count++
-			assert.Contains(t, man, path, path)
+			assert.Contains(t, man, fp, fp)
 		}
-		if path != "." && info.IsDir() {
+		if fp != "." && info.IsDir() {
 			return filepath.SkipDir
 		}
 		return nil
@@ -94,13 +94,13 @@ func TestReadme(t *testing.T) {
 	readme := string(b)
 	assert.NoError(t, err)
 	count := 0
-	filepath.Walk("man", func(path string, info fs.FileInfo, err error) error {
+	filepath.Walk("man", func(fp string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
-		if strings.HasSuffix(path, ".txt") {
+		if strings.HasSuffix(fp, ".txt") {
 			count++
-			s := strings.TrimPrefix(path, "man/")
+			s := strings.TrimPrefix(fp, "man/")
 			s = strings.TrimSuffix(s, ".txt")
 			i := strings.LastIndex(s, ".")
 			ref := "[" + s[:i] + "(" + s[i+1:] + ")]"
@@ -110,15 +110,15 @@ func TestReadme(t *testing.T) {
 	})
 	assert.Greater(t, count, 0, "no man pages were found")
 	count = 0
-	filepath.Walk(".", func(path string, info fs.FileInfo, err error) error {
+	filepath.Walk(".", func(fp string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
-		if strings.HasSuffix(path, ".go") &&
-			!strings.HasSuffix(path, "_test.go") &&
-			!strings.HasSuffix(path, "_cmd.go") {
+		if strings.HasSuffix(fp, ".go") &&
+			!strings.HasSuffix(fp, "_test.go") &&
+			!strings.HasSuffix(fp, "_cmd.go") {
 			count++
-			s := strings.TrimPrefix(path, "./")
+			s := strings.TrimPrefix(fp, "./")
 			ref := "`" + s + "`"
 			assert.Contains(t, readme, ref, ref)
 		}

@@ -53,14 +53,18 @@ func uploadHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		data.Quality = quality
 	}
 	name := r.FormValue("filename")
+	if isHiddenName(name) {
+		http.Error(w, "the file would be hidden", http.StatusForbidden)
+		return
+	}
 	var err error
 	if name != "" {
-		data.Name, err = next(dir, name, 0)
+		data.Name, err = next(filepath.FromSlash(dir), name, 0)
 	} else if last := r.FormValue("last"); last != "" {
 		data.Last = last
-		mimeType := mime.TypeByExtension(filepath.Ext(last))
+		mimeType := mime.TypeByExtension(path.Ext(last))
 		data.Image = strings.HasPrefix(mimeType, "image/")
-		data.Name, err = next(dir, last, 1)
+		data.Name, err = next(filepath.FromSlash(dir), last, 1)
 		data.Actual = r.Form["actual"]
 	}
 	if err != nil {
@@ -85,7 +89,7 @@ func next(dir, fn string, i int) (string, error) {
 			return fn, nil
 		}
 		ext := filepath.Ext(fn)
-		// faking it
+		// faking a match as if "-0" had been matched
 		m = []string{"", fn[:len(fn)-len(ext)] + "-", "0", ext}
 	}
 	n, err := strconv.Atoi(m[2])
@@ -107,9 +111,9 @@ func next(dir, fn string, i int) (string, error) {
 // is redirected to the view of that file. Some errors are for the users and some are for users and the admins. Those
 // later errors are printed, too.
 func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
-	d := filepath.Dir(filepath.FromSlash(dir))
+	dir = filepath.FromSlash(dir)
 	// ensure the directory exists
-	fi, err := os.Stat(d)
+	fi, err := os.Stat(dir)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -119,11 +123,14 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		return
 	}
 	data := url.Values{}
-	name := r.FormValue("name")
-	filename := filepath.Base(name)
-	// no overwriting of hidden files or adding subdirectories
-	if strings.HasPrefix(filename, ".") || filepath.Dir(name) != "." {
-		http.Error(w, "no filename", http.StatusForbidden)
+	fn := r.FormValue("name")
+	// This is like the id query parameter: it may not contain any slashes, so it's a path and a filepath.
+	if strings.Contains(fn, "/") {
+		http.Error(w, "the file may not contain slashes", http.StatusBadRequest)
+		return
+	}
+	if isHiddenName(fn) {
+		http.Error(w, "the file would be hidden", http.StatusForbidden)
 		return
 	}
 	// Quality is a number. If no quality is set and a quality is required, 75 is used.
@@ -149,7 +156,7 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		data.Set("maxwidth", maxwidth) // remember for the next request
 	}
 	// the destination image format is determined by the extension
-	to := strings.ToLower(filepath.Ext(filename))
+	to := strings.ToLower(path.Ext(fn))
 	first := true
 	for _, fhs := range r.MultipartForm.File["file"] {
 		file, err := fhs.Open()
@@ -160,7 +167,7 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		defer file.Close()
 		// the first filename overwrites!
 		if !first {
-			filename, err = next(d, filename, 1)
+			fn, err = next(dir, fn, 1)
 			if err != nil {
 				log.Println(err)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -168,15 +175,15 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 			}
 		}
 		first = false
-		path := filepath.Join(d, filename)
-		watches.ignore(path)
-		err = backup(path)
+		fp := filepath.Join(dir, fn)
+		watches.ignore(fp)
+		err = backup(fp)
 		if err != nil {
 			log.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		dst, err := os.Create(path)
+		dst, err := os.Create(fp)
 		if err != nil {
 			log.Println(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -226,25 +233,25 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 			}
 			// if zero bytes were copied, delete the file instead
 			if n == 0 {
-				err := os.Remove(path)
+				err := os.Remove(fp)
 				if err != nil {
 					log.Println(err)
 					http.Error(w, err.Error(), http.StatusInternalServerError)
 					return
 				}
-				log.Println("Delete", path)
+				log.Println("Delete", fp)
 			}
 		}
-		data.Add("actual", filename)
+		data.Add("actual", fn)
 		username, _, ok := r.BasicAuth()
 		if ok {
-			log.Println("Save", path, "by", username)
+			log.Println("Save", filepath.ToSlash(fp), "by", username)
 		} else {
-			log.Println("Save", path)
+			log.Println("Save", filepath.ToSlash(fp))
 		}
-		updateTemplate(path)
+		updateTemplate(fp)
 	}
-	data.Set("last", filename) // has no slashes
+	data.Set("last", fn) // has no slashes
 	http.Redirect(w, r, "/upload/" + nameEscape(dir) + "?" + data.Encode(), http.StatusFound)
 }
 

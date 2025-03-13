@@ -84,7 +84,7 @@ func staticCli(source, target string, jobs int, quiet bool) subcommands.ExitStat
 func staticWalk(source, target string, tasks chan (args), stop chan (error)) {
 	// The error returned here is what's in the stop channel but at the very end, a worker might return an error
 	// even though the walk is already done. This is why we cannot rely on the return value of the walk.
-	filepath.Walk(source, func(path string, info fs.FileInfo, err error) error {
+	filepath.Walk(source, func(fp string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -92,9 +92,8 @@ func staticWalk(source, target string, tasks chan (args), stop chan (error)) {
 		case err := <-stop:
 			return err
 		default:
-			base := filepath.Base(path)
 			// skip hidden directories and files
-			if path != "." && strings.HasPrefix(base, ".") {
+			if fp != "." && strings.HasPrefix(filepath.Base(fp), ".") {
 				if info.IsDir() {
 					return filepath.SkipDir
 				} else {
@@ -102,28 +101,28 @@ func staticWalk(source, target string, tasks chan (args), stop chan (error)) {
 				}
 			}
 			// skip backup files, avoid recursion
-			if strings.HasSuffix(path, "~") || strings.HasPrefix(path, target) {
+			if strings.HasSuffix(fp, "~") || strings.HasPrefix(fp, target) {
 				return nil
 			}
 			// determine the actual target: if source is a/ and target is b/ and path is a/file, then the
 			// target is b/file
-			var actual_target string
+			var actualTarget string
 			if source == "." {
-				actual_target = filepath.Join(target, path)
+				actualTarget = filepath.Join(target, fp)
 			} else {
-				if !strings.HasPrefix(path, source) {
-					return fmt.Errorf("%s is not a subdirectory of %s", path, source)
+				if !strings.HasPrefix(fp, source) {
+					return fmt.Errorf("%s is not a subdirectory of %s", fp, source)
 				}
-				actual_target = filepath.Join(target, path[len(source):])
+				actualTarget = filepath.Join(target, fp[len(source):])
 			}
 			// recreate subdirectories
 			if info.IsDir() {
-				return os.Mkdir(actual_target, 0755)
+				return os.Mkdir(actualTarget, 0755)
 			}
 			// do the task if the target file doesn't exist or if the source file is newer
-			other, err := os.Stat(actual_target)
+			other, err := os.Stat(actualTarget)
 			if err != nil || info.ModTime().After(other.ModTime()) {
-				tasks <- args{source: path, target: actual_target, info: info}
+				tasks <- args{source: fp, target: actualTarget, info: info}
 			}
 			return nil
 		}
@@ -256,22 +255,22 @@ func staticLinks(node ast.Node, entering bool) ast.WalkStatus {
 }
 
 // write a page or feed with an appropriate template to a specific destination, overwriting it.
-func write(data any, path, prefix, templateFile string) error {
-	file, err := os.Create(path)
+func write(data any, fp, prefix, templateFile string) error {
+	file, err := os.Create(fp)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Cannot create %s: %s\n", path, err)
+		fmt.Fprintf(os.Stderr, "Cannot create %s: %s\n", fp, err)
 		return err
 	}
 	_, err = file.Write([]byte(prefix))
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Cannot write prefix %s: %s\n", path, err)
+		fmt.Fprintf(os.Stderr, "Cannot write prefix %s: %s\n", fp, err)
 		return err
 	}
 	templates.RLock()
 	defer templates.RUnlock()
 	err = templates.template[templateFile].Execute(file, data)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Cannot execute %s template for %s: %s\n", templateFile, path, err)
+		fmt.Fprintf(os.Stderr, "Cannot execute %s template for %s: %s\n", templateFile, fp, err)
 		return err
 	}
 	return nil

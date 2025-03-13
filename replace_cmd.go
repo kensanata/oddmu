@@ -55,12 +55,12 @@ func replaceCli(w io.Writer, isConfirmed bool, isRegexp bool, args []string) sub
 	}
 	repl := []byte(args[1])
 	changes := 0
-	err := filepath.Walk(".", func(path string, info fs.FileInfo, err error) error {
+	err := filepath.Walk(".", func(fp string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 		// skip hidden directories and files
-		if path != "." && strings.HasPrefix(filepath.Base(path), ".") {
+		if fp != "." && strings.HasPrefix(filepath.Base(fp), ".") {
 			if info.IsDir() {
 				return filepath.SkipDir
 			} else {
@@ -68,10 +68,10 @@ func replaceCli(w io.Writer, isConfirmed bool, isRegexp bool, args []string) sub
 			}
 		}
 		// skipp all but page files
-		if !strings.HasSuffix(path, ".md") {
+		if !strings.HasSuffix(fp, ".md") {
 			return nil
 		}
-		body, err := os.ReadFile(path)
+		body, err := os.ReadFile(fp)
 		if err != nil {
 			return err
 		}
@@ -79,15 +79,15 @@ func replaceCli(w io.Writer, isConfirmed bool, isRegexp bool, args []string) sub
 		if !slices.Equal(result, body) {
 			changes++
 			if isConfirmed {
-				fmt.Fprintln(w, path)
-				_ = os.Rename(path, path+"~")
-				err = os.WriteFile(path, result, 0644)
+				fmt.Fprintln(w, fp)
+				_ = os.Rename(fp, fp + "~")
+				err = os.WriteFile(fp, result, 0644)
 				if err != nil {
 					return err
 				}
 			} else {
-				edits := myers.ComputeEdits(span.URIFromPath(path+"~"), string(body), string(result))
-				diff := fmt.Sprint(gotextdiff.ToUnified(path+"~", path, string(body), edits))
+				edits := myers.ComputeEdits(span.URIFromPath(fp + "~"), string(body), string(result))
+				diff := fmt.Sprint(gotextdiff.ToUnified(fp + "~", fp, string(body), edits))
 				fmt.Fprintln(w, diff)
 			}
 		}

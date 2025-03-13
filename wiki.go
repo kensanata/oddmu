@@ -27,48 +27,55 @@ var validPath = regexp.MustCompile("^/([^/]+)/(.*)$")
 // instead.
 var titleRegexp = regexp.MustCompile("(?m)^#\\s*(.*)\n+")
 
+// isHiddenName returns true if any path segment starts with a dot. This also catches '..' segments.
+func isHiddenName (name string) bool {
+	for _, segment := range strings.Split(name, "/") {
+		if strings.HasPrefix(segment, ".") {
+			return true
+		}
+	}
+	return false
+}
+
 // makeHandler returns a handler that uses the URL path without the first path element as its argument, e.g. if the URL
 // path is /edit/foo/bar, the editHandler is called with "foo/bar" as its argument. This uses the second group from the
 // validPath regular expression. The boolean argument indicates whether the following path is required. When false, a
 // URL like /upload/ is OK. The argument can also be provided using a form parameter, i.e. call /edit/?id=foo/bar. The
 // handle itself is called with the remaining URL path fragment. Any path segment beginning with a period is rejected
 // because it's considered to be a hidden file or directory. This also takes care of path traversal since ".." is
-// treated the same. To turn it into a filepath: filepath.Clean(filepath.FromSlash(url.PathUnescape(dir))).
+// treated the same.
 func makeHandler(fn func(http.ResponseWriter, *http.Request, string), required bool) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// no hidden files or directories
-		for _, segment := range strings.Split(r.URL.Path, "/") {
-			if strings.HasPrefix(segment, ".") {
-				http.Error(w, "can neither confirm nor deny the existence of this resource", http.StatusForbidden)
-				return
-			}
+		log.Println(r.URL.Path, r.URL.RawQuery)
+		if isHiddenName(r.URL.Path) {
+			http.Error(w, "can neither confirm nor deny the existence of this resource", http.StatusForbidden)
+			return
 		}
 		m := validPath.FindStringSubmatch(r.URL.Path)
-		// handle / and /action
 		if m == nil {
 			http.NotFound(w, r)
 			return
 		}
-		path := m[2]
+		name := m[2]
 		// extract page id from the query parameter
-		if r.Method == "GET" && (path == "" || strings.HasSuffix(path, "/")) {
+		if r.Method == "GET" && (name == "" || strings.HasSuffix(name, "/")) {
 			err := r.ParseForm()
 			if err == nil {
 				id := r.Form.Get("id")
-				if strings.HasPrefix(id, ".") {
-					http.Error(w, "can neither confirm nor deny the existence of this resource", http.StatusForbidden)
-					return
-				}
 				if strings.Contains(id, "/") {
 					http.Error(w, "id may not contain slashes", http.StatusBadRequest)
 					return
 				}
-				path += id
+				if isHiddenName(id) {
+					http.Error(w, "can neither confirm nor deny the existence of this resource", http.StatusForbidden)
+					return
+				}
+				name += id
 			}
 		}
 		// handle /action/ or /action/page
-		if !required || len(path) > 0 {
-			fn(w, r, path)
+		if !required || len(name) > 0 {
+			fn(w, r, name)
 			return
 		}
 		http.NotFound(w, r)

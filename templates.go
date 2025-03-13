@@ -5,7 +5,6 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
-	"path"
 	"path/filepath"
 	"slices"
 	"strings"
@@ -23,10 +22,9 @@ var templateFiles = []string{"edit.html", "add.html", "view.html", "preview.html
 type templateStore struct {
 	sync.RWMutex
 
-	// template is a map of parsed HTML templates. The key is their path name. By default, the map only contains
+	// template is a map of parsed HTML templates. The key is their filepath name. By default, the map only contains
 	// top-level templates like "view.html". Subdirectories may contain their own templates which override the
-	// templates in the root directory. If so, they are paths like "dir/view.html", not filepaths. Use
-	// filepath.ToSlash() if necessary.
+	// templates in the root directory. If so, they are filepaths like "dir/view.html".
 	template map[string]*template.Template
 }
 
@@ -58,8 +56,7 @@ func loadTemplate(fp string, info fs.FileInfo, err error) error {
 			log.Println("Cannot parse template:", fp, err)
 			// ignore error
 		} else {
-			// log.Println("Parse template:", path)
-			templates.template[filepath.ToSlash(fp)] = t
+			templates.template[fp] = t
 		}
 	}
 	return nil
@@ -75,7 +72,7 @@ func updateTemplate(fp string) {
 		} else {
 			templates.Lock()
 			defer templates.Unlock()
-			templates.template[filepath.ToSlash(fp)] = t
+			templates.template[fp] = t
 			log.Println("Parse template:", fp)
 		}
 	}
@@ -87,7 +84,7 @@ func removeTemplate(fp string) {
 		filepath.Dir(fp) != "." {
 		templates.Lock()
 		defer templates.Unlock()
-		delete(templates.template, filepath.ToSlash(fp))
+		delete(templates.template, fp)
 		log.Println("Discard template:", fp)
 	}
 }
@@ -99,7 +96,7 @@ func renderTemplate(w http.ResponseWriter, dir, tmpl string, data any) {
 	base := tmpl + ".html"
 	templates.RLock()
 	defer templates.RUnlock()
-	t := templates.template[path.Join(dir, base)]
+	t := templates.template[filepath.Join(dir, base)]
 	if t == nil {
 		t = templates.template[base]
 	}

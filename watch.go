@@ -63,20 +63,19 @@ func (w *watchStore) install() (int, error) {
 }
 
 // add installs a watch for every directory that isn't hidden. Note that the root directory (".") is not skipped.
-func (w *watchStore) add(path string, info fs.FileInfo, err error) error {
+func (w *watchStore) add(fp string, info fs.FileInfo, err error) error {
 	if err != nil {
 		return err
 	}
 	if info.IsDir() {
-		if path != "." && strings.HasPrefix(filepath.Base(path), ".") {
+		if fp != "." && strings.HasPrefix(filepath.Base(fp), ".") {
 			return filepath.SkipDir
 		}
-		err := w.watcher.Add(path)
+		err := w.watcher.Add(fp)
 		if err != nil {
-			log.Println("Cannot add watch:", path)
+			log.Println("Cannot add watch:", fp)
 			return err
 		}
-		// log.Println("Watching", path)
 	}
 	return nil
 }
@@ -110,112 +109,112 @@ func (w *watchStore) watch() {
 // directory"). Note the painful details: If moving a file into a watched directory, a Create event is received. If a
 // new file is created in a watched directory, a Create event and one or more Write events is received.
 func (w *watchStore) watchHandle(e fsnotify.Event) {
-	path := strings.TrimPrefix(e.Name, "./")
-	if strings.HasPrefix(filepath.Base(path), ".") {
+	fp := strings.TrimPrefix(e.Name, "./")
+	if strings.HasPrefix(filepath.Base(fp), ".") {
 		return
 	}
 	// log.Println(e)
 	w.Lock()
 	defer w.Unlock()
 	if e.Op.Has(fsnotify.Create|fsnotify.Write) &&
-		(strings.HasSuffix(path, ".html") &&
-			slices.Contains(templateFiles, filepath.Base(path)) ||
-			strings.HasSuffix(path, ".md")) {
-		w.files[path] = time.Now()
+		(strings.HasSuffix(fp, ".html") &&
+			slices.Contains(templateFiles, filepath.Base(fp)) ||
+			strings.HasSuffix(fp, ".md")) {
+		w.files[fp] = time.Now()
 		timer := time.NewTimer(time.Second)
 		go func() {
 			<-timer.C
 			w.Lock()
 			defer w.Unlock()
-			w.watchTimer(path)
+			w.watchTimer(fp)
 		}()
 	} else if e.Op.Has(fsnotify.Rename | fsnotify.Remove) {
-		w.watchDoRemove(path)
+		w.watchDoRemove(fp)
 	} else if e.Op.Has(fsnotify.Create) &&
-		!slices.Contains(w.watcher.WatchList(), path) {
-		fi, err := os.Stat(path)
+		!slices.Contains(w.watcher.WatchList(), fp) {
+		fi, err := os.Stat(fp)
 		if err != nil {
 			log.Println(err)
 		} else if fi.IsDir() {
-			log.Println("Add watch for", path)
-			w.watcher.Add(path)
+			log.Println("Add watch for", fp)
+			w.watcher.Add(fp)
 		}
 	}
 }
 
 // watchTimer checks if the file hasn't been updated in 1s and if so, it calls watchDoUpdate. If another write has
 // updated the file, do nothing because another watchTimer will run at the appropriate time and check again.
-func (w *watchStore) watchTimer(path string) {
-	t, ok := w.files[path]
+func (w *watchStore) watchTimer(fp string) {
+	t, ok := w.files[fp]
 	if ok && t.Add(time.Second).Before(time.Now().Add(time.Nanosecond)) {
-		delete(w.files, path)
-		w.watchDoUpdate(path)
+		delete(w.files, fp)
+		w.watchDoUpdate(fp)
 	}
 }
 
 // Do the right thing right now. For Create events such as directories being created or files being moved into a watched
 // directory, this is the right thing to do. When a file is being written to, watchHandle will have started a timer and
 // will call this function after 1s of no more writes. If, however, the path is in the ignores map, do nothing.
-func (w *watchStore) watchDoUpdate(path string) {
-	_, ignored := w.ignores[path]
+func (w *watchStore) watchDoUpdate(fp string) {
+	_, ignored := w.ignores[fp]
 	if ignored {
 		return
-	} else if strings.HasSuffix(path, ".html") {
-		updateTemplate(path)
-	} else if strings.HasSuffix(path, ".md") {
-		p, err := loadPage(path[:len(path)-3]) // page name without ".md"
+	} else if strings.HasSuffix(fp, ".html") {
+		updateTemplate(fp)
+	} else if strings.HasSuffix(fp, ".md") {
+		p, err := loadPage(fp[:len(fp)-3]) // page name without ".md"
 		if err != nil {
-			log.Println("Cannot load page", path)
+			log.Println("Cannot load page", fp)
 		} else {
-			log.Println("Update index for", path)
+			log.Println("Update index for", fp)
 			index.update(p)
 		}
-	} else if !slices.Contains(w.watcher.WatchList(), path) {
-		fi, err := os.Stat(path)
+	} else if !slices.Contains(w.watcher.WatchList(), fp) {
+		fi, err := os.Stat(fp)
 		if err != nil {
 			log.Println(err)
 			return
 		}
 		if fi.IsDir() {
-			log.Println("Add watch for", path)
-			w.watcher.Add(path)
+			log.Println("Add watch for", fp)
+			w.watcher.Add(fp)
 		}
 	}
 }
 
 // watchDoRemove removes files from the index or discards templates. If the path in question is in the ignores map, do
 // nothing.
-func (w *watchStore) watchDoRemove(path string) {
-	_, ignored := w.ignores[path]
+func (w *watchStore) watchDoRemove(fp string) {
+	_, ignored := w.ignores[fp]
 	if ignored {
 		return
-	} else if strings.HasSuffix(path, ".html") {
-		removeTemplate(path)
-	} else if strings.HasSuffix(path, ".md") {
-		_, err := os.Stat(path)
+	} else if strings.HasSuffix(fp, ".html") {
+		removeTemplate(fp)
+	} else if strings.HasSuffix(fp, ".md") {
+		_, err := os.Stat(fp)
 		if err == nil {
-			log.Println("Cannot remove existing page from the index", path)
+			log.Println("Cannot remove existing page from the index", fp)
 		} else {
-			log.Println("Deindex", path)
-			index.deletePageName(path[:len(path)-3]) // page name without ".md"
+			log.Println("Deindex", fp)
+			index.deletePageName(fp[:len(fp)-3]) // page name without ".md"
 		}
 	}
 }
 
 // ignore is before code that is known suspected save files and trigger watchHandle eventhough the code already handles
 // this. This is achieved by adding the path to the ignores map for 1s.
-func (w *watchStore) ignore(path string) {
+func (w *watchStore) ignore(fp string) {
 	w.Lock()
 	defer w.Unlock()
-	w.ignores[path] = time.Now()
+	w.ignores[fp] = time.Now()
 	timer := time.NewTimer(time.Second)
 	go func() {
 		<-timer.C
 		w.Lock()
 		defer w.Unlock()
-		t := w.ignores[path]
+		t := w.ignores[fp]
 		if t.Add(time.Second).Before(time.Now().Add(time.Nanosecond)) {
-			delete(w.ignores, path)
+			delete(w.ignores, fp)
 		}
 	}()
 }

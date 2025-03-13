@@ -16,7 +16,7 @@ import (
 // are skipped. If the environment variable ODDMU_FILTER is a regular expression that matches the starting directory,
 // this is a "separate site"; if the regular expression does not match, this is the "main site" and page names must also
 // not match the regular expression.
-func archiveHandler(w http.ResponseWriter, r *http.Request, path string) {
+func archiveHandler(w http.ResponseWriter, r *http.Request, name string) {
 	filter := os.Getenv("ODDMU_FILTER")
 	re, err := regexp.Compile(filter)
 	if err != nil {
@@ -24,30 +24,30 @@ func archiveHandler(w http.ResponseWriter, r *http.Request, path string) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	matches := re.MatchString(path)
-	dir := filepath.Dir(filepath.FromSlash(path))
+	matches := re.MatchString(name)
+	dir := filepath.Dir(filepath.FromSlash(name))
 	z := zip.NewWriter(w)
-	err = filepath.Walk(dir, func(path string, info fs.FileInfo, err error) error {
+	err = filepath.Walk(dir, func(fp string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 		if info.IsDir() {
-			if path != "." && strings.HasPrefix(filepath.Base(path), ".") {
+			if fp != "." && strings.HasPrefix(filepath.Base(fp), ".") {
 				return filepath.SkipDir
 			}
-		} else if !strings.HasPrefix(filepath.Base(path), ".") &&
-			(matches || !re.MatchString(path)) {
-			zf, err := z.Create(path)
+		} else if !strings.HasPrefix(filepath.Base(fp), ".") &&
+			(matches || !re.MatchString(filepath.ToSlash(fp))) {
+			zf, err := z.Create(fp)
 			if err != nil {
 				log.Println(err)
 				return err
 			}
-			file, err := os.Open(path)
+			f, err := os.Open(fp)
 			if err != nil {
 				log.Println(err)
 				return err
 			}
-			_, err = io.Copy(zf, file)
+			_, err = io.Copy(zf, f)
 			if err != nil {
 				log.Println(err)
 				return err
