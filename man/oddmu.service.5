@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU.SERVICE" "5" "2024-08-23"
+.TH "ODDMU.SERVICE" "5" "2025-03-14"
 .PP
 .SH NAME
 .PP
@@ -94,8 +94,8 @@ sudo mkdir /run/oddmu
 .fi
 .RE
 .PP
-The unit file for the service defines where the "oddmu" is and where the data
-directory is.\& These are the lines you most likely have to take care of:
+The unit file for the service defines where the Oddmu binary is and where the
+data directory is.\& These are the lines you most likely have to take care of:
 .PP
 .nf
 .RS 4
@@ -151,6 +151,9 @@ WorkingDirectory=/home/alex/wiki
 Environment="ODDMU_LANGUAGES=de,en"
 .fi
 .RE
+.PP
+Make sure to change the "ExecStart" entry so that it points to your copy of the
+Oddmu binary.\&
 .PP
 Since this is a user service, the same user can edit the files using their
 favourite text editor.\&
