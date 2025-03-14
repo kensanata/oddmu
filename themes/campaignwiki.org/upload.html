@@ -76,10 +76,16 @@ window.addEventListener('load', uploadFiles.init);
     <p>Previous upload: <a href="/view/{{.Dir}}{{.Last}}">{{.Last}}</a>
     {{if .Image}}
     <p><img class="last" src="/view/{{.Dir}}{{.Last}}"><br>
-      <tt>Link: ![]({{.Last}})</tt>
+      Links:<tt>{{range .Actual}}<br>![]({{.}}){{end}}</tt>
     {{else}}
     <p>Link: <tt>[text]({{.Last}})</tt>
     {{end}}
+    <form id="add" action="/append/{{.Dir}}{{.Base}}" method="POST">
+      <input type="hidden" name="body" value="{{range .Actual}}![]({{.}})
+{{end}}">
+      <p>Append this to <a href="/view/{{.Dir}}{{.Base}}">{{.Title}}</a>?
+        <input type="submit" value="Add">
+    </form>
     {{end}}
     <form id="form" action="/drop/{{.Dir}}" method="POST" enctype="multipart/form-data">
       <p>When uploading a picture from a phone, its filename is going to be something like IMG_1234.JPG.
@@ -100,7 +106,7 @@ window.addEventListener('load', uploadFiles.init);
         Picture metadata is only removed if the pictures gets resized.
         Providing a new max width is recommended for all pictures.
         If you're uploading multiple files, they are all renamed using the filename above and therefore they all get the same extension so they must be of the same type.
-      <p>To delete a file, upload an empty file.
+      <p>You can rename or delete files <a href="/list/{{.Dir}}">from the file list</a>.
       <p><label for="file">Pick files to upload:</label>
         <input type="file" name="file" required multiple>
       <p><input type="submit" value="Save">

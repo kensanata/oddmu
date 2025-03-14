@@ -6,10 +6,33 @@
     <meta name="viewport" content="width=device-width">
     <title>Add to {{.Title}}</title>
     <link href="oddmu.css" rel="stylesheet" />
+    <script>
+window.addEventListener("load", () => {
+  let t = document.getElementsByTagName('textarea').item(0);
+  t.addEventListener("keydown", (event) => {
+    if (event.ctrlKey && !event.altKey && !event.metaKey) {
+      let ch;
+      if (event.key == "i") {
+        ch = ["*", "*"];
+      } else if (event.key == "b") {
+        ch = ["**", "**"];
+      } else if (event.key == "k") {
+        ch = ["[", "]()"];
+      }
+      if (ch) {
+        event.preventDefault();
+        let s = t.value.substring(t.selectionStart, t.selectionEnd);
+        t.setRangeText(ch[0] + s + ch[1]);
+      }
+    }
+  });
+});
+    </script>
   </head>
   <body>
     <h1>Adding to {{.Title}}</h1>
     <form action="/append/{{.Path}}" method="POST">
+      <p>Use <tt>Control+I</tt> for italics, <tt>Control+B</tt> for bold, <tt>Control+k</tt> for link.</p>
       <textarea name="body" rows="20" cols="80" placeholder="Text" lang="{{.Language}}" autofocus required>{{if .IsBlog}}**{{.Today}}**. {{end}}</textarea>
       <p><label><input type="checkbox" name="notify" checked> Add link to <a href="/view/changes">the list of changes</a>.</label></p>
       <p><input type="submit" value="Add">

@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-RELEASES" "7" "2025-02-22"
+.TH "ODDMU-RELEASES" "7" "2025-03-14"
 .PP
 .SH NAME
 .PP
@@ -18,6 +18,11 @@ This page lists user-visible features and template changes to consider.\&
 .SS 1.16 (unreleased)
 .PP
 Add support for WebP images for uploading and resizing.\&
+.PP
+You need to change {{.\&Name}} to {{.\&Path}} in HTML templates.\& If you don'\&t do
+this, your page names (i.\&e.\& filenames for pages) may not include a comma, a
+semicolon or a questionmark.\& This fix was necessary because file uploads of
+filenames with non-ASCII characters ended up double-encoded.\&
 .PP
 Improved the example themes.\& The chat theme got better list styling and better
 upload functionality with automatic "add" button; the plain theme got rocket

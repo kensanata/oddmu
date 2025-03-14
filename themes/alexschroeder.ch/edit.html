@@ -7,10 +7,33 @@
     <base href="/view/{{.Dir}}">
     <title>Editing {{.Title}}</title>
     <link href="oddmu.css" rel="stylesheet" />
+    <script>
+window.addEventListener("load", () => {
+  let t = document.getElementsByTagName('textarea').item(0);
+  t.addEventListener("keydown", (event) => {
+    if (event.ctrlKey && !event.altKey && !event.metaKey) {
+      let ch;
+      if (event.key == "i") {
+        ch = ["*", "*"];
+      } else if (event.key == "b") {
+        ch = ["**", "**"];
+      } else if (event.key == "k") {
+        ch = ["[", "]()"];
+      }
+      if (ch) {
+        event.preventDefault();
+        let s = t.value.substring(t.selectionStart, t.selectionEnd);
+        t.setRangeText(ch[0] + s + ch[1]);
+      }
+    }
+  });
+});
+    </script>
   </head>
   <body>
     <h1>Editing {{.Title}}</h1>
     <form action="/save/{{.Path}}" method="POST">
+      <p>Use <tt>Control+I</tt> for italics, <tt>Control+B</tt> for bold, <tt>Control+k</tt> for link.</p>
       <textarea name="body" rows="20" cols="80" placeholder="# Title
 
 Text" lang="{{.Language}}" autofocus>{{ or .Body (printf "# %s " .Today) | printf "%s" }}</textarea>
