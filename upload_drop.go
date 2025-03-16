@@ -112,8 +112,8 @@ func next(dir, fn string, i int) (string, error) {
 // later errors are printed, too.
 func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 	dir = filepath.FromSlash(dir)
-	// ensure the directory exists
-	fi, err := os.Stat(dir)
+	// ensure the directory exists and that "" results in "."
+	fi, err := os.Stat(filepath.Clean(dir))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

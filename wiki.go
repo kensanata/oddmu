@@ -46,7 +46,6 @@ func isHiddenName (name string) bool {
 // treated the same.
 func makeHandler(fn func(http.ResponseWriter, *http.Request, string), required bool) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		log.Println(r.URL.Path, r.URL.RawQuery)
 		if isHiddenName(r.URL.Path) {
 			http.Error(w, "can neither confirm nor deny the existence of this resource", http.StatusForbidden)
 			return
