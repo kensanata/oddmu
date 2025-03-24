@@ -203,6 +203,7 @@ func serve() {
 			ReadTimeout:  2 * time.Minute,
 			WriteTimeout: 5 * time.Minute,
 			IdleTimeout:  2 * time.Minute,
+			Handler: http.NewServeMux(),
 		}
 		err := srv.Serve(listener)
 		if err != nil {
