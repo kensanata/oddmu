@@ -15,6 +15,7 @@ import (
 	"os"
 	"regexp"
 	"strings"
+	"time"
 )
 
 // validPath is a regular expression where the second group matches a page, so when the editHandler is called, a URL
@@ -198,7 +199,12 @@ func serve() {
 	if listener == nil {
 		log.Println(err)
 	} else {
-		err := http.Serve(listener, nil)
+		srv := &http.Server{
+			ReadTimeout:  2 * time.Minute,
+			WriteTimeout: 5 * time.Minute,
+			IdleTimeout:  2 * time.Minute,
+		}
+		err := srv.Serve(listener)
 		if err != nil {
 			log.Println(err)
 		}
