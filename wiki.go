@@ -177,38 +177,39 @@ func scheduleInstallWatcher() {
 // [scheduleLoadLanguages] and the current directory and its subdirectories is watched for changes using watchers
 // installed via [scheduleInstallWatcher].
 func serve() {
-	http.HandleFunc("/", rootHandler)
-	http.HandleFunc("/archive/", makeHandler(archiveHandler, true))
-	http.HandleFunc("/view/", makeHandler(viewHandler, false))
-	http.HandleFunc("/preview/", makeHandler(previewHandler, false))
-	http.HandleFunc("/diff/", makeHandler(diffHandler, true))
-	http.HandleFunc("/edit/", makeHandler(editHandler, true))
-	http.HandleFunc("/save/", makeHandler(saveHandler, true))
-	http.HandleFunc("/add/", makeHandler(addHandler, true))
-	http.HandleFunc("/append/", makeHandler(appendHandler, true))
-	http.HandleFunc("/upload/", makeHandler(uploadHandler, false))
-	http.HandleFunc("/drop/", makeHandler(dropHandler, false))
-	http.HandleFunc("/list/", makeHandler(listHandler, false))
-	http.HandleFunc("/delete/", makeHandler(deleteHandler, true))
-	http.HandleFunc("/rename/", makeHandler(renameHandler, true))
-	http.HandleFunc("/search/", makeHandler(searchHandler, false))
-	go scheduleLoadIndex()
-	go scheduleLoadLanguages()
-	go scheduleInstallWatcher()
 	listener, err := getListener()
 	if listener == nil {
 		log.Println(err)
-	} else {
-		srv := &http.Server{
-			ReadTimeout:  2 * time.Minute,
-			WriteTimeout: 5 * time.Minute,
-			IdleTimeout:  2 * time.Minute,
-			Handler: http.NewServeMux(),
-		}
-		err := srv.Serve(listener)
-		if err != nil {
-			log.Println(err)
-		}
+		return
+	}
+	go scheduleLoadIndex()
+	go scheduleLoadLanguages()
+	go scheduleInstallWatcher()
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", rootHandler)
+	mux.HandleFunc("/archive/", makeHandler(archiveHandler, true))
+	mux.HandleFunc("/view/", makeHandler(viewHandler, false))
+	mux.HandleFunc("/preview/", makeHandler(previewHandler, false))
+	mux.HandleFunc("/diff/", makeHandler(diffHandler, true))
+	mux.HandleFunc("/edit/", makeHandler(editHandler, true))
+	mux.HandleFunc("/save/", makeHandler(saveHandler, true))
+	mux.HandleFunc("/add/", makeHandler(addHandler, true))
+	mux.HandleFunc("/append/", makeHandler(appendHandler, true))
+	mux.HandleFunc("/upload/", makeHandler(uploadHandler, false))
+	mux.HandleFunc("/drop/", makeHandler(dropHandler, false))
+	mux.HandleFunc("/list/", makeHandler(listHandler, false))
+	mux.HandleFunc("/delete/", makeHandler(deleteHandler, true))
+	mux.HandleFunc("/rename/", makeHandler(renameHandler, true))
+	mux.HandleFunc("/search/", makeHandler(searchHandler, false))
+	srv := &http.Server{
+		ReadTimeout:  2 * time.Minute,
+		WriteTimeout: 5 * time.Minute,
+		IdleTimeout:  2 * time.Minute,
+		Handler: mux,
+	}
+	err = srv.Serve(listener)
+	if err != nil {
+		log.Println(err)
 	}
 }
 

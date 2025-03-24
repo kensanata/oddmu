@@ -159,6 +159,7 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 	to := strings.ToLower(path.Ext(fn))
 	first := true
 	for _, fhs := range r.MultipartForm.File["file"] {
+		log.Println("Reading", fhs.Filename)
 		file, err := fhs.Open()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
@@ -183,6 +184,7 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		log.Println("Creating", fp)
 		dst, err := os.Create(fp)
 		if err != nil {
 			log.Println(err)
@@ -223,6 +225,7 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
+			log.Println("Encoded", to, fp)
 		} else {
 			// just copy the bytes
 			n, err := io.Copy(dst, file)
@@ -239,15 +242,17 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 					http.Error(w, err.Error(), http.StatusInternalServerError)
 					return
 				}
-				log.Println("Delete", fp)
+				log.Println("Deleted", fp)
+			} else {
+				log.Println("Copied", fp)
 			}
 		}
 		data.Add("actual", fn)
 		username, _, ok := r.BasicAuth()
 		if ok {
-			log.Println("Save", filepath.ToSlash(fp), "by", username)
+			log.Println("Saved", filepath.ToSlash(fp), "by", username)
 		} else {
-			log.Println("Save", filepath.ToSlash(fp))
+			log.Println("Saved", filepath.ToSlash(fp))
 		}
 		updateTemplate(fp)
 	}
