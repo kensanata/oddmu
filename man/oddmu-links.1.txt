@@ -10,8 +10,8 @@ oddmu-links - list outgoing links for pages
 
 # DESCRIPTION
 
-The "links" subcommand lists outgoing links for one or more page names. Use "-"
-as the page name if you want to read Markdown from *stdin*.
+The "links" subcommand lists outgoing links for one or more Markdown files. Use
+"-" as the page name if you want to read Markdown from *stdin*.
 
 # SEE ALSO
 

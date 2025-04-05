@@ -7,6 +7,7 @@ import (
 	"github.com/google/subcommands"
 	"io"
 	"os"
+	"strings"
 )
 
 type linksCmd struct {
@@ -43,6 +44,11 @@ func linksCli(w io.Writer, args []string) subcommands.ExitStatus {
 		return subcommands.ExitSuccess
 	}
 	for _, name := range args {
+		if !strings.HasSuffix(name, ".md") {
+			fmt.Fprintf(os.Stderr, "%s does not end in '.md'\n", name)
+			return subcommands.ExitFailure
+		}
+		name = name[0:len(name)-3]
 		p, err := loadPage(name)
 		if err != nil {
 			fmt.Fprintf(w, "Loading %s: %s\n", name, err)

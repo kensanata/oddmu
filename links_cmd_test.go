@@ -9,7 +9,7 @@ import (
 
 func TestLinksCmd(t *testing.T) {
 	b := new(bytes.Buffer)
-	s := linksCli(b, []string{"README"})
+	s := linksCli(b, []string{"README.md"})
 	assert.Equal(t, subcommands.ExitSuccess, s)
 	x := b.String()
 	assert.Contains(t, x, "https://alexschroeder.ch/view/oddmu/oddmu.1\n")
