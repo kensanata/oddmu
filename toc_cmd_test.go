@@ -10,7 +10,7 @@ import (
 // ## is promoted to level 1 because there is just one instance of level 1
 func TestTocCmd(t *testing.T) {
 	b := new(bytes.Buffer)
-	s := tocCli(b, []string{"README"})
+	s := tocCli(b, []string{"README.md"})
 	assert.Equal(t, subcommands.ExitSuccess, s)
 	x := b.String()
 	assert.Contains(t, x, "\n* [Bugs](#bugs)\n")
