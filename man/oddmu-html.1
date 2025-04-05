@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-HTML" "1" "2024-08-29"
+.TH "ODDMU-HTML" "1" "2025-04-05"
 .PP
 .SH NAME
 .PP
@@ -13,21 +13,21 @@ oddmu-html - render Oddmu page HTML
 .PP
 .SH SYNOPSIS
 .PP
-\fBoddmu html\fR [-view] \fIpage-name\fR
+\fBoddmu html\fR [\fB\fR-template\fB\fR \fItemplate-name\fR] \fIpage-name\fR
 .PP
 .SH DESCRIPTION
 .PP
-The "html" subcommand opens the Markdown file for the given page name (appending
-the ".\&md" extension) and prints the HTML to STDOUT without invoking the
-"view.\&html" template.\& Use "-" as the page name if you want to read Markdown from
-\fBstdin\fR.\&
+The "html" subcommand opens the given Markdown file and prints the resulting
+HTML to STDOUT without invoking the "view.\&html" template.\& Use "-" as the page
+name if you want to read Markdown from \fBstdin\fR.\&
 .PP
 .SH OPTIONS
 .PP
-\fB-view\fR
+\fB\fR-template\fB\fR \fItemplate-name\fR
 .RS 4
-Use the "view.\&html" template to render the page.\& Without this, the HTML
-lacks html and body tags.\&
+Use the given template to render the page.\& Without this, the HTML lacks
+html and body tags.\& The only two options that make sense are "view.\&html"
+and "static.\&html".\&
 .PP
 .RE
 .SH EXAMPLES
@@ -36,7 +36,7 @@ Generate "README.\&html" from "README.\&md":
 .PP
 .nf
 .RS 4
-oddmu html README > README\&.html
+oddmu html README\&.md > README\&.html
 .fi
 .RE
 .PP

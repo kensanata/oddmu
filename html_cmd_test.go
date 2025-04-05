@@ -9,7 +9,7 @@ import (
 
 func TestHtmlCmd(t *testing.T) {
 	b := new(bytes.Buffer)
-	s := htmlCli(b, false, []string{"index"})
+	s := htmlCli(b, "", []string{"index.md"})
 	assert.Equal(t, subcommands.ExitSuccess, s)
 	r := `<h1 id="welcome-to-oddμ">Welcome to Oddμ</h1>
 

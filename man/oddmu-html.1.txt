@@ -6,27 +6,27 @@ oddmu-html - render Oddmu page HTML
 
 # SYNOPSIS
 
-*oddmu html* [-view] _page-name_
+*oddmu html* [**-template** _template-name_] _page-name_
 
 # DESCRIPTION
 
-The "html" subcommand opens the Markdown file for the given page name (appending
-the ".md" extension) and prints the HTML to STDOUT without invoking the
-"view.html" template. Use "-" as the page name if you want to read Markdown from
-*stdin*.
+The "html" subcommand opens the given Markdown file and prints the resulting
+HTML to STDOUT without invoking the "view.html" template. Use "-" as the page
+name if you want to read Markdown from *stdin*.
 
 # OPTIONS
 
-*-view*
-	Use the "view.html" template to render the page. Without this, the HTML
-	lacks html and body tags.
+**-template** _template-name_
+	Use the given template to render the page. Without this, the HTML lacks
+	html and body tags. The only two options that make sense are "view.html"
+	and "static.html".
 
 # EXAMPLES
 
 Generate "README.html" from "README.md":
 
 ```
-oddmu html README > README.html
+oddmu html README.md > README.html
 ```
 
 Alternatively:

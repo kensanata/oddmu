@@ -23,6 +23,9 @@ links via JavaScript; the alexschroeder.ch theme got a preview button and better
 image support for upload and search; the transjovian.org theme got better image
 support for upload.
 
+Switch the _html_ subcommand to take filenames (including the `.md` suffix)
+instead of page names (without the `.md` suffix).
+
 ## 1.15 (2025)
 
 Fix the hashtag detection. This was necessary to cut down on the many false
