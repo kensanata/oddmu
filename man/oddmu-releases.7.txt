@@ -23,8 +23,8 @@ links via JavaScript; the alexschroeder.ch theme got a preview button and better
 image support for upload and search; the transjovian.org theme got better image
 support for upload.
 
-Switch the _html_ and _link_ subcommand to take filenames (including the `.md`
-suffix) instead of page names (without the `.md` suffix).
+Switch the _html_, _link_ and _notify_ subcommand to take filenames (including
+the `.md` suffix) instead of page names (without the `.md` suffix).
 
 ## 1.15 (2025)
 

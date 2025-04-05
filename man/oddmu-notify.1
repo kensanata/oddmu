@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-NOTIFY" "1" "2024-08-29"
+.TH "ODDMU-NOTIFY" "1" "2025-04-05"
 .PP
 .SH NAME
 .PP
@@ -17,8 +17,8 @@ oddmu-notify - add links to changes.\&md, index.\&md, and hashtag pages
 .PP
 .SH DESCRIPTION
 .PP
-The "notify" subcommand takes all the page names provided (without the ".\&md"
-extension) and adds links to it from other pages.\&
+The "notify" subcommand takes all the Markdown files provided and adds links to
+these pages from other pages.\&
 .PP
 A new link is added to the \fBchanges\fR page in the current directory if it doesn'\&t
 exist.\& The current date of the machine Oddmu is running on is used as the
@@ -57,7 +57,7 @@ it exists):
 .PP
 .nf
 .RS 4
-oddmu notify 2023-11-05-climate
+oddmu notify 2023-11-05-climate\&.md
 .fi
 .RE
 .PP
