@@ -150,19 +150,24 @@ func (p *Page) IsBlog() bool {
 
 const upperhex = "0123456789ABCDEF"
 
-// Path returns the page name with semicolon, comma and questionmark escaped because html/template doesn't escape those.
-// This is suitable for use in HTML templates.
+// Path returns the page name with some characters escaped because html/template doesn't escape those. This is suitable
+// for use in HTML templates.
 func (p *Page) Path() string {
-	s := p.Name
-	n := strings.Count(s, ";") + strings.Count(s, ",") + strings.Count(s, "?")
+	return pathEncode(p.Name)
+}
+
+// pathEncode returns the page name with some characters escaped because html/template doesn't escape those. This is
+// suitable for use in HTML templates.
+func pathEncode(s string) string {
+	n := strings.Count(s, ";") + strings.Count(s, ",") + strings.Count(s, "?") + strings.Count(s, "#")
 	if n == 0 {
-		return p.Name
+		return s
 	}
 	t := make([]byte, len(s) + 2*n)
 	j := 0
 	for i := 0; i < len(s); i++ {
 		switch s[i] {
-		case ';', ',', '?':
+		case ';', ',', '?', '#':
 			t[j] = '%'
 			t[j+1] = upperhex[s[i]>>4]
 			t[j+2] = upperhex[s[i]&15]

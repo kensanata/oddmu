@@ -26,6 +26,10 @@ type List struct {
 	Files []File
 }
 
+func (f *File) Path() string {
+	return pathEncode(f.Name)
+}
+
 // listHandler uses the "list.html" template to enable file management in a particular directory.
 func listHandler(w http.ResponseWriter, r *http.Request, name string) {
 	files := []File{}
