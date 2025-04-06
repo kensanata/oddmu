@@ -14,3 +14,9 @@ When preparing a new release
 5. Tag the release and push the tag to all remotes
 
 6. cd man && make upload
+
+7. make dist
+
+8. create a new release at https://github.com/kensanata/oddmu/releases
+
+9. upload the four .tar.gz binaries to the GitHub release

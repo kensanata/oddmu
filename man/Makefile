@@ -27,7 +27,7 @@ html: ${HTML}
 %.html: %.md
 	@echo Making $@
 	@echo '<!DOCTYPE html>' > $@
-	@oddmu html $(basename $<) | sed --regexp-extended \
+	@oddmu html $< | sed --regexp-extended \
 	  -e 's/<a href="(oddmu[a-z.-]*.[1-9])">([^<>]*)<\/a>/<a href="\1.html">\2<\/a>/g' >> $@
 
 md: ${MD}
