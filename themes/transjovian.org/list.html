@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width">
+    <title>Manage Files</title>
+    <style>
+html { max-width: 70ch; padding: 1ch; margin: auto; color: #ddd; background-color: #222 }
+a { color: #8cf } a:visited { color: #dbf } a:hover { color: #fff }
+input, button { color: #222; background-color: #ddd; border: 1px solid #eee }
+mark { color: #222; background-color: #ffa; border-radius: 10px; padding: 7px }
+body { hyphens: auto }
+form { width: 100% }
+table { border-collapse: collapse }
+th:nth-child(3) { max-width: 3ex; overflow: visible }
+td form { display: inline }
+td { padding-right: 1ch }
+td:last-child { padding-right: 0 }
+td:first-child { max-width: 30ch; overflow: hidden }
+tr:nth-child(odd) { background-color: #444 }
+td:first-child, td:last-child { white-space: nowrap }
+    </style>
+  </head>
+  <body lang="en">
+    <header>
+      <a href="#main">Skip navigation</a>
+      <a href="/view/index">Home</a>
+      <a href="/archive/{{.Dir}}data.zip" accesskey="z">Zip</a>
+      <a href="/upload/{{.Dir}}?filename=image-1.jpg" accesskey="u">Upload</a>
+      <form role="search" action="/search/{{.Dir}}" method="GET">
+        <label for="search">Search:</label>
+        <input id="search" type="text" spellcheck="false" name="q" accesskey="f" placeholder="term #tag title:term blog:true" required>
+        <button>Go</button>
+      </form>
+    </header>
+    <main>
+      <h1>Manage Files</h1>
+      <form id="manage">
+        <p><mark>Deletions and renamings take effect immediately and there is no undo!</mark></p>
+      </form>
+      <table>
+        <tr>
+          <th>Name</th>
+          <th>Title</th>
+          <th>Delete</th>
+          <th>Rename</th>
+        </tr>{{range .Files}}
+        <tr>
+          <td>{{if .IsDir}}<a href="/list/{{$.Dir}}{{.Name}}">{{.Name}}</a>{{else}}<a href="/view/{{$.Dir}}{{.Name}}">{{.Name}}</a>{{end}}</td>
+          <td>{{.Title}}</td>
+          <td>{{if .IsUp}}{{else}}<button form="manage" formaction="/delete/{{$.Dir}}{{.Name}}" title="Delete {{.Name}}">🗑</button>{{end}}</td>
+          <td>{{if .IsUp}}{{else}}
+            <form action="/rename/{{$.Dir}}{{.Name}}">
+              <input name="name" placeholder="New name"/>
+              <button title="Rename {{.Name}}">♺</button>
+            </form>{{end}}</td>
+        </tr>{{end}}
+      </table>
+    </main>
+  </body>
+</html>

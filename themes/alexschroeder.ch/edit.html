@@ -4,7 +4,6 @@
     <meta charset="utf-8">
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width">
-    <base href="/view/{{.Dir}}">
     <title>Editing {{.Title}}</title>
     <link href="oddmu.css" rel="stylesheet" />
     <script>
@@ -32,7 +31,7 @@ window.addEventListener("load", () => {
   </head>
   <body>
     <h1>Editing {{.Title}}</h1>
-    <form action="/save/{{.Path}}" method="POST">
+    <form id="editor" action="/save/{{.Path}}" method="POST">
       <p>Use <tt>Control+I</tt> for italics, <tt>Control+B</tt> for bold, <tt>Control+k</tt> for link.</p>
       <textarea name="body" rows="20" cols="80" placeholder="# Title
 

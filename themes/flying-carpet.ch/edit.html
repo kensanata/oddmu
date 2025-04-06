@@ -6,13 +6,17 @@
     <meta name="viewport" content="width=device-width">
     <title>Bearbeiten von {{.Title}}</title>
     <style>
-html { max-width: 70ch; padding: 2ch; margin: auto; color: #111; background-color: #eee; }
-form, textarea { width: 100%; }
+html { max-width: 70ch; padding: 1ch; height: calc(100% - 2ch); margin: auto }
+body { hyphens: auto; color: #111; background-color: #eee; margin: 0; padding: 0; height: 100%; display: flex; flex-flow: column; }
+textarea, input, button { color: #222; background-color: #ddd; border: 1px solid #eee; }
+form, textarea { box-sizing: border-box; width: 100%; font-size: inherit }
+#editor { flex: 1 1 auto; display: flex; flex-flow: column; }
+textarea { flex: 1 1 auto; }
     </style>
   </head>
   <body>
     <h1>Bearbeiten von {{.Title}}</h1>
-    <form action="/save/{{.Path}}" method="POST">
+    <form id="editor" action="/save/{{.Path}}" method="POST">
       <textarea name="body" rows="20" cols="80" placeholder="# Title
 
 Text" lang="" autofocus>{{printf "%s" .Body}}</textarea>

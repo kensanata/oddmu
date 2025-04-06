@@ -1,14 +1,16 @@
-html { max-width: 80ch; padding: 1ch; margin: auto }
-body { hyphens: auto; color: #111; background-color: #ffe }
+html { max-width: 80ch; padding: 1ch; height: calc(100% - 2ch); margin: auto }
+body { hyphens: auto; color: black; background-color: #ffe; margin: 0; padding: 0; height: 100%; display: flex; flex-flow: column; }
 header a { margin-right: 1ch }
 h1 { text-wrap: balance }
 footer { border-top: 1px solid #888 }
-form, textarea { width: 97%; font-size: inherit }
-pre { background-color: #fff; padding: 1ex 2ex; overflow-x: auto }
-.diff { font-size: inherit; white-space: normal; overflow-wrap: break-word; background-color: white; border: 1px solid #333; padding: 1ch }
+form, textarea { box-sizing: border-box; width: 100%; font-size: inherit }
+#editor { flex: 1 1 auto; display: flex; flex-flow: column; }
+textarea { flex: 1 1 auto; }
+pre { background-color: #ddd; padding: 1ex 2ex; overflow-x: auto }
+.diff { font-size: inherit; white-space: normal; overflow-wrap: break-word; border: 1px solid #333; padding: 1ch }
 img, video { max-width: 100%; max-height: 90vh; width: auto; height: auto }
-.right img { float: right; margin-left: 2em; margin-bottom: 1em; border: 1px solid #111 }
-.left img { float: left; margin-right: 2em; margin-bottom: 1em; border: 1px solid #111 }
+.right img { float: right; margin-left: 2em; margin-bottom: 1em; border: 1px solid black }
+.left img { float: left; margin-right: 2em; margin-bottom: 1em; border: 1px solid black }
 button { background-color: #eee; color: inherit; border-radius: 4px; border-width: 1px }
 del  { background-color: #fab }
 ins  { background-color: #af8 }
@@ -26,13 +28,22 @@ hr { border-bottom: 1px }
 th { font-weight: normal }
 th + th, td + td { padding-left: 1em }
 
+table { border-collapse: collapse }
+th:nth-child(3) { max-width: 3ex; overflow: visible }
+td form { display: inline }
+td { padding-right: 1ch }
+td:last-child { padding-right: 0 }
+td:first-child { max-width: 20ch; overflow: hidden }
+tr:nth-child(odd) { background-color: #eed }
+td:first-child, td:last-child { white-space: nowrap }
+
 @media (prefers-color-scheme: dark) {
-    body { color: #eeeee8; background-color: #333 }
+    body { color: #ffe; background-color: #110 }
     footer { border-top: 1px solid #666 }
     .diff { background-color: inherit; border: 1px solid #666 }
     .right img { border: 1px solid #111 }
     .left img { border: 1px solid #111 }
-    pre { background-color: #000; }
+    pre { background-color: #333; }
     button { background-color: #eee; color: inherit }
     del  { background-color: #f40 }
     ins  { background-color: #070 }

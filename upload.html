@@ -98,7 +98,7 @@ window.addEventListener('load', uploadFiles.init);
         Feel free to specify a max width of 1200 pixels, for example.
       <p><label for="maxwidth">Max width:</label>
         <input id="maxwidth" name="maxwidth" value="{{.MaxWidth}}" type="number" min="10" placeholder="1200">
-      <p>If the filename you provided above ends in <tt>.jpg</tt>, you can specify a quality.
+      <p>If the filename you provided above ends in <tt>.jpg</tt> or <tt>.webp</tt>, you can specify a quality.
         Typically, a quality of 60 is not too bad and a quality of 90 is more than enough.
       <p><label for="quality">Quality:</label>
         <input id="quality" name="quality" value="{{.Quality}}" type="number" min="1" max="99" placeholder="75">

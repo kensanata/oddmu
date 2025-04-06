@@ -8,6 +8,11 @@ oddmu-releases - what's new?
 
 This page lists user-visible features and template changes to consider.
 
+## 1.17 (unreleased)
+
+Updated the example themes. Some of my sites got a text area that tries to take
+all the vertical space available. This is great for monitors in portrait mode.
+
 ## 1.16 (2025)
 
 Add support for WebP images for uploading and resizing.

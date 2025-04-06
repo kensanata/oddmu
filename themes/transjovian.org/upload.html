@@ -18,7 +18,7 @@ input [type=text] { width: 30ch }
     <script type="text/javascript">
 var uploadFiles = {
   init: function() {
-    let e = document.getElementById('form');
+    let e = document.getElementById('upload');
     if (e) {
       e.addEventListener('paste', uploadFiles.pasteHandler);
       e.addEventListener('dragover', e => e.preventDefault());
@@ -48,7 +48,7 @@ var uploadFiles = {
       uploadFiles.post(files)
   },
   post: function(files) {
-    let action = document.getElementById('form').getAttribute('action');
+    let action = document.getElementById('upload').getAttribute('action');
     var fd = new FormData();
     fd.append("name", document.getElementById('name').value);
     fd.append("maxwidth", document.getElementById('maxwidth').value);
@@ -89,7 +89,7 @@ window.addEventListener('load', uploadFiles.init);
         <input type="submit" value="Add">
     </form>
     {{end}}
-    <form id="form" action="/drop/{{.Dir}}" method="POST" enctype="multipart/form-data">
+    <form id="upload" action="/drop/{{.Dir}}" method="POST" enctype="multipart/form-data">
       <p>When uploading a picture from a phone, its filename is going to be something like IMG_1234.JPG.
         Please provide your own filename. End the base name with "-1" to auto-increment.
         Use <tt>.jpg</tt>, <tt>.png</tt> or <tt>.webp</tt> as the extension if you want to resize the picture.
@@ -107,9 +107,9 @@ window.addEventListener('load', uploadFiles.init);
       <p>Finally, pick the files or photos to upload.
         Picture metadata is only removed if the pictures gets resized.
         Providing a new max width is recommended for all pictures.
-        If you're uploading multiple files, they are all renamed using the filename above and therefore they all get the same extension so they must be of the same type.
-      <p>To delete a file, upload an empty file.
-      <p><label for="file">Pick files to upload:</label>
+        If you’re uploading multiple files, they are all renamed using the filename above and therefore they all get the same extension so they must be of the same type.
+      <p>You can delete and rename files <a href="/list/{{.Dir}}">from the file list</a>.
+      <p><label for="file">Files to upload:</label>
         <input type="file" name="file" required multiple>
       <p><input type="submit" value="Save">
         <a href="/view/index"><button type="button">Cancel</button></a>
