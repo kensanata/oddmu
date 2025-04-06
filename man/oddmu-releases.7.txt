@@ -8,7 +8,7 @@ oddmu-releases - what's new?
 
 This page lists user-visible features and template changes to consider.
 
-## 1.16 (unreleased)
+## 1.16 (2025)
 
 Add support for WebP images for uploading and resizing.
 
