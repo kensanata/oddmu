@@ -13,6 +13,22 @@ func TestListHandler(t *testing.T) {
 		"index.md")
 }
 
+func TestListDot(t *testing.T) {
+	cleanup(t, "testdata/list-dot")
+	p := &Page{Name: "testdata/list-dot/haiku", Body: []byte(`# Pressure
+
+fingers tap and dance
+round and round they go at night
+before we go to bed
+`)}
+	p.save()
+	_, err := os.Create("testdata/list-dot/.secret")
+	assert.NoError(t, err)
+	body := assert.HTTPBody(makeHandler(listHandler, false), "GET", "/list/testdata/list-dot/", nil)
+	assert.NotContains(t, body, "secret", "secret file was not found")
+	assert.Contains(t, body, "haiku", "regular page was found")
+}
+
 func TestDeleteHandler(t *testing.T) {
 	cleanup(t, "testdata/delete")
 	assert.NoError(t, os.Mkdir("testdata/delete", 0755))

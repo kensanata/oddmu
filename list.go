@@ -53,7 +53,13 @@ func listHandler(w http.ResponseWriter, r *http.Request, name string) {
 		name := filepath.ToSlash(fp)
 		base := filepath.Base(fp)
 		title := ""
-		if !isDir && strings.HasSuffix(name, ".md") {
+		if strings.HasPrefix(base, ".") {
+			// skip dot directories and dot files
+			if isDir {
+				return filepath.SkipDir
+			}
+			return nil
+		} else if !isDir && strings.HasSuffix(name, ".md") {
 			index.RLock()
 			defer index.RUnlock()
 			title = index.titles[name[:len(name)-3]]
@@ -64,6 +70,7 @@ func listHandler(w http.ResponseWriter, r *http.Request, name string) {
 		it := File{Name: base, Title: title, Date: fi.ModTime().Format(time.DateTime), IsDir: isDir }
 		files = append(files, it)
 		if isDir {
+			// never descend into directories
 			return filepath.SkipDir
 		}
 		return nil
