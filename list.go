@@ -26,10 +26,6 @@ type List struct {
 	Files []File
 }
 
-func (f *File) Path() string {
-	return pathEncode(f.Name)
-}
-
 // listHandler uses the "list.html" template to enable file management in a particular directory.
 func listHandler(w http.ResponseWriter, r *http.Request, name string) {
 	files := []File{}
@@ -116,4 +112,10 @@ func renameHandler(w http.ResponseWriter, r *http.Request, name string) {
 		return
 	}
 	http.Redirect(w, r, "/list/" + nameEscape(path.Dir(filepath.ToSlash(target))) + "/", http.StatusFound)
+}
+
+// Path returns the File.Name with some characters escaped because html/template doesn't escape those. This is suitable
+// for use in HTML templates.
+func (f *File) Path() string {
+	return pathEncode(f.Name)
 }

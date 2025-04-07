@@ -26,7 +26,7 @@ import (
 	"time"
 )
 
-type upload struct {
+type Upload struct {
 	Dir      string
 	Name     string
 	Last     string
@@ -43,7 +43,7 @@ var baseRe = regexp.MustCompile(`^(.*?)-[0-9]+$`)
 // parameters are used to copy name, maxwidth and quality from the previous upload. If the previous name contains a
 // number, this is incremented by one.
 func uploadHandler(w http.ResponseWriter, r *http.Request, dir string) {
-	data := &upload{Dir: dir}
+	data := &Upload{Dir: pathEncode(dir)}
 	maxwidth := r.FormValue("maxwidth")
 	if maxwidth != "" {
 		data.MaxWidth = maxwidth
@@ -65,7 +65,10 @@ func uploadHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		mimeType := mime.TypeByExtension(path.Ext(last))
 		data.Image = strings.HasPrefix(mimeType, "image/")
 		data.Name, err = next(filepath.FromSlash(dir), last, 1)
-		data.Actual = r.Form["actual"]
+		data.Actual = make([]string, len(r.Form["actual"]))
+		for i, s := range r.Form["actual"] {
+			data.Actual[i] = pathEncode(s)
+		}
 	}
 	if err != nil {
 		log.Println(err)
@@ -260,10 +263,11 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 	http.Redirect(w, r, "/upload/" + nameEscape(dir) + "?" + data.Encode(), http.StatusFound)
 }
 
-// Base returns a page name matching the first uploaded file: no extension and no appended number. If the name
-// refers to a directory, returns "index". This is used to create the form target in "upload.html", for example.
-func (u *upload) Base() string {
-	n := u.Name[:strings.LastIndex(u.Name, ".")]
+// Base returns a page name matching the first uploaded file: no extension and no appended number. If the name refers to
+// a directory, returns "index".
+func (u *Upload) Base() string {
+	s := u.Name
+	n := s[:strings.LastIndex(s, ".")]
 	m := baseRe.FindStringSubmatch(n)
 	if m != nil {
 		return m[1]
@@ -274,8 +278,22 @@ func (u *upload) Base() string {
 	return n
 }
 
+// PagePath returns the Upload.Base(), percent-escaped except for the slashes.
+func (u *Upload) PagePath() string {
+	s := u.Name
+	n := s[:strings.LastIndex(s, ".")]
+	m := baseRe.FindStringSubmatch(n)
+	if m != nil {
+		return pathEncode(m[1])
+	}
+	if n == "." {
+		return "index"
+	}
+	return pathEncode(n)
+}
+
 // Title returns the title of the matching page, if it exists.
-func (u *upload) Title() string {
+func (u *Upload) Title() string {
 	index.RLock()
 	defer index.RUnlock()
 	name := path.Join(u.Dir, u.Base())
@@ -287,6 +305,12 @@ func (u *upload) Title() string {
 }
 
 // Today returns the date, as a string, for use in templates.
-func (u *upload) Today() string {
+func (u *Upload) Today() string {
 	return time.Now().Format(time.DateOnly)
+}
+
+// LastPath returns the LastName with some characters escaped because html/template doesn't escape those. This is
+// suitable for use in HTML templates.
+func (u *Upload) LastPath() string {
+	return pathEncode(u.Last)
 }

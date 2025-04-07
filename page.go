@@ -150,7 +150,7 @@ func (p *Page) IsBlog() bool {
 
 const upperhex = "0123456789ABCDEF"
 
-// Path returns the page name with some characters escaped because html/template doesn't escape those. This is suitable
+// Path returns the Page.Name with some characters escaped because html/template doesn't escape those. This is suitable
 // for use in HTML templates.
 func (p *Page) Path() string {
 	return pathEncode(p.Name)
@@ -177,21 +177,22 @@ func pathEncode(s string) string {
 			j++
 		}
 	}
-	return string(t);
+	return string(t)
 }
 
-// Dir returns the directory part of the page name. It's either the empty string if the page is in the Oddmu working
-// directory, or it ends in a slash. This is used to create the upload link in "view.html", for example.
+// Dir returns the directory part of the page name, percent-escaped except for the slashes. It's either the empty string
+// if the page is in the Oddmu working directory, or it ends in a slash. This is used to create the upload link in
+// "view.html", for example.
 func (p *Page) Dir() string {
 	d := path.Dir(p.Name)
 	if d == "." {
 		return ""
 	}
-	return d + "/"
+	return pathEncode(d) + "/"
 }
 
-// Base returns the basename of the page name: no directory. This is used to create the upload link in "view.html", for
-// example.
+// Base returns the  basename of the page  name: no directory, percent-escaped except  for the slashes. This  is used to
+// create the upload link in "view.html", for example.
 func (p *Page) Base() string {
 	n := path.Base(p.Name)
 	if n == "." {

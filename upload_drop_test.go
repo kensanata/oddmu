@@ -365,3 +365,41 @@ Unfassbar, all das`)}
 		assert.HTTPBody(makeHandler(listHandler, false), "GET", "/list/testdata/umlaut/", nil),
 		"ärger.txt")
 }
+
+func TestUploadHash(t *testing.T) {
+	cleanup(t, "testdata/#hash")
+	// create a page
+	p := &Page{Name: "testdata/#hash/#number", Body: []byte(`# Number
+Countless heads to see
+Bald and hairy, wearing hats
+I wait my number`)}
+	p.save()
+	// check location for upload on a page name containing an hash
+	body := assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/%23hash/%23number", nil)
+	assert.Contains(t, body, `href="/upload/testdata/%23hash/?filename=%23number-1.jpg"`)
+	// check location for drop in a directory containing an hash
+	body = assert.HTTPBody(makeHandler(uploadHandler, false), "GET", "/upload/%23number/dir/", nil)
+	assert.Contains(t, body, `action="/drop/%23number/dir/"`)
+	// actual upload
+	form := new(bytes.Buffer)
+	writer := multipart.NewWriter(form)
+	field, err := writer.CreateFormField("name")
+	assert.NoError(t, err)
+	_, err = field.Write([]byte("#number.txt"))
+	assert.NoError(t, err)
+	file, err := writer.CreateFormFile("file", "#number.txt")
+	assert.NoError(t, err)
+	_, err = file.Write([]byte("Hello!"))
+	assert.NoError(t, err)
+	err = writer.Close()
+	assert.NoError(t, err)
+	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/%23hash/",
+		writer.FormDataContentType(), form, "/upload/testdata/%23hash/?actual=%23number.txt&last=%23number.txt")
+	assert.Contains(t,
+		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/%23hash/%23number.txt", nil),
+		"Hello!")
+	assert.Contains(t,
+		assert.HTTPBody(makeHandler(listHandler, false), "GET", "/list/testdata/%23hash/", nil),
+		"#number.txt")
+	assert.FileExists(t, "testdata/#hash/#number.txt")
+}
