@@ -47,9 +47,21 @@ placeholders.\&
 The following property lists always indicate whether the property is
 percent-encoded or not.\& In theory, the html/template package would handle this.\&
 The problem is that the package gives special treatment to the semicolon, comma,
-question-mark and hash-sign.\& For example, given a .\&Name of "#foo" in the context
-<a href="{{.\&Name}}">, the html/template package treats it as a URL fragment
-instead of a file path that needs to be escaped to "%23foo".\&
+question-mark and hash-sign.\&
+.PP
+Consider the following:
+.PP
+.nf
+.RS 4
+<a href="{{\&.Name}}">{{\&.Name}}</a>
+.fi
+.RE
+.PP
+If \fI.\&Name\fR is "#foo", the html/template package treats it as a URL fragment
+inside the attribute instead of a file path that needs to be escaped to
+"%23foo".\& The same problem arises if \fI.\&Name\fR is "foo?\&" as the questionmark is
+not escaped and therefore treated as the separator between URL path and query
+parameters instead of being part of the name.\&
 .PP
 The consequences for template authors is that the properties that are
 percent-encoded must be used in links where as the regular properties must be
