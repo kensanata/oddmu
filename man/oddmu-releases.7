@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-RELEASES" "7" "2025-04-07"
+.TH "ODDMU-RELEASES" "7" "2025-04-08"
 .PP
 .SH NAME
 .PP
@@ -17,15 +17,16 @@ This page lists user-visible features and template changes to consider.\&
 .PP
 .SS 1.17 (unreleased)
 .PP
-You need to make multiple changes to the upload template ("upload.\&html") in
-order to allow files containing hashes in their names to be handled correctly.\&
-.PP
-You need to change {{.\&Name}} to {{.\&Path}} in HTML templates where files are
-concerned ("list.\&html").\& If you don'\&t do this, file deleting and rename may not
+You need to change {{.\&Name}} to {{.\&Path}} when it is used in URLs, in the list
+template ("list.\&html").\& If you don'\&t do this, file deleting and rename may not
 work on files containing a comma, a semicolon, a questionmark or a hash
 character.\& This fix was necessary because URLs for files containing a
 questionmark or a hash character would end the path at this character and treat
 the rest as a query parameter or fragment, respectively.\&
+.PP
+You need to change {{.\&Last}} to {{.\&LastPath}} and {{.\&Base}} to {{.\&PagePath}}
+when they are used in URLs, in the upload template ("upload.\&html"), in order to
+allow files containing hashes in their names to be handled correctly: .\&
 .PP
 Updated the example themes.\& Some of my sites got a text area that tries to take
 all the vertical space available.\& This is great for monitors in portrait mode.\&
@@ -38,8 +39,8 @@ Add support for WebP images for uploading and resizing.\&
 .PP
 You need to change {{.\&Name}} to {{.\&Path}} in HTML templates where pages are
 concerned.\& If you don'\&t do this, your page names (i.\&e.\& filenames for pages) may
-not include a comma, a semicolon or a questionmark.\& This fix was necessary
-because file uploads of filenames with non-ASCII characters ended up
+not include a comma, a semicolon, a questionmark or a hash sign.\& This fix was
+necessary because file uploads of filenames with non-ASCII characters ended up
 double-encoded.\&
 .PP
 Note that on the "list.\&html" template, {{.\&Name}} refers to file instead of a
