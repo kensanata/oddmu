@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-TEMPLATES" "5" "2025-04-07" "File Formats Manual"
+.TH "ODDMU-TEMPLATES" "5" "2025-04-08" "File Formats Manual"
 .PP
 .SH NAME
 .PP
@@ -44,6 +44,17 @@ placeholders.\&
 \fIview.\&html\fR uses a \fIpage\fR
 .PD
 .PP
+The following property lists always indicate whether the property is
+percent-encoded or not.\& In theory, the html/template package would handle this.\&
+The problem is that the package gives special treatment to the semicolon, comma,
+question-mark and hash-sign.\& For example, given a .\&Name of "#foo" in the context
+<a href="{{.\&Name}}">, the html/template package treats it as a URL fragment
+instead of a file path that needs to be escaped to "%23foo".\&
+.PP
+The consequences for template authors is that the properties that are
+percent-encoded must be used in links where as the regular properties must be
+used outside of links.\&
+.PP
 .SS Page
 .PP
 A page has the following properties:
@@ -53,13 +64,12 @@ page name is used.\&
 .PP
 \fI{{.\&Name}}\fR is the page name.\& The page name doesn'\&t include the \fI.\&md\fR extension.\&
 .PP
-\fI{{.\&Path}}\fR is the page name, escaped for use in URLs.\& More specifically, it is
-percent-escaped except for the slashes.\&
+\fI{{.\&Path}}\fR is the page name, percent-encoded.\&
 .PP
-\fI{{.\&Dir}}\fR is the page directory, percent-escaped except for the slashes.\&
+\fI{{.\&Dir}}\fR is the page directory, percent-encoded.\&
 .PP
 \fI{{.\&Base}}\fR is the basename of the current file (without the directory and
-without the \fI.\&md\fR extension), percent-escaped except for the slashes.\&
+without the \fI.\&md\fR extension), percent-encoded.\&
 .PP
 \fI{{.\&Language}}\fR is the suspected language of the page.\& This is used to set the
 language on the \fIview.\&html\fR template.\& See "Non-English hyphenation" below.\&
@@ -114,7 +124,7 @@ An item is a page plus a date.\& All the properties of a page can be used (see
 .PP
 The list contains a directory name and an array of files.\&
 .PP
-\fI{{.\&Dir}}\fR is the directory name that is being listed.\&
+\fI{{.\&Dir}}\fR is the directory name that is being listed, percent-encoded.\&
 .PP
 \fI{{.\&Files}}\fR is the array of files.\& To refer to them, you need to use a \fI{{range
 Files}}\fR … \fI{{end}}\fR construct.\&
@@ -123,6 +133,8 @@ Each file has the following attributes:
 .PP
 \fI{{.\&Name}}\fR is the filename.\& The ".\&md" suffix for Markdown files is part of the
 name (unlike page names).\&
+.PP
+\fI{{.\&Path}}\fR is the page name, percent-encoded.\&
 .PP
 \fI{{.\&Title}}\fR is the page title, if the file in question is a Markdown file.\&
 .PP
@@ -138,8 +150,7 @@ directory).\& The filename of this file is ".\&.\&".\&
 .PP
 \fI{{.\&Query}}\fR is the query string.\&
 .PP
-\fI{{.\&Dir}}\fR is the directory in which the search starts, percent-escaped except
-for the slashes.\&
+\fI{{.\&Dir}}\fR is the directory in which the search starts, percent-encoded.\&
 .PP
 \fI{{.\&Previous}}\fR, \fI{{.\&Page}}\fR and \fI{{.\&Next}}\fR are the previous, current and next
 page number in the results since doing arithmetics in templates is hard.\& The
@@ -176,24 +187,22 @@ search term that matched.\&
 .SS Upload
 .PP
 \fI{{.\&Dir}}\fR is the directory where the uploaded file ends up, based on the URL
-path, percent-escaped except for the slashes.\&
+path, percent-encoded.\&
 .PP
 \fI{{.\&Name}}\fR is the \fIfilename\fR query parameter.\&
 .PP
 \fI{{.\&Last}}\fR is the filename of the last file uploaded.\&
 .PP
-\fI{{.\&LastPath}}\fR is the filename of the last file uploaded, percent-escaped
-except for the slashes.\&
+\fI{{.\&LastPath}}\fR is the filename of the last file uploaded, percent-encoded.\&
 .PP
 \fI{{.\&Actual}}\fR is an array of filenames of all the files uploaded,
-percent-escaped except for the slashes.\& Use {{range .\&Actual}} … {{.\&}} … {{end}}
-to loop over all the filenames.\&
+percent-encoded.\& Use {{range .\&Actual}} … {{.\&}} … {{end}} to loop over all the
+filenames.\&
 .PP
 \fI{{.\&Base}}\fR is the basename of the first file uploaded (without the directory,
 extension and numeric part at the end).\&
 .PP
-\fI{{.\&PagePath}}\fR, is the basename of the first file uploaded, percent-escaped
-except for the slashes
+\fI{{.\&PagePath}}\fR, is the basename of the first file uploaded, percent-encoded.\&
 .PP
 \fI{{.\&Title}}\fR is the title of the basename, if it exists.\&
 .PP

@@ -67,10 +67,10 @@ he did not like it
 }
 
 func TestListHash(t *testing.T) {
-	cleanup(t, "testdata/list-hash")
-	os.Mkdir("testdata/list-hash", 0755)
-	_, err := os.Create("testdata/list-hash/#secret")
+	cleanup(t, "testdata/list-#hash")
+	os.Mkdir("testdata/list-#hash", 0755)
+	_, err := os.Create("testdata/list-#hash/#secret")
 	assert.NoError(t, err)
-	body := assert.HTTPBody(makeHandler(listHandler, false), "GET", "/list/testdata/list-hash/", nil)
-	assert.Contains(t, body, `<button form="manage" formaction="/delete/testdata/list-hash/%23secret" title="Delete #secret">`)
+	body := assert.HTTPBody(makeHandler(listHandler, false), "GET", "/list/testdata/list-%23hash/", nil)
+	assert.Contains(t, body, `<button form="manage" formaction="/delete/testdata/list-%23hash/%23secret" title="Delete #secret">`)
 }

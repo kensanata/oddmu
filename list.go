@@ -80,7 +80,7 @@ func listHandler(w http.ResponseWriter, r *http.Request, name string) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	renderTemplate(w, d, "list", &List{Dir: name, Files: files})
+	renderTemplate(w, d, "list", &List{Dir: pathEncode(name), Files: files})
 }
 
 
