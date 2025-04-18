@@ -48,7 +48,7 @@ var uploadFiles = {
   post: function(files) {
     let action = document.getElementById('upload').getAttribute('action');
     var fd = new FormData();
-    fd.append("name", document.getElementById('name').value);
+    fd.append("filename", document.getElementById('filename').value);
     fd.append("maxwidth", document.getElementById('maxwidth').value);
     fd.append("quality", document.getElementById('quality').value);
     for (var i = 0; i < files.length; i++) {
@@ -72,27 +72,24 @@ window.addEventListener('load', uploadFiles.init);
   </head>
   <body lang="en">
     <h1>Upload Files</h1>
-    {{if ne .Last ""}}
-    <p>Previous upload: <a href="/view/{{.Dir}}{{.LastPath}}">{{.Last}}</a>
-    {{if .Image}}
-    <p><img class="last" src="/view/{{.Dir}}{{.LastPath}}"><br>
-      Links:<tt>{{range .Actual}}<br>![]({{.}}){{end}}</tt>
-    {{else}}
-    <p>Link: <tt>[text]({{.Last}})</tt>
-    {{end}}
-    <form id="add" action="/append/{{.Dir}}{{.PagePath}}" method="POST">
-      <input type="hidden" name="body" value="{{range .Actual}}![]({{.}})
+    {{if .Uploads}}
+    <p>Previous uploads:
+    <p>{{range .Uploads}}
+      {{if .Image}}<img class="upload" src="/view/{{$.Dir}}{{.Path}}">{{else}}<a class="upload" href="/view/{{$.Dir}}{{.Path}}">{{end}}{{end}}
+    <form id="add" action="/append/{{.Dir}}{{.Path}}" method="POST">
+      <input type="hidden" name="body" value="{{range .Uploads}}{{if .Image}}!{{end}}[{{.Name}}]({{.Path}})
 {{end}}">
-      <p>Append this to <a href="/view/{{.Dir}}{{.PagePath}}">{{.Title}}</a>?
-        <input type="submit" value="Add">
+      <input type="hidden" name="pagename" value="{{.Name}}">
+      <p>Append it to <a href="/view/{{.Dir}}{{.Path}}">{{.Title}}</a>?
+      <input type="submit" value="Add">
     </form>
     {{end}}
     <form id="upload" action="/drop/{{.Dir}}" method="POST" enctype="multipart/form-data">
       <p>When uploading a picture from a phone, its filename is going to be something like IMG_1234.JPG.
         Please provide your own filename. End the base name with "-1" to auto-increment.
         Use <tt>.jpg</tt>, <tt>.png</tt> or <tt>.webp</tt> as the extension if you want to resize the picture.
-      <p><label for="name">Filename:</label>
-        <input id="name" name="name" value="{{.Name}}" type="text" placeholder="image-1.jpg" autofocus required>
+      <p><label for="filename">Filename:</label>
+        <input id="filename" name="filename" value="{{.FileName}}" type="text" placeholder="image-1.jpg" autofocus required>
       <p>If the uploaded file is a picture from a phone, it is going to be too big for your site.
         Sadly, resizing only works when uploading <tt>.jpeg</tt>, <tt>.webp</tt>, <tt>.heic</tt> and <tt>.png</tt> files.
         Feel free to specify a max width of 1200 pixels, for example.
@@ -110,7 +107,7 @@ window.addEventListener('load', uploadFiles.init);
       <p><label for="file">Files to upload:</label>
         <input type="file" name="file" required multiple>
       <p><input type="submit" value="Save">
-        <a href="/view/index"><button type="button">Cancel</button></a>
+        <a href="/view/{{.Dir}}{{.Path}}"><button type="button">Cancel</button></a>
       <p>You can also paste images or drag and drop files.
     </form>
   </body>

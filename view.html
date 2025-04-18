@@ -24,7 +24,7 @@ img { max-width: 100%; }
       <a href="/add/{{.Path}}" accesskey="a">Add</a>
       <a href="/diff/{{.Path}}" accesskey="d">Diff</a>
       <a href="/archive/{{.Dir}}data.zip" accesskey="z">Zip</a>
-      <a href="/upload/{{.Dir}}?filename={{.Base}}-1.jpg" accesskey="u">Upload</a>
+      <a href="/upload/{{.Dir}}?filename={{.Base}}-1.jpg&pagename={{.Base}}" accesskey="u">Upload</a>
       <form role="search" action="/search/{{.Dir}}" method="GET">
         <label for="search">Search:</label>
         <input id="search" type="text" spellcheck="false" name="q" accesskey="f" placeholder="term #tag title:term blog:true" required>

@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-TEMPLATES" "5" "2025-04-08" "File Formats Manual"
+.TH "ODDMU-TEMPLATES" "5" "2025-04-18" "File Formats Manual"
 .PP
 .SH NAME
 .PP
@@ -47,7 +47,7 @@ placeholders.\&
 The following property lists always indicate whether the property is
 percent-encoded or not.\& In theory, the html/template package would handle this.\&
 The problem is that the package gives special treatment to the semicolon, comma,
-question-mark and hash-sign.\&
+question-mark and hash-sign as these are potential separators in a URL.\&
 .PP
 Consider the following:
 .PP
@@ -201,26 +201,16 @@ search term that matched.\&
 \fI{{.\&Dir}}\fR is the directory where the uploaded file ends up, based on the URL
 path, percent-encoded.\&
 .PP
-\fI{{.\&Name}}\fR is the \fIfilename\fR query parameter.\&
+\fI{{.\&FileName}}\fR is the \fIfilename\fR query parameter used to suggested a filename.\&
 .PP
-\fI{{.\&Last}}\fR is the filename of the last file uploaded.\&
+\fI{{.\&FilePath}}\fR is the filename, percent-encoded.\&
 .PP
-\fI{{.\&LastPath}}\fR is the filename of the last file uploaded, percent-encoded.\&
+\fI{{.\&Name}}\fR is the \fIpagename\fR query parameter used to indicate where to append
+links to the files.\&
 .PP
-\fI{{.\&Actual}}\fR is an array of filenames of all the files uploaded,
-percent-encoded.\& Use {{range .\&Actual}} … {{.\&}} … {{end}} to loop over all the
-filenames.\&
+\fI{{.\&Path}}\fR is the page name, percent-encoded.\&
 .PP
-\fI{{.\&Base}}\fR is the basename of the first file uploaded (without the directory,
-extension and numeric part at the end).\&
-.PP
-\fI{{.\&PagePath}}\fR, is the basename of the first file uploaded, percent-encoded.\&
-.PP
-\fI{{.\&Title}}\fR is the title of the basename, if it exists.\&
-.PP
-\fI{{.\&Image}}\fR is a boolean to indicate whether the last file uploaded has a file
-name indicating an image or not (such as ending in \fI.\&jpg\fR).\& If so, a thumbnail
-can be shown by the template, for example.\&
+\fI{{.\&Title}}\fR is the title of the page, if it exists.\&
 .PP
 \fI{{.\&MaxWidth}}\fR is the \fImaxwidth\fR query parameter, i.\&e.\& the value used for the
 previous image uploaded.\&
@@ -229,6 +219,22 @@ previous image uploaded.\&
 previous image uploaded.\&
 .PP
 \fI{{.\&Today}}\fR is the current date, in ISO format.\&
+.PP
+\fI{{.\&Uploads}}\fR an array of files already uploaded, based on the \fIuploads\fR query
+parameter.\& To refer to them, you need to use a \fI{{range .\&Uploads}}\fR … \fI{{end}}\fR
+construct.\& This is required because the \fIdrop\fR action redirects back to the
+\fIupload\fR action, so after saving one or more files, you can upload even more
+files.\&
+.PP
+Each upload has the following attributes:
+.PP
+\fI{{.\&Name}}\fR is the filename.\&
+.PP
+\fI{{.\&Path}}\fR is the file name, percent-encoded.\&
+.PP
+\fI{{.\&Image}}\fR is a boolean to indicate whether the upload is an image or not
+(such as ending in \fI.\&jpg\fR).\& If so, a thumbnail can be shown by the template, for
+example.\&
 .PP
 .SS Non-English hyphenation
 .PP

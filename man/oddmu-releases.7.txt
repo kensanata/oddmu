@@ -17,9 +17,8 @@ character. This fix was necessary because URLs for files containing a
 questionmark or a hash character would end the path at this character and treat
 the rest as a query parameter or fragment, respectively.
 
-You need to change {{.Last}} to {{.LastPath}} and {{.Base}} to {{.PagePath}}
-when they are used in URLs, in the upload template ("upload.html"), in order to
-allow files containing hashes in their names to be handled correctly: .
+You need to update the upload template ("upload.html"). Many things have
+changed! See _oddmu-templates_(5) for more.
 
 Updated the example themes. Some of my sites got a text area that tries to take
 all the vertical space available. This is great for monitors in portrait mode.

@@ -28,7 +28,7 @@ placeholders.
 The following property lists always indicate whether the property is
 percent-encoded or not. In theory, the html/template package would handle this.
 The problem is that the package gives special treatment to the semicolon, comma,
-question-mark and hash-sign.
+question-mark and hash-sign as these are potential separators in a URL.
 
 Consider the following:
 
@@ -175,26 +175,16 @@ search term that matched.
 _{{.Dir}}_ is the directory where the uploaded file ends up, based on the URL
 path, percent-encoded.
 
-_{{.Name}}_ is the _filename_ query parameter.
+_{{.FileName}}_ is the _filename_ query parameter used to suggested a filename.
 
-_{{.Last}}_ is the filename of the last file uploaded.
+_{{.FilePath}}_ is the filename, percent-encoded.
 
-_{{.LastPath}}_ is the filename of the last file uploaded, percent-encoded.
+_{{.Name}}_ is the _pagename_ query parameter used to indicate where to append
+links to the files.
 
-_{{.Actual}}_ is an array of filenames of all the files uploaded,
-percent-encoded. Use {{range .Actual}} … {{.}} … {{end}} to loop over all the
-filenames.
+_{{.Path}}_ is the page name, percent-encoded.
 
-_{{.Base}}_ is the basename of the first file uploaded (without the directory,
-extension and numeric part at the end).
-
-_{{.PagePath}}_, is the basename of the first file uploaded, percent-encoded.
-
-_{{.Title}}_ is the title of the basename, if it exists.
-
-_{{.Image}}_ is a boolean to indicate whether the last file uploaded has a file
-name indicating an image or not (such as ending in _.jpg_). If so, a thumbnail
-can be shown by the template, for example.
+_{{.Title}}_ is the title of the page, if it exists.
 
 _{{.MaxWidth}}_ is the _maxwidth_ query parameter, i.e. the value used for the
 previous image uploaded.
@@ -203,6 +193,22 @@ _{{.Quality}}_ is the _quality_ query parameter, i.e. the value used for the
 previous image uploaded.
 
 _{{.Today}}_ is the current date, in ISO format.
+
+_{{.Uploads}}_ an array of files already uploaded, based on the _uploads_ query
+parameter. To refer to them, you need to use a _{{range .Uploads}}_ … _{{end}}_
+construct. This is required because the _drop_ action redirects back to the
+_upload_ action, so after saving one or more files, you can upload even more
+files.
+
+Each upload has the following attributes:
+
+_{{.Name}}_ is the filename.
+
+_{{.Path}}_ is the file name, percent-encoded.
+
+_{{.Image}}_ is a boolean to indicate whether the upload is an image or not
+(such as ending in _.jpg_). If so, a thumbnail can be shown by the template, for
+example.
 
 ## Non-English hyphenation
 

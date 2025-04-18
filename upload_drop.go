@@ -28,12 +28,16 @@ import (
 
 type Upload struct {
 	Dir      string
+	FileName string
 	Name     string
-	Last     string
-	Image    bool
 	MaxWidth string
 	Quality  string
-	Actual   []string
+	Uploads  []FileUpload
+}
+
+type FileUpload struct {
+	Name     string
+	Image    bool
 }
 
 var lastRe = regexp.MustCompile(`^(.*?)([0-9]+)([^0-9]*)$`)
@@ -44,6 +48,7 @@ var baseRe = regexp.MustCompile(`^(.*?)-[0-9]+$`)
 // number, this is incremented by one.
 func uploadHandler(w http.ResponseWriter, r *http.Request, dir string) {
 	data := &Upload{Dir: pathEncode(dir)}
+	var err error
 	maxwidth := r.FormValue("maxwidth")
 	if maxwidth != "" {
 		data.MaxWidth = maxwidth
@@ -52,28 +57,33 @@ func uploadHandler(w http.ResponseWriter, r *http.Request, dir string) {
 	if quality != "" {
 		data.Quality = quality
 	}
-	name := r.FormValue("filename")
-	if isHiddenName(name) {
+	filename := r.FormValue("filename")
+	if isHiddenName(filename) {
 		http.Error(w, "the file would be hidden", http.StatusForbidden)
 		return
 	}
-	var err error
-	if name != "" {
-		data.Name, err = next(filepath.FromSlash(dir), name, 0)
-	} else if last := r.FormValue("last"); last != "" {
-		data.Last = last
-		mimeType := mime.TypeByExtension(path.Ext(last))
-		data.Image = strings.HasPrefix(mimeType, "image/")
-		data.Name, err = next(filepath.FromSlash(dir), last, 1)
-		data.Actual = make([]string, len(r.Form["actual"]))
-		for i, s := range r.Form["actual"] {
-			data.Actual[i] = pathEncode(s)
-		}
-	}
+	filename, err = next(filepath.FromSlash(dir), filename, 0)
 	if err != nil {
-		log.Println(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "cannot determine filename", http.StatusInternalServerError)
 		return
+	}
+	data.FileName = filename
+	name := r.FormValue("pagename")
+	if isHiddenName(name) {
+		http.Error(w, "the page would be hidden", http.StatusForbidden)
+		return
+	}
+	if name != "" {
+		data.Name = name
+	} else {
+		data.Name = basename(filename)
+	}
+	data.Uploads = make([]FileUpload, len(r.Form["uploads"]))
+	for i, s := range r.Form["uploads"] {
+		data.Uploads[i].Name = s
+		mimeType := mime.TypeByExtension(path.Ext(s))
+		data.Uploads[i].Image = strings.HasPrefix(mimeType, "image/")
+		
 	}
 	renderTemplate(w, dir, "upload", data)
 }
@@ -126,7 +136,7 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		return
 	}
 	data := url.Values{}
-	fn := r.FormValue("name")
+	fn := r.FormValue("filename")
 	// This is like the id query parameter: it may not contain any slashes, so it's a path and a filepath.
 	if strings.Contains(fn, "/") {
 		http.Error(w, "the file may not contain slashes", http.StatusBadRequest)
@@ -136,6 +146,21 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		http.Error(w, "the file would be hidden", http.StatusForbidden)
 		return
 	}
+	data.Set("filename", fn)
+	pn := r.FormValue("pagename")
+	if pn != "" {
+		data.Set("pagename", pn)
+	}
+	// This is like the id query parameter: it may not contain any slashes, so it's a path and a filepath.
+	if strings.Contains(fn, "/") {
+		http.Error(w, "the file may not contain slashes", http.StatusBadRequest)
+		return
+	}
+	if isHiddenName(fn) {
+		http.Error(w, "the file would be hidden", http.StatusForbidden)
+		return
+	}
+	data.Set("filename", fn)
 	// Quality is a number. If no quality is set and a quality is required, 75 is used.
 	q := 75
 	quality := r.FormValue("quality")
@@ -250,7 +275,7 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 				log.Println("Copied", fp)
 			}
 		}
-		data.Add("actual", fn)
+		data.Add("uploads", fn)
 		username, _, ok := r.BasicAuth()
 		if ok {
 			log.Println("Saved", filepath.ToSlash(fp), "by", username)
@@ -259,44 +284,38 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		}
 		updateTemplate(fp)
 	}
-	data.Set("last", fn) // has no slashes
 	http.Redirect(w, r, "/upload/" + nameEscape(dir) + "?" + data.Encode(), http.StatusFound)
 }
 
-// Base returns a page name matching the first uploaded file: no extension and no appended number. If the name refers to
-// a directory, returns "index".
-func (u *Upload) Base() string {
-	s := u.Name
-	n := s[:strings.LastIndex(s, ".")]
-	m := baseRe.FindStringSubmatch(n)
+// basename returns a name matching the uploaded file but with no extension and no appended number. Given an uploaded
+// file "example-1.jpg" this returns "example".
+func basename(s string) string {
+	e := strings.LastIndex(s, ".")
+	if e > 0 {
+		s = s[:e]
+	}
+	m := baseRe.FindStringSubmatch(s)
 	if m != nil {
 		return m[1]
 	}
-	if n == "." {
-		return "index"
-	}
-	return n
+	return s
 }
 
-// PagePath returns the Upload.Base(), percent-escaped except for the slashes.
-func (u *Upload) PagePath() string {
-	s := u.Name
-	n := s[:strings.LastIndex(s, ".")]
-	m := baseRe.FindStringSubmatch(n)
-	if m != nil {
-		return pathEncode(m[1])
-	}
-	if n == "." {
-		return "index"
-	}
-	return pathEncode(n)
+// Path returns the Name with some special characters percent-escaped.
+func (u *Upload) Path() string {
+	return pathEncode(u.Name)
 }
 
-// Title returns the title of the matching page, if it exists.
+// Path returns the Name with some special characters percent-escaped.
+func (f *FileUpload) Path() string {
+	return pathEncode(f.Name)
+}
+
+// Title returns the title of the matching page. If the page does not exist, the page name is returned.
 func (u *Upload) Title() string {
 	index.RLock()
 	defer index.RUnlock()
-	name := path.Join(u.Dir, u.Base())
+	name := path.Join(u.Dir, u.Name)
 	title, ok := index.titles[name]
 	if ok {
 		return title
@@ -307,10 +326,4 @@ func (u *Upload) Title() string {
 // Today returns the date, as a string, for use in templates.
 func (u *Upload) Today() string {
 	return time.Now().Format(time.DateOnly)
-}
-
-// LastPath returns the LastName with some characters escaped because html/template doesn't escape those. This is
-// suitable for use in HTML templates.
-func (u *Upload) LastPath() string {
-	return pathEncode(u.Last)
 }

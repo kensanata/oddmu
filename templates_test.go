@@ -24,7 +24,7 @@ Memories of cold
 	html := "<body><h1>{{.Title}}</h1>{{.Html}}"
 	form := new(bytes.Buffer)
 	writer := multipart.NewWriter(form)
-	field, err := writer.CreateFormField("name")
+	field, err := writer.CreateFormField("filename")
 	assert.NoError(t, err)
 	field.Write([]byte("view.html"))
 	file, err := writer.CreateFormFile("file", "test.html")

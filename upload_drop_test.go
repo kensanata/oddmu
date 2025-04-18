@@ -24,7 +24,7 @@ func TestUpload(t *testing.T) {
 	assert.HTTPStatusCode(t, makeHandler(uploadHandler, false), "GET", "/upload/testdata/files/", nil, 200)
 	form := new(bytes.Buffer)
 	writer := multipart.NewWriter(form)
-	field, err := writer.CreateFormField("name")
+	field, err := writer.CreateFormField("filename")
 	assert.NoError(t, err)
 	_, err = field.Write([]byte("ok.txt"))
 	assert.NoError(t, err)
@@ -35,7 +35,7 @@ func TestUpload(t *testing.T) {
 	err = writer.Close()
 	assert.NoError(t, err)
 	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/files/",
-		writer.FormDataContentType(), form, "/upload/testdata/files/?actual=ok.txt&last=ok.txt")
+		writer.FormDataContentType(), form, "/upload/testdata/files/?filename=ok.txt&uploads=ok.txt")
 	assert.Contains(t,
 		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/files/ok.txt", nil),
 		"Hello!")
@@ -47,14 +47,14 @@ func TestUploadPng(t *testing.T) {
 	os.MkdirAll("testdata/png", 0755)
 	form := new(bytes.Buffer)
 	writer := multipart.NewWriter(form)
-	field, _ := writer.CreateFormField("name")
+	field, _ := writer.CreateFormField("filename")
 	field.Write([]byte("ok.png"))
 	file, _ := writer.CreateFormFile("file", "ok.png")
 	img := image.NewRGBA(image.Rect(0, 0, 20, 20))
 	png.Encode(file, img)
 	writer.Close()
 	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/png/",
-		writer.FormDataContentType(), form, "/upload/testdata/png/?actual=ok.png&last=ok.png")
+		writer.FormDataContentType(), form, "/upload/testdata/png/?filename=ok.png&uploads=ok.png")
 }
 
 func TestUploadJpg(t *testing.T) {
@@ -63,14 +63,14 @@ func TestUploadJpg(t *testing.T) {
 	os.MkdirAll("testdata/jpg", 0755)
 	form := new(bytes.Buffer)
 	writer := multipart.NewWriter(form)
-	field, _ := writer.CreateFormField("name")
+	field, _ := writer.CreateFormField("filename")
 	field.Write([]byte("ok.jpg"))
 	file, _ := writer.CreateFormFile("file", "ok.jpg")
 	img := image.NewRGBA(image.Rect(0, 0, 20, 20))
 	jpeg.Encode(file, img, &jpeg.Options{Quality: 90})
 	writer.Close()
 	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/jpg/",
-		writer.FormDataContentType(), form, "/upload/testdata/jpg/?actual=ok.jpg&last=ok.jpg")
+		writer.FormDataContentType(), form, "/upload/testdata/jpg/?filename=ok.jpg&uploads=ok.jpg")
 }
 
 func TestUploadHeic(t *testing.T) {
@@ -79,7 +79,7 @@ func TestUploadHeic(t *testing.T) {
 	os.MkdirAll("testdata/heic", 0755)
 	form := new(bytes.Buffer)
 	writer := multipart.NewWriter(form)
-	field, _ := writer.CreateFormField("name")
+	field, _ := writer.CreateFormField("filename")
 	field.Write([]byte("ok.jpg"))                       // target
 	file, _ := writer.CreateFormFile("file", "ok.heic") // source
 	// convert -size 1x1 canvas: heic:- | base64
@@ -98,7 +98,7 @@ YXQAAAApKAGvEyE1mvXho5qH3STtzcWnOxedwNIXAKNDaJNqz3uONoCHeUhi/HA=`
 	file.Write(img)
 	writer.Close()
 	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/heic/",
-		writer.FormDataContentType(), form, "/upload/testdata/heic/?actual=ok.jpg&last=ok.jpg")
+		writer.FormDataContentType(), form, "/upload/testdata/heic/?filename=ok.jpg&uploads=ok.jpg")
 	fp := "testdata/heic/ok.jpg"
 	fi, err := os.Open(fp)
 	assert.NoError(t, err)
@@ -114,14 +114,14 @@ func TestUploadWebp(t *testing.T) {
 	os.MkdirAll("testdata/webp", 0755)
 	form := new(bytes.Buffer)
 	writer := multipart.NewWriter(form)
-	field, _ := writer.CreateFormField("name")
+	field, _ := writer.CreateFormField("filename")
 	field.Write([]byte("ok.jpg"))                       // target
 	file, _ := writer.CreateFormFile("file", "ok.webp") // source
 	img := image.NewRGBA(image.Rect(0, 0, 20, 20))
 	webp.Encode(file, img)
 	writer.Close()
 	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/webp/",
-		writer.FormDataContentType(), form, "/upload/testdata/webp/?actual=ok.jpg&last=ok.jpg")
+		writer.FormDataContentType(), form, "/upload/testdata/webp/?filename=ok.jpg&uploads=ok.jpg")
 	fp := "testdata/webp/ok.jpg"
 	fi, err := os.Open(fp)
 	assert.NoError(t, err)
@@ -137,14 +137,14 @@ func TestConvertToWebp(t *testing.T) {
 	os.MkdirAll("testdata/towebp", 0755)
 	form := new(bytes.Buffer)
 	writer := multipart.NewWriter(form)
-	field, _ := writer.CreateFormField("name")
+	field, _ := writer.CreateFormField("filename")
 	field.Write([]byte("ok.webp"))
 	file, _ := writer.CreateFormFile("file", "ok.png")
 	img := image.NewRGBA(image.Rect(0, 0, 20, 20))
 	png.Encode(file, img)
 	writer.Close()
 	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/towebp/",
-		writer.FormDataContentType(), form, "/upload/testdata/towebp/?actual=ok.webp&last=ok.webp")
+		writer.FormDataContentType(), form, "/upload/testdata/towebp/?filename=ok.webp&uploads=ok.webp")
 	fp := "testdata/towebp/ok.webp"
 	fi, err := os.Open(fp)
 	assert.NoError(t, err)
@@ -167,13 +167,13 @@ What happened just now?`), 0644))
 	// delete it by upload a zero byte file
 	form := new(bytes.Buffer)
 	writer := multipart.NewWriter(form)
-	field, _ := writer.CreateFormField("name")
+	field, _ := writer.CreateFormField("filename")
 	field.Write([]byte("nothing.txt"))
 	file, _ := writer.CreateFormFile("file", "test.txt")
 	file.Write([]byte(""))
 	writer.Close()
 	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/delete/",
-		writer.FormDataContentType(), form, "/upload/testdata/delete/?actual=nothing.txt&last=nothing.txt")
+		writer.FormDataContentType(), form, "/upload/testdata/delete/?filename=nothing.txt&uploads=nothing.txt")
 	// check that it worked
 	assert.NoFileExists(t, "testdata/delete/nothing.txt")
 }
@@ -189,7 +189,7 @@ But here: jasmin dreams`)}
 
 	// check location for upload
 	body := assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/multi/culture", nil)
-	assert.Contains(t, body, `href="/upload/testdata/multi/?filename=culture-1.jpg"`)
+	assert.Contains(t, body, `href="/upload/testdata/multi/?filename=culture-1.jpg&pagename=culture"`)
 
 	// check location for drop
 	body = assert.HTTPBody(makeHandler(uploadHandler, false), "GET", "/upload/testdata/multi/", nil)
@@ -198,7 +198,7 @@ But here: jasmin dreams`)}
 	// actually do the upload
 	form := new(bytes.Buffer)
 	writer := multipart.NewWriter(form)
-	field, _ := writer.CreateFormField("name")
+	field, _ := writer.CreateFormField("filename")
 	field.Write([]byte("2023-10-02-hike-1.jpg"))
 	field, _ = writer.CreateFormField("maxwidth")
 	field.Write([]byte("15"))
@@ -213,7 +213,7 @@ But here: jasmin dreams`)}
 	url, _ := url.Parse(location)
 	assert.Equal(t, "/upload/testdata/multi/", url.Path, "Redirect to upload location")
 	values := url.Query()
-	assert.Equal(t, "2023-10-02-hike-1.jpg", values.Get("last"))
+	assert.Equal(t, "2023-10-02-hike-1.jpg", values.Get("uploads"))
 	assert.Equal(t, "15", values.Get("maxwidth"))
 	assert.Equal(t, "50", values.Get("quality"))
 
@@ -236,7 +236,7 @@ There is no answer`)}
 
 	// check location for upload
 	body := assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/dir/test", nil)
-	assert.Contains(t, body, `href="/upload/testdata/dir/?filename=test-1.jpg"`)
+	assert.Contains(t, body, `href="/upload/testdata/dir/?filename=test-1.jpg&pagename=test"`)
 
 	// check location for drop
 	body = assert.HTTPBody(makeHandler(uploadHandler, false), "GET", "/upload/testdata/dir/", nil)
@@ -245,7 +245,7 @@ There is no answer`)}
 	// actually do the upload
 	form := new(bytes.Buffer)
 	writer := multipart.NewWriter(form)
-	field, _ := writer.CreateFormField("name")
+	field, _ := writer.CreateFormField("filename")
 	field.Write([]byte("test.jpg"))
 	file, _ := writer.CreateFormFile("file", "ok.jpg")
 	img := image.NewRGBA(image.Rect(0, 0, 20, 20))
@@ -256,7 +256,7 @@ There is no answer`)}
 	url, _ := url.Parse(location)
 	assert.Equal(t, "/upload/testdata/dir/", url.Path, "Redirect to upload location")
 	values := url.Query()
-	assert.Equal(t, "test.jpg", values.Get("last"))
+	assert.Equal(t, "test.jpg", values.Get("uploads"))
 
 	// check the result page
 	body = assert.HTTPBody(makeHandler(uploadHandler, false), "GET", url.Path, values)
@@ -268,7 +268,7 @@ func TestUploadTwoInOne(t *testing.T) {
 	os.MkdirAll("testdata/two", 0755)
 	form := new(bytes.Buffer)
 	writer := multipart.NewWriter(form)
-	field, _ := writer.CreateFormField("name")
+	field, _ := writer.CreateFormField("filename")
 	field.Write([]byte("2024-02-19-hike-1.jpg"))
 	file1, _ := writer.CreateFormFile("file", "one.jpg")
 	img1 := image.NewRGBA(image.Rect(0, 0, 10, 10))
@@ -282,7 +282,8 @@ func TestUploadTwoInOne(t *testing.T) {
 	url, _ := url.Parse(location)
 	assert.Equal(t, "/upload/testdata/two/", url.Path, "Redirect to upload location")
 	values := url.Query()
-	assert.Equal(t, "2024-02-19-hike-2.jpg", values.Get("last"))
+	assert.Equal(t, "2024-02-19-hike-1.jpg", values["uploads"][0])
+	assert.Equal(t, "2024-02-19-hike-2.jpg", values["uploads"][1])
 	// check the files
 	assert.FileExists(t, "testdata/two/2024-02-19-hike-1.jpg")
 	assert.FileExists(t, "testdata/two/2024-02-19-hike-2.jpg")
@@ -293,7 +294,7 @@ func TestUploadTwoInOneAgain(t *testing.T) {
 	os.MkdirAll("testdata/zwei", 0755)
 	form := new(bytes.Buffer)
 	writer := multipart.NewWriter(form)
-	field, _ := writer.CreateFormField("name")
+	field, _ := writer.CreateFormField("filename")
 	field.Write([]byte("image.jpg"))
 	file1, _ := writer.CreateFormFile("file", "one.jpg")
 	img1 := image.NewRGBA(image.Rect(0, 0, 10, 10))
@@ -307,7 +308,8 @@ func TestUploadTwoInOneAgain(t *testing.T) {
 	url, _ := url.Parse(location)
 	assert.Equal(t, "/upload/testdata/zwei/", url.Path, "Redirect to upload location")
 	values := url.Query()
-	assert.Equal(t, "image-1.jpg", values.Get("last"))
+	assert.Equal(t, "image.jpg", values["uploads"][0])
+	assert.Equal(t, "image-1.jpg", values["uploads"][1])
 	// check the files
 	assert.FileExists(t, "testdata/zwei/image.jpg")
 	assert.FileExists(t, "testdata/zwei/image-1.jpg")
@@ -339,14 +341,14 @@ Unfassbar, all das`)}
 	p.save()
 	// check location for upload on a page name containing an umlaut
 	body := assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/umlaut/%C3%A4rger", nil)
-	assert.Contains(t, body, `href="/upload/testdata/umlaut/?filename=%c3%a4rger-1.jpg"`) // changed to lowercase
+	assert.Contains(t, body, `href="/upload/testdata/umlaut/?filename=%c3%a4rger-1.jpg&pagename=%c3%a4rger"`) // lower case
 	// check location for drop in a directory containing an umlaut
 	body = assert.HTTPBody(makeHandler(uploadHandler, false), "GET", "/upload/%C3%A4rger/dir/", nil)
 	assert.Contains(t, body, `action="/drop/%c3%a4rger/dir/"`) // changed to lowercase
 	// actual upload
 	form := new(bytes.Buffer)
 	writer := multipart.NewWriter(form)
-	field, err := writer.CreateFormField("name")
+	field, err := writer.CreateFormField("filename")
 	assert.NoError(t, err)
 	_, err = field.Write([]byte("ärger.txt"))
 	assert.NoError(t, err)
@@ -357,7 +359,7 @@ Unfassbar, all das`)}
 	err = writer.Close()
 	assert.NoError(t, err)
 	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/umlaut/",
-		writer.FormDataContentType(), form, "/upload/testdata/umlaut/?actual=%C3%A4rger.txt&last=%C3%A4rger.txt")
+		writer.FormDataContentType(), form, "/upload/testdata/umlaut/?filename=%C3%A4rger.txt&uploads=%C3%A4rger.txt")
 	assert.Contains(t,
 		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/umlaut/%C3%A4rger.txt", nil),
 		"Hello!")
@@ -376,14 +378,14 @@ I wait my number`)}
 	p.save()
 	// check location for upload on a page name containing an hash
 	body := assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/%23hash/%23number", nil)
-	assert.Contains(t, body, `href="/upload/testdata/%23hash/?filename=%23number-1.jpg"`)
+	assert.Contains(t, body, `href="/upload/testdata/%23hash/?filename=%23number-1.jpg&pagename=%23number"`)
 	// check location for drop in a directory containing an hash
 	body = assert.HTTPBody(makeHandler(uploadHandler, false), "GET", "/upload/%23number/dir/", nil)
 	assert.Contains(t, body, `action="/drop/%23number/dir/"`)
 	// actual upload
 	form := new(bytes.Buffer)
 	writer := multipart.NewWriter(form)
-	field, err := writer.CreateFormField("name")
+	field, err := writer.CreateFormField("filename")
 	assert.NoError(t, err)
 	_, err = field.Write([]byte("#number.txt"))
 	assert.NoError(t, err)
@@ -394,7 +396,7 @@ I wait my number`)}
 	err = writer.Close()
 	assert.NoError(t, err)
 	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/%23hash/",
-		writer.FormDataContentType(), form, "/upload/testdata/%23hash/?actual=%23number.txt&last=%23number.txt")
+		writer.FormDataContentType(), form, "/upload/testdata/%23hash/?filename=%23number.txt&uploads=%23number.txt")
 	assert.Contains(t,
 		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/%23hash/%23number.txt", nil),
 		"Hello!")
