@@ -20,7 +20,7 @@ img { max-width: 100% }
     <header>
       <a href="/view/index">Willkommen</a>
       <a href="/edit/{{.Path}}" accesskey="e">Bearbeiten</a>
-      <a href="/upload/{{.Dir}}" accesskey="u">Upload</a>
+      <a href="/upload/{{.Dir}}?filename={{.Base}}-1.jpg&pagename={{.Base}}" accesskey="u">Upload</a>
       <form role="search" action="/search/{{.Dir}}" method="GET">
         <label for="search">Suchen:</label>
         <input id="search" type="text" spellcheck="false" name="q" accesskey="f" placeholder="term #tag title:term blog:true" required>
