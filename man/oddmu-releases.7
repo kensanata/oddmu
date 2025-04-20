@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-RELEASES" "7" "2025-04-18"
+.TH "ODDMU-RELEASES" "7" "2025-04-20"
 .PP
 .SH NAME
 .PP
@@ -25,7 +25,16 @@ questionmark or a hash character would end the path at this character and treat
 the rest as a query parameter or fragment, respectively.\&
 .PP
 You need to update the upload template ("upload.\&html").\& Many things have
-changed!\& See \fIoddmu-templates\fR(5) for more.\&
+changed!\& See \fIoddmu-templates\fR(5) for more.\& You probably want to add \fIfilename\fR
+and \fIpagename\fR parameters to the upload link.\&
+.PP
+Example:
+.PP
+.nf
+.RS 4
+<a href="/upload/{{\&.Dir}}?filename={{\&.Base}}-1\&.jpg&pagename={{\&.Base}}">Upload</a>
+.fi
+.RE
 .PP
 Updated the example themes.\& Some of my sites got a text area that tries to take
 all the vertical space available.\& This is great for monitors in portrait mode.\&
