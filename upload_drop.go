@@ -62,6 +62,9 @@ func uploadHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		http.Error(w, "the file would be hidden", http.StatusForbidden)
 		return
 	}
+	if filename == "" {
+		filename = "image-1.jpg"
+	}
 	filename, err = next(filepath.FromSlash(dir), filename, 0)
 	if err != nil {
 		http.Error(w, "cannot determine filename", http.StatusInternalServerError)
