@@ -1,11 +1,11 @@
 html { max-width: 80ch; padding: 1ch; height: calc(100% - 2ch); margin: auto }
-body { hyphens: auto; color: black; background-color: #ffe; margin: 0; padding: 0; height: 100%; display: flex; flex-flow: column; }
+body { hyphens: auto; color: black; background-color: #ffe; margin: 0; padding: 0; height: 100%; display: flex; flex-flow: column }
 header a { margin-right: 1ch }
 h1 { text-wrap: balance }
 footer { border-top: 1px solid #888 }
 form, textarea { box-sizing: border-box; width: 100%; font-size: inherit }
-#editor { flex: 1 1 auto; display: flex; flex-flow: column; }
-textarea { flex: 1 1 auto; }
+#editor { flex: 1 1 auto; display: flex; flex-flow: column }
+textarea { flex: 1 1 auto }
 pre { background-color: #ddd; padding: 1ex 2ex; overflow-x: auto }
 .diff { font-size: inherit; white-space: normal; overflow-wrap: break-word; border: 1px solid #333; padding: 1ch }
 img, video { max-width: 100%; max-height: 90vh; width: auto; height: auto }
@@ -17,7 +17,7 @@ ins  { background-color: #af8 }
 #search, #id { max-width: 30ch; width: calc(100% - 23ch) }
 .result { font-size: larger }
 .score { font-size: smaller; opacity: 0.8 }
-.image { font-size: small; display: inline-block; margin-right: 1em; max-width: calc(20% - 1em); }
+.image { font-size: small; display: inline-block; margin-right: 1em; max-width: calc(20% - 1em) }
 #view   form  { margin-top: 2px }
 #view  button { width: 6ch }
 #view   label { display: inline-block; width: 10ch }
@@ -43,15 +43,15 @@ td:first-child, td:last-child { white-space: nowrap }
     .diff { background-color: inherit; border: 1px solid #666 }
     .right img { border: 1px solid #111 }
     .left img { border: 1px solid #111 }
-    pre { background-color: #333; }
+    pre { background-color: #333 }
     button { background-color: #eee; color: inherit }
     del  { background-color: #f40 }
     ins  { background-color: #070 }
     a:link { color: #1e90ff }
     a:hover { color: #63b8ff }
     a:visited { color: #7a67ee }
-    img { opacity: .75; transition: opacity .5s ease-in-out; }
-    img:hover { opacity: 1; }
+    img { opacity: .75; transition: opacity .5s ease-in-out }
+    img:hover { opacity: 1 }
     input, input[type="text"], textarea, button, .diff {
 	color: #eeeee8; background-color: #555
     }
