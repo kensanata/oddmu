@@ -18,4 +18,6 @@ links to other pages: On a line by itself (no inline links!) write
 "=>", a space, the URL, and optionally another space and the text to
 use.
 
+Unfortunately, this magic happens in JavaScript. 😭
+
 => ../index Themes
