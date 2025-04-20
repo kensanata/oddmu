@@ -47,11 +47,11 @@ td:first-child, td:last-child { white-space: nowrap }
           <th>Rename</th>
         </tr>{{range .Files}}
         <tr>
-          <td>{{if .IsDir}}<a href="/list/{{$.Dir}}{{.Name}}">{{.Name}}</a>{{else}}<a href="/view/{{$.Dir}}{{.Name}}">{{.Name}}</a>{{end}}</td>
+          <td>{{if .IsDir}}<a href="/list/{{$.Dir}}{{.Path}}">{{.Name}}</a>{{else}}<a href="/view/{{$.Dir}}{{.Path}}">{{.Name}}</a>{{end}}</td>
           <td>{{.Title}}</td>
-          <td>{{if .IsUp}}{{else}}<button form="manage" formaction="/delete/{{$.Dir}}{{.Name}}" title="Delete {{.Name}}">🗑</button>{{end}}</td>
+          <td>{{if .IsUp}}{{else}}<button form="manage" formaction="/delete/{{$.Dir}}{{.Path}}" title="Delete {{.Name}}">🗑</button>{{end}}</td>
           <td>{{if .IsUp}}{{else}}
-            <form action="/rename/{{$.Dir}}{{.Name}}">
+            <form action="/rename/{{$.Dir}}{{.Path}}">
               <input name="name" placeholder="New name"/>
               <button title="Rename {{.Name}}">♺</button>
             </form>{{end}}</td>

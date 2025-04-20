@@ -27,14 +27,14 @@ img { max-width: 100% }
       <a href="/add/{{.Path}}" accesskey="a">Add</a>
       <a href="/diff/{{.Path}}" accesskey="d">Diff</a>
       <a href="/view/{{.Path}}.md" accesskey="r">Raw</a>
-      <a href="/upload/{{.Dir}}" accesskey="u">Upload</a>
+      <a href="/upload/{{.Dir}}?filename={{.Base}}-1.jpg&pagename={{.Base}}" accesskey="u">Upload</a>
       <form role="search" action="/search/{{.Dir}}" method="GET">
         <label for="search">Search:</label>
         <input id="search" type="text" spellcheck="false" name="q" accesskey="f" placeholder="term #tag title:term blog:true" required>
-        <input type="submit" value="Go"/>
+        <button>Go</button>
       </form>
     </header>
-    <main id="main">
+    <main>
       <h1>{{.Title}}</h1>
       {{.Html}}
     </main>
