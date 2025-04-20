@@ -6,19 +6,20 @@
     <meta name="viewport" content="width=device-width">
     <title>{{.Title}}</title>
     <style>
-html { max-width: 70ch; padding: 1ch; margin: auto; color: #111; background-color: #ffe; }
-body { hyphens: auto; }
-header a { margin-right: 1ch; }
-form { display: inline-block; }
-input#search { width: 12ch; }
-button { background-color: #eee; color: inherit; border-radius: 4px; border-width: 1px; }
+html { max-width: 70ch; padding: 1ch; margin: auto; color: #111; background-color: #ffe }
+body { hyphens: auto }
+header a { margin-right: 1ch }
+h1 { text-wrap: balance }
+form { display: inline-block }
+input#search { width: 12ch }
+button { background-color: #eee; color: inherit; border-radius: 4px; border-width: 1px }
 footer { border-top: 1px solid #888 }
-img { max-width: 100%; }
+img { max-width: 100% }
     </style>
   </head>
   <body>
     <header>
-      <a href="#main">Skip navigation</a>
+      <a href="#main">Skip</a>
       <a href="/view/index">Home</a>
       <a href="/edit/{{.Path}}" accesskey="e">Edit</a>
       <a href="/add/{{.Path}}" accesskey="a">Add</a>
