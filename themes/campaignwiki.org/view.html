@@ -10,6 +10,7 @@
 html { max-width: 70ch; padding: 1ch; margin: auto; color: #111; background-color: #eed }
 body { hyphens: auto }
 header a { margin-right: 1ch }
+h1 { text-wrap: balance }
 label { display: inline-block; width: 10ch }
 input#search, input#id { width: 30ch }
 button { background-color: #eee; color: inherit; border-radius: 4px; border-width: 1px }
@@ -18,14 +19,14 @@ img { max-width: 100% }
     </style>
   </head>
   <body>
-    <header id="view">
+    <header>
       <a href="#main">Skip</a>
       <a href="index">Home</a>
       <a href="changes">Changes</a>
       <a href="/edit/{{.Path}}" accesskey="e">Edit</a>
       <a href="/add/{{.Path}}" accesskey="a">Add</a>
       <a href="/diff/{{.Path}}" accesskey="d">Diff</a>
-      <a href="/upload/{{.Dir}}?filename={{.Base}}-1.jpg" accesskey="u">Upload</a>
+      <a href="/upload/{{.Dir}}?filename={{.Base}}-1.jpg&pagename={{.Base}}" accesskey="u">Upload</a>
       <a href="/archive/{{.Dir}}data.zip" accesskey="u">Zip</a>
       <form role="search" action="/search/{{.Dir}}" method="GET">
         <label for="search">Search:</label>
@@ -38,7 +39,7 @@ img { max-width: 100% }
         <button>Edit</button>
       </form>
     </header>
-    <main id="main">
+    <main>
       <h1>{{.Title}}</h1>
       {{.Html}}
     </main>
