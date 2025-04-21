@@ -2,7 +2,6 @@ SHELL=/usr/bin/fish
 
 # Manually figure out what needs to change:
 # (ediff-directories "alexschroeder.ch" "/ssh:sibirocobombus:alexschroeder.ch/wiki/" "html$")
-# (ediff "alexschroeder.ch/oddmu.css" "/ssh:sibirocobombus:alexschroeder.ch/css/oddmu-2025.css")
 # (ediff-directories "flying-carpet.ch" "/ssh:sibirocobombus.root:/home/claudia/flying-carpet.ch/wiki/" "html$") + fix permissions
 # (ediff-directories "campaignwiki.org" "/ssh:sibirocobombus:campaignwiki.org/data/" "html$")
 # (ediff-directories "transjovian.org" "/ssh:sibirocobombus.root:/home/oddmu/" "html$")
