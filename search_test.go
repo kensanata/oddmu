@@ -277,7 +277,7 @@ The silence streches.`)}
 	p.save()
 	data := url.Values{}
 	data.Set("q", "look")
-	body := assert.HTTPBody(makeHandler(searchHandler, false), "GET", "/search/", data)
+	body := assert.HTTPBody(makeHandler(searchHandler, false), "GET", "/search/testdata/question/", data)
 	assert.Contains(t, body, "We <b>look</b>")
 	assert.NotContains(t, body, "Odd?")
 	assert.Contains(t, body, "Even?")
