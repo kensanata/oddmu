@@ -300,3 +300,9 @@ func searchHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		Results: len(items) > 0, More: more}
 	renderTemplate(w, dir, "search", s)
 }
+
+// Path returns the ImageData.Name with some characters escaped because html/template doesn't escape those. This is
+// suitable for use in HTML templates.
+func (img *ImageData) Path() string {
+	return pathEncode(img.Name)
+}
