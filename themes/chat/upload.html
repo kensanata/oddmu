@@ -10,9 +10,65 @@ html { max-width: 50ch; padding: 2ch; margin: auto; color: #000; background-colo
 body { hyphens: auto }
 form, textarea { width: 100% }
 label { display: inline-block; width: 7ch }
-.last { max-width: 100% }
+.upload { max-width: 100% }
 #name { width: 25ch }
     </style>
+    <script type="text/javascript">
+var uploadFiles = {
+  init: function() {
+    let e = document.getElementById('upload');
+    if (e) {
+      e.addEventListener('paste', uploadFiles.pasteHandler);
+      e.addEventListener('dragover', e => e.preventDefault());
+      e.addEventListener('drop', uploadFiles.dropHandler);
+    }
+  },
+  pasteHandler: function(e) {
+    uploadFiles.handle(e.clipboardData);
+  },
+  dropHandler: function(e) {
+    e.preventDefault();
+    uploadFiles.handle(e.dataTransfer);
+  },
+  handle: function(dataTransfer) {
+    let files = [];
+    if (dataTransfer.items) {
+      [...dataTransfer.items].forEach((item, i) => {
+        if (item.kind === "file")
+          files.push(item.getAsFile());
+      });
+    } else {
+      [...dataTransfer.files].forEach((file, i) => {
+        files.push(file);
+      });
+    }
+    if (files.length)
+      uploadFiles.post(files)
+  },
+  post: function(files) {
+    let action = document.getElementById('upload').getAttribute('action');
+    var fd = new FormData();
+    fd.append("filename", document.getElementById('filename').value);
+    fd.append("maxwidth", document.getElementById('maxwidth').value);
+    fd.append("quality", document.getElementById('quality').value);
+    for (var i = 0; i < files.length; i++) {
+      fd.append("file", files[i]);
+    }
+    try {
+      fetch(action, { method: "POST", body: fd })
+        .then(response => {
+          if (response.ok) {
+            window.location = response.url;
+          } else {
+            alert(response.text);
+          }})
+    } catch (e) {
+      alert(e);
+    }
+  },
+};
+window.addEventListener('load', uploadFiles.init);
+</script>
   </head>
   <body lang="en">
     <header>
@@ -21,30 +77,30 @@ label { display: inline-block; width: 7ch }
     </header>
     <main>
       <h1>Upload</h1>
-      {{if ne .Last ""}}
-      {{if .Image}}
-      <p><img class="last" src="/view/{{.Dir}}{{.Last}}">
-      {{end}}
-      <p>Use the following to post the image:
-      <pre>![]({{.Last}})</a></pre>
-      <form id="add" action="/append/{{.Dir}}{{.Base}}" method="POST">
-        <input type="hidden" name="body" value="{{range .Actual}}![]({{.}})
+    {{if .Uploads}}
+    <p>Previous uploads:
+    <p>{{range .Uploads}}
+      {{if .Image}}<img class="upload" src="/view/{{$.Dir}}{{.Path}}">{{else}}<a class="upload" href="/view/{{$.Dir}}{{.Path}}">{{end}}{{end}}
+    <form id="add" action="/append/{{.Dir}}{{.Path}}" method="POST">
+      <input type="hidden" name="body" value="{{range .Uploads}}{{if .Image}}!{{end}}[{{.Name}}]({{.Path}})
 {{end}}">
-        <p>Append this to <a href="/view/{{.Dir}}{{.Base}}">{{.Title}}</a>?
-        <input type="submit" value="Add">
+      <input type="hidden" name="pagename" value="{{.Name}}">
+      <p>Append it to <a href="/view/{{.Dir}}{{.Path}}">{{.Title}}</a>?
+      <input type="submit" value="Add">
       </form>
       {{end}}
       <form id="upload" action="/drop/{{.Dir}}" method="POST" enctype="multipart/form-data">
         <p>What name to use for the uploads.
           Make sure to increase the number at the end if you already uploaded images!
           If you don’t, your upload overwrites the existing images.
-        <p><label for="text">Name:</label>
-          <input id="name" name="name" value="{{.Name}}" type="text" autofocus required>
-          <input name="maxwidth" value="1200" type="hidden">
-          <input name="quality" value="75" type="hidden">
+        <p><label for="filename">Name:</label>
+          <input id="filename" name="filename" value="{{.FileName}}" type="text" placeholder="image-1.jpg" autofocus required>
+          <input id="maxwidth" name="maxwidth" value="1200" type="hidden">
+          <input id="quality" name="quality" value="75" type="hidden">
         <p><label for="file">Photos:</label>
           <input type="file" name="file" required multiple>
         <p><input type="submit" value="Upload">
+          <a href="/view/{{.Dir}}{{.Path}}"><button type="button">Cancel</button></a>
       </form>
     <main>
   </body>
