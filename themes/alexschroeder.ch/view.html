@@ -3,20 +3,45 @@
   <head>
     <meta charset="utf-8">
     <meta name="format-detection" content="telephone=no">
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <title>{{.Title}}</title>
-    <link href="oddmu.css" rel="stylesheet" />
+    <style>
+html { max-width: 70ch; padding: 1ch; margin: auto; color: #111; background-color: #ffe }
+body { hyphens: auto }
+header a { margin-right: 1ch }
+h1 { text-wrap: balance }
+form { display: inline-block }
+label { display: inline-block; width: 10ch; margin: 4px 0 }
+input#search { width: 12ch }
+button { background-color: #eee; color: inherit; border-radius: 4px; border-width: 1px }
+footer { border-top: 1px solid #888 }
+img { max-width: 100% }
+@media (prefers-color-scheme: dark) {
+    html { color: #ffe; background-color: #110 }
+    footer { border-top: 1px solid #666 }
+    .right img { border: 1px solid #111 }
+    .left img { border: 1px solid #111 }
+    pre { background-color: #333 }
+    button { background-color: #eee; color: inherit }
+    a:link { color: #1e90ff }
+    a:hover { color: #63b8ff }
+    a:visited { color: #7a67ee }
+    img { opacity: .75; transition: opacity .5s ease-in-out }
+    img:hover { opacity: 1 }
+    input, input[type="text"], textarea, button { color: #eeeee8; background-color: #555 }
+}
+    </style>
     <link rel="alternate" type="application/rss+xml" title="Alex Schroeder: {{.Title}}" href="/view/{{.Path}}.rss" />
   </head>
   <body>
-    <header id="view">
+    <header>
       <a href="#main">Skip</a>
       <a href="index">Home</a>
       <a href="changes">Changes</a>
       <a href="/edit/{{.Path}}" accesskey="e">Edit</a>
       <a href="/add/{{.Path}}" accesskey="a">Add</a>
       <a href="/diff/{{.Path}}" accesskey="d">Diff</a>
-      <a href="/upload/{{.Dir}}?filename={{.Base}}-1.jpg" accesskey="u">Upload</a>
+      <a href="/upload/{{.Dir}}?filename={{.Base}}-1.jpg&pagename={{.Base}}" accesskey="u">Upload</a>
       <form role="search" action="/search/{{.Dir}}" method="GET">
         <label for="search">Search:</label>
         <input id="search" type="text" spellcheck="false" name="q" accesskey="f" placeholder="term #tag title:term blog:true" required>

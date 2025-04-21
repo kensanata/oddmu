@@ -5,7 +5,26 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width">
     <title>Search for {{.Query}}</title>
-    <link href="oddmu.css" rel="stylesheet" />
+    <style>
+html { max-width: 70ch; padding: 2ch; margin: auto; color: #111; background-color: #ffe }
+body { hyphens: auto }
+header a { margin-right: 1ch }
+form { display: inline-block }
+input#search { width: 20ch }
+button { background-color: #eee; color: inherit; border-radius: 4px; border-width: 1px }
+.result { font-size: larger }
+.score { font-size: smaller; opacity: 0.8 }
+.image { display: inline-block; margin-right: 1em; max-width: calc(20% - 1em); font-size: small }
+.image img { max-width: 100% }
+@media (prefers-color-scheme: dark) {
+    html { color: #ffe; background-color: #110 }
+    a:link { color: #1e90ff }
+    a:hover { color: #63b8ff }
+    a:visited { color: #7a67ee }
+    img { opacity: .75; transition: opacity .5s ease-in-out }
+    img:hover { opacity: 1 }
+}
+    </style>
   </head>
   <body>
     <header>

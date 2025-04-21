@@ -5,7 +5,30 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width">
     <title>Manage Files</title>
-    <link href="oddmu.css" rel="stylesheet" />
+    <style>
+html { max-width: 70ch; padding: 2ch; margin: auto; color: #111; background-color: #ffe }
+body { hyphens: auto }
+form { width: 100% }
+hr { border-bottom: 1px }
+table { border-collapse: collapse }
+th { font-weight: normal }
+th:nth-child(3) { max-width: 3ex; overflow: visible }
+td form { display: inline }
+td { padding-right: 1ch }
+td:last-child { padding-right: 0 }
+td:first-child { max-width: 20ch; overflow: hidden }
+tr:nth-child(odd) { background-color: #eed }
+td:first-child, td:last-child { white-space: nowrap }
+@media (prefers-color-scheme: dark) {
+    html { color: #ffe; background-color: #111 }
+    a:link { color: #1e90ff }
+    a:hover { color: #63b8ff }
+    a:visited { color: #7a67ee }
+    input, button { color: #eeeee8; background-color: #555 }
+    tr:nth-child(odd) { background-color: #333 }
+    mark { color: #111; background-color: #ffa; padding: 4px; border-radius: 4px }
+}
+    </style>
   </head>
   <body lang="en">
     <header>

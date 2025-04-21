@@ -5,7 +5,21 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width">
     <title>Add to {{.Title}}</title>
-    <link href="oddmu.css" rel="stylesheet" />
+    <style>
+html { max-width: 70ch; padding: 1ch; height: calc(100% - 2ch); margin: auto }
+body { hyphens: auto; color: #111; background-color: #ffe; margin: 0; padding: 0; height: 100%; display: flex; flex-flow: column }
+form, textarea { box-sizing: border-box; width: 100%; font-size: inherit }
+#editor { flex: 1 1 auto; display: flex; flex-flow: column }
+textarea { flex: 1 1 auto }
+@media (prefers-color-scheme: dark) {
+    body { color: #ffe; background-color: #110 }
+    pre { background-color: #333 }
+    a:link { color: #1e90ff }
+    a:hover { color: #63b8ff }
+    a:visited { color: #7a67ee }
+    input, textarea, button { color: #eeeee8; background-color: #555 }
+}
+    </style>
     <script>
 window.addEventListener("load", () => {
   let t = document.getElementsByTagName('textarea').item(0);
