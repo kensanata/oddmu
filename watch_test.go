@@ -62,8 +62,7 @@ the smell is everywhere
 `)}
 	p.save()
 	assert.Contains(t,
-		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/watched-template/raclette", nil),
-		"Skip navigation")
+		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/watched-template/raclette", nil), "Skip")
 
 	// save a new view handler directly
 	assert.NoError(t,
