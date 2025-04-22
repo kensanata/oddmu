@@ -10,9 +10,11 @@
 html { max-width: 70ch; padding: 1ch; margin: auto; color: #111; background-color: #def4b5 }
 body { hyphens: auto }
 header a { margin-right: 1ch }
-h1 { text-wrap: balance }
-form { display: inline-block }
-input#search { width: 12ch }
+h1 { text-wrap: balance; background-color: #517005; color: #fff; padding: 0.2ch; margin-top: 0.1 }
+header { line-height: 1.6 }
+footer { background-color: #cd9; border-bottom:solid; margin: 3em 0 0 0; padding: 1ch; border-top:2px solid }
+label { display: inline-block; width: 10ch }
+input[type=text] { width: 25ch }
 button { background-color: #eee; color: inherit; border-radius: 4px; border-width: 1px }
 footer { border-top: 1px solid #888 }
 img { max-width: 100% }
@@ -21,12 +23,13 @@ img { max-width: 100% }
   <body>
     <header id="view">
       <a href="#main">Skip</a>
-      <a href="/view/index">Home</a>
-      <a href="/edit/{{.Path}}" accesskey="e">Edit</a>
-      <a href="/add/{{.Path}}" accesskey="a">Add</a>
-      <a href="/diff/{{.Path}}" accesskey="d">Diff</a>
-      <a href="/archive/{{.Dir}}data.zip" accesskey="z">Zip</a>
-      <a href="/upload/{{.Dir}}?filename={{.Base}}-1.jpg&pagename={{.Base}}" accesskey="u">Upload</a>
+      <a href="index">Home</a>
+      <a href="changes">Changes</a>
+      <a href="/edit/{{.Name}}" accesskey="e">Edit</a>
+      <a href="/add/{{.Name}}" accesskey="a">Add</a>
+      <a href="/diff/{{.Name}}" accesskey="d">Diff</a>
+      <a href="/upload/{{.Dir}}?filename={{.Base}}-1.jpg" accesskey="u">Upload</a>
+      <a href="/archive/{{.Dir}}data.zip" accesskey="u">Zip</a>
       <form role="search" action="/search/{{.Dir}}" method="GET">
         <label for="search">Search:</label>
         <input id="search" type="text" spellcheck="false" name="q" accesskey="f" placeholder="term #tag title:term blog:true" required>
@@ -38,7 +41,7 @@ img { max-width: 100% }
         <button>Edit</button>
       </form>
     </header>
-    <main>
+    <main id="main">
       <h1>{{.Title}}</h1>
       {{.Html}}
     </main>
