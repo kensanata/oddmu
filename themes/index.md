@@ -6,6 +6,7 @@ your own sites.
 
 - [themes/alexschroeder.ch](alexschroeder.ch/README)
 - [themes/campaignwiki.org](campaignwiki.org/README)
+- [themes/communitywiki.org](communitywiki.org/README)
 - [themes/flying-carpet.ch](flying-carpet.ch/README)
 - [themes/transjovian.org](transjovian.org/README)
 

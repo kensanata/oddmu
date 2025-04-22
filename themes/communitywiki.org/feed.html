@@ -1,0 +1,27 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+    <title>{{.Title}}</title>
+    <link>https://campaignwiki.org/view/{{.Name}}</link>
+    <webMaster>alex@alexschroeder.ch (Alex Schroeder)</webMaster>
+    <atom:link href="https://campaignwiki.org/view/{{.Name}}.rss" rel="self" type="application/rss+xml"/>
+    <description>This is the feed for the campaign wiki {{.Title}}.</description>
+    <image>
+      <url>https://campaignwiki.org/blue-mountain-logo.jpg</url>
+      <title>{{.Title}}</title>
+      <link>https://campaignwiki.org/view/{{.Name}}</link>
+    </image>
+    {{range .Items}}
+    <item>
+      <title>{{.Title}}</title>
+      <link>https://campaignwiki.org/view/{{.Name}}</link>
+      <guid>https://campaignwiki.org/view/{{.Name}}</guid>
+      <description>{{.Html}}</description>
+      <pubDate>{{.Date}}</pubDate>
+      {{range .Hashtags}}
+      <category>{{.}}</category>
+      {{end}}
+    </item>
+    {{end}}
+  </channel>
+</rss>

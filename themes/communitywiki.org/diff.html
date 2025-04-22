@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="{{.Language}}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>{{.Title}}</title>
+    <style>
+html { max-width: 70ch; padding: 1ch; margin: auto; color: #111; background-color: #def4b5 }
+body { hyphens: auto }
+del  { background-color: #fab }
+ins  { background-color: #af8 }
+pre { white-space: normal; background-color: white; border: 1px solid #eee; padding: 1ch }
+    </style>
+  </head>
+  <body>
+    <header>
+      <a href="/view/{{.Path}}">Back</a>
+    </header>
+    <main id="main">
+      <h1>{{.Title}}</h1>
+      <p>This is the diff between <a href="/view/{{.Path}}.md~">the backup</a> and <a href="/view/{{.Path}}.md">the current copy</a>.</p>
+      <pre>
+{{.Diff}}
+      </pre>
+    </main>
+  </body>
+</html>
