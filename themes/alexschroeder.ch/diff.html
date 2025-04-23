@@ -23,15 +23,10 @@ pre { white-space: normal; background-color: white; border: 1px solid #eee; padd
     </style>
   </head>
   <body>
-    <header>
-      <a href="/view/{{.Path}}">Back</a>
-    </header>
-    <main id="main">
-      <h1>{{.Title}}</h1>
-      <p>This is the diff between <a href="/view/{{.Path}}.md~">the backup</a> and <a href="/view/{{.Path}}.md">the current copy</a>.</p>
-      <pre>
+    <h1>{{.Title}}</h1>
+    <p>This is the diff between <a href="/view/{{.Path}}.md~">the backup</a> and <a href="/view/{{.Path}}.md">the current copy</a>.</p>
+    <pre>
 {{.Diff}}
-      </pre>
-    </main>
+    </pre>
   </body>
 </html>
