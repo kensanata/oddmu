@@ -18,8 +18,11 @@ questionmark or a hash character would end the path at this character and treat
 the rest as a query parameter or fragment, respectively.
 
 You need to update the upload template ("upload.html"). Many things have
-changed! See _oddmu-templates_(5) for more. You probably want to add _filename_
-and _pagename_ parameters to the upload link.
+changed! See _oddmu-templates_(5) for more.
+
+You probably want to ensure that the upload link on the view template
+("view.html") and others, if you added it, has a _filename_ and _pagename_
+parameters.
 
 Example:
 

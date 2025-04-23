@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-RELEASES" "7" "2025-04-20"
+.TH "ODDMU-RELEASES" "7" "2025-04-23"
 .PP
 .SH NAME
 .PP
@@ -25,8 +25,11 @@ questionmark or a hash character would end the path at this character and treat
 the rest as a query parameter or fragment, respectively.\&
 .PP
 You need to update the upload template ("upload.\&html").\& Many things have
-changed!\& See \fIoddmu-templates\fR(5) for more.\& You probably want to add \fIfilename\fR
-and \fIpagename\fR parameters to the upload link.\&
+changed!\& See \fIoddmu-templates\fR(5) for more.\&
+.PP
+You probably want to ensure that the upload link on the view template
+("view.\&html") and others, if you added it, has a \fIfilename\fR and \fIpagename\fR
+parameters.\&
 .PP
 Example:
 .PP
