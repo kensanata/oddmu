@@ -223,16 +223,16 @@ use a small number of languages – or just a single language! – you can set t
 environment variable ODDMU_LANGUAGES to a comma-separated list of ISO 639-1
 codes, e.g. "en" or "en,de,fr,pt".
 
-"view.html" is used the template to render a single page and so the language
-detected is added to the "html" element.
+"view.html" is used to render a single page and so the language detected is
+added to the "html" element.
 
 "search.html" is the template used to render search results and so "en" is used
 for the "html" element and the language detected for every page in the search
 result is added to the "article" element for each snippet.
 
-"edit.html" and "add.html" are the templates used to edit a page and at that
-point, the language isn't known, so "en" is used for the "html" element and no
-language is used for the "textarea" element.
+"edit.html" and "add.html" are the templates used to edit a page. If the page
+already exists, its language is used for the "textarea" element. If the page is
+new, no language is used for the "textarea" element.
 
 # EXAMPLES
 
