@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-RELEASES" "7" "2025-04-23"
+.TH "ODDMU-RELEASES" "7" "2025-04-26"
 .PP
 .SH NAME
 .PP
@@ -15,14 +15,7 @@ oddmu-releases - what'\&s new?\&
 .PP
 This page lists user-visible features and template changes to consider.\&
 .PP
-.SS 1.17 (unreleased)
-.PP
-You need to change {{.\&Name}} to {{.\&Path}} when it is used in URLs, in the list
-template ("list.\&html").\& If you don'\&t do this, file deleting and rename may not
-work on files containing a comma, a semicolon, a questionmark or a hash
-character.\& This fix was necessary because URLs for files containing a
-questionmark or a hash character would end the path at this character and treat
-the rest as a query parameter or fragment, respectively.\&
+.SS 1.17 (2025)
 .PP
 You need to update the upload template ("upload.\&html").\& Many things have
 changed!\& See \fIoddmu-templates\fR(5) for more.\&
@@ -38,6 +31,13 @@ Example:
 <a href="/upload/{{\&.Dir}}?filename={{\&.Base}}-1\&.jpg&pagename={{\&.Base}}">Upload</a>
 .fi
 .RE
+.PP
+You need to change {{.\&Name}} to {{.\&Path}} when it is used in URLs, in the list
+template ("list.\&html").\& If you don'\&t do this, file deleting and rename may not
+work on files containing a comma, a semicolon, a questionmark or a hash
+character.\& This fix was necessary because URLs for files containing a
+questionmark or a hash character would end the path at this character and treat
+the rest as a query parameter or fragment, respectively.\&
 .PP
 Updated the example themes.\& Some of my sites got a text area that tries to take
 all the vertical space available.\& This is great for monitors in portrait mode.\&

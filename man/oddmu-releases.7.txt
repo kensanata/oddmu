@@ -8,14 +8,7 @@ oddmu-releases - what's new?
 
 This page lists user-visible features and template changes to consider.
 
-## 1.17 (unreleased)
-
-You need to change {{.Name}} to {{.Path}} when it is used in URLs, in the list
-template ("list.html"). If you don't do this, file deleting and rename may not
-work on files containing a comma, a semicolon, a questionmark or a hash
-character. This fix was necessary because URLs for files containing a
-questionmark or a hash character would end the path at this character and treat
-the rest as a query parameter or fragment, respectively.
+## 1.17 (2025)
 
 You need to update the upload template ("upload.html"). Many things have
 changed! See _oddmu-templates_(5) for more.
@@ -29,6 +22,13 @@ Example:
 ```
 <a href="/upload/{{.Dir}}?filename={{.Base}}-1.jpg&pagename={{.Base}}">Upload</a>
 ```
+
+You need to change {{.Name}} to {{.Path}} when it is used in URLs, in the list
+template ("list.html"). If you don't do this, file deleting and rename may not
+work on files containing a comma, a semicolon, a questionmark or a hash
+character. This fix was necessary because URLs for files containing a
+questionmark or a hash character would end the path at this character and treat
+the rest as a query parameter or fragment, respectively.
 
 Updated the example themes. Some of my sites got a text area that tries to take
 all the vertical space available. This is great for monitors in portrait mode.
