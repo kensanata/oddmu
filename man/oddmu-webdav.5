@@ -14,27 +14,34 @@ oddmu-webdav - how to setup Web-DAV using Apache for Oddmu
 .SH DESCRIPTION
 .PP
 With the Apache Web-DAV module enabled, users can mount the wiki as a remote
-file system and edit files using their favourite text editor.\& If you want to
-offer users direct file access to the wiki, this can be accomplished via ssh,
-sftp or Web-DAV.\&
-.PP
-The benefit of using the Apache Web-DAV module is that access has to be
-configured only once.\&
+file system and manage the files using some other tool.\& Using the Apache Web-DAV
+module means that the same user accounts can be used as for the regular wiki.\&
 .PP
 .SH CONFIGURATION
 .PP
-In the following example, "data" is not an action provided by Oddmu but an
-actual directory for Oddmu files.\& In the example below,
-"/home/alex/campaignwiki.\&org/data" is both the document root for static files
-and the data directory for Oddmu.\& This is the directory where Oddmu needs to
-run.\& When users request the "/data" path, authentication is required but the
-request is not proxied to Oddmu since the "ProxyPassMatch" directive doesn'\&t
-handle "/data".\& Instead, Apache gets to handle it.\& Since "data" is part of all
-the "LocationMatch" directives, credentials are required to save (PUT) files.\&
+Consider the "campaignwiki.\&org" site in the example below.\& This site offers
+users their own wikis.\& Thus:
 .PP
-"Dav On" enables Web-DAV for the "knochentanz" wiki.\& It is enabled for all the
-actions, but since only "/data" is handled by Apache, this has no effect for all
-the other actions, allowing us to specify the required users only once.\&
+"https://campaignwiki.\&org/" is a regular website with static files.\&
+.PP
+"https://campaignwiki.\&org/view/index" is one of the requests that gets passed to
+a Unix domain socket.\& See "Socket Activation" in \fIoddmu\fR(1).\&
+.PP
+Some of these actions are protected by basic authentication.\& A valid user is
+required to make changes to the site.\& Valid users are "admin" and "alex".\&
+.PP
+"data" is the Oddmu working directory.\& WebDAV is turned on for this directory.\& A
+shortcut has been taken, here: The "data" subdirectory requires authentication
+and offers WebDAV access.\& The other paths also require authentication and map to
+Oddmu actions.\& The fact that WebDAV access is "enabled" for the Oddmu actions
+has no effect.\& The only drawback is that "https://campaignwiki.\&org/data/" now
+requires authentication even if only used for reading.\&
+.PP
+"https://campaignwiki.\&org/view/knochentanz/index" is a separate site called
+"knochentanz".\& The only valid user is "knochentanz".\&
+.PP
+Notice how the \fIarchive\fR action is not available at the top level, only for
+subdirectories.\&
 .PP
 .nf
 .RS 4
@@ -48,27 +55,31 @@ MDomain campaignwiki\&.org
 <VirtualHost *:443>
     ServerAdmin alex@campaignwiki\&.org
     ServerName campaignwiki\&.org
+    # Static HTML, CSS, JavaScript files and so on are saved here\&.
     DocumentRoot /home/alex/campaignwiki\&.org
     <Directory /home/alex/campaignwiki\&.org>
-        Options Includes Indexes MultiViews SymLinksIfOwnerMatch
+        Options Indexes MultiViews SymLinksIfOwnerMatch
         AllowOverride All
-	Require all granted
+        Require all granted
     </Directory>
     SSLEngine on
+    # Any request to the following paths is passed on to the Unix domain socket\&.
     ProxyPassMatch 
       "^/((view|preview|diff|edit|save|add|append|upload|drop|search|archive/\&.+)/(\&.*))$" 
       "unix:/home/oddmu/campaignwiki\&.sock|http://localhost/$1"
     # /archive only for subdirectories
     Redirect "/archive/data\&.zip" "/view/archive"
+    # Making changes to the wiki requires authentication\&.
     <LocationMatch "^/(data|edit|preview|save|add|append|upload|drop)/">
       AuthType Basic
       AuthName "Password Required"
       AuthUserFile /home/oddmu/\&.htpasswd
       Require user admin alex
-    </LocationMatch>
-    <LocationMatch "^/(data|edit|preview|save|add|append|upload|drop|archive)/knochentanz">
-      Require user admin alex knochentanz
       Dav On
+    </LocationMatch>
+    # Making changes to a subdirectory requires different accounts\&.
+    <LocationMatch "^/(data|edit|preview|save|add|append|upload|drop|archive)/knochentanz">
+      Require user knochentanz
     </LocationMatch>
 </VirtualHost>
 .fi
@@ -101,9 +112,13 @@ sudo chmod g+w /home/alex/campaignwiki\&.org/data/knochentanz
 Web-DAV clients are often implemented such that they only work with servers that
 exactly match their assumptions.\& If you'\&re trying to use \fIgvfs\fR(7), the Windows
 File Explorer or the macOS Finder to edit Oddmu pages using Web-DAV, you'\&re on
-your own.\&
+your own.\& Sometimes it works.\& I'\&ve used Nemo 5.\&6.\&4 to connect to the server and
+edited files using gedit 44.\&2.\& But I'\&ve used other file managers and other
+editors with WebDAV support and they didn'\&t work very well.\&
 .PP
-This section has examples sessions using tools that work.\&
+On Windows, try third party tools like WinSCP.\&
+.PP
+This section has examples sessions using command-line tools that work.\&
 .PP
 .SS cadaver
 .PP
@@ -182,6 +197,9 @@ alex@melanobombus ~> echo test >> knochentanz/index\&.md
 .PP
 "Apache Module mod_dav".\&
 https://httpd.\&apache.\&org/docs/current/mod/mod_dav.\&html
+.PP
+"WinSCP"
+https://winscp.\&net/
 .PP
 .SH AUTHORS
 .PP
