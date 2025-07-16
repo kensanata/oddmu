@@ -48,17 +48,17 @@ MDomain campaignwiki.org
     </Directory>
     SSLEngine on
     ProxyPassMatch \
-      "^/((view|preview|diff|edit|save|add|append|upload|drop|list|delete|search|archive/.+)/(.*))$" \
+      "^/((view|preview|diff|edit|save|add|append|upload|drop|search|archive/.+)/(.*))$" \
       "unix:/home/oddmu/campaignwiki.sock|http://localhost/$1"
     # /archive only for subdirectories
     Redirect "/archive/data.zip" "/view/archive"
-    <LocationMatch "^/(data|edit|preview|save|add|append|upload|drop|list|delete)/">
+    <LocationMatch "^/(data|edit|preview|save|add|append|upload|drop)/">
       AuthType Basic
       AuthName "Password Required"
       AuthUserFile /home/oddmu/.htpasswd
       Require user admin alex
     </LocationMatch>
-    <LocationMatch "^/(data|edit|preview|save|add|append|upload|drop|list|delete|archive)/knochentanz">
+    <LocationMatch "^/(data|edit|preview|save|add|append|upload|drop|archive)/knochentanz">
       Require user admin alex knochentanz
       Dav On
     </LocationMatch>

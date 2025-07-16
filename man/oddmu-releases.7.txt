@@ -8,6 +8,15 @@ oddmu-releases - what's new?
 
 This page lists user-visible features and template changes to consider.
 
+## 1.18 (unreleased)
+
+In an effort to remove features that can be handled by the web server, the
+_list_, _delete_ and _rename_ actions were removed again. See _oddmu-webdav_(5)
+for a better solution.
+
+You probably need to remove a sentence linking to the list action from the
+upload template ("upload.html").
+
 ## 1.17 (2025)
 
 You need to update the upload template ("upload.html"). Many things have

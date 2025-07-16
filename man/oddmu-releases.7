@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-RELEASES" "7" "2025-04-26"
+.TH "ODDMU-RELEASES" "7" "2025-07-16"
 .PP
 .SH NAME
 .PP
@@ -14,6 +14,15 @@ oddmu-releases - what'\&s new?\&
 .SH DESCRIPTION
 .PP
 This page lists user-visible features and template changes to consider.\&
+.PP
+.SS 1.18 (unreleased)
+.PP
+In an effort to remove features that can be handled by the web server, the
+\fIlist\fR, \fIdelete\fR and \fIrename\fR actions were removed again.\& See \fIoddmu-webdav\fR(5)
+for a better solution.\&
+.PP
+You probably need to remove a sentence linking to the list action from the
+upload template ("upload.\&html").\&
 .PP
 .SS 1.17 (2025)
 .PP

@@ -197,9 +197,6 @@ func serve() {
 	mux.HandleFunc("/append/", makeHandler(appendHandler, true))
 	mux.HandleFunc("/upload/", makeHandler(uploadHandler, false))
 	mux.HandleFunc("/drop/", makeHandler(dropHandler, false))
-	mux.HandleFunc("/list/", makeHandler(listHandler, false))
-	mux.HandleFunc("/delete/", makeHandler(deleteHandler, true))
-	mux.HandleFunc("/rename/", makeHandler(renameHandler, true))
 	mux.HandleFunc("/search/", makeHandler(searchHandler, false))
 	srv := &http.Server{
 		ReadTimeout:  2 * time.Minute,

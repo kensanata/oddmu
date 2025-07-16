@@ -363,9 +363,6 @@ Unfassbar, all das`)}
 	assert.Contains(t,
 		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/umlaut/%C3%A4rger.txt", nil),
 		"Hello!")
-	assert.Contains(t,
-		assert.HTTPBody(makeHandler(listHandler, false), "GET", "/list/testdata/umlaut/", nil),
-		"ärger.txt")
 }
 
 func TestUploadHash(t *testing.T) {
@@ -400,8 +397,5 @@ I wait my number`)}
 	assert.Contains(t,
 		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/%23hash/%23number.txt", nil),
 		"Hello!")
-	assert.Contains(t,
-		assert.HTTPBody(makeHandler(listHandler, false), "GET", "/list/testdata/%23hash/", nil),
-		"#number.txt")
 	assert.FileExists(t, "testdata/#hash/#number.txt")
 }

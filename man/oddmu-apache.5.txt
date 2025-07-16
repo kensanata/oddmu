@@ -40,7 +40,7 @@ ServerAdmin alex@alexschroeder.ch
 <VirtualHost *:443>
   ServerName transjovian.org
   SSLEngine on
-  ProxyPassMatch "^/((view|preview|diff|edit|save|add|append|upload|drop|list|delete|rename|search|archive)/(.*))?$" \
+  ProxyPassMatch "^/((view|preview|diff|edit|save|add|append|upload|drop|search|archive)/(.*))?$" \
                  "http://localhost:8080/$1"
 </VirtualHost>
 ```
@@ -106,13 +106,13 @@ ServerAdmin alex@alexschroeder.ch
   ServerName transjovian.org
   ProxyPassMatch "^/((view|diff|search|archive)/(.*))?$" \
                  "http://localhost:8080/$1"
-  RedirectMatch  "^/((edit|save|add|append|upload|drop|list|delete|rename)/(.*))?$" \
+  RedirectMatch  "^/((edit|save|add|append|upload|drop)/(.*))?$" \
                  "https://transjovian.org/$1"
 </VirtualHost>
 <VirtualHost *:443>
   ServerName transjovian.org
   SSLEngine on
-  ProxyPassMatch "^/((view|preview|diff|edit|save|add|append|upload|drop|list|delete|rename|search|archive)/(.*))?$" \
+  ProxyPassMatch "^/((view|preview|diff|edit|save|add|append|upload|drop|search|archive)/(.*))?$" \
                  "http://localhost:8080/$1"
 </VirtualHost>
 ```
@@ -144,7 +144,7 @@ You probably want to serve some static files as well (see *Serve static files*).
 In that case, you need to use the ProxyPassMatch directive.
 
 ```
-ProxyPassMatch "^/((view|preview|diff|edit|save|add|append|upload|drop|list|delete|rename|search|archive)/(.*))?$" \
+ProxyPassMatch "^/((view|preview|diff|edit|save|add|append|upload|drop|search|archive)/(.*))?$" \
                "unix:/run/oddmu/oddmu.sock|http://localhost/$1"
 ```
 
@@ -159,7 +159,7 @@ A workaround is to add the redirect manually and drop the question-mark:
 
 ```
 RedirectMatch "^/$" "/view/index"
-ProxyPassMatch "^/((view|preview|diff|edit|save|add|append|upload|drop|list|delete|rename|search|archive)/(.*))$" \
+ProxyPassMatch "^/((view|preview|diff|edit|save|add|append|upload|drop|search|archive)/(.*))$" \
                "unix:/run/oddmu/oddmu.sock|http://localhost/$1"
 ```
 
@@ -197,11 +197,11 @@ htpasswd -D .htpasswd berta
 ```
 
 Modify your site configuration and protect the "/edit/", "/save/", "/add/",
-"/append/", "/upload/", "/drop/", "/list/", "/delete/" and "/rename/" URLs with
-a password by adding the following to your "<VirtualHost \*:443>" section:
+"/append/", "/upload/" and "/drop/" URLs with a password by adding the following
+to your "<VirtualHost \*:443>" section:
 
 ```
-<LocationMatch "^/(edit|save|add|append|upload|drop|list|delete|rename)/">
+<LocationMatch "^/(edit|save|add|append|upload|drop)/">
   AuthType Basic
   AuthName "Password Required"
   AuthUserFile /home/oddmu/.htpasswd
@@ -234,7 +234,7 @@ You need to configure the web server to prevent access to the "secret/"
 directory:
 
 ```
-<LocationMatch "^/(edit|save|add|append|upload|drop|list|delete|rename|(view|preview|search|archive)/secret)/">
+<LocationMatch "^/(edit|save|add|append|upload|drop|(view|preview|search|archive)/secret)/">
   AuthType Basic
   AuthName "Password Required"
   AuthUserFile /home/oddmu/.htpasswd
@@ -257,9 +257,8 @@ DocumentRoot /home/oddmu
 
 Make sure that none of the subdirectories look like the wiki paths "/view/",
 "/diff/", "/edit/", "/save/", "/add/", "/append/", "/upload/", "/drop/",
-"/list", "/delete/", "/rename/" "/search/" or "/archive/". For example, create a
-file called "robots.txt" containing the following, telling all robots that
-they're not welcome.
+"/search/" or "/archive/". For example, create a file called "robots.txt"
+containing the following, telling all robots that they're not welcome.
 
 ```
 User-agent: *
@@ -302,7 +301,7 @@ password file mentioned above.
 This requires a valid login by the user "alex" or "berta":
 
 ```
-<LocationMatch "^/(edit|save|add|append|upload|drop|list|delete|rename)/intetebi/">
+<LocationMatch "^/(edit|save|add|append|upload|drop)/intetebi/">
   Require user alex berta
 </LocationMatch>
 ```
