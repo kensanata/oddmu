@@ -16,6 +16,8 @@ help:
 	@echo "    just build it"
 	@echo make install
 	@echo "    install the files to ~/.local"
+	@echo sudo make install PREFIX=/usr/local
+	@echo "    install the files to /usr/local"
 	@echo make upload
 	@echo "    this is how I upgrade my server"
 	@echo make dist
