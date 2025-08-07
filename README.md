@@ -1,28 +1,35 @@
 # Oddμ: A minimal wiki
 
-This program helps you run a minimal wiki, blog, digital garden, memex
-or Zettelkasten. There is no version history.
+Oddμ (or Oddmu) helps you run a minimal wiki, blog, digital garden,
+memex or Zettelkasten.
 
-It's well suited as a self-hosted, single-user web application, when
-there is no need for collaboration on the site itself. Links and email
-connect you to the rest of the net. The wiki can be public or private.
-Perhaps it just runs on your local machine, unreachable from the
-Internet.
+Oddμ can be run as a static site generator, processing a directory
+with Markdown files, turning them into HTML files. HTML templates
+allow the customisation of headers, footers and styling. There are no
+plugins.
 
-It's well suited as a secondary medium for a close-knit group:
+Oddμ is well suited as a self-hosted, single-user web application,
+when there is no need for collaboration on the site itself. Links and
+email connect you to the rest of the net. The wiki can be public or
+private.
+
+If the site is public, use a regular web server as a proxy to make
+people log in before making changes. As there is no version history,
+it is not possible to undo vandalism and spam. Only grant write-access
+to people you trust.
+
+If the site is private, running on a local machine and unreachable
+from the Internet, no such precautions are necessary.
+
+Oddμ is well suited as a secondary medium for a close-knit group:
 collaboration and conversation happens elsewhere, in chat, on social
 media. The wiki serves as the text repository that results from these
-discussions. As there are no logins and no version histories, it is
-not possible to undo vandalism and spam. Only allow people you trust
-write-access to the site.
-
-It's well suited as a simple static site generator. There are no
-plugins.
+discussions.
 
 When Oddμ runs as a web server, it serves all the Markdown files
 (ending in `.md`) as web pages. These pages can be edited via the web.
 
-Oddmu adds the following extensions to Markdown: local links `[[like
+Oddμ adds the following extensions to Markdown: local links `[[like
 this]]`, hashtags `#Like_This` and fediverse account links like
 `@alex@alexschroeder.ch`.
 
@@ -42,15 +49,15 @@ available:
 
 [oddmu(1)](https://alexschroeder.ch/view/oddmu/oddmu.1): This man page
 has a short introduction to Oddmu, its configuration via templates and
-environment variables, plus points to the other man pages.
+environment variables, plus pointers to the other man pages.
 
 [oddmu(5)](https://alexschroeder.ch/view/oddmu/oddmu.5): This man page
-talks about the Markdown and includes some examples for the
-non-standard features such as table markup. It also talks about the
-Oddmu extensions to Markdown: wiki links, hashtags and fediverse
-account links. Local links must use percent encoding for page names so
-there is a section about percent encoding. The man page also explains
-how feeds are generated.
+talks about Markdown and includes some examples for the non-standard
+features such as table markup. It also talks about the Oddmu
+extensions to Markdown: wiki links, hashtags and fediverse account
+links. Local links must use percent encoding for page names so there
+is a section about percent encoding. The man page also explains how
+feeds are generated.
 
 [oddmu-releases(7)](https://alexschroeder.ch/view/oddmu/oddmu-releases.7):
 This man page lists all the Oddmu versions and their user-visible
