@@ -34,10 +34,6 @@ func (*exportCmd) Usage() string {
   it:
 
     oddmu export > /tmp/export.rss
-
-  Options:
-
-  -template "filename" specifies the template to use (default: feed.html)
 `
 }
 
