@@ -10,8 +10,13 @@ import (
 // otherwise the rendered template has garbage bytes at the end. Note also that we need to remove the title from the
 // page so that the preview works as intended (and much like the "view.html" template) where as the editing requires the
 // page content including the header… which is why it needs to be added in the "preview.html" template. This makes me
-// sad.
+// sad. While viewing the preview, links will point to the /preview path. In order to handle this, regular GET requests
+// are passed on the the {viewHandler}.
 func previewHandler(w http.ResponseWriter, r *http.Request, path string) {
+	if r.Method != http.MethodPost {
+		http.Redirect(w, r, "/view/" + strings.TrimPrefix(path, "/preview/"), http.StatusFound)
+		return
+	}
 	body := strings.ReplaceAll(r.FormValue("body"), "\r", "")
 	p := &Page{Name: path, Body: []byte(body)}
 	p.handleTitle(true)
