@@ -16,24 +16,24 @@ func TestEditSave(t *testing.T) {
 	data.Set("body", "Hallo!")
 
 	// View of the non-existing page redirects to the edit page
-	HTTPRedirectTo(t, makeHandler(viewHandler, false),
+	HTTPRedirectTo(t, makeHandler(viewHandler, false, http.MethodGet),
 		"GET", "/view/testdata/save/alex", nil, "/edit/testdata/save/alex")
 	// Edit page can be fetched
-	assert.HTTPStatusCode(t, makeHandler(editHandler, true),
+	assert.HTTPStatusCode(t, makeHandler(editHandler, true, http.MethodGet),
 		"GET", "/edit/testdata/save/alex", nil, 200)
 	// Posting to the save URL saves a page
-	HTTPRedirectTo(t, makeHandler(saveHandler, true),
+	HTTPRedirectTo(t, makeHandler(saveHandler, true, http.MethodPost),
 		"POST", "/save/testdata/save/alex", data, "/view/testdata/save/alex")
 	// Page now contains the text
-	assert.Contains(t, assert.HTTPBody(makeHandler(viewHandler, false),
+	assert.Contains(t, assert.HTTPBody(makeHandler(viewHandler, false, http.MethodGet),
 		"GET", "/view/testdata/save/alex", nil),
 		"Hallo!")
 	// Delete the page and you're sent to the empty page
 	data.Set("body", "")
-	HTTPRedirectTo(t, makeHandler(saveHandler, true),
+	HTTPRedirectTo(t, makeHandler(saveHandler, true, http.MethodPost),
 		"POST", "/save/testdata/save/alex", data, "/view/testdata/save/alex")
 	// Viewing the non-existing page redirects to the edit page (like in the beginning)
-	HTTPRedirectTo(t, makeHandler(viewHandler, false),
+	HTTPRedirectTo(t, makeHandler(viewHandler, false, http.MethodGet),
 		"GET", "/view/testdata/save/alex", nil, "/edit/testdata/save/alex")
 }
 
@@ -44,7 +44,7 @@ func TestEditSaveChanges(t *testing.T) {
 	data.Add("notify", "on")
 	today := time.Now().Format("2006-01-02")
 	// Posting to the save URL saves a page
-	HTTPRedirectTo(t, makeHandler(saveHandler, true),
+	HTTPRedirectTo(t, makeHandler(saveHandler, true, http.MethodPost),
 		"POST", "/save/testdata/notification/"+today,
 		data, "/view/testdata/notification/"+today)
 	// The changes.md file was created
@@ -73,15 +73,15 @@ func TestEditId(t *testing.T) {
 	cleanup(t, "testdata/id")
 	data := url.Values{}
 	data.Set("id", "testdata/id/alex")
-	assert.HTTPStatusCode(t, makeHandler(editHandler, true),
+	assert.HTTPStatusCode(t, makeHandler(editHandler, true, http.MethodGet),
 		"GET", "/edit/", data, http.StatusBadRequest,
 		"No slashes in id")
 	data.Set("id", ".alex")
-	assert.HTTPStatusCode(t, makeHandler(editHandler, true),
+	assert.HTTPStatusCode(t, makeHandler(editHandler, true, http.MethodGet),
 		"GET", "/edit/", data, http.StatusForbidden,
 		"No hidden files")
 	data.Set("id", "alex")
-	assert.Contains(t, assert.HTTPBody(makeHandler(editHandler, true),
+	assert.Contains(t, assert.HTTPBody(makeHandler(editHandler, true, http.MethodGet),
 		"GET", "/edit/testdata/id/", data),
 		"Editing testdata/id/alex")
 }

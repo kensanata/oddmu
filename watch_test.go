@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/stretchr/testify/assert"
+	"net/http"
 	"os"
 	"testing"
 	"time"
@@ -62,7 +63,7 @@ the smell is everywhere
 `)}
 	p.save()
 	assert.Contains(t,
-		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/watched-template/raclette", nil), "Skip")
+		assert.HTTPBody(makeHandler(viewHandler, false, http.MethodGet), "GET", "/view/testdata/watched-template/raclette", nil), "Skip")
 
 	// save a new view handler directly
 	assert.NoError(t,
@@ -82,7 +83,7 @@ the smell is everywhere
 
 	watches.watchTimer(path)
 
-	body := assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/"+name, nil)
+	body := assert.HTTPBody(makeHandler(viewHandler, false, http.MethodGet), "GET", "/view/"+name, nil)
 	assert.Contains(t, body, "<h1>Raclette</h1>") // page text is still there
 	assert.NotContains(t, body, "Skip")           // but the header is not
 }

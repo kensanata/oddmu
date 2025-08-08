@@ -45,8 +45,17 @@ func isHiddenName (name string) bool {
 // handle itself is called with the remaining URL path fragment. Any path segment beginning with a period is rejected
 // because it's considered to be a hidden file or directory. This also takes care of path traversal since ".." is
 // treated the same.
-func makeHandler(fn func(http.ResponseWriter, *http.Request, string), required bool) http.HandlerFunc {
+func makeHandler(fn func(http.ResponseWriter, *http.Request, string), required bool, methods ...string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		validMethod := false
+		for i := range methods {
+			if r.Method == methods[i] {
+				validMethod = true
+			}
+		}
+		if !validMethod {
+			http.Error(w, fmt.Sprintf("bad request method %s in %v", r.Method, methods), http.StatusMethodNotAllowed)
+		}
 		if isHiddenName(r.URL.Path) {
 			http.Error(w, "can neither confirm nor deny the existence of this resource", http.StatusForbidden)
 			return
@@ -187,17 +196,17 @@ func serve() {
 	go scheduleInstallWatcher()
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", rootHandler)
-	mux.HandleFunc("/archive/", makeHandler(archiveHandler, true))
-	mux.HandleFunc("/view/", makeHandler(viewHandler, false))
-	mux.HandleFunc("/preview/", makeHandler(previewHandler, false))
-	mux.HandleFunc("/diff/", makeHandler(diffHandler, true))
-	mux.HandleFunc("/edit/", makeHandler(editHandler, true))
-	mux.HandleFunc("/save/", makeHandler(saveHandler, true))
-	mux.HandleFunc("/add/", makeHandler(addHandler, true))
-	mux.HandleFunc("/append/", makeHandler(appendHandler, true))
-	mux.HandleFunc("/upload/", makeHandler(uploadHandler, false))
-	mux.HandleFunc("/drop/", makeHandler(dropHandler, false))
-	mux.HandleFunc("/search/", makeHandler(searchHandler, false))
+	mux.HandleFunc("/archive/", makeHandler(archiveHandler, true, http.MethodGet))
+	mux.HandleFunc("/view/", makeHandler(viewHandler, false, http.MethodGet, http.MethodHead))
+	mux.HandleFunc("/preview/", makeHandler(previewHandler, false, http.MethodGet, http.MethodPost))
+	mux.HandleFunc("/diff/", makeHandler(diffHandler, true, http.MethodGet))
+	mux.HandleFunc("/edit/", makeHandler(editHandler, true, http.MethodGet))
+	mux.HandleFunc("/save/", makeHandler(saveHandler, true, http.MethodPost))
+	mux.HandleFunc("/add/", makeHandler(addHandler, true, http.MethodGet))
+	mux.HandleFunc("/append/", makeHandler(appendHandler, true, http.MethodPost))
+	mux.HandleFunc("/upload/", makeHandler(uploadHandler, false, http.MethodGet))
+	mux.HandleFunc("/drop/", makeHandler(dropHandler, false, http.MethodPost))
+	mux.HandleFunc("/search/", makeHandler(searchHandler, false, http.MethodGet, http.MethodPost))
 	srv := &http.Server{
 		ReadTimeout:  2 * time.Minute,
 		WriteTimeout: 5 * time.Minute,

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"net/http"
 	"net/url"
 	"slices"
 	"testing"
@@ -63,15 +64,15 @@ func TestSearch(t *testing.T) {
 	data := url.Values{}
 	data.Set("q", "oddμ")
 
-	body := assert.HTTPBody(makeHandler(searchHandler, false), "GET", "/search/", data)
+	body := assert.HTTPBody(makeHandler(searchHandler, false, http.MethodGet), "GET", "/search/", data)
 	assert.Contains(t, body, "Welcome")
 	assert.Contains(t, body, `<span class="score">5</span>`)
 
-	body = assert.HTTPBody(makeHandler(searchHandler, false), "GET", "/search/testdata", data)
+	body = assert.HTTPBody(makeHandler(searchHandler, false, http.MethodGet), "GET", "/search/testdata", data)
 	assert.NotContains(t, body, "Welcome")
 
 	data.Set("q", "'create a new page'")
-	body = assert.HTTPBody(makeHandler(searchHandler, false), "GET", "/search/", data)
+	body = assert.HTTPBody(makeHandler(searchHandler, false, http.MethodGet), "GET", "/search/", data)
 	assert.Contains(t, body, "Welcome")
 }
 
@@ -158,16 +159,16 @@ Where is lady luck?`)}
 	data := url.Values{}
 	data.Set("q", "luck")
 
-	body := assert.HTTPBody(makeHandler(searchHandler, false), "GET", "/search/", data)
+	body := assert.HTTPBody(makeHandler(searchHandler, false, http.MethodGet), "GET", "/search/", data)
 	assert.Contains(t, body, "luck")
 
-	body = assert.HTTPBody(makeHandler(searchHandler, false), "GET", "/search/testdata", data)
+	body = assert.HTTPBody(makeHandler(searchHandler, false, http.MethodGet), "GET", "/search/testdata", data)
 	assert.Contains(t, body, "luck")
 
-	body = assert.HTTPBody(makeHandler(searchHandler, false), "GET", "/search/testdata/dir", data)
+	body = assert.HTTPBody(makeHandler(searchHandler, false, http.MethodGet), "GET", "/search/testdata/dir", data)
 	assert.Contains(t, body, "luck")
 
-	body = assert.HTTPBody(makeHandler(searchHandler, false), "GET", "/search/testdata/other", data)
+	body = assert.HTTPBody(makeHandler(searchHandler, false, http.MethodGet), "GET", "/search/testdata/other", data)
 	assert.Contains(t, body, "No results")
 }
 
@@ -277,7 +278,7 @@ The silence streches.`)}
 	p.save()
 	data := url.Values{}
 	data.Set("q", "look")
-	body := assert.HTTPBody(makeHandler(searchHandler, false), "GET", "/search/testdata/question/", data)
+	body := assert.HTTPBody(makeHandler(searchHandler, false, http.MethodGet), "GET", "/search/testdata/question/", data)
 	assert.Contains(t, body, "We <b>look</b>")
 	assert.NotContains(t, body, "Odd?")
 	assert.Contains(t, body, "Even?")

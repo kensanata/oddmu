@@ -11,6 +11,7 @@ import (
 	"image/png"
 	"mime"
 	"mime/multipart"
+	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -21,7 +22,7 @@ func TestUpload(t *testing.T) {
 	cleanup(t, "testdata/files")
 	// for uploads, the directory is not created automatically
 	os.MkdirAll("testdata/files", 0755)
-	assert.HTTPStatusCode(t, makeHandler(uploadHandler, false), "GET", "/upload/testdata/files/", nil, 200)
+	assert.HTTPStatusCode(t, makeHandler(uploadHandler, false, http.MethodGet), "GET", "/upload/testdata/files/", nil, 200)
 	form := new(bytes.Buffer)
 	writer := multipart.NewWriter(form)
 	field, err := writer.CreateFormField("filename")
@@ -34,10 +35,10 @@ func TestUpload(t *testing.T) {
 	assert.NoError(t, err)
 	err = writer.Close()
 	assert.NoError(t, err)
-	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/files/",
+	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false, http.MethodPost), "/drop/testdata/files/",
 		writer.FormDataContentType(), form, "/upload/testdata/files/?filename=ok.txt&uploads=ok.txt")
 	assert.Contains(t,
-		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/files/ok.txt", nil),
+		assert.HTTPBody(makeHandler(viewHandler, false, http.MethodGet), "GET", "/view/testdata/files/ok.txt", nil),
 		"Hello!")
 }
 
@@ -53,7 +54,7 @@ func TestUploadPng(t *testing.T) {
 	img := image.NewRGBA(image.Rect(0, 0, 20, 20))
 	png.Encode(file, img)
 	writer.Close()
-	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/png/",
+	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false, http.MethodPost), "/drop/testdata/png/",
 		writer.FormDataContentType(), form, "/upload/testdata/png/?filename=ok.png&uploads=ok.png")
 }
 
@@ -69,7 +70,7 @@ func TestUploadJpg(t *testing.T) {
 	img := image.NewRGBA(image.Rect(0, 0, 20, 20))
 	jpeg.Encode(file, img, &jpeg.Options{Quality: 90})
 	writer.Close()
-	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/jpg/",
+	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false, http.MethodPost), "/drop/testdata/jpg/",
 		writer.FormDataContentType(), form, "/upload/testdata/jpg/?filename=ok.jpg&uploads=ok.jpg")
 }
 
@@ -97,7 +98,7 @@ YXQAAAApKAGvEyE1mvXho5qH3STtzcWnOxedwNIXAKNDaJNqz3uONoCHeUhi/HA=`
 	assert.NoError(t, err)
 	file.Write(img)
 	writer.Close()
-	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/heic/",
+	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false, http.MethodPost), "/drop/testdata/heic/",
 		writer.FormDataContentType(), form, "/upload/testdata/heic/?filename=ok.jpg&uploads=ok.jpg")
 	fp := "testdata/heic/ok.jpg"
 	fi, err := os.Open(fp)
@@ -120,7 +121,7 @@ func TestUploadWebp(t *testing.T) {
 	img := image.NewRGBA(image.Rect(0, 0, 20, 20))
 	webp.Encode(file, img)
 	writer.Close()
-	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/webp/",
+	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false, http.MethodPost), "/drop/testdata/webp/",
 		writer.FormDataContentType(), form, "/upload/testdata/webp/?filename=ok.jpg&uploads=ok.jpg")
 	fp := "testdata/webp/ok.jpg"
 	fi, err := os.Open(fp)
@@ -143,7 +144,7 @@ func TestConvertToWebp(t *testing.T) {
 	img := image.NewRGBA(image.Rect(0, 0, 20, 20))
 	png.Encode(file, img)
 	writer.Close()
-	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/towebp/",
+	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false, http.MethodPost), "/drop/testdata/towebp/",
 		writer.FormDataContentType(), form, "/upload/testdata/towebp/?filename=ok.webp&uploads=ok.webp")
 	fp := "testdata/towebp/ok.webp"
 	fi, err := os.Open(fp)
@@ -172,7 +173,7 @@ What happened just now?`), 0644))
 	file, _ := writer.CreateFormFile("file", "test.txt")
 	file.Write([]byte(""))
 	writer.Close()
-	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/delete/",
+	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false, http.MethodPost), "/drop/testdata/delete/",
 		writer.FormDataContentType(), form, "/upload/testdata/delete/?filename=nothing.txt&uploads=nothing.txt")
 	// check that it worked
 	assert.NoFileExists(t, "testdata/delete/nothing.txt")
@@ -188,11 +189,11 @@ But here: jasmin dreams`)}
 	p.save()
 
 	// check location for upload
-	body := assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/multi/culture", nil)
+	body := assert.HTTPBody(makeHandler(viewHandler, false, http.MethodGet), "GET", "/view/testdata/multi/culture", nil)
 	assert.Contains(t, body, `href="/upload/testdata/multi/?filename=culture-1.jpg&pagename=culture"`)
 
 	// check location for drop
-	body = assert.HTTPBody(makeHandler(uploadHandler, false), "GET", "/upload/testdata/multi/", nil)
+	body = assert.HTTPBody(makeHandler(uploadHandler, false, http.MethodGet), "GET", "/upload/testdata/multi/", nil)
 	assert.Contains(t, body, `action="/drop/testdata/multi/"`)
 
 	// actually do the upload
@@ -208,7 +209,7 @@ But here: jasmin dreams`)}
 	img := image.NewRGBA(image.Rect(0, 0, 20, 20))
 	jpeg.Encode(file, img, &jpeg.Options{Quality: 90})
 	writer.Close()
-	location := HTTPUploadLocation(t, makeHandler(dropHandler, false), "/drop/testdata/multi/",
+	location := HTTPUploadLocation(t, makeHandler(dropHandler, false, http.MethodPost), "/drop/testdata/multi/",
 		writer.FormDataContentType(), form)
 	url, _ := url.Parse(location)
 	assert.Equal(t, "/upload/testdata/multi/", url.Path, "Redirect to upload location")
@@ -218,7 +219,7 @@ But here: jasmin dreams`)}
 	assert.Equal(t, "50", values.Get("quality"))
 
 	// check the result page
-	body = assert.HTTPBody(makeHandler(uploadHandler, false), "GET", url.Path, values)
+	body = assert.HTTPBody(makeHandler(uploadHandler, false, http.MethodGet), "GET", url.Path, values)
 	assert.Contains(t, body, `value="2023-10-02-hike-2.jpg"`)
 	assert.Contains(t, body, `value="15"`)
 	assert.Contains(t, body, `value="50"`)
@@ -235,11 +236,11 @@ There is no answer`)}
 	p.save()
 
 	// check location for upload
-	body := assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/dir/test", nil)
+	body := assert.HTTPBody(makeHandler(viewHandler, false, http.MethodGet), "GET", "/view/testdata/dir/test", nil)
 	assert.Contains(t, body, `href="/upload/testdata/dir/?filename=test-1.jpg&pagename=test"`)
 
 	// check location for drop
-	body = assert.HTTPBody(makeHandler(uploadHandler, false), "GET", "/upload/testdata/dir/", nil)
+	body = assert.HTTPBody(makeHandler(uploadHandler, false, http.MethodGet), "GET", "/upload/testdata/dir/", nil)
 	assert.Contains(t, body, `action="/drop/testdata/dir/"`)
 
 	// actually do the upload
@@ -251,7 +252,7 @@ There is no answer`)}
 	img := image.NewRGBA(image.Rect(0, 0, 20, 20))
 	jpeg.Encode(file, img, &jpeg.Options{Quality: 90})
 	writer.Close()
-	location := HTTPUploadLocation(t, makeHandler(dropHandler, false), "/drop/testdata/dir/",
+	location := HTTPUploadLocation(t, makeHandler(dropHandler, false, http.MethodPost), "/drop/testdata/dir/",
 		writer.FormDataContentType(), form)
 	url, _ := url.Parse(location)
 	assert.Equal(t, "/upload/testdata/dir/", url.Path, "Redirect to upload location")
@@ -259,7 +260,7 @@ There is no answer`)}
 	assert.Equal(t, "test.jpg", values.Get("uploads"))
 
 	// check the result page
-	body = assert.HTTPBody(makeHandler(uploadHandler, false), "GET", url.Path, values)
+	body = assert.HTTPBody(makeHandler(uploadHandler, false, http.MethodGet), "GET", url.Path, values)
 	assert.Contains(t, body, `src="/view/testdata/dir/test.jpg"`)
 }
 
@@ -277,7 +278,7 @@ func TestUploadTwoInOne(t *testing.T) {
 	img2 := image.NewRGBA(image.Rect(0, 0, 20, 20))
 	jpeg.Encode(file2, img2, &jpeg.Options{Quality: 90})
 	writer.Close()
-	location := HTTPUploadLocation(t, makeHandler(dropHandler, false), "/drop/testdata/two/",
+	location := HTTPUploadLocation(t, makeHandler(dropHandler, false, http.MethodPost), "/drop/testdata/two/",
 		writer.FormDataContentType(), form)
 	url, _ := url.Parse(location)
 	assert.Equal(t, "/upload/testdata/two/", url.Path, "Redirect to upload location")
@@ -303,7 +304,7 @@ func TestUploadTwoInOneAgain(t *testing.T) {
 	img2 := image.NewRGBA(image.Rect(0, 0, 20, 20))
 	jpeg.Encode(file2, img2, &jpeg.Options{Quality: 90})
 	writer.Close()
-	location := HTTPUploadLocation(t, makeHandler(dropHandler, false), "/drop/testdata/zwei/",
+	location := HTTPUploadLocation(t, makeHandler(dropHandler, false, http.MethodPost), "/drop/testdata/zwei/",
 		writer.FormDataContentType(), form)
 	url, _ := url.Parse(location)
 	assert.Equal(t, "/upload/testdata/zwei/", url.Path, "Redirect to upload location")
@@ -340,10 +341,10 @@ Leute, die ich nie gesehen
 Unfassbar, all das`)}
 	p.save()
 	// check location for upload on a page name containing an umlaut
-	body := assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/umlaut/%C3%A4rger", nil)
+	body := assert.HTTPBody(makeHandler(viewHandler, false, http.MethodGet), "GET", "/view/testdata/umlaut/%C3%A4rger", nil)
 	assert.Contains(t, body, `href="/upload/testdata/umlaut/?filename=%c3%a4rger-1.jpg&pagename=%c3%a4rger"`) // lower case
 	// check location for drop in a directory containing an umlaut
-	body = assert.HTTPBody(makeHandler(uploadHandler, false), "GET", "/upload/%C3%A4rger/dir/", nil)
+	body = assert.HTTPBody(makeHandler(uploadHandler, false, http.MethodGet), "GET", "/upload/%C3%A4rger/dir/", nil)
 	assert.Contains(t, body, `action="/drop/%c3%a4rger/dir/"`) // changed to lowercase
 	// actual upload
 	form := new(bytes.Buffer)
@@ -358,10 +359,10 @@ Unfassbar, all das`)}
 	assert.NoError(t, err)
 	err = writer.Close()
 	assert.NoError(t, err)
-	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/umlaut/",
+	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false, http.MethodPost), "/drop/testdata/umlaut/",
 		writer.FormDataContentType(), form, "/upload/testdata/umlaut/?filename=%C3%A4rger.txt&uploads=%C3%A4rger.txt")
 	assert.Contains(t,
-		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/umlaut/%C3%A4rger.txt", nil),
+		assert.HTTPBody(makeHandler(viewHandler, false, http.MethodGet), "GET", "/view/testdata/umlaut/%C3%A4rger.txt", nil),
 		"Hello!")
 }
 
@@ -374,10 +375,10 @@ Bald and hairy, wearing hats
 I wait my number`)}
 	p.save()
 	// check location for upload on a page name containing an hash
-	body := assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/%23hash/%23number", nil)
+	body := assert.HTTPBody(makeHandler(viewHandler, false, http.MethodGet), "GET", "/view/testdata/%23hash/%23number", nil)
 	assert.Contains(t, body, `href="/upload/testdata/%23hash/?filename=%23number-1.jpg&pagename=%23number"`)
 	// check location for drop in a directory containing an hash
-	body = assert.HTTPBody(makeHandler(uploadHandler, false), "GET", "/upload/%23number/dir/", nil)
+	body = assert.HTTPBody(makeHandler(uploadHandler, false, http.MethodGet), "GET", "/upload/%23number/dir/", nil)
 	assert.Contains(t, body, `action="/drop/%23number/dir/"`)
 	// actual upload
 	form := new(bytes.Buffer)
@@ -392,10 +393,10 @@ I wait my number`)}
 	assert.NoError(t, err)
 	err = writer.Close()
 	assert.NoError(t, err)
-	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false), "/drop/testdata/%23hash/",
+	HTTPUploadAndRedirectTo(t, makeHandler(dropHandler, false, http.MethodPost), "/drop/testdata/%23hash/",
 		writer.FormDataContentType(), form, "/upload/testdata/%23hash/?filename=%23number.txt&uploads=%23number.txt")
 	assert.Contains(t,
-		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/%23hash/%23number.txt", nil),
+		assert.HTTPBody(makeHandler(viewHandler, false, http.MethodGet), "GET", "/view/testdata/%23hash/%23number.txt", nil),
 		"Hello!")
 	assert.FileExists(t, "testdata/#hash/#number.txt")
 }

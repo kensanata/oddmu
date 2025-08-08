@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"github.com/stretchr/testify/assert"
 	"mime/multipart"
+	"net/http"
 	"testing"
 )
 
@@ -18,7 +19,7 @@ Memories of cold
 `)}
 	p.save()
 	assert.Contains(t,
-		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/templates/snow", nil), "Skip")
+		assert.HTTPBody(makeHandler(viewHandler, false, http.MethodGet), "GET", "/view/testdata/templates/snow", nil), "Skip")
 	// save a new view handler
 	html := "<body><h1>{{.Title}}</h1>{{.Html}}"
 	form := new(bytes.Buffer)
@@ -32,17 +33,17 @@ Memories of cold
 	assert.NoError(t, err)
 	assert.Equal(t, len(html), n)
 	writer.Close()
-	HTTPUploadLocation(t, makeHandler(dropHandler, false), "/drop/testdata/templates/", writer.FormDataContentType(), form)
+	HTTPUploadLocation(t, makeHandler(dropHandler, false, http.MethodPost), "/drop/testdata/templates/", writer.FormDataContentType(), form)
 	assert.FileExists(t, "view.html", "original view.html still exists")
 	assert.FileExists(t, "testdata/templates/view.html", "new view.html also exists")
 	assert.Contains(t,
-		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/templates/view.html", nil),
+		assert.HTTPBody(makeHandler(viewHandler, false, http.MethodGet), "GET", "/view/testdata/templates/view.html", nil),
 		html)
 	// verify that it works
-	body := assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/testdata/templates/snow", nil)
+	body := assert.HTTPBody(makeHandler(viewHandler, false, http.MethodGet), "GET", "/view/testdata/templates/snow", nil)
 	assert.Contains(t, body, "<h1>Snow</h1>")
 	assert.NotContains(t, body, "Skip")
 	// verify that the top level still uses the old template
 	assert.Contains(t,
-		assert.HTTPBody(makeHandler(viewHandler, false), "GET", "/view/index", nil), "Skip")
+		assert.HTTPBody(makeHandler(viewHandler, false, http.MethodGet), "GET", "/view/index", nil), "Skip")
 }

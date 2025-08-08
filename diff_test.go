@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/stretchr/testify/assert"
+	"net/http"
 	"os"
 	"testing"
 	"time"
@@ -24,7 +25,7 @@ Oh so fresh, so warm.`
 	p.save()
 	p.Body = []byte(r)
 	p.save()
-	body := assert.HTTPBody(makeHandler(diffHandler, true),
+	body := assert.HTTPBody(makeHandler(diffHandler, true, http.MethodGet),
 		"GET", "/diff/testdata/diff/bread", nil)
 	assert.Contains(t, body, `<del>breathe</del>`)
 	assert.Contains(t, body, `<ins>whisper</ins>`)
@@ -47,7 +48,7 @@ Mispronouncing words`
 	p.save()
 	p.Body = []byte(r)
 	p.save()
-	body := assert.HTTPBody(makeHandler(diffHandler, true),
+	body := assert.HTTPBody(makeHandler(diffHandler, true, http.MethodGet),
 		"GET", "/diff/testdata/diff/coup%20de%20grace", nil)
 	assert.Contains(t, body, `<del>s</del>`)
 	assert.Contains(t, body, `<ins>ce</ins>`)

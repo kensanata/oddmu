@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/stretchr/testify/assert"
+	"net/http"
 	"net/url"
 	"os"
 	"regexp"
@@ -34,15 +35,15 @@ It's not `)}
 	data.Set("body", "barbecue")
 
 	assert.Regexp(t, regexp.MustCompile("a distant fire"),
-		assert.HTTPBody(makeHandler(viewHandler, false),
+		assert.HTTPBody(makeHandler(viewHandler, false, http.MethodGet),
 			"GET", "/view/testdata/add/fire", nil))
 	assert.NotRegexp(t, regexp.MustCompile("a distant fire"),
-		assert.HTTPBody(makeHandler(addHandler, true),
+		assert.HTTPBody(makeHandler(addHandler, true, http.MethodGet),
 			"GET", "/add/testdata/add/fire", nil))
-	HTTPRedirectTo(t, makeHandler(appendHandler, true),
+	HTTPRedirectTo(t, makeHandler(appendHandler, true, http.MethodPost),
 		"POST", "/append/testdata/add/fire", data, "/view/testdata/add/fire")
 	assert.Regexp(t, regexp.MustCompile(`not</p>\s*<p>barbecue`),
-		assert.HTTPBody(makeHandler(viewHandler, false),
+		assert.HTTPBody(makeHandler(viewHandler, false, http.MethodGet),
 			"GET", "/view/testdata/add/fire", nil))
 }
 
@@ -57,7 +58,7 @@ Blue and green and pebbles gray
 	data := url.Values{}
 	data.Set("body", "Stand in cold water")
 	data.Add("notify", "on")
-	HTTPRedirectTo(t, makeHandler(appendHandler, true),
+	HTTPRedirectTo(t, makeHandler(appendHandler, true, http.MethodPost),
 		"POST", "/append/testdata/append/"+today+"-water",
 		data, "/view/testdata/append/"+today+"-water")
 	// The changes.md file was created

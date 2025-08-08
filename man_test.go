@@ -71,7 +71,7 @@ func TestManActions(t *testing.T) {
 	wiki := string(b)
 	count := 0
 	// this doesn't match the root handler
-	re := regexp.MustCompile(`\.HandleFunc\("(/[a-z]+/)", makeHandler\([a-z]+Handler, (true|false)\)\)`)
+	re := regexp.MustCompile(`\.HandleFunc\("(/[a-z]+/)", makeHandler\([a-z]+Handler, (true|false)(, http\.Method(Get|Post))+\)\)`)
 	for _, match := range re.FindAllStringSubmatch(wiki, -1) {
 		count++
 		var path string
