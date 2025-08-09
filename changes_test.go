@@ -3,11 +3,66 @@ package main
 import (
 	"github.com/stretchr/testify/assert"
 	"os"
+	"regexp"
 	"testing"
 	"time"
 )
 
 // Note TestEditSaveChanges and TestAddAppendChanges.
+
+func TestAddLinkToPageWithNoList(t *testing.T) {
+	// no newlines
+	title := "# Test"
+	p := &Page{Body: []byte(title)}
+	re := regexp.MustCompile(`(?m)^\* \[[^\]]+\]\(2025-08-08\)\n`)
+	link := "* [2025-08-08](2025-08-08)\n"
+	addLinkToPage(p, link, re)
+	assert.Equal(t, title + "\n\n" + link, string(p.Body))
+}
+
+func TestAddLinkToPageWithOlderLink(t *testing.T) {
+	// one newline
+	title := "# Test\n"
+	old := "* [2025-08-08](2025-08-08)\n"
+	p := &Page{Body: []byte(title + old)}
+	re := regexp.MustCompile(`(?m)^\* \[[^\]]+\]\(2025-08-10\)\n`)
+	link := "* [2025-08-10](2025-08-10)\n"
+	addLinkToPage(p, link, re)
+	assert.Equal(t, title + "\n" + link + old, string(p.Body))
+}
+
+func TestAddLinkToPageBetweenToExistingLinks(t *testing.T) {
+	title := "# Test\n\n"
+	new := "* [2025-08-10](2025-08-10)\n"
+	old := "* [2025-08-08](2025-08-08)\n"
+	p := &Page{Body: []byte(title + new + old)}
+	re := regexp.MustCompile(`(?m)^\* \[[^\]]+\]\(2025-08-09\)\n`)
+	link := "* [2025-08-09](2025-08-09)\n"
+	addLinkToPage(p, link, re)
+	assert.Equal(t, title + new + link + old, string(p.Body))
+}
+
+func TestAddLinkToPageBetweenToExistingLinks2(t *testing.T) {
+	title := "# Test\n\n"
+	new := "* [2025-08-10](2025-08-10)\n* [2025-08-09](2025-08-09)\n"
+	old := "* [2025-08-07](2025-08-07)\n"
+	p := &Page{Body: []byte(title + new + old)}
+	re := regexp.MustCompile(`(?m)^\* \[[^\]]+\]\(2025-08-08\)\n`)
+	link := "* [2025-08-08](2025-08-08)\n"
+	addLinkToPage(p, link, re)
+	assert.Equal(t, title + new + link + old, string(p.Body))
+}
+
+func TestAddLinkToPageAtTheEnd(t *testing.T) {
+	title := "# Test\n\n"
+	new := "* [2025-08-10](2025-08-10)\n"
+	old := "* [2025-08-08](2025-08-08)\n"
+	p := &Page{Body: []byte(title + new + old)}
+	re := regexp.MustCompile(`(?m)^\* \[[^\]]+\]\(2025-08-07\)\n`)
+	link := "* [2025-08-07](2025-08-07)\n"
+	addLinkToPage(p, link, re)
+	assert.Equal(t, title + new + old + link, string(p.Body))
+}
 
 func TestChanges(t *testing.T) {
 	cleanup(t, "testdata/washing")
@@ -48,7 +103,8 @@ Home away from home
 	assert.Contains(t, string(s), line)
 	s, err = os.ReadFile("testdata/changes/Haiku.md")
 	assert.NoError(t, err)
-	assert.Equal(t, intro+line, string(s))
+	// ensure an empty line when adding at the end of the page
+	assert.Equal(t, intro+"\n"+line, string(s))
 	assert.NoFileExists(t, "testdata/changes/Poetry.md")
 }
 

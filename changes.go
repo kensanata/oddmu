@@ -154,21 +154,56 @@ func addLink(name string, mandatory bool, link string, re *regexp.Regexp) error 
 		}
 	}
 	org := string(p.Body)
+	addLinkToPage(p, link, re)
+	// only save if something changed
+	if string(p.Body) != org {
+		return p.save()
+	}
+	return nil
+}
+
+func addLinkToPage(p *Page, link string, re *regexp.Regexp) {
 	// if a link exists, that's the place to insert the new link (in which case loc[0] and loc[1] differ)
 	loc := re.FindIndex(p.Body)
 	// if no link exists, find a good place to insert it
 	if loc == nil {
-		// locate the beginning of the list to insert the line
-		re = regexp.MustCompile(`(?m)^\* \[[^\]]+\]\([^\)]+\)\n`)
-		loc = re.FindIndex(p.Body)
-		if loc == nil {
-			// if no list was found, use the end of the page
-			m := len(p.Body)
-			loc = []int{m, m}
-		} else {
-			// if a list item was found, use just the beginning as insertion point
-			loc[1] = loc[0]
+		// locate the list items
+		re = regexp.MustCompile(`(?m)^\* \[[^\]]+\]\([^\)]+\)\n?`)
+		items := re.FindAllIndex(p.Body, -1)
+		first := false
+		pos := -1
+		// skip newer items
+		for i, it := range items {
+			// break if the current line is older (earlier in sort order)
+			stop := string(p.Body[it[0]:it[1]]) < link
+			// before the first match is always a good insert point
+			if i == 0 {
+				pos = it[0]
+				first = true
+			}
+			// if we're not stopping, then after the current item is a good insert point
+			if !stop {
+				pos = it[1]
+				first = false
+			} else {
+				break
+			}
 		}
+		// otherwise it's at the end of the list, after the last item
+		if pos == -1 && len(items) > 0 {
+			pos = items[len(items)-1][1]
+			first = false
+		}
+		// if no list was found, use the end of the page
+		if pos == -1 {
+			pos = len(p.Body)
+			first = true
+		}
+		if first {
+			p.Body, pos = ensureTwoNewlines(p.Body, pos)
+		}
+		// mimic a zero-width match at the insert point
+		loc = []int{pos, pos}
 	}
 	// start with new page content
 	r := []byte("")
@@ -179,9 +214,27 @@ func addLink(name string, mandatory bool, link string, re *regexp.Regexp) error 
 	// append the rest
 	r = append(r, p.Body[loc[1]:]...)
 	p.Body = r
-	// only save if something changed
-	if string(p.Body) != org {
-		return p.save()
+}
+
+// ensureTwoNewlines makes sure that the two bytes before pos in buf are newlines. If the are not, newlines are inserted
+// and pos is increased. The new buf and pos is returned.
+func ensureTwoNewlines(buf []byte, pos int) ([]byte, int) {
+	var insert []byte
+	if pos >= 1 && buf[pos-1] != '\n' {
+		// add two newlines if buf doesn't end with a newline
+		insert = []byte("\n\n")
+	} else if pos >= 2 && buf[pos-2] != '\n' {
+		// add one newline if Body ends with just one newline
+		insert = []byte("\n")
 	}
-	return nil
+	if insert != nil {
+		r := []byte("")
+		r = append(r, buf[:pos]...)
+		r = append(r, insert...)
+		r = append(r, buf[pos:]...)
+		buf = r
+		pos += len(insert)
+
+	}
+	return buf, pos
 }
