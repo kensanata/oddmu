@@ -10,6 +10,9 @@ This page lists user-visible features and template changes to consider.
 
 ## 1.18 (unreleased)
 
+The _hashtags_ gained the option of checking and fixing the hashtag pages by
+adding missing links to tagged blog pages. See _oddmu-hashtags_(1) for more.
+
 In an effort to remove features that can be handled by the web server, the
 _list_, _delete_ and _rename_ actions were removed again. See _oddmu-webdav_(5)
 for a better solution.
