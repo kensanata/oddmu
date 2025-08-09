@@ -5,20 +5,31 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-HASHTAGS" "1" "2024-08-29"
+.TH "ODDMU-HASHTAGS" "1" "2025-08-09"
 .PP
 .SH NAME
 .PP
-oddmu-hashtags - count the hashtags used
+oddmu-hashtags - work with hashtags
 .PP
 .SH SYNOPSIS
 .PP
 \fBoddmu hashtags\fR
 .PP
+\fBoddmu hashtags -update\fR [\fB-dry-run\fR]
+.PP
 .SH DESCRIPTION
 .PP
-The "hashtags" subcommand counts all the hashtags used and lists them, separated
-by a TAB character.\&
+By default, the "hashtags" subcommand counts all the hashtags used and lists
+them, separated by a TAB character.\&
+.PP
+With the \fB-update\fR flag, the hashtag pages are update with links to all the blog
+pages having the corresponding tag.\& This only necessary when migrating a
+collection of Markdown files.\& Ordinarily, Oddmu maintains the hashtag pages
+automatically.\& When writing pages offline, use \fIoddmu-notify\fR(1) to update the
+hashtag pages.\&
+.PP
+Use the \fB-dry-run\fR flag to see what would change with the \fB-update\fR flag without
+actually changing any files.\&
 .PP
 .SH EXAMPLES
 .PP
@@ -27,6 +38,22 @@ List the top 10 hashtags.\& This requires 11 lines because of the header line.\&
 .nf
 .RS 4
 oddmu hashtags | head -n 11
+.fi
+.RE
+.PP
+See what kind of changes Oddmu would suggest:
+.PP
+.nf
+.RS 4
+oddmu hashtags -update -dry-run
+.fi
+.RE
+.PP
+And then do it:
+.PP
+.nf
+.RS 4
+oddmu hashtags -update
 .fi
 .RE
 .PP

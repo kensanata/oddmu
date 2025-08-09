@@ -2,16 +2,27 @@ ODDMU-HASHTAGS(1)
 
 # NAME
 
-oddmu-hashtags - count the hashtags used
+oddmu-hashtags - work with hashtags
 
 # SYNOPSIS
 
 *oddmu hashtags*
 
+*oddmu hashtags -update* [*-dry-run*]
+
 # DESCRIPTION
 
-The "hashtags" subcommand counts all the hashtags used and lists them, separated
-by a TAB character.
+By default, the "hashtags" subcommand counts all the hashtags used and lists
+them, separated by a TAB character.
+
+With the *-update* flag, the hashtag pages are update with links to all the blog
+pages having the corresponding tag. This only necessary when migrating a
+collection of Markdown files. Ordinarily, Oddmu maintains the hashtag pages
+automatically. When writing pages offline, use _oddmu-notify_(1) to update the
+hashtag pages.
+
+Use the *-dry-run* flag to see what would change with the *-update* flag without
+actually changing any files.
 
 # EXAMPLES
 
@@ -19,6 +30,18 @@ List the top 10 hashtags. This requires 11 lines because of the header line.
 
 ```
 oddmu hashtags | head -n 11
+```
+
+See what kind of changes Oddmu would suggest:
+
+```
+oddmu hashtags -update -dry-run
+```
+
+And then do it:
+
+```
+oddmu hashtags -update
 ```
 
 # SEE ALSO

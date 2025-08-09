@@ -315,7 +315,7 @@ If you run Oddmu as a web server:
 If you run Oddmu as a static site generator or pages offline and sync them with
 Oddmu running as a webserver:
 
-- _oddmu-hashtags_(1), on how to count the hashtags used
+- _oddmu-hashtags_(1), on working with hashtags
 - _oddmu-html_(1), on how to render a page
 - _oddmu-list_(1), on how to list pages and titles
 - _oddmu-links_(1), on how to list the outgoing links for a page
