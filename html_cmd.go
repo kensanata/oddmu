@@ -63,23 +63,27 @@ func htmlCli(w io.Writer, template string, args []string) subcommands.ExitStatus
 }
 
 func (p *Page) printHtml(w io.Writer, fn string) subcommands.ExitStatus {
-	if fn != "" {
-		p.handleTitle(true)
-		p.renderHtml()
-		t, err := template.ParseFiles(fn)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Cannot parse template %s for %s: %s\n", fn, p.Name, err)
-			return subcommands.ExitFailure
-		}
-		err = t.Execute(w, p)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Cannot execute template %s for %s: %s\n", fn, p.Name, err)
-			return subcommands.ExitFailure
-		}
-	} else {
+	if fn == "" {
 		// do not handle title
 		p.renderHtml()
-		fmt.Fprintln(w, p.Html)
+		_, err := fmt.Fprintln(w, p.Html)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Cannot write to stdout: %s\n", err)
+			return subcommands.ExitFailure
+		}
+		return subcommands.ExitSuccess
+	}
+	p.handleTitle(true)
+	p.renderHtml()
+	t, err := template.ParseFiles(fn)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Cannot parse template %s for %s: %s\n", fn, p.Name, err)
+		return subcommands.ExitFailure
+	}
+	err = t.Execute(w, p)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Cannot execute template %s for %s: %s\n", fn, p.Name, err)
+		return subcommands.ExitFailure
 	}
 	return subcommands.ExitSuccess
 }

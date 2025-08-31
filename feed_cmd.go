@@ -27,6 +27,10 @@ func (cmd *feedCmd) SetFlags(f *flag.FlagSet) {
 }
 
 func (cmd *feedCmd) Execute(_ context.Context, f *flag.FlagSet, _ ...interface{}) subcommands.ExitStatus {
+	if len(f.Args()) == 0 {
+		fmt.Fprint(os.Stderr, cmd.Usage())
+		return subcommands.ExitFailure
+	}
 	return feedCli(os.Stdout, f.Args())
 }
 
@@ -34,7 +38,7 @@ func feedCli(w io.Writer, args []string) subcommands.ExitStatus {
 	if len(args) == 1 && args[0] == "-" {
 		body, err := io.ReadAll(os.Stdin)
 		if err != nil {
-			fmt.Fprintf(w, "Cannot read from stdin: %s\n", err)
+			fmt.Fprintf(os.Stderr, "Cannot read from stdin: %s\n", err)
 			return subcommands.ExitFailure
 		}
 		p := &Page{Name: "stdin", Body: body}
