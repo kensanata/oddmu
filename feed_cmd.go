@@ -51,6 +51,7 @@ func feedCli(w io.Writer, args []string) subcommands.ExitStatus {
 		}
 		name = name[0:len(name)-3]
 		p, err := loadPage(name)
+		p.handleTitle(false)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Cannot load %s: %s\n", name, err)
 			return subcommands.ExitFailure
