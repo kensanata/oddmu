@@ -8,6 +8,10 @@ oddmu-releases - what's new?
 
 This page lists user-visible features and template changes to consider.
 
+## 1.19 (unreleased)
+
+Add _feed_ subcommand.
+
 ## 1.18 (2025)
 
 The _hashtags_ gained the option of checking and fixing the hashtag pages by
