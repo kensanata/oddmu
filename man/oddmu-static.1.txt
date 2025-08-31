@@ -81,7 +81,11 @@ speed language determination up.
 
 # SEE ALSO
 
-_oddmu_(1), _oddmu-templates_(5), _oddmu-html_(1), _oddmu-feed_(1)
+See _oddmu_(1) and _oddmu-templates_(5) for general information.
+
+See _oddmu-html_(1) for a subcommand that converts individual pages file to HTML
+and see _oddmu-feed_(1) for a subcommand that generates feeds for individual
+files.
 
 # AUTHORS
 
