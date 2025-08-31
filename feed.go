@@ -38,7 +38,7 @@ type Feed struct {
 
 // feed returns a RSS 2.0 feed for any page. The feed items it contains are the pages linked from in list items starting
 // with an asterisk ("*").
-func feed(p *Page, ti time.Time) *Feed {
+func feed(p *Page, ti time.Time, n int) *Feed {
 	feed := new(Feed)
 	feed.Name = p.Name
 	feed.Title = p.Title
@@ -80,7 +80,7 @@ func feed(p *Page, ti time.Time) *Feed {
 		it.Html = template.HTML(template.HTMLEscaper(p2.Html))
 		it.Hashtags = p2.Hashtags
 		items = append(items, it)
-		if len(items) >= 10 {
+		if n > 0 && len(items) >= n {
 			return ast.Terminate
 		}
 		return ast.GoToNext

@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/google/subcommands"
+	"html/template"
 	"io"
 	"os"
 	"strings"
@@ -61,15 +62,18 @@ func htmlCli(w io.Writer, template string, args []string) subcommands.ExitStatus
 	return subcommands.ExitSuccess
 }
 
-func (p *Page) printHtml(w io.Writer, template string) subcommands.ExitStatus {
-	if len(template) > 0 {
-		t := template
-		loadTemplates()
+func (p *Page) printHtml(w io.Writer, fn string) subcommands.ExitStatus {
+	if fn != "" {
 		p.handleTitle(true)
 		p.renderHtml()
-		err := templates.template[t].Execute(w, p)
+		t, err := template.ParseFiles(fn)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Cannot execute %s template for %s: %s\n", t, p.Name, err)
+			fmt.Fprintf(os.Stderr, "Cannot parse template %s for %s: %s\n", fn, p.Name, err)
+			return subcommands.ExitFailure
+		}
+		err = t.Execute(w, p)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Cannot execute template %s for %s: %s\n", fn, p.Name, err)
 			return subcommands.ExitFailure
 		}
 	} else {

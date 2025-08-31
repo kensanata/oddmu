@@ -221,7 +221,7 @@ func staticFeed(source, target string, p *Page, ti time.Time) error {
 	base := filepath.Base(source)
 	_, ok := index.token[strings.ToLower(base)]
 	if base == "index" || ok {
-		f := feed(p, ti)
+		f := feed(p, ti, 10)
 		if len(f.Items) > 0 {
 			return write(f, target, `<?xml version="1.0" encoding="UTF-8"?>`, "feed.html")
 		}

@@ -317,6 +317,7 @@ Oddmu running as a webserver:
 
 - _oddmu-hashtags_(1), on working with hashtags
 - _oddmu-html_(1), on how to render a page
+- _oddmu-feed_(1), on how to render a feed
 - _oddmu-list_(1), on how to list pages and titles
 - _oddmu-links_(1), on how to list the outgoing links for a page
 - _oddmu-missing_(1), on how to find broken local links

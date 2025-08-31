@@ -108,6 +108,10 @@ Static site generator:
 This man page documents the "html" subcommand to generate HTML from
 Markdown pages from the command line.
 
+[oddmu-feed(1)](https://alexschroeder.ch/view/oddmu/oddmu-feed.1):
+This man page documents the "feed" subcommand to generate a feed from
+Markdown pages from the command line.
+
 [oddmu-static(1)](https://alexschroeder.ch/view/oddmu/oddmu-static.1):
 This man page documents the "static" subcommand to generate an entire
 static website from the command line, avoiding the need to run Oddmu

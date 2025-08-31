@@ -1,0 +1,38 @@
+ODDMU-FEED(1)
+
+# NAME
+
+oddmu-feed - render Oddmu page feed
+
+# SYNOPSIS
+
+*oddmu feed* _page-name_ ...
+
+# DESCRIPTION
+
+The "feed" subcommand opens the given Markdown files and writes the resulting
+RSS files without item limit (ordinarily, this default is 10 items per feed).
+This uses the "feed.html" template. Use "-" as the page name if you want to read
+Markdown from *stdin*.
+
+# EXAMPLES
+
+Generate "emacs.rss" from "emacs.md":
+
+```
+oddmu feed emacs.md
+```
+
+Alternatively:
+
+```
+oddmu feed - < emacs.md > emacs.rss
+```
+
+# SEE ALSO
+
+_oddmu_(1)
+
+# AUTHORS
+
+Maintained by Alex Schroeder <alex@gnu.org>.

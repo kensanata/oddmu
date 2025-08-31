@@ -132,7 +132,7 @@ func viewHandler(w http.ResponseWriter, r *http.Request, name string) {
 	}
 	p.handleTitle(true)
 	if t == rss {
-		it := feed(p, fi.ModTime())
+		it := feed(p, fi.ModTime(), 10)
 		w.Write([]byte(`<?xml version="1.0" encoding="UTF-8"?>`))
 		renderTemplate(w, p.Dir(), "feed", it)
 		return

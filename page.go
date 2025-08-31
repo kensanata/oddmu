@@ -88,6 +88,15 @@ func (p *Page) save() error {
 	return os.WriteFile(fp, s, 0644)
 }
 
+func (p *Page) ModTime() (time.Time, error) {
+	fp := filepath.FromSlash(p.Name) + ".md"
+	fi, err := os.Stat(fp)
+	if err != nil {
+		return time.Now(), err
+	}
+	return fi.ModTime(), nil	
+}
+
 // backup a file by renaming it unless the existing backup is less than an hour old. A backup gets a tilde appended to
 // it ("~"). This is true even if the file refers to a binary file like "image.png" and most applications don't know
 // what to do with a file called "image.png~". This expects a filepath. The backup file gets its modification time set

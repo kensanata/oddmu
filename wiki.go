@@ -227,6 +227,7 @@ func commands() {
 	subcommands.Register(subcommands.CommandsCommand(), "")
 	subcommands.Register(&exportCmd{}, "")
 	subcommands.Register(&hashtagsCmd{}, "")
+	subcommands.Register(&feedCmd{}, "")
 	subcommands.Register(&htmlCmd{}, "")
 	subcommands.Register(&listCmd{}, "")
 	subcommands.Register(&linksCmd{}, "")
