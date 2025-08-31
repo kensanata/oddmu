@@ -15,8 +15,8 @@ You probably want to redirect this into a file so that you can upload and import
 it somewhere.
 
 Note that this only handles pages (Markdown files). All other files (images,
-PDFs, whatever else you uploaded) are not part of the feed and has to be
-uploaded to the new platform in some other way.
+PDFs, whatever else you uploaded) are not part of the feed and have to be
+uploaded to the new platform using some other way.
 
 The *-template* option specifies the template to use. If the template filename
 ends in _.xml_, _.html_ or _.rss_, it is assumed to contain XML and the optional

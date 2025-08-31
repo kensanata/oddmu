@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-STATIC" "1" "2024-08-29"
+.TH "ODDMU-STATIC" "1" "2025-08-31"
 .PP
 .SH NAME
 .PP
@@ -28,7 +28,8 @@ pages get ".\&html" appended.\&
 If a page has a name case-insensitively matching a hashtag, a feed file is
 generated (ending with ".\&rss") if any suitable links are found.\& A suitable link
 for a feed item must appear in a bullet list item using an asterisk ("*").\& If
-no feed items are found, no feed is written.\&
+no feed items are found, no feed is written.\& The feed is limited to the ten most
+recent items.\&
 .PP
 Hidden files and directories (starting with a ".\&") and backup files (ending with
 a "~") are skipped.\&
@@ -89,7 +90,7 @@ speed language determination up.\&
 .PP
 .SH SEE ALSO
 .PP
-\fIoddmu\fR(1), \fIoddmu-templates\fR(5)
+\fIoddmu\fR(1), \fIoddmu-templates\fR(5), \fIoddmu-html\fR(1), \fIoddmu-feed\fR(1)
 .PP
 .SH AUTHORS
 .PP
