@@ -94,7 +94,7 @@ func (p *Page) ModTime() (time.Time, error) {
 	if err != nil {
 		return time.Now(), err
 	}
-	return fi.ModTime(), nil	
+	return fi.ModTime(), nil
 }
 
 // backup a file by renaming it unless the existing backup is less than an hour old. A backup gets a tilde appended to
@@ -172,7 +172,7 @@ func pathEncode(s string) string {
 	if n == 0 {
 		return s
 	}
-	t := make([]byte, len(s) + 2*n)
+	t := make([]byte, len(s)+2*n)
 	j := 0
 	for i := 0; i < len(s); i++ {
 		switch s[i] {

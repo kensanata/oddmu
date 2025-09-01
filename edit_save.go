@@ -41,5 +41,5 @@ func saveHandler(w http.ResponseWriter, r *http.Request, name string) {
 			return
 		}
 	}
-	http.Redirect(w, r, "/view/" + nameEscape(name), http.StatusFound)
+	http.Redirect(w, r, "/view/"+nameEscape(name), http.StatusFound)
 }

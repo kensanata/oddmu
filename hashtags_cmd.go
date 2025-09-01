@@ -4,9 +4,9 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"github.com/google/subcommands"
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/ast"
+	"github.com/google/subcommands"
 	"github.com/hexops/gotextdiff"
 	"github.com/hexops/gotextdiff/myers"
 	"github.com/hexops/gotextdiff/span"
@@ -86,7 +86,7 @@ func hashtagsUpdateCli(w io.Writer, dryRun bool) subcommands.ExitStatus {
 			continue
 		}
 		title, ok := namesMap[hashtag]
-		if (!ok) {
+		if !ok {
 			title = hashtagName(namesMap, hashtag, docids)
 			namesMap[hashtag] = title
 		}
@@ -133,7 +133,7 @@ func hashtagsUpdateCli(w io.Writer, dryRun bool) subcommands.ExitStatus {
 				}
 				fn := h.Name + ".md"
 				edits := myers.ComputeEdits(span.URIFromPath(fn), original, string(h.Body))
-				diff := fmt.Sprint(gotextdiff.ToUnified(fn + "~", fn, original, edits))
+				diff := fmt.Sprint(gotextdiff.ToUnified(fn+"~", fn, original, edits))
 				fmt.Fprint(w, diff)
 			} else {
 				err = h.save()
@@ -149,7 +149,7 @@ func hashtagsUpdateCli(w io.Writer, dryRun bool) subcommands.ExitStatus {
 
 // Go through all the documents in the same directory and look for hashtag matches in the rendered HTML in order to
 // determine the most likely capitalization.
-func hashtagName (namesMap map[string]string, hashtag string, docids []docid) string {
+func hashtagName(namesMap map[string]string, hashtag string, docids []docid) string {
 	candidate := make(map[string]int)
 	var mostPopular string
 	for _, docid := range docids {

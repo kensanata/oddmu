@@ -48,7 +48,7 @@ func htmlCli(w io.Writer, template string, args []string) subcommands.ExitStatus
 			fmt.Fprintf(os.Stderr, "%s does not end in '.md'\n", name)
 			return subcommands.ExitFailure
 		}
-		name = name[0:len(name)-3]
+		name = name[0 : len(name)-3]
 		p, err := loadPage(name)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Cannot load %s: %s\n", name, err)

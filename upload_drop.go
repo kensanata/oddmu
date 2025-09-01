@@ -6,12 +6,12 @@ package main
 import (
 	"errors"
 	"fmt"
-	_ "github.com/gen2brain/heic"
 	"github.com/disintegration/imaging"
 	"github.com/edwvee/exiffix"
+	_ "github.com/gen2brain/heic"
 	"github.com/gen2brain/webp"
-	"image/png"
 	"image/jpeg"
+	"image/png"
 	"io"
 	"log"
 	"mime"
@@ -36,8 +36,8 @@ type Upload struct {
 }
 
 type FileUpload struct {
-	Name     string
-	Image    bool
+	Name  string
+	Image bool
 }
 
 var lastRe = regexp.MustCompile(`^(.*?)([0-9]+)([^0-9]*)$`)
@@ -86,7 +86,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		data.Uploads[i].Name = s
 		mimeType := mime.TypeByExtension(path.Ext(s))
 		data.Uploads[i].Image = strings.HasPrefix(mimeType, "image/")
-		
+
 	}
 	renderTemplate(w, dir, "upload", data)
 }
@@ -229,7 +229,7 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 			// do not use imaging.Decode(file, imaging.AutoOrientation(true)) because that only works for JPEG files
 			img, fmt, err := exiffix.Decode(file)
 			if err != nil {
-				http.Error(w, "The image could not be decoded from " + from + " format", http.StatusBadRequest)
+				http.Error(w, "The image could not be decoded from "+from+" format", http.StatusBadRequest)
 				return
 			}
 			log.Println("Decoded", fmt, "file")
@@ -241,7 +241,7 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 				}
 			}
 			// images are always reencoded, so image quality goes down
-			switch (to) {
+			switch to {
 			case ".png":
 				err = png.Encode(dst, img)
 			case ".jpg", ".jpeg":
@@ -287,7 +287,7 @@ func dropHandler(w http.ResponseWriter, r *http.Request, dir string) {
 		}
 		updateTemplate(fp)
 	}
-	http.Redirect(w, r, "/upload/" + nameEscape(dir) + "?" + data.Encode(), http.StatusFound)
+	http.Redirect(w, r, "/upload/"+nameEscape(dir)+"?"+data.Encode(), http.StatusFound)
 }
 
 // basename returns a name matching the uploaded file but with no extension and no appended number. Given an uploaded

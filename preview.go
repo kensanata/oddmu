@@ -14,7 +14,7 @@ import (
 // are passed on the the {viewHandler}.
 func previewHandler(w http.ResponseWriter, r *http.Request, path string) {
 	if r.Method != http.MethodPost {
-		http.Redirect(w, r, "/view/" + strings.TrimPrefix(path, "/preview/"), http.StatusFound)
+		http.Redirect(w, r, "/view/"+strings.TrimPrefix(path, "/preview/"), http.StatusFound)
 		return
 	}
 	body := strings.ReplaceAll(r.FormValue("body"), "\r", "")

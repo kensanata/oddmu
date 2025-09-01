@@ -29,7 +29,7 @@ var validPath = regexp.MustCompile("^/([^/]+)/(.*)$")
 var titleRegexp = regexp.MustCompile("(?m)^#\\s*(.*)\n+")
 
 // isHiddenName returns true if any path segment starts with a dot. This also catches '..' segments.
-func isHiddenName (name string) bool {
+func isHiddenName(name string) bool {
 	for _, segment := range strings.Split(name, "/") {
 		if strings.HasPrefix(segment, ".") {
 			return true
@@ -211,7 +211,7 @@ func serve() {
 		ReadTimeout:  2 * time.Minute,
 		WriteTimeout: 5 * time.Minute,
 		IdleTimeout:  2 * time.Minute,
-		Handler: mux,
+		Handler:      mux,
 	}
 	err = srv.Serve(listener)
 	if err != nil {

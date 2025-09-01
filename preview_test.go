@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/stretchr/testify/assert"
-	"net/url"
 	"net/http"
+	"net/url"
 	"testing"
 )
 

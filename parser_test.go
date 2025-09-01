@@ -119,17 +119,17 @@ func TestAt(t *testing.T) {
 	// prevent lookups
 	accounts.Lock()
 	accounts.uris = make(map[string]string)
-	accounts.uris["alex@alexschroeder.ch"] = "https://social.alexschroeder.ch/@alex";
+	accounts.uris["alex@alexschroeder.ch"] = "https://social.alexschroeder.ch/@alex"
 	accounts.Unlock()
 	// test account
 	p := &Page{Body: []byte(`My fedi handle is @alex@alexschroeder.ch.`)}
 	p.renderHtml()
-	assert.Contains(t,string(p.Html),
+	assert.Contains(t, string(p.Html),
 		`My fedi handle is <a class="account" href="https://social.alexschroeder.ch/@alex" title="@alex@alexschroeder.ch">@alex</a>.`)
 	// test escaped account
 	p = &Page{Body: []byte(`My fedi handle is \@alex@alexschroeder.ch. \`)}
 	p.renderHtml()
-	assert.Contains(t,string(p.Html),
+	assert.Contains(t, string(p.Html),
 		`My fedi handle is @alex@alexschroeder.ch.`)
 	// disable webfinger
 	useWebfinger = false

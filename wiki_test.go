@@ -45,7 +45,7 @@ func HTTPRedirectTo(t *testing.T, handler http.HandlerFunc, method, url string, 
 	handler(w, req)
 	code := w.Code
 	isRedirectCode := code >= http.StatusMultipleChoices && code <= http.StatusTemporaryRedirect
-	if (values != nil) {
+	if values != nil {
 		url += "?" + values.Encode()
 	}
 	assert.True(t, isRedirectCode, "Expected HTTP redirect status code for %q but received %d", url, code)

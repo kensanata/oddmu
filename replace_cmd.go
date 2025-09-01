@@ -80,14 +80,14 @@ func replaceCli(w io.Writer, isConfirmed bool, isRegexp bool, args []string) sub
 			changes++
 			if isConfirmed {
 				fmt.Fprintln(w, fp)
-				_ = os.Rename(fp, fp + "~")
+				_ = os.Rename(fp, fp+"~")
 				err = os.WriteFile(fp, result, 0644)
 				if err != nil {
 					return err
 				}
 			} else {
-				edits := myers.ComputeEdits(span.URIFromPath(fp + "~"), string(body), string(result))
-				diff := fmt.Sprint(gotextdiff.ToUnified(fp + "~", fp, string(body), edits))
+				edits := myers.ComputeEdits(span.URIFromPath(fp+"~"), string(body), string(result))
+				diff := fmt.Sprint(gotextdiff.ToUnified(fp+"~", fp, string(body), edits))
 				fmt.Fprintln(w, diff)
 			}
 		}

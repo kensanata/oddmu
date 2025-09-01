@@ -17,7 +17,7 @@ func TestAddLinkToPageWithNoList(t *testing.T) {
 	re := regexp.MustCompile(`(?m)^\* \[[^\]]+\]\(2025-08-08\)\n`)
 	link := "* [2025-08-08](2025-08-08)\n"
 	addLinkToPage(p, link, re)
-	assert.Equal(t, title + "\n\n" + link, string(p.Body))
+	assert.Equal(t, title+"\n\n"+link, string(p.Body))
 }
 
 func TestAddLinkToPageWithOlderLink(t *testing.T) {
@@ -28,7 +28,7 @@ func TestAddLinkToPageWithOlderLink(t *testing.T) {
 	re := regexp.MustCompile(`(?m)^\* \[[^\]]+\]\(2025-08-10\)\n`)
 	link := "* [2025-08-10](2025-08-10)\n"
 	addLinkToPage(p, link, re)
-	assert.Equal(t, title + "\n" + link + old, string(p.Body))
+	assert.Equal(t, title+"\n"+link+old, string(p.Body))
 }
 
 func TestAddLinkToPageBetweenToExistingLinks(t *testing.T) {
@@ -39,7 +39,7 @@ func TestAddLinkToPageBetweenToExistingLinks(t *testing.T) {
 	re := regexp.MustCompile(`(?m)^\* \[[^\]]+\]\(2025-08-09\)\n`)
 	link := "* [2025-08-09](2025-08-09)\n"
 	addLinkToPage(p, link, re)
-	assert.Equal(t, title + new + link + old, string(p.Body))
+	assert.Equal(t, title+new+link+old, string(p.Body))
 }
 
 func TestAddLinkToPageBetweenToExistingLinks2(t *testing.T) {
@@ -50,7 +50,7 @@ func TestAddLinkToPageBetweenToExistingLinks2(t *testing.T) {
 	re := regexp.MustCompile(`(?m)^\* \[[^\]]+\]\(2025-08-08\)\n`)
 	link := "* [2025-08-08](2025-08-08)\n"
 	addLinkToPage(p, link, re)
-	assert.Equal(t, title + new + link + old, string(p.Body))
+	assert.Equal(t, title+new+link+old, string(p.Body))
 }
 
 func TestAddLinkToPageAtTheEnd(t *testing.T) {
@@ -61,7 +61,7 @@ func TestAddLinkToPageAtTheEnd(t *testing.T) {
 	re := regexp.MustCompile(`(?m)^\* \[[^\]]+\]\(2025-08-07\)\n`)
 	link := "* [2025-08-07](2025-08-07)\n"
 	addLinkToPage(p, link, re)
-	assert.Equal(t, title + new + old + link, string(p.Body))
+	assert.Equal(t, title+new+old+link, string(p.Body))
 }
 
 func TestChanges(t *testing.T) {
