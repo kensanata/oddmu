@@ -43,7 +43,7 @@ README.md: ../README.md
 	  < $< > $@
 
 upload: ${MD} README.md
-	rsync --itemize-changes --archive *.md sibirocobombus:alexschroeder.ch/wiki/oddmu/
+	rsync --itemize-changes --archive *.md ../README.md sibirocobombus:alexschroeder.ch/wiki/oddmu/
 	make clean
 
 clean:
