@@ -74,7 +74,7 @@ oddmu-windows-amd64.tar.gz: oddmu.exe
 
 %.tar.gz: %
 	tar --create --file $@ --transform='s/^$</oddmu/' --transform='s/^/oddmu\//' --exclude='*~' \
-	  $< *.html Makefile *.socket *.service *.md man/Makefile man/*.1 man/*.5 man/*.7 themes/
+	  $< *.html Makefile *.socket *.service *.md man/Makefile man/*.[157] themes/
 
 priv:
 	sudo setcap 'cap_net_bind_service=+ep' oddmu
