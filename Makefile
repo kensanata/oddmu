@@ -73,7 +73,7 @@ oddmu-windows-amd64.tar.gz: oddmu.exe
 	  $< *.md man/*.[157].{html,md} themes/
 
 %.tar.gz: %
-	tar --create --file $@ --transform='s/^$</oddmu/' --transform='s/^/oddmu\//' --exclude='*~' \
+	tar --create --gzip --file $@ --transform='s/^$</oddmu/' --transform='s/^/oddmu\//' --exclude='*~' \
 	  $< *.html Makefile *.socket *.service *.md man/Makefile man/*.[157] themes/
 
 priv:
