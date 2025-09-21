@@ -9,6 +9,7 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+	"strconv"
 	"time"
 )
 
@@ -132,7 +133,15 @@ func viewHandler(w http.ResponseWriter, r *http.Request, name string) {
 	}
 	p.handleTitle(true)
 	if t == rss {
-		it := feed(p, fi.ModTime(), 10)
+		from, err := strconv.Atoi(r.FormValue("from"))
+		if err != nil {
+			from = 0
+		}
+		n, err := strconv.Atoi(r.FormValue("n"))
+		if err != nil {
+			n = 10
+		}
+		it := feed(p, fi.ModTime(), from, n)
 		w.Write([]byte(`<?xml version="1.0" encoding="UTF-8"?>`))
 		renderTemplate(w, p.Dir(), "feed", it)
 		return

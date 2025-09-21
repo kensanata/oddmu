@@ -1,11 +1,15 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"
+     xmlns:fh="http://purl.org/syndication/history/1.0">
   <channel>
     <docs>http://blogs.law.harvard.edu/tech/rss</docs>
     <title>{{.Title}}</title>
     <link>https://example.org/</link>
     <managingEditor>you@example.org (Your Name)</managingEditor>
     <webMaster>you@example.org (Your Name)</webMaster>
-    <atom:link href="https://example.org/view/{{.Path}}.rss" rel="self" type="application/rss+xml"/>
+    <atom:link href="https://example.org/view/{{.Path}}.rss" rel="self" type="application/rss+xml"/>{{if .From}}
+    <atom:link href="https://example.org/view/{{.Path}}.rss?from={{.Prev}}&n={{.N}}" rel="previous" type="application/rss+xml"/>{{end}}{{if .Next}}
+    <atom:link href="https://example.org/view/{{.Path}}.rss?from={{.Next}}&n={{.N}}" rel="next" type="application/rss+xml"/>{{end}}{{if .Complete}}
+    <fh:complete/>{{end}}
     <description>This is the digital garden of Your Name.</description>
     <image>
       <url>https://example.org/view/logo.jpg</url>

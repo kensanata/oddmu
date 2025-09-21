@@ -65,8 +65,9 @@ func feedCli(w io.Writer, args []string) subcommands.ExitStatus {
 	return subcommands.ExitSuccess
 }
 
+// printFeed prints the complete feed for a page (unpaginated).
 func (p *Page) printFeed(w io.Writer, ti time.Time) subcommands.ExitStatus {
-	f := feed(p, ti, 0)
+	f := feed(p, ti, 0, 0)
 	if len(f.Items) == 0 {
 		fmt.Fprintf(os.Stderr, "Empty feed for %s\n", p.Name)
 		return subcommands.ExitFailure

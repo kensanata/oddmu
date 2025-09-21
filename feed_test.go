@@ -4,6 +4,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
+	"net/url"
 )
 
 func TestFeed(t *testing.T) {
@@ -19,7 +20,6 @@ func TestNoFeed(t *testing.T) {
 
 func TestFeedItems(t *testing.T) {
 	cleanup(t, "testdata/feed")
-	index.load()
 
 	p1 := &Page{Name: "testdata/feed/cactus", Body: []byte(`# Cactus
 Green head and white hair
@@ -52,4 +52,88 @@ Writing poems about plants.
 	assert.Contains(t, body, "&lt;h1 id=&#34;dragon&#34;&gt;Dragon&lt;/h1&gt;")
 	assert.Contains(t, body, "<category>Succulent</category>")
 	assert.Contains(t, body, "<category>Palmtree</category>")
+}
+
+
+func TestFeedPagination(t *testing.T) {
+	cleanup(t, "testdata/pagination")
+
+	p := &Page{Name: "testdata/pagination/one", Body: []byte("# One\n")}; p.save()
+	p = &Page{Name: "testdata/pagination/two", Body: []byte("# Two\n")}; p.save()
+	p = &Page{Name: "testdata/pagination/three", Body: []byte("# Three\n")}; p.save()
+	p = &Page{Name: "testdata/pagination/four", Body: []byte("# Four\n")}; p.save()
+	p = &Page{Name: "testdata/pagination/five", Body: []byte("# Five\n")}; p.save()
+	p = &Page{Name: "testdata/pagination/six", Body: []byte("# Six\n")}; p.save()
+	p = &Page{Name: "testdata/pagination/seven", Body: []byte("# Seven\n")}; p.save()
+	p = &Page{Name: "testdata/pagination/eight", Body: []byte("# Eight\n")}; p.save()
+	p = &Page{Name: "testdata/pagination/nine", Body: []byte("# Nine\n")}; p.save()
+	p = &Page{Name: "testdata/pagination/ten", Body: []byte("# Ten\n")}; p.save()
+
+	p = &Page{Name: "testdata/pagination/index", Body: []byte(`# Index
+* [one](one)
+* [two](two)
+* [three](three)
+* [four](four)
+* [five](five)
+* [six](six)
+* [seven](seven)
+* [eight](eight)
+* [nine](nine)
+* [ten](ten)
+`)}
+	p.save()
+
+	body := assert.HTTPBody(makeHandler(viewHandler, false, http.MethodGet), "GET", "/view/testdata/pagination/index.rss", nil)
+	assert.Contains(t, body, "<title>One</title>")
+	assert.Contains(t, body, "<title>Ten</title>")
+	assert.NotContains(t, body, `<atom:link href="https://example.org/view/testdata/pagination/index.rss?from=10&n=10" rel="next" type="application/rss+xml"/>`)
+
+	p = &Page{Name: "testdata/pagination/eleven", Body: []byte("# Eleven\n")}; p.save()
+	p = &Page{Name: "testdata/pagination/index", Body: []byte(`# Index
+* [one](one)
+* [two](two)
+* [three](three)
+* [four](four)
+* [five](five)
+* [six](six)
+* [seven](seven)
+* [eight](eight)
+* [nine](nine)
+* [ten](ten)
+* [eleven](eleven)
+`)}
+	p.save()
+
+	body = assert.HTTPBody(makeHandler(viewHandler, false, http.MethodGet), "GET", "/view/testdata/pagination/index.rss", nil)
+	assert.Contains(t, body, `<atom:link href="https://example.org/view/testdata/pagination/index.rss?from=10&n=10" rel="next" type="application/rss+xml"/>`)
+
+	params := url.Values{}
+	params.Set("n", "3")
+	body = assert.HTTPBody(makeHandler(viewHandler, false, http.MethodGet), "GET", "/view/testdata/pagination/index.rss", params)
+	assert.Contains(t, body, "<title>One</title>")
+	assert.Contains(t, body, "<title>Three</title>")
+	assert.NotContains(t, body, "<title>Four</title>")
+	assert.Contains(t, body, `<atom:link href="https://example.org/view/testdata/pagination/index.rss?from=3&n=3" rel="next" type="application/rss+xml"/>`)
+
+	params = url.Values{}
+	params.Set("from", "3")
+	params.Set("n", "3")
+	body = assert.HTTPBody(makeHandler(viewHandler, false, http.MethodGet), "GET", "/view/testdata/pagination/index.rss", params)
+	assert.NotContains(t, body, "<title>Three</title>")
+	assert.Contains(t, body, "<title>Four</title>")
+	assert.Contains(t, body, "<title>Six</title>")
+	assert.NotContains(t, body, "<title>Seven</title>")
+	assert.Contains(t, body, `<atom:link href="https://example.org/view/testdata/pagination/index.rss?from=0&n=3" rel="previous" type="application/rss+xml"/>`)
+	assert.Contains(t, body, `<atom:link href="https://example.org/view/testdata/pagination/index.rss?from=6&n=3" rel="next" type="application/rss+xml"/>`)
+
+	params = url.Values{}
+	params.Set("from", "2")
+	params.Set("n", "3")
+	body = assert.HTTPBody(makeHandler(viewHandler, false, http.MethodGet), "GET", "/view/testdata/pagination/index.rss", params)
+	assert.NotContains(t, body, "<title>Two</title>")
+	assert.Contains(t, body, "<title>Three</title>")
+	assert.Contains(t, body, "<title>Five</title>")
+	assert.NotContains(t, body, "<title>Six</title>")
+	assert.Contains(t, body, `<atom:link href="https://example.org/view/testdata/pagination/index.rss?from=0&n=3" rel="previous" type="application/rss+xml"/>`)
+	assert.Contains(t, body, `<atom:link href="https://example.org/view/testdata/pagination/index.rss?from=5&n=3" rel="next" type="application/rss+xml"/>`)
 }

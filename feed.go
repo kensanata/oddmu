@@ -34,19 +34,36 @@ type Feed struct {
 	// Items are based on the pages linked in list items starting with an asterisk ("*"). Links in
 	// list items starting with a minus ("-") are ignored!
 	Items []Item
+
+	// From is where the item number where the feed starts. It defaults to 0. Prev and From are the item numbers of
+	// the previous and the next page of the feed. N is the number of items per page.
+	Prev, Next, From, N int
+
+	// Complete is set when there is no pagination.
+	Complete bool
 }
 
 // feed returns a RSS 2.0 feed for any page. The feed items it contains are the pages linked from in list items starting
-// with an asterisk ("*").
-func feed(p *Page, ti time.Time, n int) *Feed {
+// with an asterisk ("*"). The feed starts from a certain item and contains n items. If n is 0, the feed is complete
+// (unpaginated).
+func feed(p *Page, ti time.Time, from, n int) *Feed {
 	feed := new(Feed)
 	feed.Name = p.Name
 	feed.Title = p.Title
 	feed.Date = ti.Format(time.RFC1123Z)
+	feed.From = from
+	feed.N = n
+	if n == 0 {
+		feed.Complete = true
+	} else if from > n {
+		feed.Prev = from - n
+	}
+	to := from + n
 	parser, _ := wikiParser()
 	doc := markdown.Parse(p.Body, parser)
 	items := make([]Item, 0)
 	inListItem := false
+	i := 0
 	ast.WalkFunc(doc, func(node ast.Node, entering bool) ast.WalkStatus {
 		// set the flag if we're in a list item
 		listItem, ok := node.(*ast.ListItem)
@@ -58,11 +75,22 @@ func feed(p *Page, ti time.Time, n int) *Feed {
 		if !inListItem || !entering {
 			return ast.GoToNext
 		}
-		// if we're in a link and it's local
+		// if we're in a link and it's not local
 		link, ok := node.(*ast.Link)
 		if !ok || bytes.Contains(link.Destination, []byte("//")) {
 			return ast.GoToNext
 		}
+		// if we're too early or too late
+		i++
+		if i <= from {
+			return ast.GoToNext
+		}
+		if n > 0 && i > to {
+			// set if it's likely that more items exist
+			feed.Next = to
+			return ast.Terminate
+		}
+		// i counts links, not actual existing pages
 		name := path.Join(p.Dir(), string(link.Destination))
 		fi, err := os.Stat(filepath.FromSlash(name) + ".md")
 		if err != nil {
@@ -80,9 +108,6 @@ func feed(p *Page, ti time.Time, n int) *Feed {
 		it.Html = template.HTML(template.HTMLEscaper(p2.Html))
 		it.Hashtags = p2.Hashtags
 		items = append(items, it)
-		if n > 0 && len(items) >= n {
-			return ast.Terminate
-		}
 		return ast.GoToNext
 	})
 	feed.Items = items

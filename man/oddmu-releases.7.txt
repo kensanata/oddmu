@@ -10,7 +10,11 @@ This page lists user-visible features and template changes to consider.
 
 ## 1.19 (unreleased)
 
-Add _feed_ subcommand.
+Add _feed_ subcommand. This produces a "complete" feed.
+
+Add feed pagination for the _feed_ action. This produces a "paginated" feed.
+
+See RFC 5005 for more information.
 
 ## 1.18 (2025)
 
