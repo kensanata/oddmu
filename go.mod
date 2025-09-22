@@ -1,4 +1,4 @@
-module src.alexschroeder.ch/oddmu.git
+module src.alexschroeder.ch/oddmu
 
 go 1.22
 
