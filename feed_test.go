@@ -105,9 +105,16 @@ func TestFeedPagination(t *testing.T) {
 	p.save()
 
 	body = assert.HTTPBody(makeHandler(viewHandler, false, http.MethodGet), "GET", "/view/testdata/pagination/index.rss", nil)
+	assert.NotContains(t, body, "<title>Eleven</title>")
 	assert.Contains(t, body, `<atom:link href="https://example.org/view/testdata/pagination/index.rss?from=10&n=10" rel="next" type="application/rss+xml"/>`)
 
 	params := url.Values{}
+	params.Set("n", "0")
+	body = assert.HTTPBody(makeHandler(viewHandler, false, http.MethodGet), "GET", "/view/testdata/pagination/index.rss", params)
+	assert.Contains(t, body, "<title>Eleven</title>")
+	assert.Contains(t, body, `<fh:complete/>`)
+
+	params = url.Values{}
 	params.Set("n", "3")
 	body = assert.HTTPBody(makeHandler(viewHandler, false, http.MethodGet), "GET", "/view/testdata/pagination/index.rss", params)
 	assert.Contains(t, body, "<title>One</title>")
