@@ -5,7 +5,7 @@
 .nh
 .ad l
 .\" Begin generated content:
-.TH "ODDMU-TEMPLATES" "5" "2025-08-31" "File Formats Manual"
+.TH "ODDMU-TEMPLATES" "5" "2025-09-24" "File Formats Manual"
 .PP
 .SH NAME
 .PP
@@ -131,6 +131,26 @@ An item is a page plus a date.\& All the properties of a page can be used (see
 \fBPage\fR above).\&
 .PP
 \fI{{.\&Date}}\fR is the date of the last update to the page, in RFC 822 format.\&
+.PP
+In order to paginate feeds, the following attributes are also available in the
+feed:
+.PP
+\fI{{.\&From}}\fR is the item number where the feed starts.\& The first page starts at
+0.\& This can be passed to Oddmu via the query parameter \fIfrom\fR.\&
+.PP
+\fI{{.\&N}}\fR is the number items per page.\& The default is 10.\& This can be passed to
+Oddmu via the query parameter \fIn\fR.\& If this is set to 0, the feed is not
+paginated.\&
+.PP
+\fI{{.\&Complete}}\fR is a boolean that is true if the feed is not paginated.\& Such a
+feed cannot have a previous or next page.\&
+.PP
+\fI{{.\&Prev}}\fR is the item number where the previous page of the feed starts.\& On
+the first page, it'\&s value is 0 instead of -10.\& You need to test if \fI{{.\&From}}\fR
+is non-zero (in which case this is not the first page) before using \fI{{.\&Prev}}\fR.\&
+.PP
+\fI{{.\&Next}}\fR is the item number where the next feed starts, if there are any
+items left.\& If there are none, it'\&s value is 0.\&
 .PP
 .SS List
 .PP

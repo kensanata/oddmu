@@ -60,6 +60,40 @@ func TestManTemplates(t *testing.T) {
 	assert.Greater(t, count, 0, "no templates were found")
 }
 
+// Does oddmu-templates(5) mention all the templates?
+func TestManTemplateAttributess(t *testing.T) {
+	mfp := "man/oddmu-templates.5.txt"
+	b, err := os.ReadFile(mfp)
+	man := string(b)
+	assert.NoError(t, err)
+	re := regexp.MustCompile(`{{(?:(?:if|range) )?(\.[A-Z][a-z]*)}}`)
+	filepath.Walk(".", func(fp string, info fs.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if fp != "." && info.IsDir() {
+			return filepath.SkipDir
+		}
+		if !strings.HasSuffix(fp, ".html") {
+			return nil
+		}
+		h, err := os.ReadFile(fp)
+		matches := re.FindAllSubmatch(h, -1)
+		assert.Greater(t, len(matches), 0, "%s contains no attributes", fp)
+		seen := make(map[string]bool)
+		for _, m := range matches {
+			attr := string(m[1])
+			if seen[attr] {
+				continue
+			}
+			seen[attr] = true
+			assert.Contains(t, man, "_{{"+attr+"}}_", "%s does not mention _{{%s}}_", mfp, attr)
+		}
+		assert.NoError(t, err)
+		return nil
+	})
+}
+
 // Does oddmu(1) mention all the actions? We're not going to parse the go file and make sure to catch them all. I tried
 // it, and it's convoluted.
 func TestManActions(t *testing.T) {
