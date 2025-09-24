@@ -106,7 +106,7 @@ func TestFeedPagination(t *testing.T) {
 
 	body = assert.HTTPBody(makeHandler(viewHandler, false, http.MethodGet), "GET", "/view/testdata/pagination/index.rss", nil)
 	assert.NotContains(t, body, "<title>Eleven</title>")
-	assert.Contains(t, body, `<atom:link href="https://example.org/view/testdata/pagination/index.rss?from=10&n=10" rel="next" type="application/rss+xml"/>`)
+	assert.Contains(t, body, `<atom:link href="https://example.org/view/testdata/pagination/index.rss?from=10&amp;n=10" rel="next" type="application/rss+xml"/>`)
 
 	params := url.Values{}
 	params.Set("n", "0")
@@ -120,7 +120,7 @@ func TestFeedPagination(t *testing.T) {
 	assert.Contains(t, body, "<title>One</title>")
 	assert.Contains(t, body, "<title>Three</title>")
 	assert.NotContains(t, body, "<title>Four</title>")
-	assert.Contains(t, body, `<atom:link href="https://example.org/view/testdata/pagination/index.rss?from=3&n=3" rel="next" type="application/rss+xml"/>`)
+	assert.Contains(t, body, `<atom:link href="https://example.org/view/testdata/pagination/index.rss?from=3&amp;n=3" rel="next" type="application/rss+xml"/>`)
 
 	params = url.Values{}
 	params.Set("from", "3")
@@ -130,8 +130,8 @@ func TestFeedPagination(t *testing.T) {
 	assert.Contains(t, body, "<title>Four</title>")
 	assert.Contains(t, body, "<title>Six</title>")
 	assert.NotContains(t, body, "<title>Seven</title>")
-	assert.Contains(t, body, `<atom:link href="https://example.org/view/testdata/pagination/index.rss?from=0&n=3" rel="previous" type="application/rss+xml"/>`)
-	assert.Contains(t, body, `<atom:link href="https://example.org/view/testdata/pagination/index.rss?from=6&n=3" rel="next" type="application/rss+xml"/>`)
+	assert.Contains(t, body, `<atom:link href="https://example.org/view/testdata/pagination/index.rss?from=0&amp;n=3" rel="previous" type="application/rss+xml"/>`)
+	assert.Contains(t, body, `<atom:link href="https://example.org/view/testdata/pagination/index.rss?from=6&amp;n=3" rel="next" type="application/rss+xml"/>`)
 
 	params = url.Values{}
 	params.Set("from", "2")
@@ -141,6 +141,6 @@ func TestFeedPagination(t *testing.T) {
 	assert.Contains(t, body, "<title>Three</title>")
 	assert.Contains(t, body, "<title>Five</title>")
 	assert.NotContains(t, body, "<title>Six</title>")
-	assert.Contains(t, body, `<atom:link href="https://example.org/view/testdata/pagination/index.rss?from=0&n=3" rel="previous" type="application/rss+xml"/>`)
-	assert.Contains(t, body, `<atom:link href="https://example.org/view/testdata/pagination/index.rss?from=5&n=3" rel="next" type="application/rss+xml"/>`)
+	assert.Contains(t, body, `<atom:link href="https://example.org/view/testdata/pagination/index.rss?from=0&amp;n=3" rel="previous" type="application/rss+xml"/>`)
+	assert.Contains(t, body, `<atom:link href="https://example.org/view/testdata/pagination/index.rss?from=5&amp;n=3" rel="next" type="application/rss+xml"/>`)
 }
