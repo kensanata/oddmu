@@ -16,6 +16,28 @@ Add feed pagination for the _feed_ action. This produces a "paginated" feed.
 
 See RFC 5005 for more information.
 
+If you like the idea of feed pagination (not a given since that also helps bots
+scrape your site!) you need to add the necessary links to the feed template
+("feed.html"). See _oddmu-templates_(5) for more.
+
+Example, adding the feed history namespace:
+
+```
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"
+     xmlns:fh="http://purl.org/syndication/history/1.0">
+  …
+  {{if .From}}
+  <atom:link rel="previous" type="application/rss+xml"
+   href="https://example.org/view/{{.Path}}.rss?from={{.Prev}}&amp;n={{.N}}"/>
+  {{end}}
+  {{if .Next}}
+  <atom:link rel="next" type="application/rss+xml"
+   href="https://example.org/view/{{.Path}}.rss?from={{.Next}}&amp;n={{.N}}"/>
+  {{end}}
+  {{if .Complete}}<fh:complete/>{{end}}
+  …
+```
+
 ## 1.18 (2025)
 
 The _hashtags_ gained the option of checking and fixing the hashtag pages by
