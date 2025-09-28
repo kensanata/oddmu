@@ -8,7 +8,7 @@ oddmu-releases - what's new?
 
 This page lists user-visible features and template changes to consider.
 
-## 1.19 (unreleased)
+## 1.19 (2025)
 
 Add _feed_ subcommand. This produces a "complete" feed.
 
